@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BloodHound | JinPwn</title><meta name="description" content="Graph the domain, find the shortest path. BloodHound CE is the current default (BloodHound Legacy and SharpHound are deprecated for new work).">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/">
+<meta property="og:title" content="BloodHound | JinPwn">
+<meta property="og:description" content="Graph the domain, find the shortest path. BloodHound CE is the current default (BloodHound Legacy and SharpHound are deprecated for new work).">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="BloodHound | JinPwn">
+<meta name="twitter:description" content="Graph the domain, find the shortest path. BloodHound CE is the current default (BloodHound Legacy and SharpHound are deprecated for new work).">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Graph the domain, find the shortest path. BloodHound CE is the current default (BloodHound Legacy and SharpHound are deprecated for new work).","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"BloodHound | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link">Enumeration</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link is-current">BloodHound</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link">Kerberoasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link">AS-REP Roasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link">Password Spraying</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link">ADCS ESC1-16</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link">DCSync</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link">Trust Attacks</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link">Persistence</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>BloodHound</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">BloodHound</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Active Directory Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link">Enumeration</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link is-current">BloodHound</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link">Kerberoasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link">AS-REP Roasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link">Password Spraying</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link">ADCS ESC1-16</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link">DCSync</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link">Trust Attacks</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link">Persistence</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Graph the domain, find the shortest path. BloodHound CE is the current default (BloodHound Legacy and SharpHound are deprecated for new work).</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
+</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
+</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;svc_user&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
+</span></span></code></pre></div><h2 id="i-spin-up-bloodhound-ce" data-heading-permalink="true"><span class="heading-content">i. Spin up BloodHound CE</span>
+    <a class="heading-permalink" href="#i-spin-up-bloodhound-ce" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Docker compose, one-shot:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -L https://ghst.ly/getbhce -o docker-compose.yml
+</span></span><span class="line"><span class="cl">docker-compose up -d
+</span></span><span class="line"><span class="cl"><span class="c1">## Wait 30s, then watch logs for the initial admin password:</span>
+</span></span><span class="line"><span class="cl">docker-compose logs bloodhound <span class="p">|</span> grep <span class="s2">&#34;Initial Password Set To&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## UI: http://127.0.0.1:8080  user: admin  pw: (from log)</span>
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">CE vs Legacy</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>rusthound-ce, bloodyAD <code>get bloodhound</code>, and modern nxc all output CE-format JSON. Old SharpHound and bloodhound-python output Legacy format. Don&rsquo;t mix, your edges will be missing or mislabeled.</p>
+  </div>
+</div>
+<h2 id="ii-rusthound-ce-primary-collector" data-heading-permalink="true"><span class="heading-content">ii. rusthound-ce, primary collector</span>
+    <a class="heading-permalink" href="#ii-rusthound-ce-primary-collector" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Faster and more accurate than bloodhound-python. Generates the BloodHound CE-compatible zip directly.</p>
+<p>Basic collection:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">rusthound-ce -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -i <span class="nv">$DC</span> -z
+</span></span><span class="line"><span class="cl"><span class="c1">## With PtH:</span>
+</span></span><span class="line"><span class="cl">rusthound-ce -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -H <span class="nv">$NTHASH</span> -i <span class="nv">$DC</span> -z
+</span></span><span class="line"><span class="cl"><span class="c1">## LDAPS:</span>
+</span></span><span class="line"><span class="cl">rusthound-ce -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -i <span class="nv">$DC</span> --ldaps -z
+</span></span><span class="line"><span class="cl"><span class="c1">## Custom output dir:</span>
+</span></span><span class="line"><span class="cl">rusthound-ce -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -i <span class="nv">$DC</span> -o /tmp/bh -z
+</span></span></code></pre></div><p>Stealthier collection (LDAP only, no SMB session enum):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">rusthound-ce -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -i <span class="nv">$DC</span> --dc-only -z
+</span></span></code></pre></div><p>ADCS enumeration (collects cert templates and CA objects for ADCS analysis):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">rusthound-ce -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -i <span class="nv">$DC</span> --adcs -z
+</span></span></code></pre></div><p>FQDN resolution module (when DNS is funky from your attacker box):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">rusthound-ce -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -i <span class="nv">$DC</span> --fqdn-resolver -z
+</span></span></code></pre></div><p>Through a SOCKS pivot (use proxychains, rusthound-ce is just an LDAP client):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">proxychains -q rusthound-ce -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -i <span class="nv">$DC</span> -z
+</span></span></code></pre></div><h2 id="iii-bloodyad-get-bloodhound-the-fallback" data-heading-permalink="true"><span class="heading-content">iii. bloodyAD get bloodhound, the fallback</span>
+    <a class="heading-permalink" href="#iii-bloodyad-get-bloodhound-the-fallback" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>bloodyAD&rsquo;s collector is simpler and sometimes catches edges rusthound-ce skips, especially outbound ACL edges on objects outside your OU. Run it as a supplement.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get bloodhound
+</span></span><span class="line"><span class="cl"><span class="c1">## Output: BLOODHOUND-DATE.zip in CWD</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Custom path:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get bloodhound --path /tmp/bh-bloody.zip
+</span></span><span class="line"><span class="cl"><span class="c1">## Walk trusts (start from a DC of your home domain):</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get bloodhound --transitive
+</span></span></code></pre></div><p>PtH:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="s2">&#34;:</span><span class="nv">$NTHASH</span><span class="s2">&#34;</span> --host <span class="nv">$DC</span> get bloodhound
+</span></span></code></pre></div><p>Through SOCKS pivot:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">proxychains -q bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get bloodhound
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">What bloodyAD&rsquo;s collector misses</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>The wiki notes the bloodhound collector is still &ldquo;basics only&rdquo; and ADCS ESC nodes plus some complex relationship types aren&rsquo;t included yet. Use it together with rusthound-ce, not instead of.</p>
+  </div>
+</div>
+<h2 id="iv-run-both-upload-both" data-heading-permalink="true"><span class="heading-content">iv. Run both, upload both</span>
+    <a class="heading-permalink" href="#iv-run-both-upload-both" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The graph in BloodHound CE merges edges from multiple ingests. Run both tools, drop both zips into the BloodHound CE upload UI:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">rusthound-ce -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -i <span class="nv">$DC</span> --adcs -z -o /tmp/rh
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get bloodhound --path /tmp/bloody.zip
+</span></span><span class="line"><span class="cl"><span class="c1">## Then in BloodHound UI: Administration -&gt; File Ingest -&gt; drag both .zip files in</span>
+</span></span></code></pre></div><p>Catches the outbound ACL edges rusthound-ce silently skips, and gives you the ADCS analysis rusthound-ce includes.</p>
+<h2 id="v-nxc-as-a-third-pass-collector" data-heading-permalink="true"><span class="heading-content">v. nxc as a third-pass collector</span>
+    <a class="heading-permalink" href="#v-nxc-as-a-third-pass-collector" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When rusthound-ce or bloodyAD fail in a weird environment, nxc has a bloodhound module that uses bloodhound-python internally. Slower, more compatible:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --bloodhound --collection All --dns-server <span class="nv">$DC</span>
+</span></span></code></pre></div><h2 id="vi-get-writable-as-a-mini-graph" data-heading-permalink="true"><span class="heading-content">vi. Get writable as a mini-graph</span>
+    <a class="heading-permalink" href="#vi-get-writable-as-a-mini-graph" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p><code>bloodyAD get writable --bh</code> outputs a BloodHound zip containing only the objects YOU can modify. Drop it into BloodHound for instant &ldquo;what can I attack from here&rdquo; view:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get writable --bh
+</span></span><span class="line"><span class="cl"><span class="c1">## Upload the resulting zip alongside your full graph</span>
+</span></span></code></pre></div><h2 id="vii-working-with-the-bloodhound-ce-ui" data-heading-permalink="true"><span class="heading-content">vii. Working with the BloodHound CE UI</span>
+    <a class="heading-permalink" href="#vii-working-with-the-bloodhound-ce-ui" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Default tabs you&rsquo;ll use:</p>
+<ul>
+<li><strong>Search</strong> - find any object by name or SID</li>
+<li><strong>Pathfinding</strong> - from owned principal to high-value (Domain Admins, DCs, etc)</li>
+<li><strong>Cypher</strong> - raw query language for custom paths</li>
+<li><strong>Group Management</strong> - mark owned principals, mark high-value targets</li>
+</ul>
+<p>Mark yourself as Owned after you finish the collection. BloodHound highlights paths starting from any Owned node.</p>
+<h2 id="viii-useful-pre-built-queries" data-heading-permalink="true"><span class="heading-content">viii. Useful pre-built queries</span>
+    <a class="heading-permalink" href="#viii-useful-pre-built-queries" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Pre-built queries are in the right sidebar. The ones to run first:</p>
+<ul>
+<li>&ldquo;Find Shortest Paths to Domain Admins&rdquo;</li>
+<li>&ldquo;Find all Domain Admins&rdquo;</li>
+<li>&ldquo;Find shortest paths to Domain Admins from owned principals&rdquo;</li>
+<li>&ldquo;List all Kerberoastable users&rdquo;</li>
+<li>&ldquo;List all AS-REP Roastable users&rdquo;</li>
+<li>&ldquo;Find computers where Domain Users are local admin&rdquo;</li>
+<li>&ldquo;Shortest paths from owned to high value targets&rdquo;</li>
+</ul>
+<h2 id="ix-custom-cypher-queries-worth-saving" data-heading-permalink="true"><span class="heading-content">ix. Custom Cypher queries worth saving</span>
+    <a class="heading-permalink" href="#ix-custom-cypher-queries-worth-saving" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Open the Cypher tab and paste:</p>
+<p>Owned -&gt; any high-value object, shortest path:</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH p = shortestPath((u {owned: true})-[*1..]-&gt;(t {highvalue: true}))
+RETURN p
+</code></pre><p>Users with paths to DA, with edge counts (find easy wins):</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH (u:User)-[r*1..]-&gt;(g:Group {name: &#39;DOMAIN ADMINS@CORP.LOCAL&#39;})
+RETURN u.name, length(r) AS hops
+ORDER BY hops ASC
+LIMIT 20
+</code></pre><p>All users with SPNs (kerberoastable, exclude disabled):</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH (u:User {hasspn: true, enabled: true})
+RETURN u.name, u.serviceprincipalnames
+</code></pre><p>All ASREP-roastable users:</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH (u:User {dontreqpreauth: true, enabled: true})
+RETURN u.name
+</code></pre><p>Users with DCSync rights:</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH (u)-[:GetChanges|GetChangesAll]-&gt;(d:Domain)
+RETURN u.name, d.name
+</code></pre><p>Computers configured for unconstrained delegation:</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH (c:Computer {unconstraineddelegation: true})
+RETURN c.name
+</code></pre><p>Groups whose membership leads to DA in N hops or fewer:</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH p = (g:Group)-[*1..3]-&gt;(da:Group {name: &#39;DOMAIN ADMINS@CORP.LOCAL&#39;})
+RETURN p
+</code></pre><p>Users with PASSWORD_NOT_REQUIRED set (empty password possible):</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH (u:User {passwordnotreqd: true, enabled: true})
+RETURN u.name
+</code></pre><h2 id="x-reading-attack-paths" data-heading-permalink="true"><span class="heading-content">x. Reading attack paths</span>
+    <a class="heading-permalink" href="#x-reading-attack-paths" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Once you have a path, decode the edges:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Edge</th>
+          <th>Tool to abuse</th>
+          <th>File</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>MemberOf</code></td>
+          <td>nested group, follow the chain</td>
+          <td>n/a</td>
+      </tr>
+      <tr>
+          <td><code>GenericAll</code>, <code>GenericWrite</code></td>
+          <td>bloodyAD <code>add genericAll</code>, set SPN, shadow creds, reset password</td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/">ACL Abuse</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>WriteOwner</code></td>
+          <td>bloodyAD <code>set owner</code> then GenericAll</td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/">ACL Abuse</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>WriteDacl</code></td>
+          <td>grant yourself GenericAll</td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/">ACL Abuse</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>ForceChangePassword</code></td>
+          <td>bloodyAD <code>set password</code></td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/">ACL Abuse</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>AddMember</code></td>
+          <td>bloodyAD <code>add groupMember</code></td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/">ACL Abuse</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>ReadGMSAPassword</code></td>
+          <td>bloodyAD <code>get object --attr msDS-ManagedPassword</code></td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/">Credential Dumping</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>ReadLAPSPassword</code></td>
+          <td>bloodyAD <code>get object --attr ms-Mcs-AdmPwd</code> or <code>msLAPS-Password</code></td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/">Credential Dumping</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>AllowedToDelegate</code></td>
+          <td>constrained delegation, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/">Delegation</a>
+</td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/">Delegation</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>AllowedToAct</code></td>
+          <td>RBCD, bloodyAD <code>add rbcd</code></td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/">Delegation</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>CanRDP</code>, <code>CanPSRemote</code>, <code>ExecuteDCOM</code></td>
+          <td>lateral move</td>
+          <td><a href="https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/">Lateral Movement</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>HasSession</code></td>
+          <td>wait for user to log in or steal their token</td>
+          <td><a href="https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/">PrivEsc - Credentials &amp; Files</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>Owns</code></td>
+          <td>implicit WriteDacl, modify ACL</td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/">ACL Abuse</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>GetChanges</code>, <code>GetChangesAll</code></td>
+          <td>DCSync</td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/">DCSync</a>
+</td>
+      </tr>
+      <tr>
+          <td><code>ADCSESC*</code></td>
+          <td>certipy, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/">ADCS ESC1-16</a>
+</td>
+          <td><a href="https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/">ADCS ESC1-16</a>
+</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="xi-re-collect-after-every-privesc-step" data-heading-permalink="true"><span class="heading-content">xi. Re-collect after every privesc step</span>
+    <a class="heading-permalink" href="#xi-re-collect-after-every-privesc-step" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Every time you compromise a new account, mark it Owned and re-run collection (or just re-run <code>bloodyAD get writable --bh</code> for that user). New paths often open up that weren&rsquo;t visible before.</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/ad01-enumeration/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Enumeration</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/active-directory/ad03-kerberoasting/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">Kerberoasting</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

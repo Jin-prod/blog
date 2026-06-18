@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Web Security on JinPwn</title>
+    <link>https://jinpwn.dev/tags/web-security/</link>
+    <description>Recent content in Web Security on JinPwn</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 18 Jun 2026 16:58:31 -0400</lastBuildDate>
+    <atom:link href="https://jinpwn.dev/tags/web-security/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Boolean-based Blind SQLi with Division-based Extraction</title>
+      <link>https://jinpwn.dev/posts/blogs/boolean-based-blind-sql-injection/</link>
+      <pubDate>Tue, 20 Jan 2026 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/posts/blogs/boolean-based-blind-sql-injection/</guid>
+      <description>Introduction # Hi guys, today I will teach you how to exploit Boolean-based Blind SQL Injection. This is a technique I recently used on a penetration test to extract database usernames without any direct output from the application.
+This one is a bit tricky because you are essentially flying blind. The app does not show you query results, error messages, or anything useful. All you get is a subtle difference in the response: data or no data. But that tiny difference? That is all you need.
+</description>
+    </item>
+  </channel>
+</rss>

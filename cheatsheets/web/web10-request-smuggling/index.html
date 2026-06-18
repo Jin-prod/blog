@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Request Smuggling | JinPwn</title><meta name="description" content="Front-end and back-end servers disagree on where one request ends and the next begins. Hijack other users&amp;rsquo; requests, bypass auth, poison caches.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web10-request-smuggling/">
+<meta property="og:title" content="Request Smuggling | JinPwn">
+<meta property="og:description" content="Front-end and back-end servers disagree on where one request ends and the next begins. Hijack other users&amp;rsquo; requests, bypass auth, poison caches.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web10-request-smuggling/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Request Smuggling | JinPwn">
+<meta name="twitter:description" content="Front-end and back-end servers disagree on where one request ends and the next begins. Hijack other users&amp;rsquo; requests, bypass auth, poison caches.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Front-end and back-end servers disagree on where one request ends and the next begins. Hijack other users\u0026rsquo; requests, bypass auth, poison caches.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Request Smuggling | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web10-request-smuggling/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link is-current">Request Smuggling</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Request Smuggling</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Request Smuggling</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Web Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link is-current">Request Smuggling</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Front-end and back-end servers disagree on where one request ends and the next begins. Hijack other users&rsquo; requests, bypass auth, poison caches.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
+</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
+    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Anywhere there&rsquo;s a chain of HTTP proxies / load balancers / CDNs in front of the app:</p>
+<ul>
+<li>CloudFront / Akamai / Cloudflare / Fastly in front of origin</li>
+<li>nginx / HAProxy / AWS ALB → application server</li>
+<li>Reverse proxy with web cache (Varnish)</li>
+<li>WAF appliances doing buffering before forward</li>
+<li>API gateway → microservice</li>
+</ul>
+<p>The vuln is in the disagreement between two HTTP parsers. Different software products handle edge cases differently in:</p>
+<ul>
+<li><code>Content-Length</code> (CL) vs <code>Transfer-Encoding: chunked</code> (TE) when both present</li>
+<li>Obfuscated <code>Transfer-Encoding</code> headers (extra whitespace, line folding, quoted values)</li>
+<li>HTTP/2 downgrade to HTTP/1.1 between front-end and back-end</li>
+<li>Newlines and header parsing edge cases</li>
+</ul>
+<h2 id="ii-the-smuggling-variants" data-heading-permalink="true"><span class="heading-content">ii. The smuggling variants</span>
+    <a class="heading-permalink" href="#ii-the-smuggling-variants" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Type</th>
+          <th>Front-end uses</th>
+          <th>Back-end uses</th>
+          <th>Notes</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>CL.TE</strong></td>
+          <td>Content-Length</td>
+          <td>Transfer-Encoding</td>
+          <td>Front sends full body, back sees chunked stop early</td>
+      </tr>
+      <tr>
+          <td><strong>TE.CL</strong></td>
+          <td>Transfer-Encoding</td>
+          <td>Content-Length</td>
+          <td>Front uses chunks, back uses CL</td>
+      </tr>
+      <tr>
+          <td><strong>TE.TE</strong></td>
+          <td>Both (one obfuscated)</td>
+          <td>Both (other one ignored)</td>
+          <td>Header obfuscation drives the desync</td>
+      </tr>
+      <tr>
+          <td><strong>H2.CL</strong></td>
+          <td>HTTP/2</td>
+          <td>Content-Length on downgrade</td>
+          <td>HTTP/2 lengths vs HTTP/1.1 CL after downgrade</td>
+      </tr>
+      <tr>
+          <td><strong>H2.TE</strong></td>
+          <td>HTTP/2</td>
+          <td>Transfer-Encoding</td>
+          <td>Same idea with TE</td>
+      </tr>
+      <tr>
+          <td><strong>0.CL</strong></td>
+          <td>HTTP/2 with 0-byte body</td>
+          <td>CL claims content</td>
+          <td>Newer technique, James Kettle&rsquo;s 2024 research</td>
+      </tr>
+      <tr>
+          <td><strong>CL.0</strong></td>
+          <td>Content-Length</td>
+          <td>No body expected</td>
+          <td>Back-end ignores CL, treats remainder as new request</td>
+      </tr>
+  </tbody>
+</table>
+<p>Modern HTTP/2 smuggling is the active research area in 2024-2026. Older HTTP/1.1 CL.TE / TE.CL is mostly patched on managed CDNs but still found in self-hosted reverse proxy setups.</p>
+<h2 id="iii-tools" data-heading-permalink="true"><span class="heading-content">iii. Tools</span>
+    <a class="heading-permalink" href="#iii-tools" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="smugglerpy-defniffer--defiant" data-heading-permalink="true"><span class="heading-content">smuggler.py (defniffer / Defiant)</span>
+    <a class="heading-permalink" href="#smugglerpy-defniffer--defiant" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>The most reliable HTTP/1.1 smuggling scanner:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/defparam/smuggler
+</span></span><span class="line"><span class="cl">python3 smuggler.py -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Adjust technique:</span>
+</span></span><span class="line"><span class="cl">python3 smuggler.py -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> --no-color -t <span class="m">5</span> -m TLS
+</span></span><span class="line"><span class="cl"><span class="c1">## From a list:</span>
+</span></span><span class="line"><span class="cl">python3 smuggler.py -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -l urls.txt
+</span></span></code></pre></div><p>Output flags <code>[CRITICAL]</code> for confirmed smuggling. Read the saved request file in <code>payloads/</code> to verify manually.</p>
+<h3 id="http-request-smuggler-burp-extension" data-heading-permalink="true"><span class="heading-content">HTTP Request Smuggler (Burp extension)</span>
+    <a class="heading-permalink" href="#http-request-smuggler-burp-extension" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>The Burp Pro / Community extension by Albinowax. Best for interactive testing:</p>
+<ul>
+<li>Install via Burp BApp Store</li>
+<li>Right-click a request → Smuggle Probe</li>
+<li>For HTTP/2: Smuggle Probe → &ldquo;Try HTTP/2 smuggling&rdquo;</li>
+</ul>
+<p>The extension does the parsing-quirk fuzzing automatically.</p>
+<h3 id="h2csmuggler" data-heading-permalink="true"><span class="heading-content">h2csmuggler</span>
+    <a class="heading-permalink" href="#h2csmuggler" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>For HTTP/2 cleartext upgrade smuggling specifically:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 h2csmuggler.py -x http://proxy.example.com:80 http://internal.example.com/
+</span></span></code></pre></div><h3 id="nuclei-templates" data-heading-permalink="true"><span class="heading-content">nuclei templates</span>
+    <a class="heading-permalink" href="#nuclei-templates" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nuclei -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -tags smuggling
+</span></span></code></pre></div><p>Useful for quick first-pass against many hosts.</p>
+<h2 id="iv-detection-manual-probes" data-heading-permalink="true"><span class="heading-content">iv. Detection (manual probes)</span>
+    <a class="heading-permalink" href="#iv-detection-manual-probes" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The classic CL.TE / TE.CL detection probes - send these manually via netcat (Burp Repeater bypasses some of the timing tricks needed):</p>
+<p>CL.TE probe - back-end uses TE, so after the chunked terminator <code>0\r\n\r\n</code>, anything extra hangs waiting for the next request:</p>
+<pre tabindex="0"><code>POST / HTTP/1.1
+Host: target.com
+Content-Length: 6
+Transfer-Encoding: chunked
+
+0
+
+X
+</code></pre><p>If the connection times out waiting for <code>X</code> → CL.TE confirmed.</p>
+<p>TE.CL probe - front-end uses TE, back-end uses CL. Back-end reads CL bytes:</p>
+<pre tabindex="0"><code>POST / HTTP/1.1
+Host: target.com
+Content-Length: 6
+Transfer-Encoding: chunked
+
+0
+
+
+X
+</code></pre><p>If response is immediate → TE.CL confirmed.</p>
+<div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Use Burp Repeater with HTTP/1</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Most clients normalize HTTP. Burp Repeater has an &ldquo;Update Content-Length&rdquo; toggle - disable it. Connection: close usually needed too.</p>
+  </div>
+</div>
+<h2 id="v-te-header-obfuscation-tricks" data-heading-permalink="true"><span class="heading-content">v. TE header obfuscation tricks</span>
+    <a class="heading-permalink" href="#v-te-header-obfuscation-tricks" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When both front and back parse <code>Transfer-Encoding</code> but one accepts an obfuscated version, you get TE.TE. Common obfuscations:</p>
+<pre tabindex="0"><code>Transfer-Encoding: xchunked
+Transfer-Encoding : chunked       ## space before colon
+Transfer-Encoding: chunked
+Transfer-Encoding:[tab]chunked
+[space]Transfer-Encoding: chunked  ## leading space
+X: X[\n]Transfer-Encoding: chunked ## line folding
+Transfer-Encoding
+ : chunked                          ## obs-fold
+Transfer-encoding: chunked          ## case variations
+TRANSFER-ENCODING: chunked
+Transfer-Encoding: chunked, identity
+Transfer-Encoding: chunked
+Content-Length: 4                   ## conflict
+</code></pre><p>Smuggler.py and the Burp extension fuzz these automatically.</p>
+<h2 id="vi-http2-smuggling" data-heading-permalink="true"><span class="heading-content">vi. HTTP/2 smuggling</span>
+    <a class="heading-permalink" href="#vi-http2-smuggling" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>HTTP/2 doesn&rsquo;t have textual headers - request bodies are framed. When a HTTP/2 front-end terminates and re-emits HTTP/1.1 to the back-end, the conversion process can introduce desyncs.</p>
+<p>HTTP/2 → HTTP/1.1 downgrade scenarios:</p>
+<ul>
+<li>HTTP/2 request with <code>transfer-encoding: chunked</code> (forbidden in HTTP/2) - front strips, back-end sees re-emitted HTTP/1.1 with the smuggled chunked encoding</li>
+<li>HTTP/2 request with explicit <code>content-length</code> mismatching the actual frame length</li>
+</ul>
+<p>The smuggler bypass: send HTTP/2 with content-length: 0 but include a body in the data frame. Front-end uses CL=0, back-end uses the data → CL.0 smuggling.</p>
+<p>Use Burp&rsquo;s HTTP Request Smuggler extension with HTTP/2 selected. Manual HTTP/2 smuggling needs a low-level client like nghttp2 or burp-stager.</p>
+<h2 id="vii-what-to-do-with-smuggling" data-heading-permalink="true"><span class="heading-content">vii. What to do with smuggling</span>
+    <a class="heading-permalink" href="#vii-what-to-do-with-smuggling" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="bypass-front-end-controls" data-heading-permalink="true"><span class="heading-content">Bypass front-end controls</span>
+    <a class="heading-permalink" href="#bypass-front-end-controls" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Smuggle a request that the front-end never sees, hitting back-end endpoints normally blocked at the edge:</p>
+<pre tabindex="0"><code>## Smuggled request goes to /admin which front-end blocks
+</code></pre><h3 id="capture-other-users-requests" data-heading-permalink="true"><span class="heading-content">Capture other users&rsquo; requests</span>
+    <a class="heading-permalink" href="#capture-other-users-requests" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Append a request prefix that captures the next victim&rsquo;s headers:</p>
+<pre tabindex="0"><code>## After your smuggled prefix, the next request to that backend
+## connection has its first bytes appended to your &#34;request body&#34;
+## You read those bytes via a reflective endpoint
+</code></pre><p>Classic capture chain via search endpoint:</p>
+<pre tabindex="0"><code>POST /search HTTP/1.1
+...
+search_query=...   ← victim&#39;s request gets appended here
+</code></pre><p>When the search endpoint stores or reflects the query, you read the victim&rsquo;s Cookies and Authorization headers.</p>
+<h3 id="cache-poisoning-amplification" data-heading-permalink="true"><span class="heading-content">Cache poisoning amplification</span>
+    <a class="heading-permalink" href="#cache-poisoning-amplification" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Combine smuggling with [[WEB11 Web Cache Poisoning]] to poison a public asset with attacker-controlled content. Every visitor downstream of the cache receives the malicious content.</p>
+<h3 id="smuggled-ssrf" data-heading-permalink="true"><span class="heading-content">Smuggled SSRF</span>
+    <a class="heading-permalink" href="#smuggled-ssrf" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Smuggle a request to an internal-only endpoint not exposed externally. Common targets: admin panels, internal APIs.</p>
+<h3 id="web-cache-deception-via-smuggling" data-heading-permalink="true"><span class="heading-content">Web cache deception via smuggling</span>
+    <a class="heading-permalink" href="#web-cache-deception-via-smuggling" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Make the cache store sensitive content (like <code>/api/me</code>) under an attacker-friendly URL.</p>
+<h2 id="viii-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">viii. Tricks worth knowing</span>
+    <a class="heading-permalink" href="#viii-tricks-worth-knowing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="connection-keep-alive" data-heading-permalink="true"><span class="heading-content">Connection: keep-alive</span>
+    <a class="heading-permalink" href="#connection-keep-alive" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>HTTP smuggling depends on connection reuse. Force <code>Connection: keep-alive</code> on your probe. Most servers default to keep-alive on HTTP/1.1 - but some normalize away.</p>
+<h3 id="cdn-behavior-fingerprint" data-heading-permalink="true"><span class="heading-content">CDN behavior fingerprint</span>
+    <a class="heading-permalink" href="#cdn-behavior-fingerprint" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Hit <code>/__cf_origin/</code> (Cloudflare) and similar paths. Front-end responds with diagnostic info revealing the CDN. Knowing the CDN narrows expected smuggling variants:</p>
+<ul>
+<li>Cloudflare → fairly robust, HTTP/2 downgrade attacks more interesting</li>
+<li>Akamai → historically vulnerable to TE.CL</li>
+<li>Fastly → varies by config</li>
+<li>AWS ALB → HTTP/2 downgrade history</li>
+</ul>
+<h3 id="smuggle-then-poll" data-heading-permalink="true"><span class="heading-content">Smuggle then poll</span>
+    <a class="heading-permalink" href="#smuggle-then-poll" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>After a smuggle attempt, hit the target rapidly with multiple distinct requests. If the back-end is desynced, you&rsquo;ll see weird responses (404 instead of 200, response from a different endpoint) - confirms desync.</p>
+<h3 id="differential-timing" data-heading-permalink="true"><span class="heading-content">Differential timing</span>
+    <a class="heading-permalink" href="#differential-timing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A successful smuggling primer leaves the back-end waiting. Subsequent requests have unusual response times. Watch latency curves while probing.</p>
+<h2 id="ix-james-kettles-research-progression" data-heading-permalink="true"><span class="heading-content">ix. James Kettle&rsquo;s research progression</span>
+    <a class="heading-permalink" href="#ix-james-kettles-research-progression" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Smuggling research is dense. Order to read:</p>
+<ol>
+<li><a href="https://portswigger.net/research/http-desync-attacks-request-smuggling-reborn" target="_blank" rel="noopener noreferrer">HTTP Desync Attacks: Request Smuggling Reborn</a>
+ - 2019 original</li>
+<li><a href="https://portswigger.net/research/http2" target="_blank" rel="noopener noreferrer">HTTP/2: The Sequel is Always Worse</a>
+ - 2021 HTTP/2 attacks</li>
+<li><a href="https://portswigger.net/research/smashing-the-state-machine" target="_blank" rel="noopener noreferrer">Smashing the state machine</a>
+ - state-based attacks</li>
+<li><a href="https://portswigger.net/research/http1-must-die" target="_blank" rel="noopener noreferrer">HTTP/1.1 must die</a>
+ - 2024 CL.0 / 0.CL</li>
+</ol>
+<p>The 2024 paper introduced &ldquo;0-byte content length&rdquo; desyncs which are the hot new variant. PortSwigger labs include practice for each.</p>
+<h2 id="x-references" data-heading-permalink="true"><span class="heading-content">x. References</span>
+    <a class="heading-permalink" href="#x-references" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li><a href="https://portswigger.net/web-security/request-smuggling" target="_blank" rel="noopener noreferrer">PortSwigger - HTTP Request Smuggling</a>
+</li>
+<li><a href="https://portswigger.net/web-security/all-labs#http-request-smuggling" target="_blank" rel="noopener noreferrer">PortSwigger - Labs</a>
+ - guided practice</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Request%20Smuggling" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - Request Smuggling</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/http-request-smuggling" target="_blank" rel="noopener noreferrer">HackTricks - HTTP Request Smuggling</a>
+</li>
+<li><a href="https://github.com/defparam/smuggler" target="_blank" rel="noopener noreferrer">smuggler tool</a>
+</li>
+<li><a href="https://github.com/BishopFox/h2csmuggler" target="_blank" rel="noopener noreferrer">h2csmuggler</a>
+</li>
+</ul>
+<h2 id="xi-where-it-leads" data-heading-permalink="true"><span class="heading-content">xi. Where it leads</span>
+    <a class="heading-permalink" href="#xi-where-it-leads" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li>Session theft → account takeover, see [[WEB02 Auth &amp; Session]]</li>
+<li>Auth bypass to internal admin paths → privilege escalation</li>
+<li>Cache poisoning → persistent XSS-like attacks for all visitors, see [[WEB11 Web Cache Poisoning]]</li>
+<li>SSRF amplification → internal endpoints exposed</li>
+<li>Header rewriting → trust manipulation (smuggled <code>X-Forwarded-For: 127.0.0.1</code> etc)</li>
+</ul>
+<p>Smuggling is high-impact when it works, but rare and hard to confirm. Expect plenty of false positives. Always validate by chaining to a real impact (session capture, cache poisoning).</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web09-csrf--cors/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">WEB09 CSRF &amp; CORS</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web11-web-cache-poisoning/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">Web Cache Poisoning</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

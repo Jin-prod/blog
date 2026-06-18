@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cloud Pentesting on JinPwn</title>
+    <link>https://jinpwn.dev/cheatsheets/cloud/</link>
+    <description>Recent content in Cloud Pentesting on JinPwn</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 18 Jun 2026 16:58:31 -0400</lastBuildDate>
+    <atom:link href="https://jinpwn.dev/cheatsheets/cloud/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>GCP</title>
+      <link>https://jinpwn.dev/cheatsheets/cloud/gcp/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/cloud/gcp/</guid>
+      <description>Google Cloud Platform attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside a GCP project.
+PROJECT=target-prod SA=svc-account@target-prod.iam.gserviceaccount.com i. Authentication options # Service Account key file (most common foothold) # JSON key file (-----BEGIN PRIVATE KEY----- inside):
+gcloud auth activate-service-account --key-file=key.json gcloud auth list ## confirm active identity gcloud config set project $PROJECT Application Default Credentials (ADC) # gcloud auth application-default login ## ADC stored in: ~/.config/gcloud/application_default_credentials.json Access token directly # ## Get a token for an active identity: TOKEN=$(gcloud auth print-access-token) ## Use it directly: curl -H &amp;#34;Authorization: Bearer $TOKEN&amp;#34; &amp;#34;https://cloudresourcemanager.googleapis.com/v1/projects&amp;#34; Personal user auth (interactive) # gcloud auth login gcloud auth login --no-launch-browser ## for headless / SSH ii. Metadata service inside Compute Engine # When you have RCE or SSRF on a Compute Engine instance, hit the metadata service. GCP requires the Metadata-Flavor: Google header - missing it returns 403.
+</description>
+    </item>
+    <item>
+      <title>Azure</title>
+      <link>https://jinpwn.dev/cheatsheets/cloud/azure/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/cloud/azure/</guid>
+      <description>Azure + Entra ID (formerly Azure AD) attack surface. Hybrid AD integration covered briefly here, full on-prem AD in 00 AD MOC .
+Naming Microsoft rebranded &amp;ldquo;Azure AD&amp;rdquo; to &amp;ldquo;Entra ID&amp;rdquo; in 2023. Same product, same APIs. Tools still use &amp;ldquo;AAD&amp;rdquo; interchangeably. This file uses &amp;ldquo;Entra ID&amp;rdquo; for the identity layer and &amp;ldquo;Azure&amp;rdquo; for the resource layer.
+TENANT=target.onmicrosoft.com USER=&amp;#39;user@target.com&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Pre-auth: tenant enumeration # You don&amp;rsquo;t need credentials to enumerate a tenant&amp;rsquo;s basic info. Public endpoints give you a lot.
+</description>
+    </item>
+    <item>
+      <title>AWS</title>
+      <link>https://jinpwn.dev/cheatsheets/cloud/aws/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/cloud/aws/</guid>
+      <description>AWS attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside an AWS account.
+i. Set up identity # Found keys (from leaked configs, IMDS, etc):
+export AWS_ACCESS_KEY_ID=AKIA... export AWS_SECRET_ACCESS_KEY=... export AWS_SESSION_TOKEN=... ## only for ASIA... temp creds export AWS_DEFAULT_REGION=us-east-1 Or use a profile:
+aws configure --profile target ## Then prefix everything with --profile target Confirm identity:
+</description>
+    </item>
+    <item>
+      <title>Cloud Storage</title>
+      <link>https://jinpwn.dev/cheatsheets/cloud/cloud-storage/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/cloud/cloud-storage/</guid>
+      <description>S3, Azure Blob, GCS - same idea, three implementations. Public buckets, weak ACLs, exposed objects, pre-signed URL leaks.
+DOMAIN=target.com BUCKET=target-prod-assets i. AWS S3 # Anonymous access tests # ## List bucket contents (anonymous): curl &amp;#34;https://$BUCKET.s3.amazonaws.com/&amp;#34; curl &amp;#34;https://s3.amazonaws.com/$BUCKET/&amp;#34; ## Both formats work. Different responses tell you about region restrictions. ## With aws CLI (no credentials needed for public): aws s3 ls &amp;#34;s3://$BUCKET/&amp;#34; --no-sign-request aws s3 cp &amp;#34;s3://$BUCKET/file.txt&amp;#34; - --no-sign-request ## Recursive download of everything readable: aws s3 sync &amp;#34;s3://$BUCKET/&amp;#34; ./loot --no-sign-request Status codes:
+</description>
+    </item>
+    <item>
+      <title>Cloud Recon</title>
+      <link>https://jinpwn.dev/cheatsheets/cloud/cloud-recon/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/cloud/cloud-recon/</guid>
+      <description>Identify cloud assets that belong to a target before authenticating to anything. Builds on Recon (External) but focuses on cloud-specific fingerprints.
+DOMAIN=target.com ORG=&amp;#39;Target Inc&amp;#39; i. Find the cloud netblocks # Cloud providers publish their ASN ranges. Cross-reference with target&amp;rsquo;s known IPs to identify cloud presence.
+AWS ranges:
+curl -s https://ip-ranges.amazonaws.com/ip-ranges.json | jq -r &amp;#39;.prefixes[] | &amp;#34;\(.ip_prefix) \(.region) \(.service)&amp;#34;&amp;#39; Azure ranges:
+## Microsoft publishes weekly JSON files at: ## https://www.microsoft.com/en-us/download/details.aspx?id=56519 ## Search engine query: &amp;#34;Azure IP Ranges and Service Tags Public Cloud&amp;#34; GCP ranges:
+</description>
+    </item>
+    <item>
+      <title>Cloud MOC</title>
+      <link>https://jinpwn.dev/cheatsheets/cloud/00-cloud-moc/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/cloud/00-cloud-moc/</guid>
+      <description>Cloud provider attack surface.</description>
+    </item>
+  </channel>
+</rss>

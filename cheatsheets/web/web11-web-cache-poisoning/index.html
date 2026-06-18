@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Web Cache Poisoning | JinPwn</title><meta name="description" content="The cache stores attacker-controlled content under a victim-accessible URL. One request poisons the cache, all subsequent visitors get the malicious response.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web11-web-cache-poisoning/">
+<meta property="og:title" content="Web Cache Poisoning | JinPwn">
+<meta property="og:description" content="The cache stores attacker-controlled content under a victim-accessible URL. One request poisons the cache, all subsequent visitors get the malicious response.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web11-web-cache-poisoning/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Web Cache Poisoning | JinPwn">
+<meta name="twitter:description" content="The cache stores attacker-controlled content under a victim-accessible URL. One request poisons the cache, all subsequent visitors get the malicious response.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"The cache stores attacker-controlled content under a victim-accessible URL. One request poisons the cache, all subsequent visitors get the malicious response.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Web Cache Poisoning | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web11-web-cache-poisoning/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link is-current">Web Cache Poisoning</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Web Cache Poisoning</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Web Cache Poisoning</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Web Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link is-current">Web Cache Poisoning</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>The cache stores attacker-controlled content under a victim-accessible URL. One request poisons the cache, all subsequent visitors get the malicious response.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
+</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
+    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Anywhere there&rsquo;s a cache between users and the origin:</p>
+<ul>
+<li>CDNs (Cloudflare, Akamai, Fastly, CloudFront, Edgecast)</li>
+<li>Reverse proxies with caching (Varnish, nginx with proxy_cache, HAProxy)</li>
+<li>Application-layer cache (Redis-backed page cache, full-page application caches)</li>
+<li>ESI (Edge Side Includes) processors</li>
+</ul>
+<p>Detect a cache:</p>
+<ul>
+<li><code>X-Cache: HIT</code> / <code>X-Cache: MISS</code> headers</li>
+<li><code>CF-Cache-Status: HIT|MISS|EXPIRED|REVALIDATED</code> (Cloudflare)</li>
+<li><code>Age: &lt;seconds&gt;</code> header</li>
+<li><code>Cache-Control: public, max-age=...</code></li>
+<li>Static asset response times suspiciously fast on repeat (cached)</li>
+</ul>
+<h2 id="ii-the-fundamental-concept" data-heading-permalink="true"><span class="heading-content">ii. The fundamental concept</span>
+    <a class="heading-permalink" href="#ii-the-fundamental-concept" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The cache stores responses by <strong>cache key</strong> - usually <code>method + host + path + query</code>. Inputs that aren&rsquo;t part of the cache key but DO affect the response are unkeyed inputs. These are the bug class:</p>
+<ol>
+<li>Send a request with attacker-controlled unkeyed input</li>
+<li>The cache stores the malicious response under the normal cache key</li>
+<li>Victims hit that URL, get the cached attacker response</li>
+</ol>
+<p>Cache poisoning ≠ cache deception:</p>
+<ul>
+<li><strong>Cache poisoning</strong>: trick cache into storing malicious content under a normal URL</li>
+<li><strong>Cache deception</strong>: trick cache into storing sensitive content under an attacker-accessible URL (path confusion, see section vii)</li>
+</ul>
+<h2 id="iii-tools" data-heading-permalink="true"><span class="heading-content">iii. Tools</span>
+    <a class="heading-permalink" href="#iii-tools" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="param-miner-burp-extension" data-heading-permalink="true"><span class="heading-content">Param Miner (Burp extension)</span>
+    <a class="heading-permalink" href="#param-miner-burp-extension" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>The single most important tool. Discovers unkeyed inputs automatically.</p>
+<pre tabindex="0"><code>Burp -&gt; Extensions -&gt; BApp Store -&gt; Param Miner -&gt; install
+## Then right-click a request:
+## Param Miner -&gt; Guess headers
+## Param Miner -&gt; Guess params
+## Param Miner -&gt; Guess cookies
+</code></pre><p>Param Miner sends modified versions of the request with a unique cache-buster (random <code>?cb=</code> param) and compares responses. Differences flag unkeyed inputs that affect the response.</p>
+<h3 id="burps-cache-poisoning-pro-scanner" data-heading-permalink="true"><span class="heading-content">Burp&rsquo;s cache poisoning Pro scanner</span>
+    <a class="heading-permalink" href="#burps-cache-poisoning-pro-scanner" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Active audit detects basic cache poisoning automatically. Less comprehensive than Param Miner manual flow.</p>
+<h3 id="nuclei-templates" data-heading-permalink="true"><span class="heading-content">nuclei templates</span>
+    <a class="heading-permalink" href="#nuclei-templates" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nuclei -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -tags cache,cache-poisoning
+</span></span></code></pre></div><p>Catches common patterns like X-Forwarded-Host poisoning.</p>
+<h2 id="iv-manual-unkeyed-input-discovery" data-heading-permalink="true"><span class="heading-content">iv. Manual unkeyed input discovery</span>
+    <a class="heading-permalink" href="#iv-manual-unkeyed-input-discovery" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Send the same request twice with different values of a candidate header, see if the response changes:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Baseline:</span>
+</span></span><span class="line"><span class="cl">curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/?cb=</span><span class="k">$(</span>date +%s%N<span class="k">)</span><span class="s2">&#34;</span> -H <span class="s2">&#34;X-Forwarded-Host: target.com&#34;</span> <span class="p">|</span> head -10
+</span></span><span class="line"><span class="cl"><span class="c1">## Modified:</span>
+</span></span><span class="line"><span class="cl">curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/?cb=</span><span class="k">$(</span>date +%s%N<span class="k">)</span><span class="s2">&#34;</span> -H <span class="s2">&#34;X-Forwarded-Host: attacker.com&#34;</span> <span class="p">|</span> head -10
+</span></span></code></pre></div><p>If the body / headers differ but only the second has <code>attacker.com</code> reflected → that header is unkeyed and reflected.</p>
+<p>Common unkeyed inputs to test:</p>
+<ul>
+<li><code>X-Forwarded-Host</code></li>
+<li><code>X-Host</code></li>
+<li><code>X-Forwarded-Server</code></li>
+<li><code>X-HTTP-Host-Override</code></li>
+<li><code>X-Original-URL</code></li>
+<li><code>X-Rewrite-URL</code></li>
+<li><code>X-Forwarded-Scheme</code></li>
+<li><code>X-Forwarded-Proto</code></li>
+<li><code>X-Original-Forwarded-For</code></li>
+<li><code>X-WAP-Profile</code></li>
+<li><code>Via</code></li>
+<li><code>User-Agent</code> (sometimes affects response, rarely unkeyed)</li>
+<li>Custom cookies / <code>Cookie:</code> header subsets</li>
+</ul>
+<p>Param Miner&rsquo;s <code>singles</code> wordlist covers 1000+ candidates.</p>
+<h2 id="v-the-poisoning-workflow" data-heading-permalink="true"><span class="heading-content">v. The poisoning workflow</span>
+    <a class="heading-permalink" href="#v-the-poisoning-workflow" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ol>
+<li>
+<p><strong>Discover unkeyed input</strong> that&rsquo;s reflected in the response somewhere harmful (URL injected into a link, hostname used in a redirect, value reflected unsafely in HTML).</p>
+</li>
+<li>
+<p><strong>Confirm cache key boundaries</strong>:</p>
+<ul>
+<li>What&rsquo;s in the cache key? (path, query string, sometimes vary headers)</li>
+<li>What&rsquo;s NOT in the cache key but affects response? → poison candidate</li>
+</ul>
+</li>
+<li>
+<p><strong>Craft the malicious response</strong>:</p>
+<ul>
+<li>Inject XSS via header reflection</li>
+<li>Inject malicious URL into linked resources</li>
+<li>Inject open redirect destinations</li>
+</ul>
+</li>
+<li>
+<p><strong>Poison the cache</strong>:</p>
+<ul>
+<li>Send the malicious request, wait for <code>X-Cache: MISS</code> then <code>HIT</code></li>
+<li>Verify a clean client gets the poisoned response</li>
+</ul>
+</li>
+<li>
+<p><strong>Validate from a different IP / browser</strong> to confirm it&rsquo;s not a local effect.</p>
+</li>
+</ol>
+<h2 id="vi-detect-cache-key-bypasses" data-heading-permalink="true"><span class="heading-content">vi. Detect cache key bypasses</span>
+    <a class="heading-permalink" href="#vi-detect-cache-key-bypasses" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Sometimes the cache key normalizes the path (case-insensitive, trailing slashes), so attacker requests <code>/x</code> and <code>/X</code> may share the same cache key. Test with cache-buster variations:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Same cache key check:</span>
+</span></span><span class="line"><span class="cl">curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/?cb=1&#34;</span> -H <span class="s2">&#34;X-Foo: a&#34;</span> <span class="p">;</span> curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/?cb=1&#34;</span> -H <span class="s2">&#34;X-Foo: b&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Check if X-Cache: HIT on the second</span>
+</span></span></code></pre></div><p>The path itself is sometimes processed (URL decoding, normalization) before becoming the cache key. Path tricks:</p>
+<ul>
+<li><code>/admin</code> vs <code>/admin/</code> vs <code>/admin//</code></li>
+<li><code>/admin</code> vs <code>/Admin</code> (case sensitivity)</li>
+<li><code>/foo/../admin</code> (path normalization)</li>
+<li><code>/admin;param=x</code> (path parameter)</li>
+<li><code>/admin%20</code> vs <code>/admin</code> (encoded space)</li>
+</ul>
+<h2 id="vii-web-cache-deception" data-heading-permalink="true"><span class="heading-content">vii. Web Cache Deception</span>
+    <a class="heading-permalink" href="#vii-web-cache-deception" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Cache caches <code>/user/api/me.css</code> because of <code>.css</code> extension matching cache rules. But the back-end ignores the <code>.css</code> and returns <code>/user/api/me</code> (the JSON profile data). Attacker tricks victim into requesting <code>/user/api/me.css</code>, then attacker fetches the same URL and gets the cached victim&rsquo;s profile data.</p>
+<p>Test cache deception:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Login as victim, request:</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/me/anything.css&#34;</span> -H <span class="s2">&#34;Cookie: session=victim_session&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Then unauthenticated:</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/me/anything.css&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## If second response has victim&#39;s data → cache deception confirmed</span>
+</span></span></code></pre></div><p>The trick is finding a static-extension suffix the cache will store and the back-end will ignore. Try <code>.css</code>, <code>.js</code>, <code>.png</code>, <code>.gif</code>, <code>.jpg</code>, <code>.ico</code>, <code>.svg</code>, then path-variant tricks (<code>/x.css</code>, <code>/x/anything.css</code>).</p>
+<h2 id="viii-cache-key-injection" data-heading-permalink="true"><span class="heading-content">viii. Cache key injection</span>
+    <a class="heading-permalink" href="#viii-cache-key-injection" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When the cache uses headers in its cache key (some configs add Cookie, Origin, User-Agent), you can inject characters into those headers that confuse the cache key calculator:</p>
+<pre tabindex="0"><code>User-Agent: \r\n
+Origin: https://target.com\r\n
+</code></pre><p>Server-side cache stores under one key, attacker recreates request to read it.</p>
+<h2 id="ix-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">ix. Tricks worth knowing</span>
+    <a class="heading-permalink" href="#ix-tricks-worth-knowing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="cache-buster-everywhere" data-heading-permalink="true"><span class="heading-content">Cache buster everywhere</span>
+    <a class="heading-permalink" href="#cache-buster-everywhere" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>While testing, always append a random query param so you don&rsquo;t accidentally poison the real cache. <code>?cb=$(date +%s%N)</code> is the standard.</p>
+<h3 id="time-based-reveal" data-heading-permalink="true"><span class="heading-content">Time-based reveal</span>
+    <a class="heading-permalink" href="#time-based-reveal" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>After a poison, wait for the <code>Age</code> header to increment. A successful poison shows the same <code>Age</code> across requests. Different ages = different cache entries or different cache servers.</p>
+<h3 id="multiple-cache-layers" data-heading-permalink="true"><span class="heading-content">Multiple cache layers</span>
+    <a class="heading-permalink" href="#multiple-cache-layers" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>CDN cache + nginx cache + application cache can all be present. Each has different key calculation. Poisoning each independently sometimes works.</p>
+<h3 id="vary-header-understanding" data-heading-permalink="true"><span class="heading-content">Vary header understanding</span>
+    <a class="heading-permalink" href="#vary-header-understanding" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p><code>Vary: User-Agent</code> means the cache stores separate entries per User-Agent value. Lots of unkeyed-input bugs are actually unkeyed-but-vary-counted. Read <code>Vary:</code> carefully.</p>
+<h3 id="cookie-not-in-cache-key-by-default" data-heading-permalink="true"><span class="heading-content">Cookie not in cache key by default</span>
+    <a class="heading-permalink" href="#cookie-not-in-cache-key-by-default" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Most CDNs don&rsquo;t include cookies in cache keys (because cookies vary per user). This is also why poisoning often affects ALL users.</p>
+<h3 id="combine-with-smuggling" data-heading-permalink="true"><span class="heading-content">Combine with smuggling</span>
+    <a class="heading-permalink" href="#combine-with-smuggling" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>[[WEB10 Request Smuggling]] can change the request the back-end thinks the cache stored. CDN sees one URL, back-end processes another, cache stores under the CDN&rsquo;s URL → smuggling-amplified cache poisoning is a top-tier real engagement bug.</p>
+<h3 id="cache-control-bypass-esi-injection" data-heading-permalink="true"><span class="heading-content">Cache-control bypass: ESI injection</span>
+    <a class="heading-permalink" href="#cache-control-bypass-esi-injection" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Edge Side Includes process server-side tags like <code>&lt;esi:include src=&quot;...&quot;/&gt;</code> at the edge cache before serving. When user input is echoed into a page that&rsquo;s processed by ESI, attacker can inject ESI tags that fetch arbitrary URLs and embed them.</p>
+<pre tabindex="0"><code>&lt;esi:include src=&#34;http://attacker.com/&#34; /&gt;
+</code></pre><p>Akamai supports ESI by default in some configurations. Cloudflare has Workers with similar power.</p>
+<h2 id="x-real-examples-to-study" data-heading-permalink="true"><span class="heading-content">x. Real examples to study</span>
+    <a class="heading-permalink" href="#x-real-examples-to-study" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li>Spotify cache poisoning (2017, Mathias Karlsson) - <code>User-Agent</code> reflection</li>
+<li>Various Cloudflare/Akamai bug reports on HackerOne</li>
+<li>Web Cache Vulnerability Scanner CTF-style challenges</li>
+</ul>
+<p>PortSwigger&rsquo;s labs have hands-on for every common variant.</p>
+<h2 id="xi-references" data-heading-permalink="true"><span class="heading-content">xi. References</span>
+    <a class="heading-permalink" href="#xi-references" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li><a href="https://portswigger.net/web-security/web-cache-poisoning" target="_blank" rel="noopener noreferrer">PortSwigger - Web Cache Poisoning</a>
+</li>
+<li><a href="https://portswigger.net/web-security/web-cache-deception" target="_blank" rel="noopener noreferrer">PortSwigger - Web Cache Deception</a>
+</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Web%20Cache%20Deception" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - Web Cache Deception</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/cache-deception" target="_blank" rel="noopener noreferrer">HackTricks - Cache Poisoning</a>
+</li>
+<li><a href="https://portswigger.net/research/practical-web-cache-poisoning" target="_blank" rel="noopener noreferrer">James Kettle - Practical Web Cache Poisoning</a>
+ - original</li>
+<li><a href="https://portswigger.net/research/web-cache-entanglement" target="_blank" rel="noopener noreferrer">James Kettle - Web Cache Entanglement</a>
+ - newer</li>
+<li><a href="https://github.com/PortSwigger/param-miner" target="_blank" rel="noopener noreferrer">Param Miner</a>
+</li>
+</ul>
+<h2 id="xii-where-it-leads" data-heading-permalink="true"><span class="heading-content">xii. Where it leads</span>
+    <a class="heading-permalink" href="#xii-where-it-leads" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li>Stored XSS effect on every visitor (without actually storing on the origin)</li>
+<li>Redirect every user to attacker (open redirect amplified by cache)</li>
+<li>Cred theft via cache deception (sensitive endpoint cached under attacker-accessible URL)</li>
+<li>Denial of service (cache fills with errors, real responses evicted)</li>
+<li>Persistent defacement during cache TTL</li>
+</ul>
+<p>Cache poisoning is one of the highest-impact web bugs when it works - affects every user who hits the URL during the TTL window.</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web10-request-smuggling/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Request Smuggling</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web12-ssrf/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">SSRF</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

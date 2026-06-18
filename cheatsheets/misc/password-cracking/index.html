@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Password Cracking | JinPwn</title><meta name="description" content="Offline hash cracking. Online brute force is in 02 Service Enum under each service.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/misc/password-cracking/">
+<meta property="og:title" content="Password Cracking | JinPwn">
+<meta property="og:description" content="Offline hash cracking. Online brute force is in 02 Service Enum under each service.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/misc/password-cracking/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Password Cracking | JinPwn">
+<meta name="twitter:description" content="Offline hash cracking. Online brute force is in 02 Service Enum under each service.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Offline hash cracking. Online brute force is in 02 Service Enum under each service.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Password Cracking | JinPwn","url":"https://jinpwn.dev/cheatsheets/misc/password-cracking/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Misc navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/misc/" class="cheatsheet-sidebar-section">Misc</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-sidebar-link">Tooling MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-sidebar-link">File Transfer</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/ldap/" class="cheatsheet-sidebar-link">LDAP</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-sidebar-link is-current">Password Cracking</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-sidebar-link">Pivoting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-sidebar-link">Recon (external)</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-sidebar-link">Reverse Shells</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Password Cracking</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Password Cracking</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Misc sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/misc/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-mobile-sections-link">Tooling MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-mobile-sections-link">File Transfer</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/ldap/" class="cheatsheet-mobile-sections-link">LDAP</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-mobile-sections-link is-current">Password Cracking</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-mobile-sections-link">Pivoting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-mobile-sections-link">Recon (external)</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-mobile-sections-link">Reverse Shells</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Offline hash cracking. Online brute force is in <a href="https://jinpwn.dev/cheatsheets/linux-pentesting/02-service-enum/">02 Service Enum</a>
+ under each service.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">WL</span><span class="o">=</span>/usr/share/wordlists/rockyou.txt
+</span></span><span class="line"><span class="cl"><span class="nv">RULES</span><span class="o">=</span>/usr/share/hashcat/rules/best64.rule
+</span></span></code></pre></div><h2 id="i-identify-the-hash-first" data-heading-permalink="true"><span class="heading-content">i. Identify the hash first</span>
+    <a class="heading-permalink" href="#i-identify-the-hash-first" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hashid <span class="s1">&#39;hash-here&#39;</span>
+</span></span><span class="line"><span class="cl">hash-identifier
+</span></span><span class="line"><span class="cl">nth hash-here                              <span class="c1">## name-that-hash, most accurate</span>
+</span></span></code></pre></div><p>Common modes you will hit on every box:</p>
+<table>
+  <thead>
+      <tr>
+          <th>Hash</th>
+          <th>hashcat -m</th>
+          <th>Notes</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>MD5</td>
+          <td>0</td>
+          <td>almost never alone, often wrapped</td>
+      </tr>
+      <tr>
+          <td>SHA1</td>
+          <td>100</td>
+          <td>same</td>
+      </tr>
+      <tr>
+          <td>NTLM</td>
+          <td>1000</td>
+          <td>local Windows accounts, from SAM</td>
+      </tr>
+      <tr>
+          <td>NetNTLMv2</td>
+          <td>5600</td>
+          <td>from responder / smb relay</td>
+      </tr>
+      <tr>
+          <td>Kerberos TGS (kerberoast)</td>
+          <td>13100</td>
+          <td><code>$krb5tgs$23$*</code></td>
+      </tr>
+      <tr>
+          <td>Kerberos AS-REP</td>
+          <td>18200</td>
+          <td><code>$krb5asrep$23$</code></td>
+      </tr>
+      <tr>
+          <td>MD5crypt</td>
+          <td>500</td>
+          <td><code>$1$</code> Linux shadow</td>
+      </tr>
+      <tr>
+          <td>sha256crypt</td>
+          <td>7400</td>
+          <td><code>$5$</code></td>
+      </tr>
+      <tr>
+          <td>sha512crypt</td>
+          <td>1800</td>
+          <td><code>$6$</code> Linux shadow, SLOW</td>
+      </tr>
+      <tr>
+          <td>bcrypt</td>
+          <td>3200</td>
+          <td><code>$2a$</code>, <code>$2b$</code>, SLOW</td>
+      </tr>
+      <tr>
+          <td>MSSQL 2012+</td>
+          <td>1731</td>
+          <td><code>0x0200...</code></td>
+      </tr>
+      <tr>
+          <td>WPA-PBKDF2</td>
+          <td>22000</td>
+          <td>new format, replaces 2500</td>
+      </tr>
+      <tr>
+          <td>LUKS</td>
+          <td>14600</td>
+          <td>also 29541 for LUKS2</td>
+      </tr>
+      <tr>
+          <td>7-Zip</td>
+          <td>11600</td>
+          <td><code>$7z$</code></td>
+      </tr>
+      <tr>
+          <td>KeePass</td>
+          <td>13400</td>
+          <td>use <code>keepass2john</code> first</td>
+      </tr>
+  </tbody>
+</table>
+<h2 id="ii-hashcat-basics" data-heading-permalink="true"><span class="heading-content">ii. Hashcat basics</span>
+    <a class="heading-permalink" href="#ii-hashcat-basics" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Dictionary attack:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hashcat -m <span class="m">1000</span> hash.txt <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span>
+</span></span></code></pre></div><p>Dictionary + rules, the workhorse:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hashcat -m <span class="m">1000</span> hash.txt <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> -r <span class="s2">&#34;</span><span class="nv">$RULES</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">hashcat -m <span class="m">1000</span> hash.txt <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> -r /usr/share/hashcat/rules/OneRuleToRuleThemAll.rule
+</span></span></code></pre></div><p>Mask attack, you know the structure:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## 8 chars, 1 upper + 6 lower + 1 digit</span>
+</span></span><span class="line"><span class="cl">hashcat -m <span class="m">1000</span> hash.txt -a <span class="m">3</span> <span class="s1">&#39;?u?l?l?l?l?l?l?d&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Custom charset, ?1 = digits + special</span>
+</span></span><span class="line"><span class="cl">hashcat -m <span class="m">1000</span> hash.txt -a <span class="m">3</span> -1 <span class="s1">&#39;?d!@#$&#39;</span> <span class="s1">&#39;Pass?1?1?1?1&#39;</span>
+</span></span></code></pre></div><p>Combinator, two dicts joined:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hashcat -m <span class="m">1000</span> hash.txt -a <span class="m">1</span> names.txt years.txt
+</span></span></code></pre></div><p>Hybrid, dict + mask:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hashcat -m <span class="m">1000</span> hash.txt -a <span class="m">6</span> <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> <span class="s1">&#39;?d?d?d?d&#39;</span>    <span class="c1">## word + 4 digits</span>
+</span></span><span class="line"><span class="cl">hashcat -m <span class="m">1000</span> hash.txt -a <span class="m">7</span> <span class="s1">&#39;?d?d?d?d&#39;</span> <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span>    <span class="c1">## 4 digits + word</span>
+</span></span></code></pre></div><p>Show cracked:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hashcat -m <span class="m">1000</span> hash.txt --show
+</span></span></code></pre></div><p>Useful flags:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">-w <span class="m">3</span>                                <span class="c1">## workload high</span>
+</span></span><span class="line"><span class="cl">-O                                  <span class="c1">## optimized kernel, password len &lt;= 27</span>
+</span></span><span class="line"><span class="cl">--username                          <span class="c1">## file is user:hash format</span>
+</span></span><span class="line"><span class="cl">--status --status-timer <span class="m">10</span>          <span class="c1">## live progress</span>
+</span></span><span class="line"><span class="cl">-d 1,2                              <span class="c1">## use specific GPU devices</span>
+</span></span><span class="line"><span class="cl">--session<span class="o">=</span>name --restore            <span class="c1">## resumable sessions</span>
+</span></span></code></pre></div><h2 id="iii-john-when-hashcat-wont-load" data-heading-permalink="true"><span class="heading-content">iii. John when hashcat won&rsquo;t load</span>
+    <a class="heading-permalink" href="#iii-john-when-hashcat-wont-load" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Fast for small/quick stuff or when GPU is unavailable. Auto-detects format:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">john --wordlist<span class="o">=</span><span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> hash.txt
+</span></span><span class="line"><span class="cl">john --wordlist<span class="o">=</span><span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> --rules<span class="o">=</span>Jumbo hash.txt
+</span></span><span class="line"><span class="cl">john --format<span class="o">=</span>NT --wordlist<span class="o">=</span><span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> hash.txt
+</span></span><span class="line"><span class="cl">john --show hash.txt
+</span></span></code></pre></div><p>John helpers convert weird formats to crackable hash strings:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">zip2john file.zip &gt; z.hash
+</span></span><span class="line"><span class="cl">ssh2john id_rsa &gt; k.hash
+</span></span><span class="line"><span class="cl">keepass2john db.kdbx &gt; kp.hash
+</span></span><span class="line"><span class="cl">office2john.py file.docx &gt; o.hash
+</span></span><span class="line"><span class="cl">pdf2john.pl file.pdf &gt; p.hash
+</span></span></code></pre></div><h2 id="iv-wordlists" data-heading-permalink="true"><span class="heading-content">iv. Wordlists</span>
+    <a class="heading-permalink" href="#iv-wordlists" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Defaults worth knowing:</p>
+<ul>
+<li><code>/usr/share/wordlists/rockyou.txt</code>-start here</li>
+<li><code>/usr/share/wordlists/seclists/Passwords/</code>-categorized lists</li>
+<li><code>/usr/share/wordlists/seclists/Usernames/</code>-for spraying</li>
+</ul>
+<p>Better ones to download:</p>
+<ul>
+<li><a href="https://github.com/danielmiessler/SecLists" target="_blank" rel="noopener noreferrer">SecLists</a>
+-broad</li>
+<li><a href="https://github.com/berzerk0/Probable-Wordlists" target="_blank" rel="noopener noreferrer">Probable-Wordlists</a>
+-ordered by likelihood</li>
+<li><a href="https://weakpass.com" target="_blank" rel="noopener noreferrer">weakpass.com</a>
+-huge breach-derived lists</li>
+<li><a href="https://github.com/sean-t-smith/Extreme_Breach_Masks" target="_blank" rel="noopener noreferrer">Extreme_Breach_Masks</a>
+-hashmasks ordered by time-to-crack</li>
+</ul>
+<p>Build a custom list from the target:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cewl -d <span class="m">3</span> -m <span class="m">6</span> -w cewl.txt https://target.htb
+</span></span><span class="line"><span class="cl"><span class="c1">## Then permute with hashcat rules:</span>
+</span></span><span class="line"><span class="cl">hashcat --stdout cewl.txt -r <span class="s2">&#34;</span><span class="nv">$RULES</span><span class="s2">&#34;</span> <span class="p">|</span> sort -u &gt; custom.txt
+</span></span></code></pre></div><h2 id="v-kerberos-hash-cracking" data-heading-permalink="true"><span class="heading-content">v. Kerberos hash cracking</span>
+    <a class="heading-permalink" href="#v-kerberos-hash-cracking" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Kerberoasting output from GetUserSPNs.py or nxc:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hashcat -m <span class="m">13100</span> spn.hash <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> -r <span class="s2">&#34;</span><span class="nv">$RULES</span><span class="s2">&#34;</span>
+</span></span></code></pre></div><p>AS-REP roasting output:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hashcat -m <span class="m">18200</span> asrep.hash <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> -r <span class="s2">&#34;</span><span class="nv">$RULES</span><span class="s2">&#34;</span>
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title"><span class="sg-latex-inline"><span class="katex"><math xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>6</mn></mrow><annotation encoding="application/x-tex">6</annotation></semantics></math></span></span> and bcrypt are slow</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>sha512crypt and bcrypt cost millions of cycles per attempt. Even on a 4090 you get a few thousand hashes/sec. Use targeted wordlists, masks, and <code>-O</code>. For full brute, rent GPUs (see below).</p>
+  </div>
+</div>
+<h2 id="vi-cracking-ssh-known_hosts" data-heading-permalink="true"><span class="heading-content">vi. Cracking SSH known_hosts</span>
+    <a class="heading-permalink" href="#vi-cracking-ssh-known_hosts" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Reveals internal IPs the user has connected to:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -SsfL https://github.com/chris408/known_hosts-hashcat/raw/refs/heads/master/kh-converter.py -O
+</span></span><span class="line"><span class="cl">curl -SsfL https://github.com/chris408/known_hosts-hashcat/raw/refs/heads/master/ipv4_hcmask.txt -O
+</span></span><span class="line"><span class="cl">python3 kh-converter.py ~/.ssh/known_hosts &gt; kh.hash
+</span></span><span class="line"><span class="cl">hashcat -m <span class="m">160</span> --hex-salt kh.hash -a <span class="m">3</span> ipv4_hcmask.txt
+</span></span></code></pre></div><h2 id="vii-cloud-cracking-when-local-gpu-is-weak" data-heading-permalink="true"><span class="heading-content">vii. Cloud cracking when local GPU is weak</span>
+    <a class="heading-permalink" href="#vii-cloud-cracking-when-local-gpu-is-weak" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<ul>
+<li><a href="https://www.vast.ai" target="_blank" rel="noopener noreferrer">vast.ai</a>
+-rent RTX 4090s by the hour</li>
+<li><a href="https://runpod.io" target="_blank" rel="noopener noreferrer">runpod.io</a>
+-same idea, hashcat docker image</li>
+<li>Use <code>dizcza/docker-hashcat:cuda</code> to skip setup</li>
+</ul>
+<h2 id="viii-online-lookup-before-brute-force" data-heading-permalink="true"><span class="heading-content">viii. Online lookup before brute force</span>
+    <a class="heading-permalink" href="#viii-online-lookup-before-brute-force" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Always try these first, they are free:</p>
+<ul>
+<li><a href="https://crackstation.net" target="_blank" rel="noopener noreferrer">crackstation.net</a>
+-straight MD5/SHA1/NTLM lookup</li>
+<li><a href="https://ntlm.pw/" target="_blank" rel="noopener noreferrer">ntlm.pw</a>
+-NTLM lookup</li>
+<li><a href="https://hashes.com/decrypt/hash" target="_blank" rel="noopener noreferrer">hashes.com</a>
+-many algorithms</li>
+</ul>
+<h2 id="ix-generate-strong-test-hashes-for-box-making" data-heading-permalink="true"><span class="heading-content">ix. Generate strong test hashes (for box-making)</span>
+    <a class="heading-permalink" href="#ix-generate-strong-test-hashes-for-box-making" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## NTLM</span>
+</span></span><span class="line"><span class="cl">python3 -c <span class="s1">&#39;import hashlib; print(hashlib.new(&#34;md4&#34;,&#34;Passw0rd!&#34;.encode(&#34;utf-16le&#34;)).hexdigest())&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## sha512crypt</span>
+</span></span><span class="line"><span class="cl">mkpasswd -m sha-512 Passw0rd!
+</span></span><span class="line"><span class="cl"><span class="c1">## bcrypt</span>
+</span></span><span class="line"><span class="cl">htpasswd -bnBC <span class="m">10</span> <span class="s2">&#34;&#34;</span> Passw0rd! <span class="p">|</span> tr -d <span class="s1">&#39;:\n&#39;</span>
+</span></span></code></pre></div>
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/misc/ldap/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">LDAP</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/misc/pivoting/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">Pivoting</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

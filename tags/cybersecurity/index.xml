@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Cybersecurity on JinPwn</title>
+    <link>https://jinpwn.dev/tags/cybersecurity/</link>
+    <description>Recent content in Cybersecurity on JinPwn</description>
+    <generator>Hugo</generator>
+    <language>en-US</language>
+    <lastBuildDate>Thu, 18 Jun 2026 16:58:31 -0400</lastBuildDate>
+    <atom:link href="https://jinpwn.dev/tags/cybersecurity/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Active Directory Basics</title>
+      <link>https://jinpwn.dev/posts/blogs/active-directory-basics/</link>
+      <pubDate>Sun, 15 Mar 2026 00:00:00 &#43;0000</pubDate>
+      <guid>https://jinpwn.dev/posts/blogs/active-directory-basics/</guid>
+      <description>Introduction # If you work in IT or cybersecurity, you are going to encounter Active Directory. It is the backbone of almost every corporate network. Trying to learn it by reading disconnected documentation can be frustrating because every concept seems to rely on three other concepts you have not learned yet.
+</description>
+    </item>
+  </channel>
+</rss>

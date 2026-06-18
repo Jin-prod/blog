@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>404 Page not found | JinPwn</title><meta name="description" content="This site is a collection of writeups, notes, and research related to hacking, CTFs, and practical exploitation. Most content is technical and meant to be useful to others working in the same field.">
+<meta name="robots" content="noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="noindex,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/404.html">
+<meta property="og:title" content="404 Page not found | JinPwn">
+<meta property="og:description" content="This site is a collection of writeups, notes, and research related to hacking, CTFs, and practical exploitation. Most content is technical and meant to be useful to others working in the same field.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/404.html">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="404 Page not found | JinPwn">
+<meta name="twitter:description" content="This site is a collection of writeups, notes, and research related to hacking, CTFs, and practical exploitation. Most content is technical and meant to be useful to others working in the same field.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"This site is a collection of writeups, notes, and research related to hacking, CTFs, and practical exploitation. Most content is technical and meant to be useful to others working in the same field.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"404 Page not found | JinPwn","url":"https://jinpwn.dev/404.html"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+<style>
+  body {
+    overflow: hidden;
+  }
+
+  .site-main {
+    min-height: 100vh;
+    min-height: 100dvh;
+    height: 100vh;
+    height: 100dvh;
+    padding: 64px 0 0;
+    overflow: hidden;
+  }
+
+  .site-footer {
+    display: none;
+  }
+
+  .nf-cinematic-shell {
+    --nf-text: #e2ddd6;
+    --nf-dim: #a89e92;
+    --nf-accent: var(--accent);
+    --nf-accent-glow: rgba(249, 115, 22, 0.2);
+    min-height: calc(100vh - 64px);
+    min-height: calc(100dvh - 64px);
+    padding: clamp(1rem, 4vh, 2.2rem) 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .nf-page-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    color: var(--nf-text);
+    opacity: 0;
+    transform: translateY(14px);
+    animation: nf-fade-up 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards 0.15s;
+  }
+
+  @keyframes nf-fade-up {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .nf-scene {
+    margin-bottom: 1.3rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: clamp(0.8rem, 2.8vw, 2.6rem);
+  }
+
+  .nf-four-oh-four {
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-weight: 700;
+    font-style: italic;
+    font-size: clamp(92px, min(17vw, 22vh), 198px);
+    line-height: 0.88;
+    letter-spacing: -0.025em;
+    user-select: none;
+    display: flex;
+    align-items: flex-end;
+    color: var(--nf-text);
+  }
+
+  .nf-digit {
+    display: inline-block;
+    transform-origin: 50% 100%;
+    transition: color 0.22s ease;
+  }
+
+  .nf-digit.is-hit {
+    color: var(--nf-accent);
+    animation: nf-four-hit-bounce 0.68s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  @keyframes nf-four-hit-bounce {
+    0% {
+      transform: translateY(0) rotate(0deg);
+    }
+
+    24% {
+      transform: translateY(-18px) rotate(-4deg);
+    }
+
+    45% {
+      transform: translateY(8px) rotate(3deg);
+    }
+
+    64% {
+      transform: translateY(-7px) rotate(-2deg);
+    }
+
+    100% {
+      transform: translateY(0) rotate(0deg);
+    }
+  }
+
+  .nf-cat-stage {
+    width: clamp(115px, 17vw, 188px);
+    margin-bottom: 0.25rem;
+    flex: 0 0 auto;
+    pointer-events: none;
+  }
+
+  .nf-cat-el {
+    width: 100%;
+    display: block;
+    overflow: visible;
+    filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.34));
+  }
+
+  .nf-cat-stage.punching .nf-cat-el {
+    animation: nf-cat-jab 0.42s cubic-bezier(0.25, 0.9, 0.2, 1);
+  }
+
+  @keyframes nf-tail-sway {
+
+    0%,
+    100% {
+      transform: rotate(8deg);
+    }
+
+    50% {
+      transform: rotate(-11deg);
+    }
+  }
+
+  @keyframes nf-breathe {
+
+    0%,
+    100% {
+      transform: translateY(0) scaleY(1);
+    }
+
+    50% {
+      transform: translateY(-1px) scaleY(1.015);
+    }
+  }
+
+  @keyframes nf-blink {
+
+    0%,
+    44%,
+    48%,
+    100% {
+      transform: scaleY(1);
+    }
+
+    46% {
+      transform: scaleY(0.14);
+    }
+  }
+
+  @keyframes nf-cat-jab {
+    0% {
+      transform: translateX(0);
+    }
+
+    22% {
+      transform: translateX(4px);
+    }
+
+    58% {
+      transform: translateX(-8px);
+    }
+
+    100% {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes nf-paw-jab {
+    0% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+
+    20% {
+      transform: translate(6px, 3px) rotate(8deg) scale(1.02);
+    }
+
+    56% {
+      transform: translate(-31px, -54px) rotate(-29deg) scale(1.04);
+    }
+
+    100% {
+      transform: translate(0, 0) rotate(0deg) scale(1);
+    }
+  }
+
+  .nf-cat-tail {
+    transform-box: fill-box;
+    transform-origin: 38% 82%;
+    animation: nf-tail-sway 3.4s ease-in-out infinite;
+  }
+
+  .nf-cat-body {
+    transform-box: fill-box;
+    transform-origin: 52% 74%;
+    animation: nf-breathe 4.4s ease-in-out infinite;
+  }
+
+  .nf-cat-eyes {
+    transform-box: fill-box;
+    transform-origin: 50% 50%;
+    animation: nf-blink 5.1s steps(1, end) infinite;
+  }
+
+  .nf-cat-paw {
+    transform-box: fill-box;
+    transform-origin: 52% 52%;
+  }
+
+  .nf-cat-stage.punching .nf-cat-paw {
+    animation: nf-paw-jab 0.42s cubic-bezier(0.2, 0.95, 0.25, 1);
+  }
+
+  .nf-tagline {
+    margin: 0 0 0.45rem;
+    font-family: "Cormorant Garamond", Georgia, serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(1.2rem, 2.5vw, 1.55rem);
+    color: var(--nf-text);
+    opacity: 0.9;
+    letter-spacing: 0.01em;
+  }
+
+  .nf-sub-message {
+    margin: 0 0 2.1rem;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--nf-dim);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .nf-home-link {
+    display: inline-block;
+    color: var(--nf-accent);
+    font-size: 0.85rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid transparent;
+    padding-bottom: 0.12rem;
+    transition: border-color 0.2s ease, color 0.2s ease, text-shadow 0.2s ease;
+  }
+
+  .nf-home-link:hover {
+    color: #fb923c;
+    border-color: rgba(249, 115, 22, 0.5);
+    text-shadow: 0 0 18px var(--nf-accent-glow);
+  }
+
+  @media (max-width: 720px) {
+    .nf-cinematic-shell {
+      min-height: calc(100vh - 64px);
+      min-height: calc(100dvh - 64px);
+      padding: clamp(0.7rem, 3vh, 1.3rem) 1rem;
+    }
+
+    .nf-scene {
+      gap: 0.5rem;
+    }
+
+    .nf-four-oh-four {
+      font-size: clamp(74px, 26vw, 128px);
+    }
+
+    .nf-cat-stage {
+      width: clamp(88px, 24vw, 122px);
+      margin-bottom: 0.1rem;
+    }
+
+    .nf-sub-message {
+      letter-spacing: 0.03em;
+      text-transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .nf-page-wrapper {
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    .nf-cat-tail,
+    .nf-cat-body,
+    .nf-cat-eyes {
+      animation: none;
+    }
+  }
+</style>
+
+<section class="container nf-cinematic-shell" id="nf-cinematic-shell">
+  <div class="nf-page-wrapper">
+    <div class="nf-scene">
+      <div class="nf-four-oh-four" aria-label="404">
+        <span class="nf-digit">4</span>
+        <span class="nf-digit">0</span>
+        <span class="nf-digit" data-nf-right>4</span>
+      </div>
+
+      <div class="nf-cat-stage" aria-hidden="true">
+        <svg class="nf-cat-el" viewBox="0 0 220 220" xmlns="http://www.w3.org/2000/svg" overflow="visible">
+          <defs>
+            <linearGradient id="nf-fur-main" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#f59f43" />
+              <stop offset="55%" stop-color="#e07b22" />
+              <stop offset="100%" stop-color="#b95d1b" />
+            </linearGradient>
+            <linearGradient id="nf-fur-shadow" x1="45%" y1="10%" x2="60%" y2="100%">
+              <stop offset="0%" stop-color="#b65f1f" stop-opacity="0.16" />
+              <stop offset="100%" stop-color="#6d3411" stop-opacity="0.7" />
+            </linearGradient>
+            <radialGradient id="nf-chest-fur" cx="50%" cy="35%" r="60%">
+              <stop offset="0%" stop-color="#fce7d3" />
+              <stop offset="100%" stop-color="#dfb58f" />
+            </radialGradient>
+            <linearGradient id="nf-ear-inner" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#f6c3a5" />
+              <stop offset="100%" stop-color="#d38262" />
+            </linearGradient>
+          </defs>
+
+          <ellipse cx="111" cy="197" rx="71" ry="13" fill="#000000" opacity="0.22" />
+
+          <path class="nf-cat-tail" d="M68 158 C18 147 23 80 79 100 C108 111 108 148 84 165" fill="none"
+            stroke="url(#nf-fur-main)" stroke-width="22" stroke-linecap="round" />
+          <path class="nf-cat-tail" d="M66 156 C22 145 27 90 74 104" fill="none" stroke="#8a4718" stroke-opacity="0.6"
+            stroke-width="4.5" stroke-linecap="round" />
+
+          <g class="nf-cat-body">
+            <ellipse cx="122" cy="140" rx="60" ry="52" fill="url(#nf-fur-main)" />
+            <path
+              d="M77 140 C80 104 149 102 161 133 C168 153 161 174 145 181 C121 191 87 185 78 165 C74 157 73 148 77 140 Z"
+              fill="url(#nf-fur-shadow)" />
+            <ellipse cx="118" cy="155" rx="24" ry="31" fill="url(#nf-chest-fur)" opacity="0.9" />
+            <ellipse class="nf-cat-paw" cx="102" cy="182" rx="17" ry="11" fill="#df8a3d" />
+            <ellipse cx="136" cy="182" rx="18" ry="11" fill="#d98438" />
+
+            <circle cx="124" cy="80" r="40" fill="url(#nf-fur-main)" />
+            <path d="M95 55 L86 23 L111 45 Z" fill="url(#nf-fur-main)" />
+            <path d="M145 45 L161 22 L155 58 Z" fill="url(#nf-fur-main)" />
+            <path d="M97 53 L90 31 L108 47 Z" fill="url(#nf-ear-inner)" />
+            <path d="M144 47 L155 30 L151 55 Z" fill="url(#nf-ear-inner)" />
+
+            <path d="M105 90 C113 99 135 99 144 90 C143 114 106 115 105 90 Z" fill="#f5d8be" />
+
+            <g class="nf-cat-eyes">
+              <ellipse cx="109" cy="79" rx="7" ry="8.7" fill="#a2af4f" />
+              <ellipse cx="139" cy="79" rx="7" ry="8.7" fill="#a2af4f" />
+              <ellipse cx="109" cy="79" rx="2.35" ry="7" fill="#1b1713" />
+              <ellipse cx="139" cy="79" rx="2.35" ry="7" fill="#1b1713" />
+              <circle cx="111" cy="75" r="1.3" fill="#f8f6ee" opacity="0.8" />
+              <circle cx="141" cy="75" r="1.3" fill="#f8f6ee" opacity="0.8" />
+            </g>
+
+            <path d="M124 92 L118 98 L130 98 Z" fill="#9b5a44" />
+            <path d="M124 99 V105" stroke="#7f4a37" stroke-width="2.2" stroke-linecap="round" />
+            <path d="M124 105 C120 109 114 109 111 106" stroke="#7f4a37" stroke-width="2.2" fill="none"
+              stroke-linecap="round" />
+            <path d="M124 105 C128 109 134 109 137 106" stroke="#7f4a37" stroke-width="2.2" fill="none"
+              stroke-linecap="round" />
+
+            <path d="M86 83 C101 85 112 87 121 90" stroke="#dfc7b2" stroke-width="2.1" fill="none"
+              stroke-linecap="round" />
+            <path d="M86 92 C101 92 112 93 121 94" stroke="#dfc7b2" stroke-width="2.1" fill="none"
+              stroke-linecap="round" />
+            <path d="M162 83 C147 85 136 87 127 90" stroke="#dfc7b2" stroke-width="2.1" fill="none"
+              stroke-linecap="round" />
+            <path d="M162 92 C147 92 136 93 127 94" stroke="#dfc7b2" stroke-width="2.1" fill="none"
+              stroke-linecap="round" />
+
+            <path d="M102 125 C108 131 109 143 106 152" stroke="#9a4e1e" stroke-width="4.2" stroke-linecap="round"
+              opacity="0.55" />
+            <path d="M123 119 C129 126 130 141 127 153" stroke="#9a4e1e" stroke-width="4.2" stroke-linecap="round"
+              opacity="0.55" />
+          </g>
+        </svg>
+      </div>
+    </div>
+
+    <p class="nf-tagline">This page wandered off.</p>
+    <p class="nf-sub-message">It might be lost somewhere - or it never existed at all.</p>
+    <a href="/" class="nf-home-link">Return to home</a>
+  </div>
+</section>
+
+<script>
+    (() => {
+      const root = document.getElementById("nf-cinematic-shell");
+      if (!root) return;
+
+      const catStage = root.querySelector(".nf-cat-stage");
+      const rightFour = root.querySelector("[data-nf-right]");
+      if (!catStage || !rightFour) return;
+
+      const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+      if (mediaQuery.matches) return;
+
+      const punchRightFour = () => {
+        catStage.classList.remove("punching");
+        rightFour.classList.remove("is-hit");
+        void catStage.offsetWidth;
+
+        catStage.classList.add("punching");
+        setTimeout(() => {
+          rightFour.classList.add("is-hit");
+        }, 135);
+        setTimeout(() => {
+          catStage.classList.remove("punching");
+        }, 430);
+        setTimeout(() => {
+          rightFour.classList.remove("is-hit");
+        }, 820);
+      };
+
+      setTimeout(() => {
+        punchRightFour();
+        setInterval(punchRightFour, 2900);
+      }, 1200);
+    })();
+  </script>
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

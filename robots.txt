@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jinpwn.dev/sitemap.xml

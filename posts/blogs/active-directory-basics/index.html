@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="is-post">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Active Directory Basics | JinPwn</title><meta name="description" content="If you work in IT or cybersecurity, you are going to encounter Active Directory. It is the backbone of almost every corporate network. Trying to learn it by reading disconnected documentation can be frustrating because every concept seems to rely on three other concepts you have not learned yet.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/posts/blogs/active-directory-basics/">
+<meta property="og:title" content="Active Directory Basics | JinPwn">
+<meta property="og:description" content="If you work in IT or cybersecurity, you are going to encounter Active Directory. It is the backbone of almost every corporate network. Trying to learn it by reading disconnected documentation can be frustrating because every concept seems to rely on three other concepts you have not learned yet.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://jinpwn.dev/posts/blogs/active-directory-basics/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/AD/AD.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Active Directory Basics | JinPwn">
+<meta name="twitter:description" content="If you work in IT or cybersecurity, you are going to encounter Active Directory. It is the backbone of almost every corporate network. Trying to learn it by reading disconnected documentation can be frustrating because every concept seems to rely on three other concepts you have not learned yet.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/AD/AD.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+  <meta property="article:published_time" content="2026-03-15T00:00:00Z">
+  <meta property="article:modified_time" content="2026-03-15T00:00:00Z">
+  <meta property="article:section" content="posts">
+  <meta property="article:tag" content="Active Directory"><meta property="article:tag" content="Windows"><meta property="article:tag" content="Cybersecurity"><meta property="article:tag" content="Red Team">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","articleSection":"posts","author":{"@type":"Person","name":"Jin"},"dateModified":"2026-03-15T00:00:00Z","datePublished":"2026-03-15T00:00:00Z","description":"If you work in IT or cybersecurity, you are going to encounter Active Directory. It is the backbone of almost every corporate network. Trying to learn it by reading disconnected documentation can be frustrating because every concept seems to rely on three other concepts you have not learned yet.","headline":"Active Directory Basics","image":["https://jinpwn.dev/images/AD/AD.png"],"inLanguage":"en-US","keywords":"Active Directory, Windows, Cybersecurity, Red Team","mainEntityOfPage":{"@id":"https://jinpwn.dev/posts/blogs/active-directory-basics/","@type":"WebPage"},"name":"Active Directory Basics","publisher":{"@type":"Organization","name":"JinPwn","url":"https://jinpwn.dev/"},"url":"https://jinpwn.dev/posts/blogs/active-directory-basics/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="is-post">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+    <div class="read-progress-track" aria-hidden="true">
+      <div class="read-progress-bar" data-progress-bar></div>
+    </div>
+  
+  <main class="site-main">
+    
+  
+  
+  
+  
+  
+  
+  
+  
+  
+    
+    
+  
+  <article class="container post-shell">
+    <a href="/" class="back-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg> Back to posts</a>
+    <header class="post-header">
+      <div class="post-meta">
+        <span class="meta-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M20 21a8 8 0 0 0-16 0"></path>
+    <circle cx="12" cy="7" r="4"></circle>
+  </svg> Jin</span>
+        <span class="meta-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M8 2v4"></path>
+    <path d="M16 2v4"></path>
+    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+    <path d="M3 10h18"></path>
+  </svg> 2026-03-15</span>
+        <span class="meta-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="12" cy="12" r="10"></circle>
+    <polyline points="12 6 12 12 16 14"></polyline>
+  </svg> 16 min read</span>
+        <div class="post-tags">
+          
+            <span>Active Directory</span>
+          
+            <span>Windows</span>
+          
+            <span>Cybersecurity</span>
+          
+            <span>Red Team</span>
+          
+        </div>
+      </div>
+      <h1>Active Directory Basics</h1>
+    </header>
+    <div class="post-layout">
+      <aside class="section-ruler" data-section-ruler></aside>
+      <div class="post-body">
+        <nav class="mobile-toc" data-mobile-toc aria-label="Table of contents" hidden>
+          <button type="button" class="mobile-toc-toggle" data-mobile-toc-toggle aria-expanded="false">
+            <span class="mobile-toc-kicker">On this page</span>
+            <span class="mobile-toc-current" data-mobile-toc-current>Jump to section</span>
+            <span class="mobile-toc-caret" aria-hidden="true"></span>
+          </button>
+          <div class="mobile-toc-panel" data-mobile-toc-panel hidden>
+            <ul class="mobile-toc-list" data-mobile-toc-list></ul>
+          </div>
+        </nav>
+        <div class="markdown-content" data-post-content>
+          <h2 id="introduction" data-heading-permalink="true" data-section-ruler="true"><span class="heading-content">Introduction</span>
+    <a class="heading-permalink" href="#introduction" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="sg-article-image">
+  <figure><img
+        src="/images/AD/AD_hu_35e804478c6bc395.png"
+        alt="Active Directory"
+        loading="lazy"
+        decoding="async"
+        fetchpriority="low"
+         srcset="/images/AD/AD_hu_99eb335ed73248f1.png 640w, /images/AD/AD_hu_7d66e68f64c884c9.png 960w, /images/AD/AD_hu_c7849f959f0b24d8.png 1280w, /images/AD/AD_hu_b12a52bcea8035b7.png 1600w, /images/AD/AD_hu_35e804478c6bc395.png 1680w"
+         sizes="(max-width: 780px) calc(100vw - 1.5rem), min(100vw, 768px)"
+         width="1680" height="916"
+        data-lightbox-src="/images/AD/AD_hu_6daaaa75aff937b.png"></figure>
+</div>
+
+<p>If you work in IT or cybersecurity, you are going to encounter Active Directory. It is the backbone of almost every corporate network. Trying to learn it by reading disconnected documentation can be frustrating because every concept seems to rely on three other concepts you have not learned yet.</p>
+<p>This guide is built to solve that problem. We will walk through the components one by one so you have a clear mental map of how a corporate network functions behind the scenes.</p>
+<h2 id="what-active-directory-is" data-heading-permalink="true"><span class="heading-content">What Active Directory Is</span>
+    <a class="heading-permalink" href="#what-active-directory-is" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Active Directory is a directory service created by Microsoft for Windows domain networks. It is a centralized database that stores information about everything on a corporate network.</p>
+<p>Organizations use it because managing computers individually is impossible at scale. If a company has five hundred employees, the IT team cannot manually create five hundred local user accounts on five hundred separate laptops. They need centralized identity and access management. This means having one central authority that decides who people are and what they are allowed to touch.</p>
+<p>Active Directory solves major administrative problems. If an employee leaves the company, an administrator disables their account in one place, and that person immediately loses access to every computer, file share, and internal application. If a new security policy requires passwords to be fifteen characters long, the administrator pushes that rule out centrally instead of configuring each machine by hand.</p>
+<h2 id="the-core-structure-of-active-directory" data-heading-permalink="true" data-section-ruler="true" data-section-marker="Structure of Active Directory"><span class="heading-content">The Core Structure of Active Directory</span>
+    <a class="heading-permalink" href="#the-core-structure-of-active-directory" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Before we look at the individual pieces of data stored in Active Directory, we need to understand the containers that hold everything together.</p>
+<p>To see how the largest boundaries relate to each other, it helps to look at a high-level map first.</p>
+<div class="sg-mermaid sg-mermaid-prerendered">
+  <svg id="my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="flowchart" style="max-width: 1122.58px; background-color: transparent;" viewBox="0 0 1122.578125 339.5" role="graphics-document document" aria-roledescription="flowchart-v2"><style>#my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:17px;fill:#d4d4d4;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#my-svg .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#my-svg .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#my-svg .error-icon{fill:#171717;}#my-svg .error-text{fill:#d4d4d4;stroke:#d4d4d4;}#my-svg .edge-thickness-normal{stroke-width:1px;}#my-svg .edge-thickness-thick{stroke-width:3.5px;}#my-svg .edge-pattern-solid{stroke-dasharray:0;}#my-svg .edge-thickness-invisible{stroke-width:0;fill:none;}#my-svg .edge-pattern-dashed{stroke-dasharray:3;}#my-svg .edge-pattern-dotted{stroke-dasharray:2;}#my-svg .marker{fill:#f97316;stroke:#f97316;}#my-svg .marker.cross{stroke:#f97316;}#my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:17px;}#my-svg p{margin:0;}#my-svg .label{font-family:"trebuchet ms",verdana,arial,sans-serif;color:#f5f5f5;}#my-svg .cluster-label text{fill:#d4d4d4;}#my-svg .cluster-label span{color:#d4d4d4;}#my-svg .cluster-label span p{background-color:transparent;}#my-svg .label text,#my-svg span{fill:#f5f5f5;color:#f5f5f5;}#my-svg .node rect,#my-svg .node circle,#my-svg .node ellipse,#my-svg .node polygon,#my-svg .node path{fill:#171717;stroke:#525252;stroke-width:1px;}#my-svg .rough-node .label text,#my-svg .node .label text,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-anchor:middle;}#my-svg .node .katex path{fill:#000;stroke:#000;stroke-width:1px;}#my-svg .rough-node .label,#my-svg .node .label,#my-svg .image-shape .label,#my-svg .icon-shape .label{text-align:center;}#my-svg .node.clickable{cursor:pointer;}#my-svg .root .anchor path{fill:#f97316!important;stroke-width:0;stroke:#f97316;}#my-svg .arrowheadPath{fill:rgba(255, 255, 255, 0);}#my-svg .edgePath .path{stroke:#f97316;stroke-width:2.0px;}#my-svg .flowchart-link{stroke:#f97316;fill:none;}#my-svg .edgeLabel{background-color:#111111;text-align:center;}#my-svg .edgeLabel p{background-color:#111111;}#my-svg .edgeLabel rect{opacity:0.5;background-color:#111111;fill:#111111;}#my-svg .labelBkg{background-color:rgba(17, 17, 17, 0.5);}#my-svg .cluster rect{fill:#171717;stroke:#404040;stroke-width:1px;}#my-svg .cluster text{fill:#d4d4d4;}#my-svg .cluster span{color:#d4d4d4;}#my-svg div.mermaidTooltip{position:absolute;text-align:center;max-width:200px;padding:2px;font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:12px;background:#171717;border:1px solid #525252;border-radius:2px;pointer-events:none;z-index:100;}#my-svg .flowchartTitleText{text-anchor:middle;font-size:18px;fill:#d4d4d4;}#my-svg rect.text{fill:none;stroke-width:0;}#my-svg .icon-shape,#my-svg .image-shape{background-color:#111111;text-align:center;}#my-svg .icon-shape p,#my-svg .image-shape p{background-color:#111111;padding:2px;}#my-svg .icon-shape .label rect,#my-svg .image-shape .label rect{opacity:0.5;background-color:#111111;fill:#111111;}#my-svg .label-icon{display:inline-block;height:1em;overflow:visible;vertical-align:-0.125em;}#my-svg .node .label-icon path{fill:currentColor;stroke:revert;stroke-width:revert;}#my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g><marker id="my-svg_flowchart-v2-pointEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 0 L 10 5 L 0 10 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-pointStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="4.5" refY="5" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto"><path d="M 0 5 L 10 10 L 10 0 z" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleEnd" class="marker flowchart-v2" viewBox="0 0 10 10" refX="11" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-circleStart" class="marker flowchart-v2" viewBox="0 0 10 10" refX="-1" refY="5" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><circle cx="5" cy="5" r="5" class="arrowMarkerPath" style="stroke-width: 1; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossEnd" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="12" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><marker id="my-svg_flowchart-v2-crossStart" class="marker cross flowchart-v2" viewBox="0 0 11 11" refX="-1" refY="5.2" markerUnits="userSpaceOnUse" markerWidth="11" markerHeight="11" orient="auto"><path d="M 1,1 l 9,9 M 10,1 l -9,9" class="arrowMarkerPath" style="stroke-width: 2; stroke-dasharray: 1, 0;"/></marker><g class="root"><g class="clusters"/><g class="edgePaths"><path d="M608.883,48.89L573.832,55.492C538.781,62.093,468.68,75.297,433.629,88.523C398.578,101.75,398.578,115,398.578,121.625L398.578,128.25" id="L_Forest_TreeA_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Forest_TreeA_0" data-points="W3sieCI6NjA4Ljg4MjgxMjUsInkiOjQ4Ljg5MDI0ODg5MTQ2OTZ9LHsieCI6Mzk4LjU3ODEyNSwieSI6ODguNX0seyJ4IjozOTguNTc4MTI1LCJ5IjoxMzIuMjV9XQ==" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M780.273,48.89L815.324,55.492C850.375,62.093,920.477,75.297,955.527,86.398C990.578,97.5,990.578,106.5,990.578,111L990.578,115.5" id="L_Forest_TreeB_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_Forest_TreeB_0" data-points="W3sieCI6NzgwLjI3MzQzNzUsInkiOjQ4Ljg5MDI0ODg5MTQ2OTZ9LHsieCI6OTkwLjU3ODEyNSwieSI6ODguNX0seyJ4Ijo5OTAuNTc4MTI1LCJ5IjoxMTkuNX1d" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M301.078,180.743L270.447,188.203C239.815,195.662,178.552,210.581,147.921,224.666C117.289,238.75,117.289,252,117.289,258.625L117.289,265.25" id="L_TreeA_DomA1_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_TreeA_DomA1_0" data-points="W3sieCI6MzAxLjA3ODEyNSwieSI6MTgwLjc0MzM2ODk3NjUzMTAzfSx7IngiOjExNy4yODkwNjI1LCJ5IjoyMjUuNX0seyJ4IjoxMTcuMjg5MDYyNSwieSI6MjY5LjI1fV0=" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M398.578,181.75L398.578,189.042C398.578,196.333,398.578,210.917,398.578,222.708C398.578,234.5,398.578,243.5,398.578,248L398.578,252.5" id="L_TreeA_DomA2_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_TreeA_DomA2_0" data-points="W3sieCI6Mzk4LjU3ODEyNSwieSI6MTgxLjc1fSx7IngiOjM5OC41NzgxMjUsInkiOjIyNS41fSx7IngiOjM5OC41NzgxMjUsInkiOjI1Ni41fV0=" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M496.078,179.563L529.161,187.219C562.245,194.876,628.411,210.188,661.495,222.344C694.578,234.5,694.578,243.5,694.578,248L694.578,252.5" id="L_TreeA_DomA3_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_TreeA_DomA3_0" data-points="W3sieCI6NDk2LjA3ODEyNSwieSI6MTc5LjU2MzM0NDU5NDU5NDU4fSx7IngiOjY5NC41NzgxMjUsInkiOjIyNS41fSx7IngiOjY5NC41NzgxMjUsInkiOjI1Ni41fV0=" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/><path d="M990.578,194.5L990.578,199.667C990.578,204.833,990.578,215.167,990.578,224.833C990.578,234.5,990.578,243.5,990.578,248L990.578,252.5" id="L_TreeB_DomB1_0" class="edge-thickness-normal edge-pattern-solid edge-thickness-normal edge-pattern-solid flowchart-link" style=";" data-edge="true" data-et="edge" data-id="L_TreeB_DomB1_0" data-points="W3sieCI6OTkwLjU3ODEyNSwieSI6MTk0LjV9LHsieCI6OTkwLjU3ODEyNSwieSI6MjI1LjV9LHsieCI6OTkwLjU3ODEyNSwieSI6MjU2LjV9XQ==" marker-end="url(#my-svg_flowchart-v2-pointEnd)"/></g><g class="edgeLabels"><g class="edgeLabel"><g class="label" data-id="L_Forest_TreeA_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_Forest_TreeB_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_TreeA_DomA1_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_TreeA_DomA2_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_TreeA_DomA3_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g><g class="edgeLabel"><g class="label" data-id="L_TreeB_DomB1_0" transform="translate(0, 0)"><foreignObject width="0" height="0"><div xmlns="http://www.w3.org/1999/xhtml" class="labelBkg" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="edgeLabel"></span></div></foreignObject></g></g></g><g class="nodes"><g class="node default" id="flowchart-Forest-0" transform="translate(694.578125, 32.75)"><rect class="basic label-container" style="" x="-85.6953125" y="-24.75" width="171.390625" height="49.5"/><g class="label" style="" transform="translate(-61.6953125, -12.75)"><rect/><foreignObject width="123.390625" height="25.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Forest Boundary</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-TreeA-1" transform="translate(398.578125, 157)"><rect class="basic label-container" style="" x="-97.5" y="-24.75" width="195" height="49.5"/><g class="label" style="" transform="translate(-73.5, -12.75)"><rect/><foreignObject width="147" height="25.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Tree: example.com</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-TreeB-3" transform="translate(990.578125, 157)"><rect class="basic label-container" style="" x="-124" y="-37.5" width="248" height="75"/><g class="label" style="" transform="translate(-100, -25.5)"><rect/><foreignObject width="200" height="51"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>Tree: acquired-company.com</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-DomA1-5" transform="translate(117.2890625, 294)"><rect class="basic label-container" style="" x="-109.2890625" y="-24.75" width="218.578125" height="49.5"/><g class="label" style="" transform="translate(-85.2890625, -12.75)"><rect/><foreignObject width="170.578125" height="25.5"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table-cell; white-space: nowrap; line-height: 1.5; max-width: 200px; text-align: center;"><span class="nodeLabel"><p>Domain: example.com</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-DomA2-7" transform="translate(398.578125, 294)"><rect class="basic label-container" style="" x="-124" y="-37.5" width="248" height="75"/><g class="label" style="" transform="translate(-100, -25.5)"><rect/><foreignObject width="200" height="51"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>Domain: asia.example.com</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-DomA3-9" transform="translate(694.578125, 294)"><rect class="basic label-container" style="" x="-124" y="-37.5" width="248" height="75"/><g class="label" style="" transform="translate(-100, -25.5)"><rect/><foreignObject width="200" height="51"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>Domain: europe.example.com</p></span></div></foreignObject></g></g><g class="node default" id="flowchart-DomB1-11" transform="translate(990.578125, 294)"><rect class="basic label-container" style="" x="-124" y="-37.5" width="248" height="75"/><g class="label" style="" transform="translate(-100, -25.5)"><rect/><foreignObject width="200" height="51"><div xmlns="http://www.w3.org/1999/xhtml" style="display: table; white-space: break-spaces; line-height: 1.5; max-width: 200px; text-align: center; width: 200px;"><span class="nodeLabel"><p>Domain: acquired-company.com</p></span></div></foreignObject></g></g></g></g></g></svg>
+</div>
+<p>Now we can break down what each of these containers actually does.</p>
+<h3 id="forest" data-heading-permalink="true"><span class="heading-content">Forest</span>
+    <a class="heading-permalink" href="#forest" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A forest is the top level of the Active Directory structure. It is a collection of one or more domains. You can picture a forest as a large parent corporation that owns several different office buildings. Each building might have its own name and its own internal rules, but they all ultimately belong to the same parent organization. The forest defines the outermost security boundary.</p>
+<h3 id="tree" data-heading-permalink="true"><span class="heading-content">Tree</span>
+    <a class="heading-permalink" href="#tree" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A tree is a collection of domains within a forest that share a continuous naming structure. If the parent company is <code>example.com</code>, they might have a tree containing <code>asia.example.com</code> and <code>europe.example.com</code>. The job of a tree is simply to organize domains logically based on geography or business unit while keeping their names related.</p>
+<h3 id="domain" data-heading-permalink="true"><span class="heading-content">Domain</span>
+    <a class="heading-permalink" href="#domain" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A domain is the logical boundary for a group of objects like users and computers. Think of a domain like a fenced-in office building. Everyone and everything inside that fence follows the same rules and shares the same directory. A domain usually looks like a standard web address, such as <code>corp.example.com</code>. Its job is to group resources together so they can be managed under one security policy.</p>
+<h3 id="domain-controller" data-heading-permalink="true"><span class="heading-content">Domain Controller</span>
+    <a class="heading-permalink" href="#domain-controller" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A domain controller is a server that runs Active Directory Domain Services and responds to authentication and directory requests. If the domain is the office building, the domain controller is the security desk at the front lobby holding the master guest list. Its job is to respond to security authentication requests. When a user tries to log in, their computer talks directly to the domain controller to verify their credentials.</p>
+<h3 id="organizational-unit-ou" data-heading-permalink="true"><span class="heading-content">Organizational Unit (OU)</span>
+    <a class="heading-permalink" href="#organizational-unit-ou" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>An Organizational Unit is a folder inside a domain used to organize objects. If the domain is the building, OUs are the specific departments like Human Resources or Accounting. OUs exist so administrators can apply specific rules to a targeted group of computers or delegate management tasks. For example, an IT administrator might put all the servers in a &ldquo;Servers&rdquo; OU and all the employee laptops in a &ldquo;Workstations&rdquo; OU, applying stricter security policies to the servers.</p>
+<h3 id="visualizing-the-hierarchy" data-heading-permalink="true"><span class="heading-content">Visualizing the Hierarchy</span>
+    <a class="heading-permalink" href="#visualizing-the-hierarchy" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Because Active Directory is a hierarchical database, all of these containers nest inside each other. Here is what a typical Active Directory structure looks like in practice once you start drilling down into a specific domain:</p>
+<div class="sg-filetree-shell">
+  <div class="sg-filetree" role="tree">
+    <ul class="sg-filetree-list sg-filetree-root">
+
+<li class="sg-filetree-item sg-filetree-item-folder">
+  <details class="sg-filetree-folder" open>
+    <summary class="sg-filetree-entry">
+      <span class="sg-filetree-glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3.75 6.75A2.25 2.25 0 0 1 6 4.5h3.64c.6 0 1.18.24 1.6.66l1.1 1.1c.42.42 1 .66 1.6.66H18a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 18 18.9H6a2.25 2.25 0 0 1-2.25-2.25z"></path>
+        </svg>
+      </span>
+      <span class="sg-filetree-name">Forest (example.com)</span>
+    </summary><ul class="sg-filetree-list">
+
+<li class="sg-filetree-item sg-filetree-item-folder">
+  <details class="sg-filetree-folder" open>
+    <summary class="sg-filetree-entry">
+      <span class="sg-filetree-glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3.75 6.75A2.25 2.25 0 0 1 6 4.5h3.64c.6 0 1.18.24 1.6.66l1.1 1.1c.42.42 1 .66 1.6.66H18a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 18 18.9H6a2.25 2.25 0 0 1-2.25-2.25z"></path>
+        </svg>
+      </span>
+      <span class="sg-filetree-name">Domain (corp.example.com)</span>
+    </summary><ul class="sg-filetree-list">
+
+<li class="sg-filetree-item sg-filetree-item-folder">
+  <details class="sg-filetree-folder" open>
+    <summary class="sg-filetree-entry">
+      <span class="sg-filetree-glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3.75 6.75A2.25 2.25 0 0 1 6 4.5h3.64c.6 0 1.18.24 1.6.66l1.1 1.1c.42.42 1 .66 1.6.66H18a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 18 18.9H6a2.25 2.25 0 0 1-2.25-2.25z"></path>
+        </svg>
+      </span>
+      <span class="sg-filetree-name">Domain Controllers</span>
+    </summary><ul class="sg-filetree-list">
+
+<li class="sg-filetree-item sg-filetree-item-file">
+  <span class="sg-filetree-entry">
+    <span class="sg-filetree-glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M7.5 3.75h6.38c.6 0 1.18.24 1.6.66l3.11 3.11c.42.42.66 1 .66 1.6v10.38A1.5 1.5 0 0 1 17.75 21h-10.5a1.5 1.5 0 0 1-1.5-1.5V5.25a1.5 1.5 0 0 1 1.5-1.5z"></path>
+        <path d="M14.25 3.75V7.5a1.5 1.5 0 0 0 1.5 1.5h3.75"></path>
+      </svg>
+    </span>
+    <span class="sg-filetree-name">DC01 (Server)</span>
+  </span>
+</li>
+
+
+<li class="sg-filetree-item sg-filetree-item-file">
+  <span class="sg-filetree-entry">
+    <span class="sg-filetree-glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M7.5 3.75h6.38c.6 0 1.18.24 1.6.66l3.11 3.11c.42.42.66 1 .66 1.6v10.38A1.5 1.5 0 0 1 17.75 21h-10.5a1.5 1.5 0 0 1-1.5-1.5V5.25a1.5 1.5 0 0 1 1.5-1.5z"></path>
+        <path d="M14.25 3.75V7.5a1.5 1.5 0 0 0 1.5 1.5h3.75"></path>
+      </svg>
+    </span>
+    <span class="sg-filetree-name">DC02 (Server)</span>
+  </span>
+</li>
+
+
+</ul></details>
+</li>
+
+
+<li class="sg-filetree-item sg-filetree-item-folder">
+  <details class="sg-filetree-folder" open>
+    <summary class="sg-filetree-entry">
+      <span class="sg-filetree-glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3.75 6.75A2.25 2.25 0 0 1 6 4.5h3.64c.6 0 1.18.24 1.6.66l1.1 1.1c.42.42 1 .66 1.6.66H18a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 18 18.9H6a2.25 2.25 0 0 1-2.25-2.25z"></path>
+        </svg>
+      </span>
+      <span class="sg-filetree-name">Accounting OU</span>
+    </summary><ul class="sg-filetree-list">
+
+<li class="sg-filetree-item sg-filetree-item-file">
+  <span class="sg-filetree-entry">
+    <span class="sg-filetree-glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M7.5 3.75h6.38c.6 0 1.18.24 1.6.66l3.11 3.11c.42.42.66 1 .66 1.6v10.38A1.5 1.5 0 0 1 17.75 21h-10.5a1.5 1.5 0 0 1-1.5-1.5V5.25a1.5 1.5 0 0 1 1.5-1.5z"></path>
+        <path d="M14.25 3.75V7.5a1.5 1.5 0 0 0 1.5 1.5h3.75"></path>
+      </svg>
+    </span>
+    <span class="sg-filetree-name">Alice (User)</span>
+  </span>
+</li>
+
+
+<li class="sg-filetree-item sg-filetree-item-file">
+  <span class="sg-filetree-entry">
+    <span class="sg-filetree-glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M7.5 3.75h6.38c.6 0 1.18.24 1.6.66l3.11 3.11c.42.42.66 1 .66 1.6v10.38A1.5 1.5 0 0 1 17.75 21h-10.5a1.5 1.5 0 0 1-1.5-1.5V5.25a1.5 1.5 0 0 1 1.5-1.5z"></path>
+        <path d="M14.25 3.75V7.5a1.5 1.5 0 0 0 1.5 1.5h3.75"></path>
+      </svg>
+    </span>
+    <span class="sg-filetree-name">Bob (User)</span>
+  </span>
+</li>
+
+
+<li class="sg-filetree-item sg-filetree-item-file">
+  <span class="sg-filetree-entry">
+    <span class="sg-filetree-glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M7.5 3.75h6.38c.6 0 1.18.24 1.6.66l3.11 3.11c.42.42.66 1 .66 1.6v10.38A1.5 1.5 0 0 1 17.75 21h-10.5a1.5 1.5 0 0 1-1.5-1.5V5.25a1.5 1.5 0 0 1 1.5-1.5z"></path>
+        <path d="M14.25 3.75V7.5a1.5 1.5 0 0 0 1.5 1.5h3.75"></path>
+      </svg>
+    </span>
+    <span class="sg-filetree-name">Accounting-FS (Computer)</span>
+  </span>
+</li>
+
+
+</ul></details>
+</li>
+
+
+<li class="sg-filetree-item sg-filetree-item-folder">
+  <details class="sg-filetree-folder">
+    <summary class="sg-filetree-entry">
+      <span class="sg-filetree-glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3.75 6.75A2.25 2.25 0 0 1 6 4.5h3.64c.6 0 1.18.24 1.6.66l1.1 1.1c.42.42 1 .66 1.6.66H18a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 18 18.9H6a2.25 2.25 0 0 1-2.25-2.25z"></path>
+        </svg>
+      </span>
+      <span class="sg-filetree-name">IT OU</span>
+    </summary><ul class="sg-filetree-list">
+
+<li class="sg-filetree-item sg-filetree-item-file">
+  <span class="sg-filetree-entry">
+    <span class="sg-filetree-glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M7.5 3.75h6.38c.6 0 1.18.24 1.6.66l3.11 3.11c.42.42.66 1 .66 1.6v10.38A1.5 1.5 0 0 1 17.75 21h-10.5a1.5 1.5 0 0 1-1.5-1.5V5.25a1.5 1.5 0 0 1 1.5-1.5z"></path>
+        <path d="M14.25 3.75V7.5a1.5 1.5 0 0 0 1.5 1.5h3.75"></path>
+      </svg>
+    </span>
+    <span class="sg-filetree-name">Admin (User)</span>
+  </span>
+</li>
+
+
+<li class="sg-filetree-item sg-filetree-item-file">
+  <span class="sg-filetree-entry">
+    <span class="sg-filetree-glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M7.5 3.75h6.38c.6 0 1.18.24 1.6.66l3.11 3.11c.42.42.66 1 .66 1.6v10.38A1.5 1.5 0 0 1 17.75 21h-10.5a1.5 1.5 0 0 1-1.5-1.5V5.25a1.5 1.5 0 0 1 1.5-1.5z"></path>
+        <path d="M14.25 3.75V7.5a1.5 1.5 0 0 0 1.5 1.5h3.75"></path>
+      </svg>
+    </span>
+    <span class="sg-filetree-name">Helpdesk (Group)</span>
+  </span>
+</li>
+
+
+</ul></details>
+</li>
+
+
+</ul></details>
+</li>
+
+
+<li class="sg-filetree-item sg-filetree-item-folder">
+  <details class="sg-filetree-folder">
+    <summary class="sg-filetree-entry">
+      <span class="sg-filetree-glyph" aria-hidden="true">
+        <svg viewBox="0 0 24 24">
+          <path d="M3.75 6.75A2.25 2.25 0 0 1 6 4.5h3.64c.6 0 1.18.24 1.6.66l1.1 1.1c.42.42 1 .66 1.6.66H18a2.25 2.25 0 0 1 2.25 2.25v7.5A2.25 2.25 0 0 1 18 18.9H6a2.25 2.25 0 0 1-2.25-2.25z"></path>
+        </svg>
+      </span>
+      <span class="sg-filetree-name">Domain (asia.example.com)</span>
+    </summary><ul class="sg-filetree-list">
+
+<li class="sg-filetree-item sg-filetree-item-file">
+  <span class="sg-filetree-entry">
+    <span class="sg-filetree-glyph" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <path d="M7.5 3.75h6.38c.6 0 1.18.24 1.6.66l3.11 3.11c.42.42.66 1 .66 1.6v10.38A1.5 1.5 0 0 1 17.75 21h-10.5a1.5 1.5 0 0 1-1.5-1.5V5.25a1.5 1.5 0 0 1 1.5-1.5z"></path>
+        <path d="M14.25 3.75V7.5a1.5 1.5 0 0 0 1.5 1.5h3.75"></path>
+      </svg>
+    </span>
+    <span class="sg-filetree-name">Users and Computers</span>
+  </span>
+</li>
+
+
+</ul></details>
+</li>
+
+
+</ul></details>
+</li>
+
+
+</ul>
+  </div>
+</div>
+
+<h3 id="trust" data-heading-permalink="true"><span class="heading-content">Trust</span>
+    <a class="heading-permalink" href="#trust" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A trust is a relationship established between two domains. By default, someone in Domain A cannot access files in Domain B. A trust acts as a secure hallway connecting two separate office buildings. Its job is to allow users from one domain to be authenticated by a domain controller in another domain. For example, if a company acquires a smaller business, administrators will set up a trust so the new employees can access the parent company intranet.</p>
+<h2 id="active-directory-objects" data-heading-permalink="true" data-section-ruler="true"><span class="heading-content">Active Directory Objects</span>
+    <a class="heading-permalink" href="#active-directory-objects" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Inside those domains and OUs, Active Directory stores objects. An object is just a record representing a real thing on the network.</p>
+<h3 id="users" data-heading-permalink="true"><span class="heading-content">Users</span>
+    <a class="heading-permalink" href="#users" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A user object represents a real human being. It exists to give an employee a unique identity on the network, linking that identity to credentials and permissions. Administrators use user objects to track logins, assign phone numbers in the company directory, and grant access to files. A simple example is a user object named <code>jsmith</code> for John Smith.</p>
+<h3 id="groups" data-heading-permalink="true"><span class="heading-content">Groups</span>
+    <a class="heading-permalink" href="#groups" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A group is a collection of users, computers, or other groups. It exists to make permission management efficient. Instead of adding fifty individual users to a folder&rsquo;s permission list, administrators create a group called &ldquo;Accounting Team,&rdquo; give that group access to the folder, and simply add users to the group.</p>
+<h3 id="computers" data-heading-permalink="true"><span class="heading-content">Computers</span>
+    <a class="heading-permalink" href="#computers" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A computer object represents a physical or virtual machine joined to the domain. Computers need identities just like humans do. A computer object exists so the domain controller can verify that a specific laptop is actually company property before allowing it onto the secure network. An example is a machine named <code>WORKSTATION-01</code>.</p>
+<h3 id="service-accounts" data-heading-permalink="true"><span class="heading-content">Service Accounts</span>
+    <a class="heading-permalink" href="#service-accounts" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A service account is a special user account created for software to use, rather than a human. Applications like database servers or backup software need to log in to the network to do their jobs. Service accounts exist because tying a critical database to a human administrator&rsquo;s personal account is dangerous. If that administrator leaves the company and their account is deleted, the database breaks. A common example is an account named <code>svc_sql</code> used exclusively to run an SQL database.</p>
+<h3 id="group-managed-service-accounts-gmsa" data-heading-permalink="true"><span class="heading-content">Group-Managed Service Accounts (gMSA)</span>
+    <a class="heading-permalink" href="#group-managed-service-accounts-gmsa" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A Group-Managed Service Account is an upgraded, automated version of a service account. With a normal service account, an administrator has to create a password, configure it manually in the application, and remember to rotate it regularly. This often leads to passwords never being changed. A gMSA exists to solve this problem. The domain controller automatically generates a massive, complex password for the gMSA and rotates it regularly without any human intervention.</p>
+<div class="obsidian-callout callout-info">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle>
+          <path d="M12 16v-4"></path>
+          <path d="M12 8h.01"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">Why gMSAs Matter</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Standard service accounts are frequently targeted by attackers because their passwords rarely change. Using gMSAs significantly improves network security by removing human error from password management.</p>
+  </div>
+</div>
+<h2 id="authentication-and-authorization" data-heading-permalink="true" data-section-ruler="true"><span class="heading-content">Authentication and Authorization</span>
+    <a class="heading-permalink" href="#authentication-and-authorization" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>These two concepts sound similar but handle completely different jobs in Active Directory.</p>
+<p>Authentication is the process of proving who you are. When you show your passport at an airport, you are authenticating. You are proving your identity matches your name.</p>
+<p>Authorization is the process of determining what you are allowed to do. When you try to board a specific flight, the gate agent checks your ticket. Having a valid passport does not mean you are authorized to board any plane you want.</p>
+<p>Active Directory handles authentication by verifying your credentials, such as your password, against its directory data. Once you are authenticated, Active Directory handles authorization by providing a list of all the groups you belong to. The target resource reads that list to decide if you are allowed inside.</p>
+<h2 id="core-protocols-and-services" data-heading-permalink="true" data-section-ruler="true"><span class="heading-content">Core Protocols and Services</span>
+    <a class="heading-permalink" href="#core-protocols-and-services" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Active Directory is not just one program. It is a collection of several background services working together.</p>
+<h3 id="dns-domain-name-system" data-heading-permalink="true"><span class="heading-content">DNS (Domain Name System)</span>
+    <a class="heading-permalink" href="#dns-domain-name-system" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>DNS is the system that translates human-readable names into IP addresses. In Active Directory, DNS acts as the GPS for the network. It matters immensely because computers rely entirely on DNS to locate a domain controller. When a computer boots up, it asks DNS &ldquo;where is the server that handles logins?&rdquo; If DNS is broken, nobody can log in.</p>
+<h3 id="ldap-lightweight-directory-access-protocol" data-heading-permalink="true"><span class="heading-content">LDAP (Lightweight Directory Access Protocol)</span>
+    <a class="heading-permalink" href="#ldap-lightweight-directory-access-protocol" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>LDAP is the language used to read and write information in the Active Directory database. While DNS helps you find the server, LDAP is how you ask the server a question. If an email program wants to look up John Smith&rsquo;s phone number, it sends an LDAP query to the domain controller.</p>
+<h3 id="kerberos" data-heading-permalink="true"><span class="heading-content">Kerberos</span>
+    <a class="heading-permalink" href="#kerberos" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Kerberos is the primary authentication protocol used by Active Directory. It exists to verify identities without sending passwords over the network. It interacts with the domain controller by exchanging encrypted tickets. A user gets a ticket from the domain controller and presents that ticket to a file server to prove their identity.</p>
+<h3 id="ntlm" data-heading-permalink="true"><span class="heading-content">NTLM</span>
+    <a class="heading-permalink" href="#ntlm" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>NTLM is the older, legacy authentication protocol. It exists mostly for backwards compatibility with older software or specific network setups where Kerberos fails. It uses a challenge and response mechanism. The server sends a mathematical puzzle to the computer, and the computer uses the user&rsquo;s password to solve it and send the answer back.</p>
+<h2 id="kerberos-in-detail" data-heading-permalink="true" data-section-ruler="true"><span class="heading-content">Kerberos in Detail</span>
+    <a class="heading-permalink" href="#kerberos-in-detail" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Because Kerberos is the default way users log in, understanding its specific parts is crucial.</p>
+<h3 id="the-components-of-kerberos" data-heading-permalink="true"><span class="heading-content">The Components of Kerberos</span>
+    <a class="heading-permalink" href="#the-components-of-kerberos" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>The Key Distribution Center (KDC) is the service running on the domain controller that actually hands out tickets. Think of the KDC as the main ticket booth at an amusement park.</p>
+<p>The Ticket Granting Ticket (TGT) is the master ticket you receive after proving your password. It is like an all-day wristband. You do not use the TGT to ride a specific ride. You show the TGT to the staff to prove you paid, so they can hand you specific ride tickets.</p>
+<p>The Ticket Granting Service (TGS) is the specific part of the KDC that looks at your TGT and issues you those specific ride tickets.</p>
+<p>A Service Ticket is the specific ticket required to access a target resource. If you want to access the shared accounting drive, you need a service ticket strictly for that drive.</p>
+<p>A Service Principal Name (SPN) is the unique identifier for a specific service running on a server. It acts as the name tag on the rollercoaster. When you ask the TGS for a service ticket, you use the SPN to specify exactly what service you want to access.</p>
+<h3 id="the-step-by-step-login-process" data-heading-permalink="true"><span class="heading-content">The Step-by-Step Login Process</span>
+    <a class="heading-permalink" href="#the-step-by-step-login-process" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Here is exactly what happens behind the scenes when a user logs into a domain-joined computer and tries to access a file share.</p>
+<div class="sg-mermaid sg-mermaid-prerendered">
+  <svg id="my-svg" width="100%" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="max-width: 1480px; background-color: transparent;" viewBox="-50 -10 1480 771" role="graphics-document document" aria-roledescription="sequence"><g><rect x="1200" y="685" fill="#eaeaea" stroke="#666" width="180" height="60" name="S" rx="3" ry="3" class="actor actor-bottom"/><text x="1290" y="715" dominant-baseline="central" alignment-baseline="central" class="actor actor-box" style="text-anchor: middle; font-size: 16px; font-weight: 400;"><tspan x="1290" dy="0">Shared Network Drive</tspan></text></g><g><rect x="760.5" y="685" fill="#eaeaea" stroke="#666" width="189" height="60" name="K" rx="3" ry="3" class="actor actor-bottom"/><text x="855" y="715" dominant-baseline="central" alignment-baseline="central" class="actor actor-box" style="text-anchor: middle; font-size: 16px; font-weight: 400;"><tspan x="855" dy="0">KDC / Domain Controller</tspan></text></g><g><rect x="330" y="685" fill="#eaeaea" stroke="#666" width="188" height="60" name="C" rx="3" ry="3" class="actor actor-bottom"/><text x="424" y="715" dominant-baseline="central" alignment-baseline="central" class="actor actor-box" style="text-anchor: middle; font-size: 16px; font-weight: 400;"><tspan x="424" dy="0">Domain-Joined Computer</tspan></text></g><g/><g><line id="actor3" x1="1290" y1="60" x2="1290" y2="685" class="actor-line 200" stroke-width="0.5px" stroke="#999" name="S"/><g id="root-3"><rect x="1200" y="0" fill="#eaeaea" stroke="#666" width="180" height="60" name="S" rx="3" ry="3" class="actor actor-top"/><text x="1290" y="30" dominant-baseline="central" alignment-baseline="central" class="actor actor-box" style="text-anchor: middle; font-size: 16px; font-weight: 400;"><tspan x="1290" dy="0">Shared Network Drive</tspan></text></g></g><g><line id="actor2" x1="855" y1="60" x2="855" y2="685" class="actor-line 200" stroke-width="0.5px" stroke="#999" name="K"/><g id="root-2"><rect x="760.5" y="0" fill="#eaeaea" stroke="#666" width="189" height="60" name="K" rx="3" ry="3" class="actor actor-top"/><text x="855" y="30" dominant-baseline="central" alignment-baseline="central" class="actor actor-box" style="text-anchor: middle; font-size: 16px; font-weight: 400;"><tspan x="855" dy="0">KDC / Domain Controller</tspan></text></g></g><g><line id="actor1" x1="424" y1="60" x2="424" y2="685" class="actor-line 200" stroke-width="0.5px" stroke="#999" name="C"/><g id="root-1"><rect x="330" y="0" fill="#eaeaea" stroke="#666" width="188" height="60" name="C" rx="3" ry="3" class="actor actor-top"/><text x="424" y="30" dominant-baseline="central" alignment-baseline="central" class="actor actor-box" style="text-anchor: middle; font-size: 16px; font-weight: 400;"><tspan x="424" dy="0">Domain-Joined Computer</tspan></text></g></g><g><line id="actor0" x1="90" y1="80" x2="90" y2="685" class="actor-line 200" stroke-width="0.5px" stroke="#999" name="U"/></g><style>#my-svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:17px;fill:#d4d4d4;}@keyframes edge-animation-frame{from{stroke-dashoffset:0;}}@keyframes dash{to{stroke-dashoffset:0;}}#my-svg .edge-animation-slow{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 50s linear infinite;stroke-linecap:round;}#my-svg .edge-animation-fast{stroke-dasharray:9,5!important;stroke-dashoffset:900;animation:dash 20s linear infinite;stroke-linecap:round;}#my-svg .error-icon{fill:#171717;}#my-svg .error-text{fill:#d4d4d4;stroke:#d4d4d4;}#my-svg .edge-thickness-normal{stroke-width:1px;}#my-svg .edge-thickness-thick{stroke-width:3.5px;}#my-svg .edge-pattern-solid{stroke-dasharray:0;}#my-svg .edge-thickness-invisible{stroke-width:0;fill:none;}#my-svg .edge-pattern-dashed{stroke-dasharray:3;}#my-svg .edge-pattern-dotted{stroke-dasharray:2;}#my-svg .marker{fill:#f97316;stroke:#f97316;}#my-svg .marker.cross{stroke:#f97316;}#my-svg svg{font-family:"trebuchet ms",verdana,arial,sans-serif;font-size:17px;}#my-svg p{margin:0;}#my-svg .actor{stroke:#525252;fill:#171717;}#my-svg text.actor&gt;tspan{fill:#f5f5f5;stroke:none;}#my-svg .actor-line{stroke:#f97316;}#my-svg .innerArc{stroke-width:1.5;stroke-dasharray:none;}#my-svg .messageLine0{stroke-width:1.5;stroke-dasharray:none;stroke:#f97316;}#my-svg .messageLine1{stroke-width:1.5;stroke-dasharray:2,2;stroke:#f97316;}#my-svg #arrowhead path{fill:#f97316;stroke:#f97316;}#my-svg .sequenceNumber{fill:#111111;}#my-svg #sequencenumber{fill:#f97316;}#my-svg #crosshead path{fill:#f97316;stroke:#f97316;}#my-svg .messageText{fill:#d4d4d4;stroke:none;}#my-svg .labelBox{stroke:#525252;fill:#171717;}#my-svg .labelText,#my-svg .labelText&gt;tspan{fill:#f5f5f5;stroke:none;}#my-svg .loopText,#my-svg .loopText&gt;tspan{fill:#f5f5f5;stroke:none;}#my-svg .loopLine{stroke-width:2px;stroke-dasharray:2,2;stroke:#525252;fill:#525252;}#my-svg .note{stroke:hsl(52.6829268293, 60%, 93.9215686275%);fill:#fff5ad;}#my-svg .noteText,#my-svg .noteText&gt;tspan{fill:#333;stroke:none;}#my-svg .activation0{fill:#171717;stroke:hsl(0, 0%, 0%);}#my-svg .activation1{fill:#171717;stroke:hsl(0, 0%, 0%);}#my-svg .activation2{fill:#171717;stroke:hsl(0, 0%, 0%);}#my-svg .actorPopupMenu{position:absolute;}#my-svg .actorPopupMenuPanel{position:absolute;fill:#171717;box-shadow:0px 8px 16px 0px rgba(0,0,0,0.2);filter:drop-shadow(3px 5px 2px rgb(0 0 0 / 0.4));}#my-svg .actor-man line{stroke:#525252;fill:#171717;}#my-svg .actor-man circle,#my-svg line{stroke:#525252;fill:#171717;stroke-width:2px;}#my-svg :root{--mermaid-font-family:"trebuchet ms",verdana,arial,sans-serif;}</style><g/><defs><symbol id="computer" width="24" height="24"><path transform="scale(.5)" d="M2 2v13h20v-13h-20zm18 11h-16v-9h16v9zm-10.228 6l.466-1h3.524l.467 1h-4.457zm14.228 3h-24l2-6h2.104l-1.33 4h18.45l-1.297-4h2.073l2 6zm-5-10h-14v-7h14v7z"/></symbol></defs><defs><symbol id="database" fill-rule="evenodd" clip-rule="evenodd"><path transform="scale(.5)" d="M12.258.001l.256.004.255.005.253.008.251.01.249.012.247.015.246.016.242.019.241.02.239.023.236.024.233.027.231.028.229.031.225.032.223.034.22.036.217.038.214.04.211.041.208.043.205.045.201.046.198.048.194.05.191.051.187.053.183.054.18.056.175.057.172.059.168.06.163.061.16.063.155.064.15.066.074.033.073.033.071.034.07.034.069.035.068.035.067.035.066.035.064.036.064.036.062.036.06.036.06.037.058.037.058.037.055.038.055.038.053.038.052.038.051.039.05.039.048.039.047.039.045.04.044.04.043.04.041.04.04.041.039.041.037.041.036.041.034.041.033.042.032.042.03.042.029.042.027.042.026.043.024.043.023.043.021.043.02.043.018.044.017.043.015.044.013.044.012.044.011.045.009.044.007.045.006.045.004.045.002.045.001.045v17l-.001.045-.002.045-.004.045-.006.045-.007.045-.009.044-.011.045-.012.044-.013.044-.015.044-.017.043-.018.044-.02.043-.021.043-.023.043-.024.043-.026.043-.027.042-.029.042-.03.042-.032.042-.033.042-.034.041-.036.041-.037.041-.039.041-.04.041-.041.04-.043.04-.044.04-.045.04-.047.039-.048.039-.05.039-.051.039-.052.038-.053.038-.055.038-.055.038-.058.037-.058.037-.06.037-.06.036-.062.036-.064.036-.064.036-.066.035-.067.035-.068.035-.069.035-.07.034-.071.034-.073.033-.074.033-.15.066-.155.064-.16.063-.163.061-.168.06-.172.059-.175.057-.18.056-.183.054-.187.053-.191.051-.194.05-.198.048-.201.046-.205.045-.208.043-.211.041-.214.04-.217.038-.22.036-.223.034-.225.032-.229.031-.231.028-.233.027-.236.024-.239.023-.241.02-.242.019-.246.016-.247.015-.249.012-.251.01-.253.008-.255.005-.256.004-.258.001-.258-.001-.256-.004-.255-.005-.253-.008-.251-.01-.249-.012-.247-.015-.245-.016-.243-.019-.241-.02-.238-.023-.236-.024-.234-.027-.231-.028-.228-.031-.226-.032-.223-.034-.22-.036-.217-.038-.214-.04-.211-.041-.208-.043-.204-.045-.201-.046-.198-.048-.195-.05-.19-.051-.187-.053-.184-.054-.179-.056-.176-.057-.172-.059-.167-.06-.164-.061-.159-.063-.155-.064-.151-.066-.074-.033-.072-.033-.072-.034-.07-.034-.069-.035-.068-.035-.067-.035-.066-.035-.064-.036-.063-.036-.062-.036-.061-.036-.06-.037-.058-.037-.057-.037-.056-.038-.055-.038-.053-.038-.052-.038-.051-.039-.049-.039-.049-.039-.046-.039-.046-.04-.044-.04-.043-.04-.041-.04-.04-.041-.039-.041-.037-.041-.036-.041-.034-.041-.033-.042-.032-.042-.03-.042-.029-.042-.027-.042-.026-.043-.024-.043-.023-.043-.021-.043-.02-.043-.018-.044-.017-.043-.015-.044-.013-.044-.012-.044-.011-.045-.009-.044-.007-.045-.006-.045-.004-.045-.002-.045-.001-.045v-17l.001-.045.002-.045.004-.045.006-.045.007-.045.009-.044.011-.045.012-.044.013-.044.015-.044.017-.043.018-.044.02-.043.021-.043.023-.043.024-.043.026-.043.027-.042.029-.042.03-.042.032-.042.033-.042.034-.041.036-.041.037-.041.039-.041.04-.041.041-.04.043-.04.044-.04.046-.04.046-.039.049-.039.049-.039.051-.039.052-.038.053-.038.055-.038.056-.038.057-.037.058-.037.06-.037.061-.036.062-.036.063-.036.064-.036.066-.035.067-.035.068-.035.069-.035.07-.034.072-.034.072-.033.074-.033.151-.066.155-.064.159-.063.164-.061.167-.06.172-.059.176-.057.179-.056.184-.054.187-.053.19-.051.195-.05.198-.048.201-.046.204-.045.208-.043.211-.041.214-.04.217-.038.22-.036.223-.034.226-.032.228-.031.231-.028.234-.027.236-.024.238-.023.241-.02.243-.019.245-.016.247-.015.249-.012.251-.01.253-.008.255-.005.256-.004.258-.001.258.001zm-9.258 20.499v.01l.001.021.003.021.004.022.005.021.006.022.007.022.009.023.01.022.011.023.012.023.013.023.015.023.016.024.017.023.018.024.019.024.021.024.022.025.023.024.024.025.052.049.056.05.061.051.066.051.07.051.075.051.079.052.084.052.088.052.092.052.097.052.102.051.105.052.11.052.114.051.119.051.123.051.127.05.131.05.135.05.139.048.144.049.147.047.152.047.155.047.16.045.163.045.167.043.171.043.176.041.178.041.183.039.187.039.19.037.194.035.197.035.202.033.204.031.209.03.212.029.216.027.219.025.222.024.226.021.23.02.233.018.236.016.24.015.243.012.246.01.249.008.253.005.256.004.259.001.26-.001.257-.004.254-.005.25-.008.247-.011.244-.012.241-.014.237-.016.233-.018.231-.021.226-.021.224-.024.22-.026.216-.027.212-.028.21-.031.205-.031.202-.034.198-.034.194-.036.191-.037.187-.039.183-.04.179-.04.175-.042.172-.043.168-.044.163-.045.16-.046.155-.046.152-.047.148-.048.143-.049.139-.049.136-.05.131-.05.126-.05.123-.051.118-.052.114-.051.11-.052.106-.052.101-.052.096-.052.092-.052.088-.053.083-.051.079-.052.074-.052.07-.051.065-.051.06-.051.056-.05.051-.05.023-.024.023-.025.021-.024.02-.024.019-.024.018-.024.017-.024.015-.023.014-.024.013-.023.012-.023.01-.023.01-.022.008-.022.006-.022.006-.022.004-.022.004-.021.001-.021.001-.021v-4.127l-.077.055-.08.053-.083.054-.085.053-.087.052-.09.052-.093.051-.095.05-.097.05-.1.049-.102.049-.105.048-.106.047-.109.047-.111.046-.114.045-.115.045-.118.044-.12.043-.122.042-.124.042-.126.041-.128.04-.13.04-.132.038-.134.038-.135.037-.138.037-.139.035-.142.035-.143.034-.144.033-.147.032-.148.031-.15.03-.151.03-.153.029-.154.027-.156.027-.158.026-.159.025-.161.024-.162.023-.163.022-.165.021-.166.02-.167.019-.169.018-.169.017-.171.016-.173.015-.173.014-.175.013-.175.012-.177.011-.178.01-.179.008-.179.008-.181.006-.182.005-.182.004-.184.003-.184.002h-.37l-.184-.002-.184-.003-.182-.004-.182-.005-.181-.006-.179-.008-.179-.008-.178-.01-.176-.011-.176-.012-.175-.013-.173-.014-.172-.015-.171-.016-.17-.017-.169-.018-.167-.019-.166-.02-.165-.021-.163-.022-.162-.023-.161-.024-.159-.025-.157-.026-.156-.027-.155-.027-.153-.029-.151-.03-.15-.03-.148-.031-.146-.032-.145-.033-.143-.034-.141-.035-.14-.035-.137-.037-.136-.037-.134-.038-.132-.038-.13-.04-.128-.04-.126-.041-.124-.042-.122-.042-.12-.044-.117-.043-.116-.045-.113-.045-.112-.046-.109-.047-.106-.047-.105-.048-.102-.049-.1-.049-.097-.05-.095-.05-.093-.052-.09-.051-.087-.052-.085-.053-.083-.054-.08-.054-.077-.054v4.127zm0-5.654v.011l.001.021.003.021.004.021.005.022.006.022.007.022.009.022.01.022.011.023.012.023.013.023.015.024.016.023.017.024.018.024.019.024.021.024.022.024.023.025.024.024.052.05.056.05.061.05.066.051.07.051.075.052.079.051.084.052.088.052.092.052.097.052.102.052.105.052.11.051.114.051.119.052.123.05.127.051.131.05.135.049.139.049.144.048.147.048.152.047.155.046.16.045.163.045.167.044.171.042.176.042.178.04.183.04.187.038.19.037.194.036.197.034.202.033.204.032.209.03.212.028.216.027.219.025.222.024.226.022.23.02.233.018.236.016.24.014.243.012.246.01.249.008.253.006.256.003.259.001.26-.001.257-.003.254-.006.25-.008.247-.01.244-.012.241-.015.237-.016.233-.018.231-.02.226-.022.224-.024.22-.025.216-.027.212-.029.21-.03.205-.032.202-.033.198-.035.194-.036.191-.037.187-.039.183-.039.179-.041.175-.042.172-.043.168-.044.163-.045.16-.045.155-.047.152-.047.148-.048.143-.048.139-.05.136-.049.131-.05.126-.051.123-.051.118-.051.114-.052.11-.052.106-.052.101-.052.096-.052.092-.052.088-.052.083-.052.079-.052.074-.051.07-.052.065-.051.06-.05.056-.051.051-.049.023-.025.023-.024.021-.025.02-.024.019-.024.018-.024.017-.024.015-.023.014-.023.013-.024.012-.022.01-.023.01-.023.008-.022.006-.022.006-.022.004-.021.004-.022.001-.021.001-.021v-4.139l-.077.054-.08.054-.083.054-.085.052-.087.053-.09.051-.093.051-.095.051-.097.05-.1.049-.102.049-.105.048-.106.047-.109.047-.111.046-.114.045-.115.044-.118.044-.12.044-.122.042-.124.042-.126.041-.128.04-.13.039-.132.039-.134.038-.135.037-.138.036-.139.036-.142.035-.143.033-.144.033-.147.033-.148.031-.15.03-.151.03-.153.028-.154.028-.156.027-.158.026-.159.025-.161.024-.162.023-.163.022-.165.021-.166.02-.167.019-.169.018-.169.017-.171.016-.173.015-.173.014-.175.013-.175.012-.177.011-.178.009-.179.009-.179.007-.181.007-.182.005-.182.004-.184.003-.184.002h-.37l-.184-.002-.184-.003-.182-.004-.182-.005-.181-.007-.179-.007-.179-.009-.178-.009-.176-.011-.176-.012-.175-.013-.173-.014-.172-.015-.171-.016-.17-.017-.169-.018-.167-.019-.166-.02-.165-.021-.163-.022-.162-.023-.161-.024-.159-.025-.157-.026-.156-.027-.155-.028-.153-.028-.151-.03-.15-.03-.148-.031-.146-.033-.145-.033-.143-.033-.141-.035-.14-.036-.137-.036-.136-.037-.134-.038-.132-.039-.13-.039-.128-.04-.126-.041-.124-.042-.122-.043-.12-.043-.117-.044-.116-.044-.113-.046-.112-.046-.109-.046-.106-.047-.105-.048-.102-.049-.1-.049-.097-.05-.095-.051-.093-.051-.09-.051-.087-.053-.085-.052-.083-.054-.08-.054-.077-.054v4.139zm0-5.666v.011l.001.02.003.022.004.021.005.022.006.021.007.022.009.023.01.022.011.023.012.023.013.023.015.023.016.024.017.024.018.023.019.024.021.025.022.024.023.024.024.025.052.05.056.05.061.05.066.051.07.051.075.052.079.051.084.052.088.052.092.052.097.052.102.052.105.051.11.052.114.051.119.051.123.051.127.05.131.05.135.05.139.049.144.048.147.048.152.047.155.046.16.045.163.045.167.043.171.043.176.042.178.04.183.04.187.038.19.037.194.036.197.034.202.033.204.032.209.03.212.028.216.027.219.025.222.024.226.021.23.02.233.018.236.017.24.014.243.012.246.01.249.008.253.006.256.003.259.001.26-.001.257-.003.254-.006.25-.008.247-.01.244-.013.241-.014.237-.016.233-.018.231-.02.226-.022.224-.024.22-.025.216-.027.212-.029.21-.03.205-.032.202-.033.198-.035.194-.036.191-.037.187-.039.183-.039.179-.041.175-.042.172-.043.168-.044.163-.045.16-.045.155-.047.152-.047.148-.048.143-.049.139-.049.136-.049.131-.051.126-.05.123-.051.118-.052.114-.051.11-.052.106-.052.101-.052.096-.052.092-.052.088-.052.083-.052.079-.052.074-.052.07-.051.065-.051.06-.051.056-.05.051-.049.023-.025.023-.025.021-.024.02-.024.019-.024.018-.024.017-.024.015-.023.014-.024.013-.023.012-.023.01-.022.01-.023.008-.022.006-.022.006-.022.004-.022.004-.021.001-.021.001-.021v-4.153l-.077.054-.08.054-.083.053-.085.053-.087.053-.09.051-.093.051-.095.051-.097.05-.1.049-.102.048-.105.048-.106.048-.109.046-.111.046-.114.046-.115.044-.118.044-.12.043-.122.043-.124.042-.126.041-.128.04-.13.039-.132.039-.134.038-.135.037-.138.036-.139.036-.142.034-.143.034-.144.033-.147.032-.148.032-.15.03-.151.03-.153.028-.154.028-.156.027-.158.026-.159.024-.161.024-.162.023-.163.023-.165.021-.166.02-.167.019-.169.018-.169.017-.171.016-.173.015-.173.014-.175.013-.175.012-.177.01-.178.01-.179.009-.179.007-.181.006-.182.006-.182.004-.184.003-.184.001-.185.001-.185-.001-.184-.001-.184-.003-.182-.004-.182-.006-.181-.006-.179-.007-.179-.009-.178-.01-.176-.01-.176-.012-.175-.013-.173-.014-.172-.015-.171-.016-.17-.017-.169-.018-.167-.019-.166-.02-.165-.021-.163-.023-.162-.023-.161-.024-.159-.024-.157-.026-.156-.027-.155-.028-.153-.028-.151-.03-.15-.03-.148-.032-.146-.032-.145-.033-.143-.034-.141-.034-.14-.036-.137-.036-.136-.037-.134-.038-.132-.039-.13-.039-.128-.041-.126-.041-.124-.041-.122-.043-.12-.043-.117-.044-.116-.044-.113-.046-.112-.046-.109-.046-.106-.048-.105-.048-.102-.048-.1-.05-.097-.049-.095-.051-.093-.051-.09-.052-.087-.052-.085-.053-.083-.053-.08-.054-.077-.054v4.153zm8.74-8.179l-.257.004-.254.005-.25.008-.247.011-.244.012-.241.014-.237.016-.233.018-.231.021-.226.022-.224.023-.22.026-.216.027-.212.028-.21.031-.205.032-.202.033-.198.034-.194.036-.191.038-.187.038-.183.04-.179.041-.175.042-.172.043-.168.043-.163.045-.16.046-.155.046-.152.048-.148.048-.143.048-.139.049-.136.05-.131.05-.126.051-.123.051-.118.051-.114.052-.11.052-.106.052-.101.052-.096.052-.092.052-.088.052-.083.052-.079.052-.074.051-.07.052-.065.051-.06.05-.056.05-.051.05-.023.025-.023.024-.021.024-.02.025-.019.024-.018.024-.017.023-.015.024-.014.023-.013.023-.012.023-.01.023-.01.022-.008.022-.006.023-.006.021-.004.022-.004.021-.001.021-.001.021.001.021.001.021.004.021.004.022.006.021.006.023.008.022.01.022.01.023.012.023.013.023.014.023.015.024.017.023.018.024.019.024.02.025.021.024.023.024.023.025.051.05.056.05.06.05.065.051.07.052.074.051.079.052.083.052.088.052.092.052.096.052.101.052.106.052.11.052.114.052.118.051.123.051.126.051.131.05.136.05.139.049.143.048.148.048.152.048.155.046.16.046.163.045.168.043.172.043.175.042.179.041.183.04.187.038.191.038.194.036.198.034.202.033.205.032.21.031.212.028.216.027.22.026.224.023.226.022.231.021.233.018.237.016.241.014.244.012.247.011.25.008.254.005.257.004.26.001.26-.001.257-.004.254-.005.25-.008.247-.011.244-.012.241-.014.237-.016.233-.018.231-.021.226-.022.224-.023.22-.026.216-.027.212-.028.21-.031.205-.032.202-.033.198-.034.194-.036.191-.038.187-.038.183-.04.179-.041.175-.042.172-.043.168-.043.163-.045.16-.046.155-.046.152-.048.148-.048.143-.048.139-.049.136-.05.131-.05.126-.051.123-.051.118-.051.114-.052.11-.052.106-.052.101-.052.096-.052.092-.052.088-.052.083-.052.079-.052.074-.051.07-.052.065-.051.06-.05.056-.05.051-.05.023-.025.023-.024.021-.024.02-.025.019-.024.018-.024.017-.023.015-.024.014-.023.013-.023.012-.023.01-.023.01-.022.008-.022.006-.023.006-.021.004-.022.004-.021.001-.021.001-.021-.001-.021-.001-.021-.004-.021-.004-.022-.006-.021-.006-.023-.008-.022-.01-.022-.01-.023-.012-.023-.013-.023-.014-.023-.015-.024-.017-.023-.018-.024-.019-.024-.02-.025-.021-.024-.023-.024-.023-.025-.051-.05-.056-.05-.06-.05-.065-.051-.07-.052-.074-.051-.079-.052-.083-.052-.088-.052-.092-.052-.096-.052-.101-.052-.106-.052-.11-.052-.114-.052-.118-.051-.123-.051-.126-.051-.131-.05-.136-.05-.139-.049-.143-.048-.148-.048-.152-.048-.155-.046-.16-.046-.163-.045-.168-.043-.172-.043-.175-.042-.179-.041-.183-.04-.187-.038-.191-.038-.194-.036-.198-.034-.202-.033-.205-.032-.21-.031-.212-.028-.216-.027-.22-.026-.224-.023-.226-.022-.231-.021-.233-.018-.237-.016-.241-.014-.244-.012-.247-.011-.25-.008-.254-.005-.257-.004-.26-.001-.26.001z"/></symbol></defs><defs><symbol id="clock" width="24" height="24"><path transform="scale(.5)" d="M12 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm0-2c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.848 12.459c.202.038.202.333.001.372-1.907.361-6.045 1.111-6.547 1.111-.719 0-1.301-.582-1.301-1.301 0-.512.77-5.447 1.125-7.445.034-.192.312-.181.343.014l.985 6.238 5.394 1.011z"/></symbol></defs><defs><marker id="arrowhead" refX="7.9" refY="5" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M -1 0 L 10 5 L 0 10 z"/></marker></defs><defs><marker id="crosshead" markerWidth="15" markerHeight="8" orient="auto" refX="4" refY="4.5"><path fill="none" stroke="#000000" stroke-width="1pt" d="M 1,2 L 6,7 M 6,2 L 1,7" style="stroke-dasharray: 0, 0;"/></marker></defs><defs><marker id="filled-head" refX="15.5" refY="7" markerWidth="20" markerHeight="28" orient="auto"><path d="M 18,7 L9,13 L14,7 L9,1 Z"/></marker></defs><defs><marker id="sequencenumber" refX="15" refY="15" markerWidth="60" markerHeight="40" orient="auto"><circle cx="15" cy="15" r="6"/></marker></defs><defs><marker id="solidTopArrowHead" refX="7.9" refY="7.25" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M 0 0 L 10 8 L 0 8 z"/></marker></defs><defs><marker id="solidBottomArrowHead" refX="7.9" refY="0.75" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M 0 0 L 10 0 L 0 8 z"/></marker></defs><defs><marker id="stickTopArrowHead" refX="7.5" refY="7" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M 0 0 L 7 7" stroke="black" stroke-width="1.5" fill="none"/></marker></defs><defs><marker id="stickBottomArrowHead" refX="7.5" refY="0" markerUnits="userSpaceOnUse" markerWidth="12" markerHeight="12" orient="auto-start-reverse"><path d="M 0 7 L 7 0" stroke="black" stroke-width="1.5" fill="none"/></marker></defs><g><rect x="895" y="175" fill="#EDF2AE" stroke="#666" width="355" height="58" class="note"/><text x="1073" y="180" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-size: 16px; font-weight: 400;"><tspan x="1073">Look up the user account and stored password hash.</tspan></text><text x="1073" y="199" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-size: 16px; font-weight: 400;"><tspan x="1073">Decrypt the timestamp to verify the password.</tspan></text></g><g><rect x="50" y="304" fill="#EDF2AE" stroke="#666" width="414" height="39" class="note"/><text x="257" y="309" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-size: 16px; font-weight: 400;"><tspan x="257">User is now authenticated to the domain</tspan></text></g><g><rect x="895" y="458" fill="#EDF2AE" stroke="#666" width="302" height="58" class="note"/><text x="1046" y="463" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-size: 16px; font-weight: 400;"><tspan x="1046">Validate the TGT and issue a Service Ticket</tspan></text><text x="1046" y="482" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="noteText" dy="1em" style="font-size: 16px; font-weight: 400;"><tspan x="1046">for the requested file share.</tspan></text></g><g class="actor-man actor-top" name="U"><line id="actor-man-torso0" x1="90" y1="25" x2="90" y2="45"/><line id="actor-man-arms0" x1="72" y1="33" x2="108" y2="33"/><line x1="72" y1="60" x2="90" y2="45"/><line x1="90" y1="45" x2="106" y2="60"/><circle cx="90" cy="10" r="15" width="180" height="60"/><text x="90" y="65" dominant-baseline="central" alignment-baseline="central" class="actor actor-man" style="text-anchor: middle; font-size: 16px; font-weight: 400;"><tspan x="90" dy="0">User</tspan></text></g><text x="256" y="75" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">Log in with username and password</text><line x1="97" y1="104" x2="420" y2="104" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"/><line x1="90" y1="104" x2="90" y2="104" stroke-width="0" marker-start="url(#sequencenumber)"/><text x="90" y="108" font-family="sans-serif" font-size="12px" text-anchor="middle" class="sequenceNumber">1</text><text x="638" y="119" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">AS-REQ</text><text x="638" y="138" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">Send timestamp encrypted with the user's password</text><line x1="431" y1="165" x2="851" y2="165" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"/><line x1="424" y1="165" x2="424" y2="165" stroke-width="0" marker-start="url(#sequencenumber)"/><text x="424" y="169" font-family="sans-serif" font-size="12px" text-anchor="middle" class="sequenceNumber">2</text><text x="641" y="248" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">AS-REP</text><text x="641" y="267" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">Return Ticket Granting Ticket (TGT)</text><line x1="860" y1="294" x2="428" y2="294" class="messageLine1" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"/><line x1="855" y1="294" x2="855" y2="294" stroke-width="0" marker-start="url(#sequencenumber)"/><text x="855" y="298" font-family="sans-serif" font-size="12px" text-anchor="middle" class="sequenceNumber">3</text><text x="256" y="358" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">Open the shared network drive</text><line x1="97" y1="387" x2="420" y2="387" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"/><line x1="90" y1="387" x2="90" y2="387" stroke-width="0" marker-start="url(#sequencenumber)"/><text x="90" y="391" font-family="sans-serif" font-size="12px" text-anchor="middle" class="sequenceNumber">4</text><text x="638" y="402" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">TGS-REQ</text><text x="638" y="421" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">Present TGT and request access to the drive's SPN</text><line x1="431" y1="448" x2="851" y2="448" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"/><line x1="424" y1="448" x2="424" y2="448" stroke-width="0" marker-start="url(#sequencenumber)"/><text x="424" y="452" font-family="sans-serif" font-size="12px" text-anchor="middle" class="sequenceNumber">5</text><text x="641" y="531" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">TGS-REP</text><text x="641" y="550" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">Return Service Ticket for the shared drive</text><line x1="860" y1="577" x2="428" y2="577" class="messageLine1" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"/><line x1="855" y1="577" x2="855" y2="577" stroke-width="0" marker-start="url(#sequencenumber)"/><text x="855" y="581" font-family="sans-serif" font-size="12px" text-anchor="middle" class="sequenceNumber">6</text><text x="856" y="592" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">Present Service Ticket</text><line x1="431" y1="621" x2="1286" y2="621" class="messageLine0" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="fill: none;"/><line x1="424" y1="621" x2="424" y2="621" stroke-width="0" marker-start="url(#sequencenumber)"/><text x="424" y="625" font-family="sans-serif" font-size="12px" text-anchor="middle" class="sequenceNumber">7</text><text x="859" y="636" text-anchor="middle" dominant-baseline="middle" alignment-baseline="middle" class="messageText" dy="1em" style="font-size: 16px; font-weight: 400;">Verify ticket and grant access</text><line x1="1295" y1="665" x2="428" y2="665" class="messageLine1" stroke-width="2" stroke="none" marker-end="url(#arrowhead)" style="stroke-dasharray: 3, 3; fill: none;"/><line x1="1290" y1="665" x2="1290" y2="665" stroke-width="0" marker-start="url(#sequencenumber)"/><text x="1290" y="669" font-family="sans-serif" font-size="12px" text-anchor="middle" class="sequenceNumber">8</text><g class="actor-man actor-bottom" name="U"><line id="actor-man-torso3" x1="90" y1="710" x2="90" y2="730"/><line id="actor-man-arms3" x1="72" y1="718" x2="108" y2="718"/><line x1="72" y1="745" x2="90" y2="730"/><line x1="90" y1="730" x2="106" y2="745"/><circle cx="90" cy="695" r="15" width="180" height="65"/><text x="90" y="752.5" dominant-baseline="central" alignment-baseline="central" class="actor actor-man" style="text-anchor: middle; font-size: 16px; font-weight: 400;"><tspan x="90" dy="0">User</tspan></text></g></svg>
+</div>
+<p>If the diagram is difficult to read, here is the same process in a simplified step-by-step format:</p>
+<div class="sg-walkthrough"><div class="sg-step"><div class="sg-step-line" aria-hidden="true"></div><div class="sg-step-index">1</div>
+        <div class="sg-step-body">
+          <h4>Request TGT</h4>
+          <div class="sg-step-content">The computer takes the current time, encrypts it using the user&rsquo;s password, and sends it to the Key Distribution Center (KDC) on the domain controller.</div>
+        </div>
+      </div><div class="sg-step"><div class="sg-step-line" aria-hidden="true"></div><div class="sg-step-index">2</div>
+        <div class="sg-step-body">
+          <h4>Verify Password</h4>
+          <div class="sg-step-content">The KDC looks up the user, grabs their stored password hash, and attempts to decrypt the time. If it works, the KDC knows the user entered the correct password.</div>
+        </div>
+      </div><div class="sg-step"><div class="sg-step-line" aria-hidden="true"></div><div class="sg-step-index">3</div>
+        <div class="sg-step-body">
+          <h4>Issue TGT</h4>
+          <div class="sg-step-content">The KDC sends back a Ticket Granting Ticket (TGT). The user is now fully authenticated to the domain.</div>
+        </div>
+      </div><div class="sg-step"><div class="sg-step-line" aria-hidden="true"></div><div class="sg-step-index">4</div>
+        <div class="sg-step-body">
+          <h4>Request Service Ticket</h4>
+          <div class="sg-step-content">Later, the user clicks on a shared network drive. The computer looks at the drive, determines its unique SPN, and sends the TGT back to the Ticket Granting Service (TGS), requesting access.</div>
+        </div>
+      </div><div class="sg-step"><div class="sg-step-line" aria-hidden="true"></div><div class="sg-step-index">5</div>
+        <div class="sg-step-body">
+          <h4>Issue Service Ticket</h4>
+          <div class="sg-step-content">The TGS verifies the TGT is valid and sends back a Service Ticket specifically for that shared drive.</div>
+        </div>
+      </div><div class="sg-step"><div class="sg-step-index">6</div>
+        <div class="sg-step-body">
+          <h4>Access Resource</h4>
+          <div class="sg-step-content">The computer presents the Service Ticket directly to the shared network drive. The drive verifies the ticket and grants access.</div>
+        </div>
+      </div></div>
+<h3 id="understanding-the-differences" data-heading-permalink="true"><span class="heading-content">Understanding the Differences</span>
+    <a class="heading-permalink" href="#understanding-the-differences" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>The difference between a TGT and a Service Ticket comes down to scope. A TGT is only used to talk to the domain controller to ask for more tickets. A Service Ticket is used to talk to the actual server you want to access.</p>
+<p>The difference between Kerberos and NTLM is about who does the verification. In Kerberos, a trusted third party (the domain controller) hands out a secure ticket, and the target server trusts that ticket. In NTLM, the target server challenges the client directly, and then the server secretly asks the domain controller if the client&rsquo;s answer was correct.</p>
+<h2 id="policies-permissions-and-control" data-heading-permalink="true" data-section-ruler="true" data-section-marker="Pol, Perm, Con"><span class="heading-content">Policies, Permissions, and Control</span>
+    <a class="heading-permalink" href="#policies-permissions-and-control" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Creating users is only half the job. Controlling what those users can touch is the other half.</p>
+<h3 id="group-policy-objects-gpos" data-heading-permalink="true"><span class="heading-content">Group Policy Objects (GPOs)</span>
+    <a class="heading-permalink" href="#group-policy-objects-gpos" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>A GPO is a collection of configuration settings applied to users or computers. Administrators use GPOs to enforce standards. Instead of walking to fifty computers to set the corporate desktop wallpaper, an administrator links a GPO to a specific OU, and all fifty computers update themselves automatically. GPOs control everything from password complexity rules to deciding which users are allowed to use USB drives.</p>
+<h3 id="acls-and-dacls" data-heading-permalink="true"><span class="heading-content">ACLs and DACLs</span>
+    <a class="heading-permalink" href="#acls-and-dacls" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>An Access Control List (ACL) is a master list attached to a file, folder, or object that defines security rules. Think of it as the guest list at a private event.</p>
+<p>A Discretionary Access Control List (DACL) is the most common part of an ACL. It is the specific list of who is allowed in and who is kept out. A DACL contains individual entries saying things like &ldquo;Allow the Accounting Group to read this file&rdquo; and &ldquo;Deny John Smith from deleting this file.&rdquo; Administrators manage DACLs every day to secure sensitive data.</p>
+<h3 id="delegation" data-heading-permalink="true"><span class="heading-content">Delegation</span>
+    <a class="heading-permalink" href="#delegation" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Delegation is the act of giving a lower-level employee specific administrative powers over a limited area. It matters because you do not want to give the helpdesk staff the master keys to the entire domain just so they can reset user passwords. Administrators use delegation to allow the helpdesk to manage users only inside the &ldquo;Sales&rdquo; OU, keeping the rest of the network secure.</p>
+<h2 id="replication-and-shared-data" data-heading-permalink="true" data-section-ruler="true"><span class="heading-content">Replication and Shared Data</span>
+    <a class="heading-permalink" href="#replication-and-shared-data" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>A corporate network usually has multiple domain controllers so that if one breaks, people can still log in. Those servers need a way to share data.</p>
+<h3 id="sysvol" data-heading-permalink="true"><span class="heading-content">SYSVOL</span>
+    <a class="heading-permalink" href="#sysvol" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>SYSVOL is a hidden shared folder that exists on every single domain controller. It stores the critical files needed to log on, primarily the Group Policy Objects and login scripts. It matters because when a computer logs in, it pulls its security policies from the SYSVOL share.</p>
+<h3 id="replication" data-heading-permalink="true"><span class="heading-content">Replication</span>
+    <a class="heading-permalink" href="#replication" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h3>
+<p>Replication is the process where domain controllers synchronize their databases with each other. If an administrator resets a password on Domain Controller A, replication is the background process that copies that new password over to Domain Controller B. If replication fails, the network becomes split. A user might be able to log in successfully using one server but get locked out if their computer accidentally talks to a different server holding outdated data.</p>
+<h2 id="golden-ticket-and-silver-ticket" data-heading-permalink="true" data-section-ruler="true"><span class="heading-content">Golden Ticket and Silver Ticket</span>
+    <a class="heading-permalink" href="#golden-ticket-and-silver-ticket" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>If you spend time learning about Active Directory, you will hear these terms. They describe severe security compromises related to Kerberos.</p>
+<p>A Golden Ticket is a forged Ticket Granting Ticket (TGT).</p>
+<p>A Silver Ticket is a forged Service Ticket.</p>
+<p>The names matter because they perfectly describe the scope of the problem. If an attacker creates a Golden Ticket, they hold a forged master wristband. They can request a service ticket for absolutely any resource in the entire domain. A Silver Ticket is a forged ticket for one specific ride. It grants the attacker access to one specific service on one specific server.</p>
+<p>Beginners should recognize these terms because they illustrate why Kerberos security is critical. If the keys used to sign these tickets are stolen, the mathematical trust holding the domain together collapses.</p>
+<h2 id="how-everything-connects-together" data-heading-permalink="true" data-section-ruler="true"><span class="heading-content">How Everything Connects Together</span>
+    <a class="heading-permalink" href="#how-everything-connects-together" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>To solidify this map, let us walk through one complete example from start to finish.</p>
+<p>Alice works in Accounting and wants to open a budget spreadsheet.</p>
+<p>Her computer, which is joined to the <code>corp.example.com</code> <strong>domain</strong>, boots up. The computer queries <strong>DNS</strong> to locate a <strong>domain controller</strong>. Alice types her password. The computer talks to the <strong>KDC</strong> on the domain controller, proving her identity (<strong>authentication</strong>). The domain controller hands her a <strong>TGT</strong>.</p>
+<p>While logging in, her computer downloads a <strong>GPO</strong> from the <strong>SYSVOL</strong> share. This GPO automatically maps a network drive letter (the Z: drive) to the accounting server.</p>
+<p>Alice clicks the Z: drive to open the budget spreadsheet. Her computer knows it needs access, so it sends her TGT to the domain controller and asks for a <strong>Service Ticket</strong> for the file server. The domain controller verifies her TGT and sends the Service Ticket back.</p>
+<p>Alice&rsquo;s computer hands the Service Ticket to the accounting file server. The file server accepts the ticket, knowing exactly who Alice is. Next, the file server needs to know if she is allowed to view the document (<strong>authorization</strong>). It looks at the document&rsquo;s <strong>DACL</strong>, which states that anyone in the &ldquo;Accounting&rdquo; <strong>group</strong> is allowed to read it. The file server checks Alice&rsquo;s ticket, sees she is a member of that group, and opens the file.</p>
+<h2 id="common-beginner-confusions" data-heading-permalink="true" data-section-ruler="true"><span class="heading-content">Common Beginner Confusions</span>
+    <a class="heading-permalink" href="#common-beginner-confusions" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Here are the most common concepts that get tangled up, and the direct differences between them:</p>
+<p><strong>Domain vs Forest:</strong> A domain is a single organization boundary. A forest is the entire collection of domains.</p>
+<p><strong>Forest vs Tree:</strong> The forest is the whole ecosystem. A tree is just a grouping of domains within that forest that happen to share a naming convention.</p>
+<p><strong>Authentication vs Authorization:</strong> Authentication verifies who you are. Authorization verifies what you are allowed to touch.</p>
+<p><strong>Kerberos vs NTLM:</strong> Kerberos uses tickets and trusts the domain controller to issue them. NTLM relies on a direct challenge and response between the client and the server.</p>
+<p><strong>TGT vs TGS:</strong> The TGT is the digital ticket data stored in your computer&rsquo;s memory. The TGS is the software service running on the server that reads your TGT.</p>
+<p><strong>TGT vs Service Ticket:</strong> A TGT is used to request other tickets. A Service Ticket is used to access an actual target resource.</p>
+<p><strong>ACL vs DACL:</strong> An ACL is the entire container of security rules for an object. The DACL is the specific sub-list inside the ACL that dictates who is allowed or denied access.</p>
+<p><strong>User Account vs Service Account:</strong> A user account is built for a human being. A service account is built for a background software application.</p>
+<p><strong>Service Account vs gMSA:</strong> A standard service account has a static password typed in by a human. A gMSA has its password managed and rotated automatically by the domain controller.</p>
+<p><strong>Domain Controller vs Domain:</strong> A domain controller is the physical server or virtual machine running the domain services. The domain is the logical boundary of the network that the server manages.</p>
+<p>If you understand how these pieces fit together, you already have a strong foundational grasp of how Active Directory works. You can always refer back to this map when a specific protocol or object type slips your mind.</p>
+
+        </div>
+      </div>
+    </div>
+    <section class="post-actions">
+      <div class="share-block">
+        <span>Spread the word</span>
+        <div class="share-links">
+          <button type="button" class="share-copy-link" data-copy-link data-copy-default="Copy Link" data-copy-success="Copied">
+            <span class="share-copy-icons" aria-hidden="true">
+              <svg class="icon-link" viewBox="0 0 24 24">
+                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+              </svg>
+              <svg class="icon-check" viewBox="0 0 24 24">
+                <path d="M20 6 9 17l-5-5"></path>
+              </svg>
+            </span>
+            <span data-copy-label>Copy Link</span>
+          </button>
+          <a href="https://x.com/intent/tweet?url=https%3a%2f%2fjinpwn.dev%2fposts%2fblogs%2factive-directory-basics%2f&text=Active%20Directory%20Basics" target="_blank" rel="noopener noreferrer" aria-label="Share on X"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="currentColor" aria-hidden="true">
+    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"></path>
+  </svg></a>
+          <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fjinpwn.dev%2fposts%2fblogs%2factive-directory-basics%2f" target="_blank" rel="noopener noreferrer"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+    <rect width="4" height="12" x="2" y="9"></rect>
+    <circle cx="4" cy="4" r="2"></circle>
+  </svg> <span>LinkedIn</span></a>
+        </div>
+      </div>
+      <a class="post-report-link" href="https://github.com/jinpwn/blog/issues/new?title=Issue%20with%20Active&#43;Directory&#43;Basics" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3.26-.36 6.68-1.6 6.68-7.3a5.64 5.64 0 0 0-1.5-3.9 5.07 5.07 0 0 0-.09-3.77s-1.18-.36-3.86 1.5a13.38 13.38 0 0 0-7 0c-2.68-1.86-3.86-1.5-3.86-1.5a5.07 5.07 0 0 0-.09 3.77 5.64 5.64 0 0 0-1.5 3.9c0 5.69 3.42 6.94 6.68 7.3a4.8 4.8 0 0 0-1 3.2v4"></path>
+    <path d="M9 18c-4.51 2-5-2-7-2"></path>
+  </svg>
+        <span>Spot a mistake? Report it on GitHub.</span>
+      </a>
+    </section>
+    <section class="author-footer">
+      <div>
+        <h3>Jin</h3>
+        <p>Security research, reverse engineering, and technical writeups.</p>
+        <div class="author-socials">
+          <a href="https://github.com/jinpwn/" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3.26-.36 6.68-1.6 6.68-7.3a5.64 5.64 0 0 0-1.5-3.9 5.07 5.07 0 0 0-.09-3.77s-1.18-.36-3.86 1.5a13.38 13.38 0 0 0-7 0c-2.68-1.86-3.86-1.5-3.86-1.5a5.07 5.07 0 0 0-.09 3.77 5.64 5.64 0 0 0-1.5 3.9c0 5.69 3.42 6.94 6.68 7.3a4.8 4.8 0 0 0-1 3.2v4"></path>
+    <path d="M9 18c-4.51 2-5-2-7-2"></path>
+  </svg>
+    </a><a href="https://ca.linkedin.com/in/gderu" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+    <rect width="4" height="12" x="2" y="9"></rect>
+    <circle cx="4" cy="4" r="2"></circle>
+  </svg>
+    </a><a href="https://app.hackthebox.com/profile/1244905" target="_blank" rel="noopener noreferrer" aria-label="Hack The Box" title="Hack The Box">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
+    <path d="m3.3 7 8.7 5 8.7-5"></path>
+    <path d="M12 22V12"></path>
+  </svg>
+    </a><a href="https://tryhackme.com/p/0xblivion" target="_blank" rel="noopener noreferrer" aria-label="TryHackMe" title="TryHackMe">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="currentColor" aria-hidden="true">
+    <path d="M10.705 0C7.54 0 4.902 2.285 4.349 5.291a4.525 4.525 0 0 0-4.107 4.5a4.525 4.525 0 0 0 4.52 4.52h6.761a.625.625 0 1 0 0-1.25H4.761a3.273 3.273 0 0 1-3.27-3.27A3.273 3.273 0 0 1 6.59 7.08a.625.625 0 0 0 .7-1.035a4.488 4.488 0 0 0-1.68-.69a5.223 5.223 0 0 1 5.096-4.104a5.221 5.221 0 0 1 5.174 4.57a4.489 4.489 0 0 0-.488.305a.625.625 0 1 0 .731 1.013a3.245 3.245 0 0 1 1.912-.616a3.278 3.278 0 0 1 3.203 2.61a.625.625 0 0 0 1.225-.251a4.533 4.533 0 0 0-4.428-3.61a4.54 4.54 0 0 0-.958.105C16.556 2.328 13.9 0 10.705 0zm5.192 10.64a.925.925 0 0 0-.462.108a.913.913 0 0 0-.313.29a1.27 1.27 0 0 0-.175.427a2.39 2.39 0 0 0-.054.514c0 .181.018.353.054.517c.036.164.095.307.175.43a.899.899 0 0 0 .313.297c.127.073.281.11.462.11c.18 0 .334-.037.46-.11a.897.897 0 0 0 .309-.296c.08-.124.137-.267.173-.431c.036-.164.054-.336.054-.517c0-.18-.018-.352-.054-.514a1.271 1.271 0 0 0-.173-.426a.901.901 0 0 0-.309-.291a.917.917 0 0 0-.46-.108zm6.486 0a.925.925 0 0 0-.462.108a.913.913 0 0 0-.313.29a1.27 1.27 0 0 0-.175.427a2.39 2.39 0 0 0-.053.514c0 .181.017.353.053.517c.036.164.095.307.175.43a.899.899 0 0 0 .313.297c.127.073.281.11.462.11c.18 0 .334-.037.46-.11a.897.897 0 0 0 .31-.296c.078-.124.136-.267.172-.431c.036-.164.054-.336.054-.517c0-.18-.018-.352-.054-.514a1.271 1.271 0 0 0-.173-.426a.901.901 0 0 0-.308-.291a.916.916 0 0 0-.461-.108zm-8.537.068l-.84.618l.313.43l.476-.368v1.877h.603v-2.557zm6.486 0l-.841.618l.314.43l.477-.368v1.877h.603v-2.557zm-4.435.445c.08 0 .143.028.193.084c.05.057.087.127.114.21c.026.083.044.173.054.269a2.541 2.541 0 0 1 0 .533c-.01.097-.028.187-.054.27a.584.584 0 0 1-.114.21a.243.243 0 0 1-.193.085a.248.248 0 0 1-.195-.086a.584.584 0 0 1-.118-.209a1.245 1.245 0 0 1-.056-.27a2.645 2.645 0 0 1 0-.533c.01-.096.029-.186.056-.27a.583.583 0 0 1 .118-.209a.25.25 0 0 1 .195-.084zm6.486 0c.08 0 .144.028.193.084c.05.057.087.127.114.21c.027.083.044.173.054.269a2.541 2.541 0 0 1 0 .533c-.01.097-.027.187-.054.27a.584.584 0 0 1-.114.21a.243.243 0 0 1-.193.085a.249.249 0 0 1-.195-.086a.581.581 0 0 1-.117-.209a1.245 1.245 0 0 1-.056-.27a2.642 2.642 0 0 1 0-.533c.01-.096.028-.186.056-.27a.58.58 0 0 1 .117-.209a.25.25 0 0 1 .195-.084zm-2.191 3.51a.93.93 0 0 0-.463.109a.908.908 0 0 0-.312.291c-.08.122-.139.263-.175.426a2.383 2.383 0 0 0-.054.514c0 .18.018.353.054.516c.036.164.094.308.175.432a.91.91 0 0 0 .312.296a.92.92 0 0 0 .463.11c.18 0 .333-.037.46-.11a.892.892 0 0 0 .308-.296a1.32 1.32 0 0 0 .174-.432c.036-.163.054-.335.054-.516c0-.18-.018-.352-.054-.514a1.274 1.274 0 0 0-.174-.426a.89.89 0 0 0-.309-.291a.918.918 0 0 0-.46-.108zm-6.402.07l-.841.617l.314.43l.476-.369v1.878h.604v-2.557zm2.125 0l-.841.617l.314.43l.477-.369v1.878h.603v-2.557zm2.116 0l-.84.617l.313.43l.477-.369v1.878h.603v-2.557zm2.16.443c.08 0 .144.028.194.085a.605.605 0 0 1 .114.21c.026.083.044.172.053.269a2.639 2.639 0 0 1 0 .532a1.28 1.28 0 0 1-.053.27a.585.585 0 0 1-.114.21a.244.244 0 0 1-.193.085a.25.25 0 0 1-.196-.085a.589.589 0 0 1-.117-.21a1.245 1.245 0 0 1-.056-.27a2.597 2.597 0 0 1 0-.532c.01-.097.028-.186.056-.27a.589.589 0 0 1 .117-.209a.249.249 0 0 1 .196-.085zm-6.729 3.073a.676.676 0 0 0-.335.078a.661.661 0 0 0-.227.211a.91.91 0 0 0-.127.31c-.027.118-.04.242-.04.373s.013.256.04.375a.93.93 0 0 0 .127.313a.65.65 0 0 0 .227.215c.092.053.204.08.335.08a.655.655 0 0 0 .334-.08a.65.65 0 0 0 .225-.215c.057-.09.1-.194.125-.313a1.75 1.75 0 0 0 .04-.375c0-.13-.014-.255-.04-.373a.931.931 0 0 0-.125-.31a.658.658 0 0 0-.225-.21a.667.667 0 0 0-.334-.08zm3.086 0a.675.675 0 0 0-.336.078a.661.661 0 0 0-.226.211a.907.907 0 0 0-.127.31a1.69 1.69 0 0 0-.04.373c0 .131.013.256.04.375a.928.928 0 0 0 .127.313c.058.09.134.162.226.215c.093.053.205.08.336.08a.655.655 0 0 0 .334-.08a.65.65 0 0 0 .224-.215c.058-.09.1-.194.126-.313a1.752 1.752 0 0 0 0-.748a.94.94 0 0 0-.126-.31a.657.657 0 0 0-.224-.21a.667.667 0 0 0-.334-.08zm5.108 0a.675.675 0 0 0-.336.078a.661.661 0 0 0-.226.211a.91.91 0 0 0-.127.31c-.027.118-.04.242-.04.373s.013.256.04.375a.931.931 0 0 0 .127.313c.058.09.134.162.226.215c.093.053.205.08.336.08c.13 0 .243-.027.334-.08a.65.65 0 0 0 .224-.215c.058-.09.1-.194.126-.313a1.75 1.75 0 0 0 .04-.375c0-.13-.014-.255-.04-.373a.943.943 0 0 0-.126-.31a.657.657 0 0 0-.224-.21a.668.668 0 0 0-.334-.08zm-6.658.05l-.61.448l.227.311l.346-.266v1.362h.438v-1.856zm3.068 0l-.61.448l.227.311l.346-.266v1.362h.438v-1.856zm5.108 0l-.611.448l.228.311l.346-.266v1.362h.438v-1.856zm-9.712.322c.058 0 .105.02.14.062a.421.421 0 0 1 .083.151a.96.96 0 0 1 .04.196a1.932 1.932 0 0 1 0 .386a.954.954 0 0 1-.04.197a.421.421 0 0 1-.083.152a.176.176 0 0 1-.14.061a.18.18 0 0 1-.141-.06a.427.427 0 0 1-.085-.153a.887.887 0 0 1-.041-.197a1.96 1.96 0 0 1 0-.386a.893.893 0 0 1 .04-.196a.42.42 0 0 1 .086-.151a.181.181 0 0 1 .141-.062zm3.086 0c.058 0 .104.02.14.062a.421.421 0 0 1 .082.151a.94.94 0 0 1 .04.196a1.906 1.906 0 0 1 0 .386a.93.93 0 0 1-.04.197a.421.421 0 0 1-.082.152a.176.176 0 0 1-.14.061a.18.18 0 0 1-.141-.06a.42.42 0 0 1-.086-.153a.846.846 0 0 1-.04-.197a1.965 1.965 0 0 1-.011-.195c0-.057.004-.121.01-.191a.849.849 0 0 1 .041-.196a.42.42 0 0 1 .086-.151a.182.182 0 0 1 .141-.062zm5.108 0c.058 0 .104.02.14.062a.421.421 0 0 1 .082.151a.92.92 0 0 1 .04.196a1.963 1.963 0 0 1 0 .386a.943.943 0 0 1-.04.197a.421.421 0 0 1-.082.152a.177.177 0 0 1-.14.061a.18.18 0 0 1-.142-.06a.437.437 0 0 1-.085-.153a.95.95 0 0 1-.04-.197a1.965 1.965 0 0 1-.011-.195c0-.057.004-.121.01-.191a.959.959 0 0 1 .04-.196a.47.47 0 0 1 .086-.151a.181.181 0 0 1 .142-.062zm-1.684 1.814a.675.675 0 0 0-.336.079a.66.66 0 0 0-.227.21a.91.91 0 0 0-.127.31a1.731 1.731 0 0 0 0 .748a.939.939 0 0 0 .127.314c.059.09.134.162.227.215c.093.053.205.08.336.08a.66.66 0 0 0 .334-.08a.648.648 0 0 0 .224-.215c.058-.09.1-.195.126-.314a1.737 1.737 0 0 0-.001-.747a.928.928 0 0 0-.125-.31a.65.65 0 0 0-.224-.211a.668.668 0 0 0-.334-.079zm3.063 0a.676.676 0 0 0-.336.079a.664.664 0 0 0-.227.21a.906.906 0 0 0-.127.31a1.74 1.74 0 0 0 0 .748a.936.936 0 0 0 .127.314a.66.66 0 0 0 .227.215c.092.053.204.08.336.08a.654.654 0 0 0 .334-.08a.648.648 0 0 0 .223-.215c.058-.09.1-.195.126-.314a1.74 1.74 0 0 0 0-.747a.928.928 0 0 0-.126-.31a.65.65 0 0 0-.223-.211a.666.666 0 0 0-.334-.079zm-1.545.05l-.611.448l.228.312l.346-.267v1.363h.438v-1.856zm-1.518.323c.057 0 .104.02.14.061a.42.42 0 0 1 .082.152a.91.91 0 0 1 .04.195a1.966 1.966 0 0 1 0 .387a.951.951 0 0 1-.04.197a.421.421 0 0 1-.082.152a.177.177 0 0 1-.14.06a.18.18 0 0 1-.142-.06a.428.428 0 0 1-.085-.152a.914.914 0 0 1-.04-.197a1.96 1.96 0 0 1-.011-.195c0-.058.003-.122.01-.192a.923.923 0 0 1 .041-.195c.02-.06.048-.11.085-.152a.181.181 0 0 1 .142-.061zm3.063 0c.057 0 .104.02.14.061a.42.42 0 0 1 .082.152a.94.94 0 0 1 .04.195a1.91 1.91 0 0 1 0 .387a.93.93 0 0 1-.04.197a.422.422 0 0 1-.083.152a.175.175 0 0 1-.14.06a.18.18 0 0 1-.141-.06a.423.423 0 0 1-.085-.152a.907.907 0 0 1-.04-.197a1.95 1.95 0 0 1 0-.387a.915.915 0 0 1 .04-.195c.02-.06.048-.11.085-.152a.182.182 0 0 1 .142-.061zm-9.713.185a.465.465 0 0 0-.232.055a.456.456 0 0 0-.157.146a.627.627 0 0 0-.089.215a1.168 1.168 0 0 0-.027.259c0 .09.009.177.027.26a.648.648 0 0 0 .089.216c.04.063.093.112.157.149a.459.459 0 0 0 .232.056c.09 0 .168-.02.231-.056a.45.45 0 0 0 .156-.149a.67.67 0 0 0 .087-.217a1.218 1.218 0 0 0 0-.518a.647.647 0 0 0-.087-.215a.448.448 0 0 0-.156-.146a.458.458 0 0 0-.23-.055zm1.052.035l-.423.31l.158.217l.24-.185v.944h.303v-1.286zm-1.052.224c.04 0 .073.014.097.042a.284.284 0 0 1 .057.105a.69.69 0 0 1 .028.136c.004.049.007.092.007.133c0 .04-.003.086-.007.135a.684.684 0 0 1-.028.136a.285.285 0 0 1-.057.105a.123.123 0 0 1-.097.043a.125.125 0 0 1-.098-.043a.298.298 0 0 1-.059-.105a.612.612 0 0 1-.028-.136a1.39 1.39 0 0 1 0-.268a.62.62 0 0 1 .028-.136a.297.297 0 0 1 .06-.105a.125.125 0 0 1 .097-.042zm3.775 1.394a.463.463 0 0 0-.232.054a.452.452 0 0 0-.157.146a.621.621 0 0 0-.088.214a1.19 1.19 0 0 0 0 .519a.641.641 0 0 0 .088.217a.46.46 0 0 0 .157.15a.458.458 0 0 0 .232.054a.454.454 0 0 0 .232-.055a.45.45 0 0 0 .155-.149a.664.664 0 0 0 .087-.217a1.189 1.189 0 0 0 0-.519a.642.642 0 0 0-.087-.214a.446.446 0 0 0-.155-.146a.459.459 0 0 0-.232-.054zm1.052.034l-.423.31l.158.216l.24-.185v.945h.303V22.68zm-1.052.223c.04 0 .073.014.098.043a.3.3 0 0 1 .057.105a.643.643 0 0 1 .027.135a1.31 1.31 0 0 1 0 .268a.654.654 0 0 1-.027.137a.307.307 0 0 1-.057.105a.124.124 0 0 1-.098.042a.125.125 0 0 1-.098-.042a.293.293 0 0 1-.059-.105a.618.618 0 0 1-.028-.137a1.364 1.364 0 0 1 0-.268a.612.612 0 0 1 .028-.135a.287.287 0 0 1 .06-.105a.123.123 0 0 1 .097-.043z"></path>
+  </svg>
+    </a><a href="https://portfolio.jinpwn.dev/" target="_blank" rel="noopener noreferrer" aria-label="Portfolio" title="Portfolio">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
+    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
+    <path d="M2 12h20"></path>
+  </svg>
+    </a>
+        </div>
+      </div>
+      <a class="coffee-link" href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" rel="noopener noreferrer">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <line x1="6" y1="2" x2="6" y2="4"></line>
+    <line x1="10" y1="2" x2="10" y2="4"></line>
+    <line x1="14" y1="2" x2="14" y2="4"></line>
+    <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8Z"></path>
+    <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
+  </svg>
+        <span>Buy me a coffee</span>
+      </a>
+    </section>
+  </article>
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>

