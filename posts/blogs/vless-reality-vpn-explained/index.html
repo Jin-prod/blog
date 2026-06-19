@@ -1,263 +1,47 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="is-post">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Getting Past DPI Without Looking Like a VPN | JinPwn</title><meta name="description" content="Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &amp;ldquo;fine&amp;rdquo; and &amp;ldquo;not fine.&amp;rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/">
-<meta property="og:title" content="Getting Past DPI Without Looking Like a VPN | JinPwn">
-<meta property="og:description" content="Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &amp;ldquo;fine&amp;rdquo; and &amp;ldquo;not fine.&amp;rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network.">
-<meta property="og:type" content="article">
-<meta property="og:url" content="https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Getting Past DPI Without Looking Like a VPN | JinPwn">
-<meta name="twitter:description" content="Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &amp;ldquo;fine&amp;rdquo; and &amp;ldquo;not fine.&amp;rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-  <meta property="article:published_time" content="2026-05-24T00:00:00Z">
-  <meta property="article:modified_time" content="2026-05-24T00:00:00Z">
-  <meta property="article:section" content="posts">
-  <meta property="article:tag" content="vpn"><meta property="article:tag" content="reality"><meta property="article:tag" content="xray"><meta property="article:tag" content="censorship"><meta property="article:tag" content="networking">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","articleSection":"posts","author":{"@type":"Person","name":"Jin"},"dateModified":"2026-05-24T00:00:00Z","datePublished":"2026-05-24T00:00:00Z","description":"Picture a machine sitting between you and the internet, reading every connection you make and sorting them into \u0026ldquo;fine\u0026rdquo; and \u0026ldquo;not fine.\u0026rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network.","headline":"Getting Past DPI Without Looking Like a VPN","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","keywords":"vpn, reality, xray, censorship, networking","mainEntityOfPage":{"@id":"https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/","@type":"WebPage"},"name":"Getting Past DPI Without Looking Like a VPN","publisher":{"@type":"Organization","name":"JinPwn","url":"https://jinpwn.dev/"},"url":"https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="is-post">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-    <div class="read-progress-track" aria-hidden="true">
-      <div class="read-progress-bar" data-progress-bar></div>
-    </div>
-  
-  <main class="site-main">
-    
-  
-  
-  
-  
-  
-  
-  
-  
-  
-    
-    
-  
-  <article class="container post-shell">
-    <a href="/" class="back-link"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg> Back to posts</a>
-    <header class="post-header">
-      <div class="post-meta">
-        <span class="meta-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M20 21a8 8 0 0 0-16 0"></path>
-    <circle cx="12" cy="7" r="4"></circle>
-  </svg> Jin</span>
-        <span class="meta-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M8 2v4"></path>
-    <path d="M16 2v4"></path>
-    <rect x="3" y="4" width="18" height="18" rx="2"></rect>
-    <path d="M3 10h18"></path>
-  </svg> 2026-05-24</span>
-        <span class="meta-item"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <circle cx="12" cy="12" r="10"></circle>
-    <polyline points="12 6 12 12 16 14"></polyline>
-  </svg> 6 min read</span>
-        <div class="post-tags">
-          
-            <span>vpn</span>
-          
-            <span>reality</span>
-          
-            <span>xray</span>
-          
-            <span>censorship</span>
-          
-            <span>networking</span>
-          
-        </div>
-      </div>
-      <h1>Getting Past DPI Without Looking Like a VPN</h1>
-    </header>
-    <div class="post-layout">
-      <aside class="section-ruler" data-section-ruler></aside>
-      <div class="post-body">
-        <nav class="mobile-toc" data-mobile-toc aria-label="Table of contents" hidden>
-          <button type="button" class="mobile-toc-toggle" data-mobile-toc-toggle aria-expanded="false">
-            <span class="mobile-toc-kicker">On this page</span>
-            <span class="mobile-toc-current" data-mobile-toc-current>Jump to section</span>
-            <span class="mobile-toc-caret" aria-hidden="true"></span>
-          </button>
-          <div class="mobile-toc-panel" data-mobile-toc-panel hidden>
-            <ul class="mobile-toc-list" data-mobile-toc-list></ul>
-          </div>
-        </nav>
-        <div class="markdown-content" data-post-content>
-          <p>Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &ldquo;fine&rdquo; and &ldquo;not fine.&rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network.</p>
-<p>This post explains how VLESS, Xray, and Reality do exactly that, in simple words. No deep networking background needed. If you know what a website and an internet connection are, you can follow along.</p>
-<h2 id="the-problem-with-normal-vpns" data-heading-permalink="true"><span class="heading-content">The problem with normal VPNs</span>
-    <a class="heading-permalink" href="#the-problem-with-normal-vpns" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>A VPN sends your internet traffic through another computer first. Your real destination is hidden, and the network you are on only sees the connection to that one computer.</p>
-<p>The trouble is that old VPN protocols are easy to recognize. Tools like OpenVPN and WireGuard have a clear &ldquo;shape&rdquo; on the network. A system called Deep Packet Inspection (DPI) looks at traffic and can say &ldquo;that is a VPN&rdquo; very quickly. Once it knows, it blocks the connection.</p>
-<p>So hiding the destination is not enough. You also need to hide the fact that you are using a VPN at all.</p>
-<h2 id="the-key-idea-behind-reality" data-heading-permalink="true"><span class="heading-content">The key idea behind Reality</span>
-    <a class="heading-permalink" href="#the-key-idea-behind-reality" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Every secure website connection (HTTPS) starts with a TLS handshake. During this handshake, your device sends a small piece of plain, readable text called the SNI. SNI just means &ldquo;the name of the website I want to visit.&rdquo; A censor reads the SNI to decide if a connection is allowed.</p>
-<p>Reality uses this to its advantage. Instead of putting your VPN server&rsquo;s name in the SNI, it puts the name of a big, trusted website, for example <code>www.microsoft.com</code>. The connection then borrows the real certificate of that trusted website. So the censor sees a connection that looks exactly like a normal visit to Microsoft.</p>
-<p>Blocking it would mean blocking Microsoft itself, and no censor wants to do that.</p>
-<p>Here are the pieces and what each one does:</p>
-<ul>
-<li><strong>VLESS</strong> is the protocol that carries your data. It is very light and adds almost no extra &ldquo;fingerprint&rdquo; of its own.</li>
-<li><strong>Xray-core</strong> is the software you run. It is the engine that speaks VLESS and runs Reality.</li>
-<li><strong>Reality</strong> is the camouflage layer. It is the part that borrows a real website&rsquo;s identity.</li>
-<li><strong>SNI / domain</strong> is the trusted website name you choose to hide behind.</li>
-</ul>
-<h2 id="what-it-looks-like-as-a-vpn" data-heading-permalink="true"><span class="heading-content">What it looks like as a VPN</span>
-    <a class="heading-permalink" href="#what-it-looks-like-as-a-vpn" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>You rent a small server in another country. You install Xray with Reality on it. You point your laptop or phone at it. After that, your browsing travels through an encrypted tunnel to that server, and the server connects to the real internet for you.</p>
-<div class="sg-mermaid">
-  <pre class="mermaid">flowchart LR
+<!doctype html><html lang=en-US dir=ltr class=is-post><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Getting Past DPI Without Looking Like a VPN | JinPwn</title><meta name=description content="Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &amp;ldquo;fine&amp;rdquo; and &amp;ldquo;not fine.&amp;rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/><meta property="og:title" content="Getting Past DPI Without Looking Like a VPN | JinPwn"><meta property="og:description" content="Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &amp;ldquo;fine&amp;rdquo; and &amp;ldquo;not fine.&amp;rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network."><meta property="og:type" content="article"><meta property="og:url" content="https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Getting Past DPI Without Looking Like a VPN | JinPwn"><meta name=twitter:description content="Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &amp;ldquo;fine&amp;rdquo; and &amp;ldquo;not fine.&amp;rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><meta property="article:published_time" content="2026-05-24T00:00:00Z"><meta property="article:modified_time" content="2026-05-24T00:00:00Z"><meta property="article:section" content="posts"><meta property="article:tag" content="vpn"><meta property="article:tag" content="reality"><meta property="article:tag" content="xray"><meta property="article:tag" content="censorship"><meta property="article:tag" content="networking"><script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","articleSection":"posts","author":{"@type":"Person","name":"Jin"},"dateModified":"2026-05-24T00:00:00Z","datePublished":"2026-05-24T00:00:00Z","description":"Picture a machine sitting between you and the internet, reading every connection you make and sorting them into \u0026ldquo;fine\u0026rdquo; and \u0026ldquo;not fine.\u0026rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network.","headline":"Getting Past DPI Without Looking Like a VPN","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","keywords":"vpn, reality, xray, censorship, networking","mainEntityOfPage":{"@id":"https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/","@type":"WebPage"},"name":"Getting Past DPI Without Looking Like a VPN","publisher":{"@type":"Organization","name":"JinPwn","url":"https://jinpwn.dev/"},"url":"https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body class=is-post><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><div class=read-progress-track aria-hidden=true><div class=read-progress-bar data-progress-bar></div></div><main class=site-main><article class="container post-shell"><a href=/ class=back-link><svg width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg> Back to posts</a><header class=post-header><div class=post-meta><span class=meta-item><svg width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21A8 8 0 004 21"/><circle cx="12" cy="7" r="4"/></svg> Jin</span>
+<span class=meta-item><svg width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 2v4"/><path d="M16 2v4"/><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/></svg> 2026-05-24</span>
+<span class=meta-item><svg width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> 6 min read</span><div class=post-tags><span>vpn</span>
+<span>reality</span>
+<span>xray</span>
+<span>censorship</span>
+<span>networking</span></div></div><h1>Getting Past DPI Without Looking Like a VPN</h1></header><div class=post-layout><aside class=section-ruler data-section-ruler></aside><div class=post-body><nav class=mobile-toc data-mobile-toc aria-label="Table of contents" hidden><button type=button class=mobile-toc-toggle data-mobile-toc-toggle aria-expanded=false>
+<span class=mobile-toc-kicker>On this page</span>
+<span class=mobile-toc-current data-mobile-toc-current>Jump to section</span>
+<span class=mobile-toc-caret aria-hidden=true></span></button><div class=mobile-toc-panel data-mobile-toc-panel hidden><ul class=mobile-toc-list data-mobile-toc-list></ul></div></nav><div class=markdown-content data-post-content><p>Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &ldquo;fine&rdquo; and &ldquo;not fine.&rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network.</p><p>This post explains how VLESS, Xray, and Reality do exactly that, in simple words. No deep networking background needed. If you know what a website and an internet connection are, you can follow along.</p><h2 id=the-problem-with-normal-vpns data-heading-permalink=true><span class=heading-content>The problem with normal VPNs</span>
+<a class=heading-permalink href=#the-problem-with-normal-vpns aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>A VPN sends your internet traffic through another computer first. Your real destination is hidden, and the network you are on only sees the connection to that one computer.</p><p>The trouble is that old VPN protocols are easy to recognize. Tools like OpenVPN and WireGuard have a clear &ldquo;shape&rdquo; on the network. A system called Deep Packet Inspection (DPI) looks at traffic and can say &ldquo;that is a VPN&rdquo; very quickly. Once it knows, it blocks the connection.</p><p>So hiding the destination is not enough. You also need to hide the fact that you are using a VPN at all.</p><h2 id=the-key-idea-behind-reality data-heading-permalink=true><span class=heading-content>The key idea behind Reality</span>
+<a class=heading-permalink href=#the-key-idea-behind-reality aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Every secure website connection (HTTPS) starts with a TLS handshake. During this handshake, your device sends a small piece of plain, readable text called the SNI. SNI just means &ldquo;the name of the website I want to visit.&rdquo; A censor reads the SNI to decide if a connection is allowed.</p><p>Reality uses this to its advantage. Instead of putting your VPN server&rsquo;s name in the SNI, it puts the name of a big, trusted website, for example <code>www.microsoft.com</code>. The connection then borrows the real certificate of that trusted website. So the censor sees a connection that looks exactly like a normal visit to Microsoft.</p><p>Blocking it would mean blocking Microsoft itself, and no censor wants to do that.</p><p>Here are the pieces and what each one does:</p><ul><li><strong>VLESS</strong> is the protocol that carries your data. It is very light and adds almost no extra &ldquo;fingerprint&rdquo; of its own.</li><li><strong>Xray-core</strong> is the software you run. It is the engine that speaks VLESS and runs Reality.</li><li><strong>Reality</strong> is the camouflage layer. It is the part that borrows a real website&rsquo;s identity.</li><li><strong>SNI / domain</strong> is the trusted website name you choose to hide behind.</li></ul><h2 id=what-it-looks-like-as-a-vpn data-heading-permalink=true><span class=heading-content>What it looks like as a VPN</span>
+<a class=heading-permalink href=#what-it-looks-like-as-a-vpn aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>You rent a small server in another country. You install Xray with Reality on it. You point your laptop or phone at it. After that, your browsing travels through an encrypted tunnel to that server, and the server connects to the real internet for you.</p><div class=sg-mermaid><pre class=mermaid>flowchart LR
     A[&#34;YOUR DEVICE&lt;br/&gt;laptop or phone&lt;br/&gt;Xray client&#34;]
     B[&#34;YOUR SERVER&lt;br/&gt;rented abroad&lt;br/&gt;Xray + Reality&#34;]
     C[&#34;The open internet&lt;br/&gt;Google, YouTube,&lt;br/&gt;news, anything&#34;]
     A -- &#34;encrypted tunnel&#34; --&gt; B
-    B -- &#34;exit point&#34; --&gt; C</pre>
-</div>
-<h2 id="what-the-censor-sees" data-heading-permalink="true"><span class="heading-content">What the censor sees</span>
-    <a class="heading-permalink" href="#what-the-censor-sees" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>This is the important part. The censor watches your connection leave the network, but the disguise holds.</p>
-<div class="sg-mermaid">
-  <pre class="mermaid">sequenceDiagram
+    B -- &#34;exit point&#34; --&gt; C</pre></div><h2 id=what-the-censor-sees data-heading-permalink=true><span class=heading-content>What the censor sees</span>
+<a class=heading-permalink href=#what-the-censor-sees aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>This is the important part. The censor watches your connection leave the network, but the disguise holds.</p><div class=sg-mermaid><pre class=mermaid>sequenceDiagram
     participant D as Your Device
     participant S as Your Server (Reality)
     participant C as Censor / ISP
     D-&gt;&gt;S: ClientHello, SNI = www.microsoft.com&lt;br/&gt;+ hidden secret key
     S--&gt;&gt;D: ServerHello, borrowing Microsoft&#39;s real certificate
     D-&gt;&gt;S: Encrypted tunnel, you browse freely
-    Note over C: Looking at the connection, the censor sees:&lt;br/&gt;SNI = www.microsoft.com&lt;br/&gt;Cert = valid, belongs to Microsoft&lt;br/&gt;Verdict: &#34;Normal HTTPS to Microsoft. Allow it.&#34;</pre>
-</div>
-<p>All of your activity, every website and every app, is wrapped inside one connection that appears to go to a trusted website.</p>
-<p>Because Reality relies on the newest web security standard (TLS 1.3), the details of that borrowed certificate are actually hidden from the censor on the way back to your device. The censor sees the <a href="https://www.microsoft.com" target="_blank" rel="noopener noreferrer">www.microsoft.com</a>
- request go out, but they cannot easily read the certificate coming back to verify it. To them, it is just a solid, unreadable block of normal secure traffic.</p>
-<h2 id="active-probing" data-heading-permalink="true"><span class="heading-content">Active probing</span>
-    <a class="heading-permalink" href="#active-probing" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Smart censors do more than watch. They also test suspicious servers by connecting to them directly. This is called active probing. If a server answers in a strange, VPN-like way, the censor blocks it.</p>
-<p>Reality has an answer for this. The handshake from a real user contains a secret key. The server checks for that key:</p>
-<div class="sg-mermaid">
-  <pre class="mermaid">flowchart LR
+    Note over C: Looking at the connection, the censor sees:&lt;br/&gt;SNI = www.microsoft.com&lt;br/&gt;Cert = valid, belongs to Microsoft&lt;br/&gt;Verdict: &#34;Normal HTTPS to Microsoft. Allow it.&#34;</pre></div><p>All of your activity, every website and every app, is wrapped inside one connection that appears to go to a trusted website.</p><p>Because Reality relies on the newest web security standard (TLS 1.3), the details of that borrowed certificate are actually hidden from the censor on the way back to your device. The censor sees the <a href=https://www.microsoft.com target=_blank rel="noopener noreferrer">www.microsoft.com</a>
+request go out, but they cannot easily read the certificate coming back to verify it. To them, it is just a solid, unreadable block of normal secure traffic.</p><h2 id=active-probing data-heading-permalink=true><span class=heading-content>Active probing</span>
+<a class=heading-permalink href=#active-probing aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Smart censors do more than watch. They also test suspicious servers by connecting to them directly. This is called active probing. If a server answers in a strange, VPN-like way, the censor blocks it.</p><p>Reality has an answer for this. The handshake from a real user contains a secret key. The server checks for that key:</p><div class=sg-mermaid><pre class=mermaid>flowchart LR
     Y[&#34;YOU&lt;br/&gt;you have the key&#34;]
     P[&#34;CENSOR PROBE&lt;br/&gt;no key&#34;]
     K{&#34;Server checks:&lt;br/&gt;does the handshake&lt;br/&gt;have the secret key?&#34;}
@@ -268,124 +52,23 @@
     Y -- &#34;Hello + KEY&#34; --&gt; K
     P -- &#34;Hello, NO KEY&#34; --&gt; K
     K -- &#34;yes&#34; --&gt; T --&gt; B
-    K -- &#34;no&#34; --&gt; F --&gt; R</pre>
-</div>
-<p>If the censor probes your server without the key, the server quietly forwards them to the genuine Microsoft website. The censor sees a normal web page load and decides the server is boring. Only you, with the correct key, get into the tunnel.</p>
-<p>Same server, same address, two completely different results.</p>
-<h2 id="weakness" data-heading-permalink="true"><span class="heading-content">Weakness</span>
-    <a class="heading-permalink" href="#weakness" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>This stack is strong, but it is not magic. There is one detail it cannot hide.</p>
-<pre tabindex="0"><code>   What the connection claims:  &#34;I am www.microsoft.com&#34;
+    K -- &#34;no&#34; --&gt; F --&gt; R</pre></div><p>If the censor probes your server without the key, the server quietly forwards them to the genuine Microsoft website. The censor sees a normal web page load and decides the server is boring. Only you, with the correct key, get into the tunnel.</p><p>Same server, same address, two completely different results.</p><h2 id=weakness data-heading-permalink=true><span class=heading-content>Weakness</span>
+<a class=heading-permalink href=#weakness aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>This stack is strong, but it is not magic. There is one detail it cannot hide.</p><pre tabindex=0><code>   What the connection claims:  &#34;I am www.microsoft.com&#34;
    Where it actually goes:      198.51.100.20
                                 ^^^^^^^^^^^^^^^^
                                 a normal hosting IP, NOT an Microsoft address
-</code></pre><p>A very advanced censor could check whether the IP address truly belongs to Microsoft. It does not, because the server is yours. In theory this mismatch can be caught.</p>
-<p>In practice, doing this check for every connection across an entire country is slow and expensive. That is exactly why Reality works well. It is cheap for you to run and costly for a censor to defeat.</p>
-<p>You can also make this mismatch harder to spot by being clever about your disguise. If your rented server is on Amazon AWS, you can choose to hide behind a trusted website that is also hosted on AWS. The censor checks the IP, sees it belongs to Amazon, and assumes everything is normal.</p>
-<h2 id="who-actually-uses-this" data-heading-permalink="true"><span class="heading-content">Who actually uses this</span>
-    <a class="heading-permalink" href="#who-actually-uses-this" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>This is mostly a tool for privacy and for reaching the open internet. People living under heavy internet filtering use it to read news, study, and stay in touch. Anyone who simply does not want their internet provider logging every site they visit can use it too. Tested results from inside China in 2026 still show very high success rates for this approach, which says a lot about how well the camouflage holds.</p>
-<p>It is not a hacking tool by nature. It is a regular VPN that happens to be very good at not being noticed.</p>
-
-        </div>
-      </div>
-    </div>
-    <section class="post-actions">
-      <div class="share-block">
-        <span>Spread the word</span>
-        <div class="share-links">
-          <button type="button" class="share-copy-link" data-copy-link data-copy-default="Copy Link" data-copy-success="Copied">
-            <span class="share-copy-icons" aria-hidden="true">
-              <svg class="icon-link" viewBox="0 0 24 24">
-                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
-                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
-              </svg>
-              <svg class="icon-check" viewBox="0 0 24 24">
-                <path d="M20 6 9 17l-5-5"></path>
-              </svg>
-            </span>
-            <span data-copy-label>Copy Link</span>
-          </button>
-          <a href="https://x.com/intent/tweet?url=https%3a%2f%2fjinpwn.dev%2fposts%2fblogs%2fvless-reality-vpn-explained%2f&text=Getting%20Past%20DPI%20Without%20Looking%20Like%20a%20VPN" target="_blank" rel="noopener noreferrer" aria-label="Share on X"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="currentColor" aria-hidden="true">
-    <path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"></path>
-  </svg></a>
-          <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fjinpwn.dev%2fposts%2fblogs%2fvless-reality-vpn-explained%2f" target="_blank" rel="noopener noreferrer"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-    <rect width="4" height="12" x="2" y="9"></rect>
-    <circle cx="4" cy="4" r="2"></circle>
-  </svg> <span>LinkedIn</span></a>
-        </div>
-      </div>
-      <a class="post-report-link" href="https://github.com/jinpwn/blog/issues/new?title=Issue%20with%20vless&#43;reality&#43;vpn&#43;explained" target="_blank" rel="noopener noreferrer">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3.26-.36 6.68-1.6 6.68-7.3a5.64 5.64 0 0 0-1.5-3.9 5.07 5.07 0 0 0-.09-3.77s-1.18-.36-3.86 1.5a13.38 13.38 0 0 0-7 0c-2.68-1.86-3.86-1.5-3.86-1.5a5.07 5.07 0 0 0-.09 3.77 5.64 5.64 0 0 0-1.5 3.9c0 5.69 3.42 6.94 6.68 7.3a4.8 4.8 0 0 0-1 3.2v4"></path>
-    <path d="M9 18c-4.51 2-5-2-7-2"></path>
-  </svg>
-        <span>Spot a mistake? Report it on GitHub.</span>
-      </a>
-    </section>
-    <section class="author-footer">
-      <div>
-        <h3>Jin</h3>
-        <p>Security research, reverse engineering, and technical writeups.</p>
-        <div class="author-socials">
-          <a href="https://github.com/jinpwn/" target="_blank" rel="noopener noreferrer" aria-label="GitHub" title="GitHub">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M15 22v-4a4.8 4.8 0 0 0-1-3.2c3.26-.36 6.68-1.6 6.68-7.3a5.64 5.64 0 0 0-1.5-3.9 5.07 5.07 0 0 0-.09-3.77s-1.18-.36-3.86 1.5a13.38 13.38 0 0 0-7 0c-2.68-1.86-3.86-1.5-3.86-1.5a5.07 5.07 0 0 0-.09 3.77 5.64 5.64 0 0 0-1.5 3.9c0 5.69 3.42 6.94 6.68 7.3a4.8 4.8 0 0 0-1 3.2v4"></path>
-    <path d="M9 18c-4.51 2-5-2-7-2"></path>
-  </svg>
-    </a><a href="https://ca.linkedin.com/in/gderu" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
-    <rect width="4" height="12" x="2" y="9"></rect>
-    <circle cx="4" cy="4" r="2"></circle>
-  </svg>
-    </a><a href="https://app.hackthebox.com/profile/1244905" target="_blank" rel="noopener noreferrer" aria-label="Hack The Box" title="Hack The Box">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"></path>
-    <path d="m3.3 7 8.7 5 8.7-5"></path>
-    <path d="M12 22V12"></path>
-  </svg>
-    </a><a href="https://tryhackme.com/p/0xblivion" target="_blank" rel="noopener noreferrer" aria-label="TryHackMe" title="TryHackMe">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="currentColor" aria-hidden="true">
-    <path d="M10.705 0C7.54 0 4.902 2.285 4.349 5.291a4.525 4.525 0 0 0-4.107 4.5a4.525 4.525 0 0 0 4.52 4.52h6.761a.625.625 0 1 0 0-1.25H4.761a3.273 3.273 0 0 1-3.27-3.27A3.273 3.273 0 0 1 6.59 7.08a.625.625 0 0 0 .7-1.035a4.488 4.488 0 0 0-1.68-.69a5.223 5.223 0 0 1 5.096-4.104a5.221 5.221 0 0 1 5.174 4.57a4.489 4.489 0 0 0-.488.305a.625.625 0 1 0 .731 1.013a3.245 3.245 0 0 1 1.912-.616a3.278 3.278 0 0 1 3.203 2.61a.625.625 0 0 0 1.225-.251a4.533 4.533 0 0 0-4.428-3.61a4.54 4.54 0 0 0-.958.105C16.556 2.328 13.9 0 10.705 0zm5.192 10.64a.925.925 0 0 0-.462.108a.913.913 0 0 0-.313.29a1.27 1.27 0 0 0-.175.427a2.39 2.39 0 0 0-.054.514c0 .181.018.353.054.517c.036.164.095.307.175.43a.899.899 0 0 0 .313.297c.127.073.281.11.462.11c.18 0 .334-.037.46-.11a.897.897 0 0 0 .309-.296c.08-.124.137-.267.173-.431c.036-.164.054-.336.054-.517c0-.18-.018-.352-.054-.514a1.271 1.271 0 0 0-.173-.426a.901.901 0 0 0-.309-.291a.917.917 0 0 0-.46-.108zm6.486 0a.925.925 0 0 0-.462.108a.913.913 0 0 0-.313.29a1.27 1.27 0 0 0-.175.427a2.39 2.39 0 0 0-.053.514c0 .181.017.353.053.517c.036.164.095.307.175.43a.899.899 0 0 0 .313.297c.127.073.281.11.462.11c.18 0 .334-.037.46-.11a.897.897 0 0 0 .31-.296c.078-.124.136-.267.172-.431c.036-.164.054-.336.054-.517c0-.18-.018-.352-.054-.514a1.271 1.271 0 0 0-.173-.426a.901.901 0 0 0-.308-.291a.916.916 0 0 0-.461-.108zm-8.537.068l-.84.618l.313.43l.476-.368v1.877h.603v-2.557zm6.486 0l-.841.618l.314.43l.477-.368v1.877h.603v-2.557zm-4.435.445c.08 0 .143.028.193.084c.05.057.087.127.114.21c.026.083.044.173.054.269a2.541 2.541 0 0 1 0 .533c-.01.097-.028.187-.054.27a.584.584 0 0 1-.114.21a.243.243 0 0 1-.193.085a.248.248 0 0 1-.195-.086a.584.584 0 0 1-.118-.209a1.245 1.245 0 0 1-.056-.27a2.645 2.645 0 0 1 0-.533c.01-.096.029-.186.056-.27a.583.583 0 0 1 .118-.209a.25.25 0 0 1 .195-.084zm6.486 0c.08 0 .144.028.193.084c.05.057.087.127.114.21c.027.083.044.173.054.269a2.541 2.541 0 0 1 0 .533c-.01.097-.027.187-.054.27a.584.584 0 0 1-.114.21a.243.243 0 0 1-.193.085a.249.249 0 0 1-.195-.086a.581.581 0 0 1-.117-.209a1.245 1.245 0 0 1-.056-.27a2.642 2.642 0 0 1 0-.533c.01-.096.028-.186.056-.27a.58.58 0 0 1 .117-.209a.25.25 0 0 1 .195-.084zm-2.191 3.51a.93.93 0 0 0-.463.109a.908.908 0 0 0-.312.291c-.08.122-.139.263-.175.426a2.383 2.383 0 0 0-.054.514c0 .18.018.353.054.516c.036.164.094.308.175.432a.91.91 0 0 0 .312.296a.92.92 0 0 0 .463.11c.18 0 .333-.037.46-.11a.892.892 0 0 0 .308-.296a1.32 1.32 0 0 0 .174-.432c.036-.163.054-.335.054-.516c0-.18-.018-.352-.054-.514a1.274 1.274 0 0 0-.174-.426a.89.89 0 0 0-.309-.291a.918.918 0 0 0-.46-.108zm-6.402.07l-.841.617l.314.43l.476-.369v1.878h.604v-2.557zm2.125 0l-.841.617l.314.43l.477-.369v1.878h.603v-2.557zm2.116 0l-.84.617l.313.43l.477-.369v1.878h.603v-2.557zm2.16.443c.08 0 .144.028.194.085a.605.605 0 0 1 .114.21c.026.083.044.172.053.269a2.639 2.639 0 0 1 0 .532a1.28 1.28 0 0 1-.053.27a.585.585 0 0 1-.114.21a.244.244 0 0 1-.193.085a.25.25 0 0 1-.196-.085a.589.589 0 0 1-.117-.21a1.245 1.245 0 0 1-.056-.27a2.597 2.597 0 0 1 0-.532c.01-.097.028-.186.056-.27a.589.589 0 0 1 .117-.209a.249.249 0 0 1 .196-.085zm-6.729 3.073a.676.676 0 0 0-.335.078a.661.661 0 0 0-.227.211a.91.91 0 0 0-.127.31c-.027.118-.04.242-.04.373s.013.256.04.375a.93.93 0 0 0 .127.313a.65.65 0 0 0 .227.215c.092.053.204.08.335.08a.655.655 0 0 0 .334-.08a.65.65 0 0 0 .225-.215c.057-.09.1-.194.125-.313a1.75 1.75 0 0 0 .04-.375c0-.13-.014-.255-.04-.373a.931.931 0 0 0-.125-.31a.658.658 0 0 0-.225-.21a.667.667 0 0 0-.334-.08zm3.086 0a.675.675 0 0 0-.336.078a.661.661 0 0 0-.226.211a.907.907 0 0 0-.127.31a1.69 1.69 0 0 0-.04.373c0 .131.013.256.04.375a.928.928 0 0 0 .127.313c.058.09.134.162.226.215c.093.053.205.08.336.08a.655.655 0 0 0 .334-.08a.65.65 0 0 0 .224-.215c.058-.09.1-.194.126-.313a1.752 1.752 0 0 0 0-.748a.94.94 0 0 0-.126-.31a.657.657 0 0 0-.224-.21a.667.667 0 0 0-.334-.08zm5.108 0a.675.675 0 0 0-.336.078a.661.661 0 0 0-.226.211a.91.91 0 0 0-.127.31c-.027.118-.04.242-.04.373s.013.256.04.375a.931.931 0 0 0 .127.313c.058.09.134.162.226.215c.093.053.205.08.336.08c.13 0 .243-.027.334-.08a.65.65 0 0 0 .224-.215c.058-.09.1-.194.126-.313a1.75 1.75 0 0 0 .04-.375c0-.13-.014-.255-.04-.373a.943.943 0 0 0-.126-.31a.657.657 0 0 0-.224-.21a.668.668 0 0 0-.334-.08zm-6.658.05l-.61.448l.227.311l.346-.266v1.362h.438v-1.856zm3.068 0l-.61.448l.227.311l.346-.266v1.362h.438v-1.856zm5.108 0l-.611.448l.228.311l.346-.266v1.362h.438v-1.856zm-9.712.322c.058 0 .105.02.14.062a.421.421 0 0 1 .083.151a.96.96 0 0 1 .04.196a1.932 1.932 0 0 1 0 .386a.954.954 0 0 1-.04.197a.421.421 0 0 1-.083.152a.176.176 0 0 1-.14.061a.18.18 0 0 1-.141-.06a.427.427 0 0 1-.085-.153a.887.887 0 0 1-.041-.197a1.96 1.96 0 0 1 0-.386a.893.893 0 0 1 .04-.196a.42.42 0 0 1 .086-.151a.181.181 0 0 1 .141-.062zm3.086 0c.058 0 .104.02.14.062a.421.421 0 0 1 .082.151a.94.94 0 0 1 .04.196a1.906 1.906 0 0 1 0 .386a.93.93 0 0 1-.04.197a.421.421 0 0 1-.082.152a.176.176 0 0 1-.14.061a.18.18 0 0 1-.141-.06a.42.42 0 0 1-.086-.153a.846.846 0 0 1-.04-.197a1.965 1.965 0 0 1-.011-.195c0-.057.004-.121.01-.191a.849.849 0 0 1 .041-.196a.42.42 0 0 1 .086-.151a.182.182 0 0 1 .141-.062zm5.108 0c.058 0 .104.02.14.062a.421.421 0 0 1 .082.151a.92.92 0 0 1 .04.196a1.963 1.963 0 0 1 0 .386a.943.943 0 0 1-.04.197a.421.421 0 0 1-.082.152a.177.177 0 0 1-.14.061a.18.18 0 0 1-.142-.06a.437.437 0 0 1-.085-.153a.95.95 0 0 1-.04-.197a1.965 1.965 0 0 1-.011-.195c0-.057.004-.121.01-.191a.959.959 0 0 1 .04-.196a.47.47 0 0 1 .086-.151a.181.181 0 0 1 .142-.062zm-1.684 1.814a.675.675 0 0 0-.336.079a.66.66 0 0 0-.227.21a.91.91 0 0 0-.127.31a1.731 1.731 0 0 0 0 .748a.939.939 0 0 0 .127.314c.059.09.134.162.227.215c.093.053.205.08.336.08a.66.66 0 0 0 .334-.08a.648.648 0 0 0 .224-.215c.058-.09.1-.195.126-.314a1.737 1.737 0 0 0-.001-.747a.928.928 0 0 0-.125-.31a.65.65 0 0 0-.224-.211a.668.668 0 0 0-.334-.079zm3.063 0a.676.676 0 0 0-.336.079a.664.664 0 0 0-.227.21a.906.906 0 0 0-.127.31a1.74 1.74 0 0 0 0 .748a.936.936 0 0 0 .127.314a.66.66 0 0 0 .227.215c.092.053.204.08.336.08a.654.654 0 0 0 .334-.08a.648.648 0 0 0 .223-.215c.058-.09.1-.195.126-.314a1.74 1.74 0 0 0 0-.747a.928.928 0 0 0-.126-.31a.65.65 0 0 0-.223-.211a.666.666 0 0 0-.334-.079zm-1.545.05l-.611.448l.228.312l.346-.267v1.363h.438v-1.856zm-1.518.323c.057 0 .104.02.14.061a.42.42 0 0 1 .082.152a.91.91 0 0 1 .04.195a1.966 1.966 0 0 1 0 .387a.951.951 0 0 1-.04.197a.421.421 0 0 1-.082.152a.177.177 0 0 1-.14.06a.18.18 0 0 1-.142-.06a.428.428 0 0 1-.085-.152a.914.914 0 0 1-.04-.197a1.96 1.96 0 0 1-.011-.195c0-.058.003-.122.01-.192a.923.923 0 0 1 .041-.195c.02-.06.048-.11.085-.152a.181.181 0 0 1 .142-.061zm3.063 0c.057 0 .104.02.14.061a.42.42 0 0 1 .082.152a.94.94 0 0 1 .04.195a1.91 1.91 0 0 1 0 .387a.93.93 0 0 1-.04.197a.422.422 0 0 1-.083.152a.175.175 0 0 1-.14.06a.18.18 0 0 1-.141-.06a.423.423 0 0 1-.085-.152a.907.907 0 0 1-.04-.197a1.95 1.95 0 0 1 0-.387a.915.915 0 0 1 .04-.195c.02-.06.048-.11.085-.152a.182.182 0 0 1 .142-.061zm-9.713.185a.465.465 0 0 0-.232.055a.456.456 0 0 0-.157.146a.627.627 0 0 0-.089.215a1.168 1.168 0 0 0-.027.259c0 .09.009.177.027.26a.648.648 0 0 0 .089.216c.04.063.093.112.157.149a.459.459 0 0 0 .232.056c.09 0 .168-.02.231-.056a.45.45 0 0 0 .156-.149a.67.67 0 0 0 .087-.217a1.218 1.218 0 0 0 0-.518a.647.647 0 0 0-.087-.215a.448.448 0 0 0-.156-.146a.458.458 0 0 0-.23-.055zm1.052.035l-.423.31l.158.217l.24-.185v.944h.303v-1.286zm-1.052.224c.04 0 .073.014.097.042a.284.284 0 0 1 .057.105a.69.69 0 0 1 .028.136c.004.049.007.092.007.133c0 .04-.003.086-.007.135a.684.684 0 0 1-.028.136a.285.285 0 0 1-.057.105a.123.123 0 0 1-.097.043a.125.125 0 0 1-.098-.043a.298.298 0 0 1-.059-.105a.612.612 0 0 1-.028-.136a1.39 1.39 0 0 1 0-.268a.62.62 0 0 1 .028-.136a.297.297 0 0 1 .06-.105a.125.125 0 0 1 .097-.042zm3.775 1.394a.463.463 0 0 0-.232.054a.452.452 0 0 0-.157.146a.621.621 0 0 0-.088.214a1.19 1.19 0 0 0 0 .519a.641.641 0 0 0 .088.217a.46.46 0 0 0 .157.15a.458.458 0 0 0 .232.054a.454.454 0 0 0 .232-.055a.45.45 0 0 0 .155-.149a.664.664 0 0 0 .087-.217a1.189 1.189 0 0 0 0-.519a.642.642 0 0 0-.087-.214a.446.446 0 0 0-.155-.146a.459.459 0 0 0-.232-.054zm1.052.034l-.423.31l.158.216l.24-.185v.945h.303V22.68zm-1.052.223c.04 0 .073.014.098.043a.3.3 0 0 1 .057.105a.643.643 0 0 1 .027.135a1.31 1.31 0 0 1 0 .268a.654.654 0 0 1-.027.137a.307.307 0 0 1-.057.105a.124.124 0 0 1-.098.042a.125.125 0 0 1-.098-.042a.293.293 0 0 1-.059-.105a.618.618 0 0 1-.028-.137a1.364 1.364 0 0 1 0-.268a.612.612 0 0 1 .028-.135a.287.287 0 0 1 .06-.105a.123.123 0 0 1 .097-.043z"></path>
-  </svg>
-    </a><a href="https://portfolio.jinpwn.dev/" target="_blank" rel="noopener noreferrer" aria-label="Portfolio" title="Portfolio">
-      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-    <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"></path>
-    <path d="M2 12h20"></path>
-  </svg>
-    </a>
-        </div>
-      </div>
-      <a class="coffee-link" href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target="_blank" rel="noopener noreferrer">
-        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <line x1="6" y1="2" x2="6" y2="4"></line>
-    <line x1="10" y1="2" x2="10" y2="4"></line>
-    <line x1="14" y1="2" x2="14" y2="4"></line>
-    <path d="M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V8Z"></path>
-    <path d="M17 8h1a4 4 0 1 1 0 8h-1"></path>
-  </svg>
-        <span>Buy me a coffee</span>
-      </a>
-    </section>
-  </article>
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><p>A very advanced censor could check whether the IP address truly belongs to Microsoft. It does not, because the server is yours. In theory this mismatch can be caught.</p><p>In practice, doing this check for every connection across an entire country is slow and expensive. That is exactly why Reality works well. It is cheap for you to run and costly for a censor to defeat.</p><p>You can also make this mismatch harder to spot by being clever about your disguise. If your rented server is on Amazon AWS, you can choose to hide behind a trusted website that is also hosted on AWS. The censor checks the IP, sees it belongs to Amazon, and assumes everything is normal.</p><h2 id=who-actually-uses-this data-heading-permalink=true><span class=heading-content>Who actually uses this</span>
+<a class=heading-permalink href=#who-actually-uses-this aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>This is mostly a tool for privacy and for reaching the open internet. People living under heavy internet filtering use it to read news, study, and stay in touch. Anyone who simply does not want their internet provider logging every site they visit can use it too. Tested results from inside China in 2026 still show very high success rates for this approach, which says a lot about how well the camouflage holds.</p><p>It is not a hacking tool by nature. It is a regular VPN that happens to be very good at not being noticed.</p></div></div></div><section class=post-actions><div class=share-block><span>Spread the word</span><div class=share-links><button type=button class=share-copy-link data-copy-link data-copy-default="Copy Link" data-copy-success=Copied>
+<span class=share-copy-icons aria-hidden=true><svg class="icon-link" viewBox="0 0 24 24"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>
+<svg class="icon-check" viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg>
+</span><span data-copy-label>Copy Link</span>
+</button>
+<a href="https://x.com/intent/tweet?url=https%3a%2f%2fjinpwn.dev%2fposts%2fblogs%2fvless-reality-vpn-explained%2f&text=Getting%20Past%20DPI%20Without%20Looking%20Like%20a%20VPN" target=_blank rel="noopener noreferrer" aria-label="Share on X"><svg width="16" height="16" viewBox="0 0 24 24" class="" fill="currentColor" aria-hidden="true"><path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932zM17.61 20.644h2.039L6.486 3.24H4.298z"/></svg></a>
+<a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3a%2f%2fjinpwn.dev%2fposts%2fblogs%2fvless-reality-vpn-explained%2f" target=_blank rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg> <span>LinkedIn</span></a></div></div><a class=post-report-link href="https://github.com/jinpwn/blog/issues/new?title=Issue%20with%20vless+reality+vpn+explained" target=_blank rel="noopener noreferrer"><svg width="20" height="20" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8.0 00-1-3.2c3.26-.36 6.68-1.6 6.68-7.3a5.64 5.64.0 00-1.5-3.9 5.07 5.07.0 00-.09-3.77s-1.18-.36-3.86 1.5a13.38 13.38.0 00-7 0c-2.68-1.86-3.86-1.5-3.86-1.5A5.07 5.07.0 004.28 3.6a5.64 5.64.0 00-1.5 3.9c0 5.69 3.42 6.94 6.68 7.3a4.8 4.8.0 00-1 3.2v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+<span>Spot a mistake? Report it on GitHub.</span></a></section><section class=author-footer><div><h3>Jin</h3><p>Security research, reverse engineering, and technical writeups.</p><div class=author-socials><a href=https://github.com/jinpwn/ target=_blank rel="noopener noreferrer" aria-label=GitHub title=GitHub><svg width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 22v-4a4.8 4.8.0 00-1-3.2c3.26-.36 6.68-1.6 6.68-7.3a5.64 5.64.0 00-1.5-3.9 5.07 5.07.0 00-.09-3.77s-1.18-.36-3.86 1.5a13.38 13.38.0 00-7 0c-2.68-1.86-3.86-1.5-3.86-1.5A5.07 5.07.0 004.28 3.6a5.64 5.64.0 00-1.5 3.9c0 5.69 3.42 6.94 6.68 7.3a4.8 4.8.0 00-1 3.2v4"/><path d="M9 18c-4.51 2-5-2-7-2"/></svg>
+</a><a href=https://ca.linkedin.com/in/gderu target=_blank rel="noopener noreferrer" aria-label=LinkedIn title=LinkedIn><svg width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect width="4" height="12" x="2" y="9"/><circle cx="4" cy="4" r="2"/></svg>
+</a><a href=https://app.hackthebox.com/profile/1244905 target=_blank rel="noopener noreferrer" aria-label="Hack The Box" title="Hack The Box"><svg width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><path d="m3.3 7 8.7 5 8.7-5"/><path d="M12 22V12"/></svg>
+</a><a href=https://tryhackme.com/p/0xblivion target=_blank rel="noopener noreferrer" aria-label=TryHackMe title=TryHackMe><svg width="18" height="18" viewBox="0 0 24 24" class="" fill="currentColor" aria-hidden="true"><path d="M10.705.0C7.54.0 4.902 2.285 4.349 5.291a4.525 4.525.0 00-4.107 4.5 4.525 4.525.0 004.52 4.52h6.761a.625.625.0 100-1.25H4.761a3.273 3.273.0 01-3.27-3.27A3.273 3.273.0 016.59 7.08a.625.625.0 00.7-1.035 4.488 4.488.0 00-1.68-.69 5.223 5.223.0 015.096-4.104 5.221 5.221.0 015.174 4.57 4.489 4.489.0 00-.488.305.625.625.0 10.731 1.013 3.245 3.245.0 011.912-.616 3.278 3.278.0 013.203 2.61.625.625.0 001.225-.251 4.533 4.533.0 00-4.428-3.61 4.54 4.54.0 00-.958.105C16.556 2.328 13.9.0 10.705.0zm5.192 10.64a.925.925.0 00-.462.108.913.913.0 00-.313.29 1.27 1.27.0 00-.175.427 2.39 2.39.0 00-.054.514c0 .181.018.353.054.517s.095.307.175.43a.899.899.0 00.313.297c.127.073.281.11.462.11.18.0.334-.037.46-.11a.897.897.0 00.309-.296c.08-.124.137-.267.173-.431.036-.164.054-.336.054-.517.0-.18-.018-.352-.054-.514a1.271 1.271.0 00-.173-.426.901.901.0 00-.309-.291.917.917.0 00-.46-.108zm6.486.0a.925.925.0 00-.462.108.913.913.0 00-.313.29 1.27 1.27.0 00-.175.427 2.39 2.39.0 00-.053.514c0 .181.017.353.053.517s.095.307.175.43a.899.899.0 00.313.297c.127.073.281.11.462.11.18.0.334-.037.46-.11a.897.897.0 00.31-.296c.078-.124.136-.267.172-.431s.054-.336.054-.517c0-.18-.018-.352-.054-.514a1.271 1.271.0 00-.173-.426.901.901.0 00-.308-.291.916.916.0 00-.461-.108zm-8.537.068-.84.618.313.43.476-.368v1.877h.603v-2.557zm6.486.0-.841.618.314.43.477-.368v1.877h.603v-2.557zm-4.435.445c.08.0.143.028.193.084.05.057.087.127.114.21.026.083.044.173.054.269a2.541 2.541.0 010 .533c-.01.097-.028.187-.054.27a.584.584.0 01-.114.21.243.243.0 01-.193.085.248.248.0 01-.195-.086.584.584.0 01-.118-.209 1.245 1.245.0 01-.056-.27 2.645 2.645.0 010-.533c.01-.096.029-.186.056-.27a.583.583.0 01.118-.209.25.25.0 01.195-.084zm6.486.0c.08.0.144.028.193.084.05.057.087.127.114.21s.044.173.054.269a2.541 2.541.0 010 .533c-.01.097-.027.187-.054.27a.584.584.0 01-.114.21.243.243.0 01-.193.085.249.249.0 01-.195-.086.581.581.0 01-.117-.209 1.245 1.245.0 01-.056-.27 2.642 2.642.0 010-.533c.01-.096.028-.186.056-.27a.58.58.0 01.117-.209.25.25.0 01.195-.084zm-2.191 3.51a.93.93.0 00-.463.109.908.908.0 00-.312.291c-.08.122-.139.263-.175.426a2.383 2.383.0 00-.054.514c0 .18.018.353.054.516.036.164.094.308.175.432a.91.91.0 00.312.296.92.92.0 00.463.11c.18.0.333-.037.46-.11a.892.892.0 00.308-.296 1.32 1.32.0 00.174-.432c.036-.163.054-.335.054-.516.0-.18-.018-.352-.054-.514a1.274 1.274.0 00-.174-.426.89.89.0 00-.309-.291.918.918.0 00-.46-.108zm-6.402.07-.841.617.314.43.476-.369v1.878h.604v-2.557zm2.125.0-.841.617.314.43.477-.369v1.878h.603v-2.557zm2.116.0-.84.617.313.43.477-.369v1.878h.603v-2.557zm2.16.443c.08.0.144.028.194.085a.605.605.0 01.114.21c.026.083.044.172.053.269a2.639 2.639.0 010 .532 1.28 1.28.0 01-.053.27.585.585.0 01-.114.21.244.244.0 01-.193.085.25.25.0 01-.196-.085.589.589.0 01-.117-.21 1.245 1.245.0 01-.056-.27 2.597 2.597.0 010-.532c.01-.097.028-.186.056-.27a.589.589.0 01.117-.209.249.249.0 01.196-.085zm-6.729 3.073a.676.676.0 00-.335.078.661.661.0 00-.227.211.91.91.0 00-.127.31c-.027.118-.04.242-.04.373s.013.256.04.375a.93.93.0 00.127.313.65.65.0 00.227.215c.092.053.204.08.335.08a.655.655.0 00.334-.08.65.65.0 00.225-.215c.057-.09.1-.194.125-.313a1.75 1.75.0 00.04-.375c0-.13-.014-.255-.04-.373a.931.931.0 00-.125-.31.658.658.0 00-.225-.21.667.667.0 00-.334-.08zm3.086.0a.675.675.0 00-.336.078.661.661.0 00-.226.211.907.907.0 00-.127.31 1.69 1.69.0 00-.04.373c0 .131.013.256.04.375a.928.928.0 00.127.313c.058.09.134.162.226.215.093.053.205.08.336.08a.655.655.0 00.334-.08.65.65.0 00.224-.215c.058-.09.1-.194.126-.313a1.752 1.752.0 000-.748.94.94.0 00-.126-.31.657.657.0 00-.224-.21.667.667.0 00-.334-.08zm5.108.0a.675.675.0 00-.336.078.661.661.0 00-.226.211.91.91.0 00-.127.31c-.027.118-.04.242-.04.373s.013.256.04.375a.931.931.0 00.127.313c.058.09.134.162.226.215.093.053.205.08.336.08.13.0.243-.027.334-.08a.65.65.0 00.224-.215c.058-.09.1-.194.126-.313a1.75 1.75.0 00.04-.375c0-.13-.014-.255-.04-.373a.943.943.0 00-.126-.31.657.657.0 00-.224-.21.668.668.0 00-.334-.08zm-6.658.05-.61.448.227.311.346-.266v1.362h.438v-1.856zm3.068.0-.61.448.227.311.346-.266v1.362h.438v-1.856zm5.108.0-.611.448.228.311.346-.266v1.362h.438v-1.856zm-9.712.322c.058.0.105.02.14.062a.421.421.0 01.083.151.96.96.0 01.04.196 1.932 1.932.0 010 .386.954.954.0 01-.04.197.421.421.0 01-.083.152.176.176.0 01-.14.061.18.18.0 01-.141-.06.427.427.0 01-.085-.153.887.887.0 01-.041-.197 1.96 1.96.0 010-.386.893.893.0 01.04-.196.42.42.0 01.086-.151.181.181.0 01.141-.062zm3.086.0c.058.0.104.02.14.062a.421.421.0 01.082.151.94.94.0 01.04.196 1.906 1.906.0 010 .386.93.93.0 01-.04.197.421.421.0 01-.082.152.176.176.0 01-.14.061.18.18.0 01-.141-.06.42.42.0 01-.086-.153.846.846.0 01-.04-.197 1.965 1.965.0 01-.011-.195c0-.057.004-.121.01-.191a.849.849.0 01.041-.196.42.42.0 01.086-.151.182.182.0 01.141-.062zm5.108.0c.058.0.104.02.14.062a.421.421.0 01.082.151.92.92.0 01.04.196 1.963 1.963.0 010 .386.943.943.0 01-.04.197.421.421.0 01-.082.152.177.177.0 01-.14.061.18.18.0 01-.142-.06.437.437.0 01-.085-.153.95.95.0 01-.04-.197 1.965 1.965.0 01-.011-.195c0-.057.004-.121.01-.191a.959.959.0 01.04-.196.47.47.0 01.086-.151.181.181.0 01.142-.062zm-1.684 1.814a.675.675.0 00-.336.079.66.66.0 00-.227.21.91.91.0 00-.127.31 1.731 1.731.0 000 .748.939.939.0 00.127.314c.059.09.134.162.227.215s.205.08.336.08a.66.66.0 00.334-.08.648.648.0 00.224-.215c.058-.09.1-.195.126-.314a1.737 1.737.0 00-.001-.747.928.928.0 00-.125-.31.65.65.0 00-.224-.211.668.668.0 00-.334-.079zm3.063.0a.676.676.0 00-.336.079.664.664.0 00-.227.21.906.906.0 00-.127.31 1.74 1.74.0 000 .748.936.936.0 00.127.314.66.66.0 00.227.215c.092.053.204.08.336.08a.654.654.0 00.334-.08.648.648.0 00.223-.215c.058-.09.1-.195.126-.314a1.74 1.74.0 000-.747.928.928.0 00-.126-.31.65.65.0 00-.223-.211.666.666.0 00-.334-.079zm-1.545.05-.611.448.228.312.346-.267v1.363h.438v-1.856zm-1.518.323c.057.0.104.02.14.061a.42.42.0 01.082.152.91.91.0 01.04.195 1.966 1.966.0 010 .387.951.951.0 01-.04.197.421.421.0 01-.082.152.177.177.0 01-.14.06.18.18.0 01-.142-.06.428.428.0 01-.085-.152.914.914.0 01-.04-.197 1.96 1.96.0 01-.011-.195c0-.058.003-.122.01-.192a.923.923.0 01.041-.195c.02-.06.048-.11.085-.152a.181.181.0 01.142-.061zm3.063.0c.057.0.104.02.14.061a.42.42.0 01.082.152.94.94.0 01.04.195 1.91 1.91.0 010 .387.93.93.0 01-.04.197.422.422.0 01-.083.152.175.175.0 01-.14.06.18.18.0 01-.141-.06.423.423.0 01-.085-.152.907.907.0 01-.04-.197 1.95 1.95.0 010-.387.915.915.0 01.04-.195c.02-.06.048-.11.085-.152a.182.182.0 01.142-.061zm-9.713.185a.465.465.0 00-.232.055.456.456.0 00-.157.146.627.627.0 00-.089.215 1.168 1.168.0 00-.027.259c0 .09.009.177.027.26a.648.648.0 00.089.216c.04.063.093.112.157.149a.459.459.0 00.232.056c.09.0.168-.02.231-.056a.45.45.0 00.156-.149.67.67.0 00.087-.217 1.218 1.218.0 000-.518.647.647.0 00-.087-.215.448.448.0 00-.156-.146.458.458.0 00-.23-.055zm1.052.035-.423.31.158.217.24-.185v.944h.303v-1.286zm-1.052.224c.04.0.073.014.097.042a.284.284.0 01.057.105.69.69.0 01.028.136c.004.049.007.092.007.133.0.04-.003.086-.007.135a.684.684.0 01-.028.136.285.285.0 01-.057.105.123.123.0 01-.097.043.125.125.0 01-.098-.043.298.298.0 01-.059-.105.612.612.0 01-.028-.136 1.39 1.39.0 010-.268.62.62.0 01.028-.136.297.297.0 01.06-.105.125.125.0 01.097-.042zm3.775 1.394a.463.463.0 00-.232.054.452.452.0 00-.157.146.621.621.0 00-.088.214 1.19 1.19.0 000 .519.641.641.0 00.088.217.46.46.0 00.157.15.458.458.0 00.232.054.454.454.0 00.232-.055.45.45.0 00.155-.149.664.664.0 00.087-.217 1.189 1.189.0 000-.519.642.642.0 00-.087-.214.446.446.0 00-.155-.146.459.459.0 00-.232-.054zm1.052.034-.423.31.158.216.24-.185v.945h.303V22.68zm-1.052.223c.04.0.073.014.098.043a.3.3.0 01.057.105.643.643.0 01.027.135 1.31 1.31.0 010 .268.654.654.0 01-.027.137.307.307.0 01-.057.105.124.124.0 01-.098.042.125.125.0 01-.098-.042.293.293.0 01-.059-.105.618.618.0 01-.028-.137 1.364 1.364.0 010-.268.612.612.0 01.028-.135.287.287.0 01.06-.105.123.123.0 01.097-.043z"/></svg>
+</a><a href=https://portfolio.jinpwn.dev/ target=_blank rel="noopener noreferrer" aria-label=Portfolio title=Portfolio><svg width="18" height="18" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 00-2-2h-4A2 2 0 008 5v2"/><path d="M2 12h20"/></svg></a></div></div><a class=coffee-link href="https://www.youtube.com/watch?v=xvFZjo5PgG0" target=_blank rel="noopener noreferrer"><svg width="16" height="16" viewBox="0 0 24 24" class="" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="6" y1="2" x2="6" y2="4"/><line x1="10" y1="2" x2="10" y2="4"/><line x1="14" y1="2" x2="14" y2="4"/><path d="M3 8h14v9a4 4 0 01-4 4H7a4 4 0 01-4-4V8z"/><path d="M17 8h1a4 4 0 110 8h-1"/></svg>
+<span>Buy me a coffee</span></a></section></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

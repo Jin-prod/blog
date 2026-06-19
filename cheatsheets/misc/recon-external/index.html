@@ -1,418 +1,94 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Recon (external) | JinPwn</title><meta name="description" content="External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon &amp;amp; Enum .">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/misc/recon-external/">
-<meta property="og:title" content="Recon (external) | JinPwn">
-<meta property="og:description" content="External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon &amp;amp; Enum .">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/misc/recon-external/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Recon (external) | JinPwn">
-<meta name="twitter:description" content="External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon &amp;amp; Enum .">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon \u0026amp; Enum .","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Recon (external) | JinPwn","url":"https://jinpwn.dev/cheatsheets/misc/recon-external/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Misc navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/misc/" class="cheatsheet-sidebar-section">Misc</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-sidebar-link">Tooling MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-sidebar-link">File Transfer</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/ldap/" class="cheatsheet-sidebar-link">LDAP</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-sidebar-link">Password Cracking</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-sidebar-link">Pivoting</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-sidebar-link is-current">Recon (external)</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-sidebar-link">Reverse Shells</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>Recon (external)</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">Recon (external)</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Misc sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/misc/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-mobile-sections-link">Tooling MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-mobile-sections-link">File Transfer</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/ldap/" class="cheatsheet-mobile-sections-link">LDAP</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-mobile-sections-link">Password Cracking</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-mobile-sections-link">Pivoting</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-mobile-sections-link is-current">Recon (external)</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-mobile-sections-link">Reverse Shells</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use <a href="https://jinpwn.dev/cheatsheets/linux-pentesting/01-recon--enum/">01 Recon &amp; Enum</a>
-.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>target.com
-</span></span><span class="line"><span class="cl"><span class="nv">WL</span><span class="o">=</span>/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt
-</span></span><span class="line"><span class="cl"><span class="nv">RESOLVERS</span><span class="o">=</span>/usr/share/wordlists/resolvers.txt
-</span></span></code></pre></div><p>Build a fresh resolver list, dead resolvers wreck mass brute-force speed:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -sL https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt -o <span class="s2">&#34;</span><span class="nv">$RESOLVERS</span><span class="s2">&#34;</span>
-</span></span></code></pre></div><h2 id="i-subdomain-enum-passive-first" data-heading-permalink="true"><span class="heading-content">i. Subdomain enum, passive first</span>
-    <a class="heading-permalink" href="#i-subdomain-enum-passive-first" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Passive uses cert logs and public datasets, no traffic to target:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">subfinder -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -all -silent -o subs-passive.txt
-</span></span><span class="line"><span class="cl">assetfinder --subs-only <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> <span class="p">|</span> tee -a subs-passive.txt
-</span></span><span class="line"><span class="cl">amass enum -passive -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -o subs-amass.txt
-</span></span></code></pre></div><p>crt.sh, fast and free, one curl:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://crt.sh/?q=%25.</span><span class="nv">$DOMAIN</span><span class="s2">&amp;output=json&#34;</span> <span class="p">|</span> jq -r <span class="s1">&#39;.[].name_value&#39;</span> <span class="p">|</span> sed <span class="s1">&#39;s/\*\.//g&#39;</span> <span class="p">|</span> sort -u
-</span></span></code></pre></div><p>Merge:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat subs-passive.txt subs-amass.txt <span class="p">|</span> sort -u &gt; subs.txt
-</span></span></code></pre></div><h2 id="ii-active-brute-force" data-heading-permalink="true"><span class="heading-content">ii. Active brute force</span>
-    <a class="heading-permalink" href="#ii-active-brute-force" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>puredns, fastest mass DNS bruteforce, uses your resolver list:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">puredns bruteforce <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -r <span class="s2">&#34;</span><span class="nv">$RESOLVERS</span><span class="s2">&#34;</span> -w subs-brute.txt
-</span></span></code></pre></div><p>dnsx, validate the merged list and also brute permutations:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">dnsx -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span> -r <span class="s2">&#34;</span><span class="nv">$RESOLVERS</span><span class="s2">&#34;</span> -o subs-dnsx.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## Permutation: alterx generates variants like staging-api, api-staging, etc.</span>
-</span></span><span class="line"><span class="cl">alterx -l subs.txt <span class="p">|</span> dnsx -r <span class="s2">&#34;</span><span class="nv">$RESOLVERS</span><span class="s2">&#34;</span> -o subs-perm.txt
-</span></span></code></pre></div><p>Merge everything:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">cat subs-passive.txt subs-brute.txt subs-perm.txt <span class="p">|</span> sort -u &gt; all-subs.txt
-</span></span></code></pre></div><h2 id="iii-probe-alive-http" data-heading-permalink="true"><span class="heading-content">iii. Probe alive HTTP</span>
-    <a class="heading-permalink" href="#iii-probe-alive-http" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>httpx-toolkit, one tool, tons of fingerprints:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">httpx -l all-subs.txt -title -tech-detect -status-code -ip -cname -web-server -o alive.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## Just alive hosts:</span>
-</span></span><span class="line"><span class="cl">httpx -l all-subs.txt -silent -o alive-bare.txt
-</span></span></code></pre></div><p>Common interesting ports beyond 80/443:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">httpx -l all-subs.txt -ports 80,443,8000,8080,8443,8888,3000,5000,7001,9000,9090,9200 -o alive-ports.txt
-</span></span></code></pre></div><h2 id="iv-port-scanning-external-ips" data-heading-permalink="true"><span class="heading-content">iv. Port scanning external IPs</span>
-    <a class="heading-permalink" href="#iv-port-scanning-external-ips" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>naabu for fast TCP port scan across a domain set:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">naabu -l all-subs.txt -top-ports <span class="m">1000</span> -rate <span class="m">5000</span> -o ports.txt
-</span></span></code></pre></div><p>nmap follow-up on the live ports:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">awk -F: <span class="s1">&#39;{print $1}&#39;</span> ports.txt <span class="p">|</span> sort -u &gt; ips.txt
-</span></span><span class="line"><span class="cl">nmap -iL ips.txt -sCV --open -Pn -oA nmap-ext
-</span></span></code></pre></div><div class="obsidian-callout callout-warning">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <path d="M12 9v4"></path>
-          <path d="M12 17h.01"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">Cloud-hosted assets</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>Scanning AWS/GCP/Azure-hosted IPs at high rate can violate ToS even when the target authorizes you. Stick to <code>--rate 1000</code> or below, and confirm the scope covers cloud-hosted assets.</p>
-  </div>
-</div>
-<h2 id="v-screenshot-at-scale" data-heading-permalink="true"><span class="heading-content">v. Screenshot at scale</span>
-    <a class="heading-permalink" href="#v-screenshot-at-scale" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gowitness scan file -f alive-bare.txt --threads <span class="m">10</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## or eyewitness:</span>
-</span></span><span class="line"><span class="cl">EyeWitness --web -f alive-bare.txt --threads <span class="m">10</span> -d screenshots/
-</span></span></code></pre></div><p>Then visually triage <code>report.html</code>. Catches default panels, abandoned staging sites, dev artifacts.</p>
-<h2 id="vi-asn-and-ip-space" data-heading-permalink="true"><span class="heading-content">vi. ASN and IP space</span>
-    <a class="heading-permalink" href="#vi-asn-and-ip-space" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Find the company&rsquo;s own netblocks:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## by org name</span>
-</span></span><span class="line"><span class="cl">amass intel -org <span class="s2">&#34;Target Inc&#34;</span> 
-</span></span><span class="line"><span class="cl"><span class="c1">## by ASN</span>
-</span></span><span class="line"><span class="cl">amass intel -asn <span class="m">12345</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## quick lookup</span>
-</span></span><span class="line"><span class="cl">whois -h whois.cymru.com <span class="s2">&#34; -v 8.8.8.8&#34;</span>
-</span></span></code></pre></div><p>bgp.he.net for visual ASN exploration. Once you have ASN, expand to all prefixes:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -s <span class="s2">&#34;https://api.bgpview.io/asn/12345/prefixes&#34;</span> <span class="p">|</span> jq -r <span class="s1">&#39;.data.ipv4_prefixes[].prefix&#39;</span>
-</span></span></code></pre></div><h2 id="vii-cloud-asset-discovery" data-heading-permalink="true"><span class="heading-content">vii. Cloud asset discovery</span>
-    <a class="heading-permalink" href="#vii-cloud-asset-discovery" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>S3 buckets, blob storage, GCS:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## S3 permutations from a domain name</span>
-</span></span><span class="line"><span class="cl">cloud_enum -k <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -k <span class="s2">&#34;target&#34;</span> -k <span class="s2">&#34;target-prod&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## or trufflehog for leaked creds in public S3:</span>
-</span></span><span class="line"><span class="cl">trufflehog s3 --bucket<span class="o">=</span>target-bucket
-</span></span></code></pre></div><h2 id="viii-github-recon" data-heading-permalink="true"><span class="heading-content">viii. GitHub recon</span>
-    <a class="heading-permalink" href="#viii-github-recon" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Find code repos, leaked secrets:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">trufflehog github --org<span class="o">=</span>target-inc --concurrency<span class="o">=</span><span class="m">10</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## by user or repo</span>
-</span></span><span class="line"><span class="cl">trufflehog github --repo<span class="o">=</span>https://github.com/target-inc/code --only-verified
-</span></span></code></pre></div><p>Search GitHub directly for the domain:</p>
-<pre tabindex="0"><code>&#34;target.com&#34; filename:.env
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Recon (external) | JinPwn</title><meta name=description content="External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon &amp;amp; Enum ."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/misc/recon-external/><meta property="og:title" content="Recon (external) | JinPwn"><meta property="og:description" content="External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon &amp;amp; Enum ."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/misc/recon-external/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Recon (external) | JinPwn"><meta name=twitter:description content="External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon &amp;amp; Enum ."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon \u0026amp; Enum .","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Recon (external) | JinPwn","url":"https://jinpwn.dev/cheatsheets/misc/recon-external/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Misc navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/misc/ class=cheatsheet-sidebar-section>Misc</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/misc/00-tooling-moc/ class=cheatsheet-sidebar-link>Tooling MOC</a></li><li><a href=/cheatsheets/misc/file-transfer/ class=cheatsheet-sidebar-link>File Transfer</a></li><li><a href=/cheatsheets/misc/ldap/ class=cheatsheet-sidebar-link>LDAP</a></li><li><a href=/cheatsheets/misc/password-cracking/ class=cheatsheet-sidebar-link>Password Cracking</a></li><li><a href=/cheatsheets/misc/pivoting/ class=cheatsheet-sidebar-link>Pivoting</a></li><li><a href=/cheatsheets/misc/recon-external/ class="cheatsheet-sidebar-link is-current">Recon (external)</a></li><li><a href=/cheatsheets/misc/reverse-shells/ class=cheatsheet-sidebar-link>Reverse Shells</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>Recon (external)</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>Recon (external)</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Misc sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/misc/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/misc/00-tooling-moc/ class=cheatsheet-mobile-sections-link>Tooling MOC</a></li><li><a href=/cheatsheets/misc/file-transfer/ class=cheatsheet-mobile-sections-link>File Transfer</a></li><li><a href=/cheatsheets/misc/ldap/ class=cheatsheet-mobile-sections-link>LDAP</a></li><li><a href=/cheatsheets/misc/password-cracking/ class=cheatsheet-mobile-sections-link>Password Cracking</a></li><li><a href=/cheatsheets/misc/pivoting/ class=cheatsheet-mobile-sections-link>Pivoting</a></li><li><a href=/cheatsheets/misc/recon-external/ class="cheatsheet-mobile-sections-link is-current">Recon (external)</a></li><li><a href=/cheatsheets/misc/reverse-shells/ class=cheatsheet-mobile-sections-link>Reverse Shells</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use <a href=https://jinpwn.dev/cheatsheets/linux-pentesting/01-recon--enum/>01 Recon & Enum</a>
+.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>DOMAIN</span><span class=o>=</span>target.com
+</span></span><span class=line><span class=cl><span class=nv>WL</span><span class=o>=</span>/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt
+</span></span><span class=line><span class=cl><span class=nv>RESOLVERS</span><span class=o>=</span>/usr/share/wordlists/resolvers.txt
+</span></span></code></pre></div><p>Build a fresh resolver list, dead resolvers wreck mass brute-force speed:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>curl -sL https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt -o <span class=s2>&#34;</span><span class=nv>$RESOLVERS</span><span class=s2>&#34;</span>
+</span></span></code></pre></div><h2 id=i-subdomain-enum-passive-first data-heading-permalink=true><span class=heading-content>i. Subdomain enum, passive first</span>
+<a class=heading-permalink href=#i-subdomain-enum-passive-first aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Passive uses cert logs and public datasets, no traffic to target:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>subfinder -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -all -silent -o subs-passive.txt
+</span></span><span class=line><span class=cl>assetfinder --subs-only <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> <span class=p>|</span> tee -a subs-passive.txt
+</span></span><span class=line><span class=cl>amass enum -passive -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -o subs-amass.txt
+</span></span></code></pre></div><p>crt.sh, fast and free, one curl:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>curl -s <span class=s2>&#34;https://crt.sh/?q=%25.</span><span class=nv>$DOMAIN</span><span class=s2>&amp;output=json&#34;</span> <span class=p>|</span> jq -r <span class=s1>&#39;.[].name_value&#39;</span> <span class=p>|</span> sed <span class=s1>&#39;s/\*\.//g&#39;</span> <span class=p>|</span> sort -u
+</span></span></code></pre></div><p>Merge:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cat subs-passive.txt subs-amass.txt <span class=p>|</span> sort -u &gt; subs.txt
+</span></span></code></pre></div><h2 id=ii-active-brute-force data-heading-permalink=true><span class=heading-content>ii. Active brute force</span>
+<a class=heading-permalink href=#ii-active-brute-force aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>puredns, fastest mass DNS bruteforce, uses your resolver list:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>puredns bruteforce <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>&#34;</span> <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -r <span class=s2>&#34;</span><span class=nv>$RESOLVERS</span><span class=s2>&#34;</span> -w subs-brute.txt
+</span></span></code></pre></div><p>dnsx, validate the merged list and also brute permutations:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>dnsx -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>&#34;</span> -r <span class=s2>&#34;</span><span class=nv>$RESOLVERS</span><span class=s2>&#34;</span> -o subs-dnsx.txt
+</span></span><span class=line><span class=cl><span class=c1>## Permutation: alterx generates variants like staging-api, api-staging, etc.</span>
+</span></span><span class=line><span class=cl>alterx -l subs.txt <span class=p>|</span> dnsx -r <span class=s2>&#34;</span><span class=nv>$RESOLVERS</span><span class=s2>&#34;</span> -o subs-perm.txt
+</span></span></code></pre></div><p>Merge everything:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>cat subs-passive.txt subs-brute.txt subs-perm.txt <span class=p>|</span> sort -u &gt; all-subs.txt
+</span></span></code></pre></div><h2 id=iii-probe-alive-http data-heading-permalink=true><span class=heading-content>iii. Probe alive HTTP</span>
+<a class=heading-permalink href=#iii-probe-alive-http aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>httpx-toolkit, one tool, tons of fingerprints:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>httpx -l all-subs.txt -title -tech-detect -status-code -ip -cname -web-server -o alive.txt
+</span></span><span class=line><span class=cl><span class=c1>## Just alive hosts:</span>
+</span></span><span class=line><span class=cl>httpx -l all-subs.txt -silent -o alive-bare.txt
+</span></span></code></pre></div><p>Common interesting ports beyond 80/443:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>httpx -l all-subs.txt -ports 80,443,8000,8080,8443,8888,3000,5000,7001,9000,9090,9200 -o alive-ports.txt
+</span></span></code></pre></div><h2 id=iv-port-scanning-external-ips data-heading-permalink=true><span class=heading-content>iv. Port scanning external IPs</span>
+<a class=heading-permalink href=#iv-port-scanning-external-ips aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>naabu for fast TCP port scan across a domain set:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>naabu -l all-subs.txt -top-ports <span class=m>1000</span> -rate <span class=m>5000</span> -o ports.txt
+</span></span></code></pre></div><p>nmap follow-up on the live ports:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>awk -F: <span class=s1>&#39;{print $1}&#39;</span> ports.txt <span class=p>|</span> sort -u &gt; ips.txt
+</span></span><span class=line><span class=cl>nmap -iL ips.txt -sCV --open -Pn -oA nmap-ext
+</span></span></code></pre></div><div class="obsidian-callout callout-warning"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 00-3.48.0l-8 14A2 2 0 004 21h16a2 2 0 001.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><span class=obsidian-callout-title>Cloud-hosted assets</span></div><div class=obsidian-callout-body><p>Scanning AWS/GCP/Azure-hosted IPs at high rate can violate ToS even when the target authorizes you. Stick to <code>--rate 1000</code> or below, and confirm the scope covers cloud-hosted assets.</p></div></div><h2 id=v-screenshot-at-scale data-heading-permalink=true><span class=heading-content>v. Screenshot at scale</span>
+<a class=heading-permalink href=#v-screenshot-at-scale aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>gowitness scan file -f alive-bare.txt --threads <span class=m>10</span>
+</span></span><span class=line><span class=cl><span class=c1>## or eyewitness:</span>
+</span></span><span class=line><span class=cl>EyeWitness --web -f alive-bare.txt --threads <span class=m>10</span> -d screenshots/
+</span></span></code></pre></div><p>Then visually triage <code>report.html</code>. Catches default panels, abandoned staging sites, dev artifacts.</p><h2 id=vi-asn-and-ip-space data-heading-permalink=true><span class=heading-content>vi. ASN and IP space</span>
+<a class=heading-permalink href=#vi-asn-and-ip-space aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Find the company&rsquo;s own netblocks:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## by org name</span>
+</span></span><span class=line><span class=cl>amass intel -org <span class=s2>&#34;Target Inc&#34;</span> 
+</span></span><span class=line><span class=cl><span class=c1>## by ASN</span>
+</span></span><span class=line><span class=cl>amass intel -asn <span class=m>12345</span>
+</span></span><span class=line><span class=cl><span class=c1>## quick lookup</span>
+</span></span><span class=line><span class=cl>whois -h whois.cymru.com <span class=s2>&#34; -v 8.8.8.8&#34;</span>
+</span></span></code></pre></div><p>bgp.he.net for visual ASN exploration. Once you have ASN, expand to all prefixes:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>curl -s <span class=s2>&#34;https://api.bgpview.io/asn/12345/prefixes&#34;</span> <span class=p>|</span> jq -r <span class=s1>&#39;.data.ipv4_prefixes[].prefix&#39;</span>
+</span></span></code></pre></div><h2 id=vii-cloud-asset-discovery data-heading-permalink=true><span class=heading-content>vii. Cloud asset discovery</span>
+<a class=heading-permalink href=#vii-cloud-asset-discovery aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>S3 buckets, blob storage, GCS:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## S3 permutations from a domain name</span>
+</span></span><span class=line><span class=cl>cloud_enum -k <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -k <span class=s2>&#34;target&#34;</span> -k <span class=s2>&#34;target-prod&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1>## or trufflehog for leaked creds in public S3:</span>
+</span></span><span class=line><span class=cl>trufflehog s3 --bucket<span class=o>=</span>target-bucket
+</span></span></code></pre></div><h2 id=viii-github-recon data-heading-permalink=true><span class=heading-content>viii. GitHub recon</span>
+<a class=heading-permalink href=#viii-github-recon aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Find code repos, leaked secrets:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>trufflehog github --org<span class=o>=</span>target-inc --concurrency<span class=o>=</span><span class=m>10</span>
+</span></span><span class=line><span class=cl><span class=c1>## by user or repo</span>
+</span></span><span class=line><span class=cl>trufflehog github --repo<span class=o>=</span>https://github.com/target-inc/code --only-verified
+</span></span></code></pre></div><p>Search GitHub directly for the domain:</p><pre tabindex=0><code>&#34;target.com&#34; filename:.env
 &#34;target.com&#34; password
 &#34;target.com&#34; extension:pem
-</code></pre><h2 id="ix-wayback-and-historical-data" data-heading-permalink="true"><span class="heading-content">ix. Wayback and historical data</span>
-    <a class="heading-permalink" href="#ix-wayback-and-historical-data" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>URLs the target had in the past, often expose dead admin panels or old endpoints still alive:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">waybackurls <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> <span class="p">|</span> tee wayback.txt
-</span></span><span class="line"><span class="cl">gau <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> <span class="p">|</span> tee -a wayback.txt
-</span></span><span class="line"><span class="cl">sort -u wayback.txt &gt; urls.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## Filter for interesting extensions</span>
-</span></span><span class="line"><span class="cl">grep -E <span class="s1">&#39;\.(env|bak|old|sql|json|config|zip|tar|gz)(\?|$)&#39;</span> urls.txt
-</span></span></code></pre></div><h2 id="x-google-dorks-worth-saving" data-heading-permalink="true"><span class="heading-content">x. Google dorks worth saving</span>
-    <a class="heading-permalink" href="#x-google-dorks-worth-saving" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<pre tabindex="0"><code>site:target.com -www
+</code></pre><h2 id=ix-wayback-and-historical-data data-heading-permalink=true><span class=heading-content>ix. Wayback and historical data</span>
+<a class=heading-permalink href=#ix-wayback-and-historical-data aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>URLs the target had in the past, often expose dead admin panels or old endpoints still alive:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>waybackurls <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> <span class=p>|</span> tee wayback.txt
+</span></span><span class=line><span class=cl>gau <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> <span class=p>|</span> tee -a wayback.txt
+</span></span><span class=line><span class=cl>sort -u wayback.txt &gt; urls.txt
+</span></span><span class=line><span class=cl><span class=c1>## Filter for interesting extensions</span>
+</span></span><span class=line><span class=cl>grep -E <span class=s1>&#39;\.(env|bak|old|sql|json|config|zip|tar|gz)(\?|$)&#39;</span> urls.txt
+</span></span></code></pre></div><h2 id=x-google-dorks-worth-saving data-heading-permalink=true><span class=heading-content>x. Google dorks worth saving</span>
+<a class=heading-permalink href=#x-google-dorks-worth-saving aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><pre tabindex=0><code>site:target.com -www
 site:target.com filetype:pdf
 site:target.com inurl:admin
 site:target.com intitle:&#34;index of&#34;
 site:*.target.com -site:www.target.com
 site:pastebin.com &#34;target.com&#34;
 site:github.com &#34;target.com&#34; password
-</code></pre><h2 id="xi-full-pipeline-one-shot" data-heading-permalink="true"><span class="heading-content">xi. Full pipeline, one shot</span>
-    <a class="heading-permalink" href="#xi-full-pipeline-one-shot" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">subfinder -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -all -silent <span class="p">|</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  dnsx -silent -r <span class="s2">&#34;</span><span class="nv">$RESOLVERS</span><span class="s2">&#34;</span> <span class="p">|</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  naabu -silent -top-ports <span class="m">1000</span> <span class="p">|</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  httpx -silent -title -tech-detect -status-code -o final.txt
-</span></span></code></pre></div><p>Output is a ready-to-triage list of live hosts with tech stacks. From here, feed the URLs into <a href="https://jinpwn.dev/cheatsheets/web/00-web-moc/">00 Web MOC</a>
-.</p>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/misc/pivoting/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">Pivoting</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/misc/reverse-shells/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">Reverse Shells</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><h2 id=xi-full-pipeline-one-shot data-heading-permalink=true><span class=heading-content>xi. Full pipeline, one shot</span>
+<a class=heading-permalink href=#xi-full-pipeline-one-shot aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>subfinder -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -all -silent <span class=p>|</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  dnsx -silent -r <span class=s2>&#34;</span><span class=nv>$RESOLVERS</span><span class=s2>&#34;</span> <span class=p>|</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  naabu -silent -top-ports <span class=m>1000</span> <span class=p>|</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  httpx -silent -title -tech-detect -status-code -o final.txt
+</span></span></code></pre></div><p>Output is a ready-to-triage list of live hosts with tech stacks. From here, feed the URLs into <a href=https://jinpwn.dev/cheatsheets/web/00-web-moc/>00 Web MOC</a>
+.</p></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/misc/pivoting/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>Pivoting</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/misc/reverse-shells/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>Reverse Shells</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

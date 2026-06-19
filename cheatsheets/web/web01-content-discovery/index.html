@@ -1,601 +1,148 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Content Discovery | JinPwn</title><meta name="description" content="Find every hidden path, parameter, vhost, and file the app didn&amp;rsquo;t link to. Done well, this finds 80% of the bugs before any &amp;ldquo;real&amp;rdquo; testing.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web01-content-discovery/">
-<meta property="og:title" content="Content Discovery | JinPwn">
-<meta property="og:description" content="Find every hidden path, parameter, vhost, and file the app didn&amp;rsquo;t link to. Done well, this finds 80% of the bugs before any &amp;ldquo;real&amp;rdquo; testing.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web01-content-discovery/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Content Discovery | JinPwn">
-<meta name="twitter:description" content="Find every hidden path, parameter, vhost, and file the app didn&amp;rsquo;t link to. Done well, this finds 80% of the bugs before any &amp;ldquo;real&amp;rdquo; testing.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Find every hidden path, parameter, vhost, and file the app didn\u0026rsquo;t link to. Done well, this finds 80% of the bugs before any \u0026ldquo;real\u0026rdquo; testing.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Content Discovery | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web01-content-discovery/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link is-current">Content Discovery</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>Content Discovery</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">Content Discovery</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Web Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link is-current">Content Discovery</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>Find every hidden path, parameter, vhost, and file the app didn&rsquo;t link to. Done well, this finds 80% of the bugs before any &ldquo;real&rdquo; testing.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
-</span></span><span class="line"><span class="cl"><span class="nv">WL</span><span class="o">=</span>/usr/share/wordlists/seclists
-</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
-    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Standard surfaces to brute-force:</p>
-<ul>
-<li>Path enumeration (directories + files)</li>
-<li>Parameter mining (GET, POST body, JSON keys, headers)</li>
-<li>Vhost discovery (Host header tricks)</li>
-<li>JS endpoint extraction (URLs and APIs referenced in JS bundles)</li>
-<li>Subdomain enumeration (see [[Recon (external)]])</li>
-<li>Archive endpoints (waybackmachine, gau, hakrawler)</li>
-</ul>
-<h2 id="ii-path-fuzzing" data-heading-permalink="true"><span class="heading-content">ii. Path fuzzing</span>
-    <a class="heading-permalink" href="#ii-path-fuzzing" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>ffuf is the default, fastest and most flexible:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ffuf -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/FUZZ&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">/Discovery/Web-Content/raft-medium-directories.txt&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -c -t <span class="m">100</span> -mc all -fc <span class="m">404</span> -recursion -recursion-depth <span class="m">2</span> -o ffuf.json -of json
-</span></span></code></pre></div><p>Filter noise by size or words when a wildcard 200 hides real hits:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ffuf -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/FUZZ&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">/Discovery/Web-Content/raft-medium-directories.txt&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -c -t <span class="m">100</span> -fs <span class="m">1234</span> -fw <span class="m">567</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## -fs filter-size, -fw filter-words, -fl filter-lines, -fr filter-regex</span>
-</span></span></code></pre></div><p>Extension fuzzing (different extensions per app stack):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ffuf -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/FUZZ.EXT&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -w <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">/Discovery/Web-Content/raft-medium-words.txt:FUZZ&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -w ext.txt:EXT <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -c -t <span class="m">100</span> -fc <span class="m">404</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## ext.txt: php, asp, aspx, jsp, jspx, do, action, html, json, xml, txt, bak, old, swp</span>
-</span></span></code></pre></div><p>feroxbuster, recursive by default, great as a second-pass:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">feroxbuster -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">/Discovery/Web-Content/raft-medium-directories.txt&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -t <span class="m">50</span> -x php,html,txt,json --depth <span class="m">3</span> -o ferox.txt
-</span></span></code></pre></div><p>Wordlist tiers (start small, escalate if needed):</p>
-<ol>
-<li><code>quickhits.txt</code> (60 lines, instant)</li>
-<li><code>common.txt</code> (4600 lines, ~1 min)</li>
-<li><code>raft-medium-directories.txt</code> (30k lines)</li>
-<li><code>raft-large-directories.txt</code> (170k)</li>
-<li><code>directory-list-2.3-medium.txt</code> (220k, dirbuster classic)</li>
-<li>SecLists <code>Discovery/Web-Content/big.txt</code> for the kitchen sink</li>
-</ol>
-<h2 id="iii-vhost-discovery" data-heading-permalink="true"><span class="heading-content">iii. Vhost discovery</span>
-    <a class="heading-permalink" href="#iii-vhost-discovery" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Same IP, different hostname = different app. Brute the Host header:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ffuf -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -H <span class="s2">&#34;Host: FUZZ.target.com&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -w <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">/Discovery/DNS/subdomains-top1million-110000.txt&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -mc all -fs &lt;baseline_size&gt;
-</span></span><span class="line"><span class="cl"><span class="c1">## Baseline size = the body size returned for a known-bad subdomain. Filter it out.</span>
-</span></span></code></pre></div><p>gobuster vhost mode as alternative:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gobuster vhost -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">/Discovery/DNS/subdomains-top1million-110000.txt&#34;</span> --append-domain
-</span></span></code></pre></div><h2 id="iv-parameter-mining" data-heading-permalink="true"><span class="heading-content">iv. Parameter mining</span>
-    <a class="heading-permalink" href="#iv-parameter-mining" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Apps almost always accept more parameters than they document. arjun finds them by reflection and behavior diffing:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">arjun -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/search&#34;</span> -m GET
-</span></span><span class="line"><span class="cl">arjun -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/search&#34;</span> -m POST --headers <span class="s2">&#34;Content-Type: application/json&#34;</span>
-</span></span><span class="line"><span class="cl">arjun -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/search&#34;</span> -m JSON -w /path/to/params.txt
-</span></span></code></pre></div><p>x8, faster Rust alternative:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">x8 -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/search&#34;</span> -w <span class="s2">&#34;</span><span class="nv">$WL</span><span class="s2">/Discovery/Web-Content/burp-parameter-names.txt&#34;</span>
-</span></span></code></pre></div><p>Param Miner (Burp extension) for unkeyed headers and cache poisoning, see [[WEB11 Web Cache Poisoning]].</p>
-<h2 id="v-js-endpoint-extraction" data-heading-permalink="true"><span class="heading-content">v. JS endpoint extraction</span>
-    <a class="heading-permalink" href="#v-js-endpoint-extraction" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Modern apps live in JavaScript. Every endpoint they call is in there somewhere.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## getallurls / waybackurls / gau combined</span>
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> target.com <span class="p">|</span> gau --threads <span class="m">10</span> <span class="p">|</span> tee gau.txt
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> target.com <span class="p">|</span> waybackurls <span class="p">|</span> tee -a gau.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## Just keep JS / API patterns:</span>
-</span></span><span class="line"><span class="cl">grep -E <span class="s1">&#39;\.(js|json)(\?|$)|/api/|/v[0-9]/&#39;</span> gau.txt <span class="p">|</span> sort -u &gt; endpoints.txt
-</span></span></code></pre></div><p>LinkFinder regex for URLs inside JS files:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">linkfinder -i <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/static/app.js&#34;</span> -o cli
-</span></span><span class="line"><span class="cl"><span class="c1">## or recursively across a domain:</span>
-</span></span><span class="line"><span class="cl">linkfinder -i <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -d -o html -o links.html
-</span></span></code></pre></div><p>katana, modern crawler that handles SPA routing and JS:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">katana -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -jc -kf all -o katana.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## -jc = JS crawling, -kf = known files (sitemap.xml, robots.txt etc)</span>
-</span></span></code></pre></div><p>gospider, fast Go crawler with form/cookie tracking:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">gospider -s <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -d <span class="m">3</span> -c <span class="m">10</span> --robots --sitemap --js -o gospider/
-</span></span></code></pre></div><p>hakrawler, focused on URL extraction:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> <span class="p">|</span> hakrawler -d <span class="m">3</span>
-</span></span></code></pre></div><h2 id="vi-well-known-files-always-to-check" data-heading-permalink="true"><span class="heading-content">vi. Well-known files always to check</span>
-    <a class="heading-permalink" href="#vi-well-known-files-always-to-check" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Hit these every time, they&rsquo;re free findings:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">for</span> path in robots.txt sitemap.xml security.txt .well-known/security.txt humans.txt crossdomain.xml clientaccesspolicy.xml<span class="p">;</span> <span class="k">do</span>
-</span></span><span class="line"><span class="cl">  curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/</span><span class="nv">$path</span><span class="s2">&#34;</span> -o /dev/null -w <span class="s2">&#34;%{http_code} </span><span class="nv">$path</span><span class="s2">\n&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="k">done</span>
-</span></span></code></pre></div><p>Dev / source exposure (the big ones):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Git repo exposure:</span>
-</span></span><span class="line"><span class="cl">curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/.git/HEAD&#34;</span>        <span class="c1">## 200 with content = full repo extractable</span>
-</span></span><span class="line"><span class="cl">curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/.git/config&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## If exposed:</span>
-</span></span><span class="line"><span class="cl">git-dumper <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/.git/&#34;</span> ./loot/
-</span></span><span class="line"><span class="cl"><span class="c1">## Other source files:</span>
-</span></span><span class="line"><span class="cl"><span class="k">for</span> f in <span class="s1">&#39;.env&#39;</span> <span class="s1">&#39;.env.local&#39;</span> <span class="s1">&#39;.env.production&#39;</span> <span class="s1">&#39;.env.development&#39;</span> <span class="s1">&#39;.env.example&#39;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">         <span class="s1">&#39;docker-compose.yml&#39;</span> <span class="s1">&#39;Dockerfile&#39;</span> <span class="s1">&#39;docker-compose.override.yml&#39;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">         <span class="s1">&#39;.DS_Store&#39;</span> <span class="s1">&#39;.htaccess&#39;</span> <span class="s1">&#39;.htpasswd&#39;</span> <span class="s1">&#39;web.config&#39;</span> <span class="s1">&#39;config.php.bak&#39;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">         <span class="s1">&#39;wp-config.php.bak&#39;</span> <span class="s1">&#39;composer.json&#39;</span> <span class="s1">&#39;composer.lock&#39;</span> <span class="s1">&#39;package.json&#39;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">         <span class="s1">&#39;package-lock.json&#39;</span> <span class="s1">&#39;.npmrc&#39;</span> <span class="s1">&#39;pom.xml&#39;</span> <span class="s1">&#39;build.gradle&#39;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">         <span class="s1">&#39;phpinfo.php&#39;</span> <span class="s1">&#39;info.php&#39;</span> <span class="s1">&#39;test.php&#39;</span> <span class="s1">&#39;config.json&#39;</span><span class="p">;</span> <span class="k">do</span>
-</span></span><span class="line"><span class="cl">  <span class="nv">code</span><span class="o">=</span><span class="k">$(</span>curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/</span><span class="nv">$f</span><span class="s2">&#34;</span> -o /dev/null -w <span class="s2">&#34;%{http_code}&#34;</span><span class="k">)</span>
-</span></span><span class="line"><span class="cl">  <span class="o">[</span> <span class="s2">&#34;</span><span class="nv">$code</span><span class="s2">&#34;</span> <span class="o">=</span> <span class="s2">&#34;200&#34;</span> <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">echo</span> <span class="s2">&#34;OPEN: </span><span class="nv">$T</span><span class="s2">/</span><span class="nv">$f</span><span class="s2">&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="k">done</span>
-</span></span></code></pre></div><p>Backup file convention sweep (one filename, many extensions):</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ffuf -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/FUZZ&#34;</span> -w backup-ext-permutations.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## permutations: index.php.bak, index.bak.php, index.php~, index.php.swp, index.php.old, index.php.orig</span>
-</span></span></code></pre></div><p><code>.DS_Store</code> exposure leaks directory contents:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ds_store_exposed.py <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/.DS_Store&#34;</span>
-</span></span></code></pre></div><h2 id="vii-common-framework-paths" data-heading-permalink="true"><span class="heading-content">vii. Common framework paths</span>
-    <a class="heading-permalink" href="#vii-common-framework-paths" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Knowing the stack narrows the wordlist. Identify first with wappalyzer-cli, whatweb, httpx tech-detect, or just look at the response headers and HTML:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">httpx -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -tech-detect -title -web-server -status-code -ip
-</span></span></code></pre></div><p>By stack:</p>
-<p><strong>Java / Spring</strong>:</p>
-<pre tabindex="0"><code>/actuator         /actuator/env       /actuator/heapdump   /actuator/mappings
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Content Discovery | JinPwn</title><meta name=description content="Find every hidden path, parameter, vhost, and file the app didn&amp;rsquo;t link to. Done well, this finds 80% of the bugs before any &amp;ldquo;real&amp;rdquo; testing."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/web/web01-content-discovery/><meta property="og:title" content="Content Discovery | JinPwn"><meta property="og:description" content="Find every hidden path, parameter, vhost, and file the app didn&amp;rsquo;t link to. Done well, this finds 80% of the bugs before any &amp;ldquo;real&amp;rdquo; testing."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web01-content-discovery/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Content Discovery | JinPwn"><meta name=twitter:description content="Find every hidden path, parameter, vhost, and file the app didn&amp;rsquo;t link to. Done well, this finds 80% of the bugs before any &amp;ldquo;real&amp;rdquo; testing."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"Find every hidden path, parameter, vhost, and file the app didn\u0026rsquo;t link to. Done well, this finds 80% of the bugs before any \u0026ldquo;real\u0026rdquo; testing.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Content Discovery | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web01-content-discovery/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Web Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/web/ class=cheatsheet-sidebar-section>Web Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-sidebar-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class="cheatsheet-sidebar-link is-current">Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-sidebar-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-sidebar-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-sidebar-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-sidebar-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-sidebar-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-sidebar-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-sidebar-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-sidebar-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-sidebar-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-sidebar-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-sidebar-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-sidebar-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-sidebar-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-sidebar-link>WEB15 Prototype Pollution</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>Content Discovery</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>Content Discovery</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Web Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/web/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-mobile-sections-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class="cheatsheet-mobile-sections-link is-current">Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-mobile-sections-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-mobile-sections-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-mobile-sections-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-mobile-sections-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-mobile-sections-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-mobile-sections-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-mobile-sections-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-mobile-sections-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-mobile-sections-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-mobile-sections-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-mobile-sections-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-mobile-sections-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-mobile-sections-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-mobile-sections-link>WEB15 Prototype Pollution</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>Find every hidden path, parameter, vhost, and file the app didn&rsquo;t link to. Done well, this finds 80% of the bugs before any &ldquo;real&rdquo; testing.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>T</span><span class=o>=</span>https://target.com
+</span></span><span class=line><span class=cl><span class=nv>WL</span><span class=o>=</span>/usr/share/wordlists/seclists
+</span></span></code></pre></div><h2 id=i-where-it-lives data-heading-permalink=true><span class=heading-content>i. Where it lives</span>
+<a class=heading-permalink href=#i-where-it-lives aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Standard surfaces to brute-force:</p><ul><li>Path enumeration (directories + files)</li><li>Parameter mining (GET, POST body, JSON keys, headers)</li><li>Vhost discovery (Host header tricks)</li><li>JS endpoint extraction (URLs and APIs referenced in JS bundles)</li><li>Subdomain enumeration (see <a href=/cheatsheets/misc/recon-external/>Recon (external)</a>
+)</li><li>Archive endpoints (waybackmachine, gau, hakrawler)</li></ul><h2 id=ii-path-fuzzing data-heading-permalink=true><span class=heading-content>ii. Path fuzzing</span>
+<a class=heading-permalink href=#ii-path-fuzzing aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>ffuf is the default, fastest and most flexible:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ffuf -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/FUZZ&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>/Discovery/Web-Content/raft-medium-directories.txt&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -c -t <span class=m>100</span> -mc all -fc <span class=m>404</span> -recursion -recursion-depth <span class=m>2</span> -o ffuf.json -of json
+</span></span></code></pre></div><p>Filter noise by size or words when a wildcard 200 hides real hits:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ffuf -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/FUZZ&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>/Discovery/Web-Content/raft-medium-directories.txt&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -c -t <span class=m>100</span> -fs <span class=m>1234</span> -fw <span class=m>567</span>
+</span></span><span class=line><span class=cl><span class=c1>## -fs filter-size, -fw filter-words, -fl filter-lines, -fr filter-regex</span>
+</span></span></code></pre></div><p>Extension fuzzing (different extensions per app stack):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ffuf -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/FUZZ.EXT&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -w <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>/Discovery/Web-Content/raft-medium-words.txt:FUZZ&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -w ext.txt:EXT <span class=se>\
+</span></span></span><span class=line><span class=cl>  -c -t <span class=m>100</span> -fc <span class=m>404</span>
+</span></span><span class=line><span class=cl><span class=c1>## ext.txt: php, asp, aspx, jsp, jspx, do, action, html, json, xml, txt, bak, old, swp</span>
+</span></span></code></pre></div><p>feroxbuster, recursive by default, great as a second-pass:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>feroxbuster -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>/Discovery/Web-Content/raft-medium-directories.txt&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -t <span class=m>50</span> -x php,html,txt,json --depth <span class=m>3</span> -o ferox.txt
+</span></span></code></pre></div><p>Wordlist tiers (start small, escalate if needed):</p><ol><li><code>quickhits.txt</code> (60 lines, instant)</li><li><code>common.txt</code> (4600 lines, ~1 min)</li><li><code>raft-medium-directories.txt</code> (30k lines)</li><li><code>raft-large-directories.txt</code> (170k)</li><li><code>directory-list-2.3-medium.txt</code> (220k, dirbuster classic)</li><li>SecLists <code>Discovery/Web-Content/big.txt</code> for the kitchen sink</li></ol><h2 id=iii-vhost-discovery data-heading-permalink=true><span class=heading-content>iii. Vhost discovery</span>
+<a class=heading-permalink href=#iii-vhost-discovery aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Same IP, different hostname = different app. Brute the Host header:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ffuf -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> -H <span class=s2>&#34;Host: FUZZ.target.com&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -w <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>/Discovery/DNS/subdomains-top1million-110000.txt&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -mc all -fs &lt;baseline_size&gt;
+</span></span><span class=line><span class=cl><span class=c1>## Baseline size = the body size returned for a known-bad subdomain. Filter it out.</span>
+</span></span></code></pre></div><p>gobuster vhost mode as alternative:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>gobuster vhost -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>/Discovery/DNS/subdomains-top1million-110000.txt&#34;</span> --append-domain
+</span></span></code></pre></div><h2 id=iv-parameter-mining data-heading-permalink=true><span class=heading-content>iv. Parameter mining</span>
+<a class=heading-permalink href=#iv-parameter-mining aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Apps almost always accept more parameters than they document. arjun finds them by reflection and behavior diffing:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>arjun -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/search&#34;</span> -m GET
+</span></span><span class=line><span class=cl>arjun -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/search&#34;</span> -m POST --headers <span class=s2>&#34;Content-Type: application/json&#34;</span>
+</span></span><span class=line><span class=cl>arjun -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/search&#34;</span> -m JSON -w /path/to/params.txt
+</span></span></code></pre></div><p>x8, faster Rust alternative:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>x8 -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/search&#34;</span> -w <span class=s2>&#34;</span><span class=nv>$WL</span><span class=s2>/Discovery/Web-Content/burp-parameter-names.txt&#34;</span>
+</span></span></code></pre></div><p>Param Miner (Burp extension) for unkeyed headers and cache poisoning, see <a href=/cheatsheets/web/web11-web-cache-poisoning/>WEB11 Web Cache Poisoning</a>
+.</p><h2 id=v-js-endpoint-extraction data-heading-permalink=true><span class=heading-content>v. JS endpoint extraction</span>
+<a class=heading-permalink href=#v-js-endpoint-extraction aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Modern apps live in JavaScript. Every endpoint they call is in there somewhere.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## getallurls / waybackurls / gau combined</span>
+</span></span><span class=line><span class=cl><span class=nb>echo</span> target.com <span class=p>|</span> gau --threads <span class=m>10</span> <span class=p>|</span> tee gau.txt
+</span></span><span class=line><span class=cl><span class=nb>echo</span> target.com <span class=p>|</span> waybackurls <span class=p>|</span> tee -a gau.txt
+</span></span><span class=line><span class=cl><span class=c1>## Just keep JS / API patterns:</span>
+</span></span><span class=line><span class=cl>grep -E <span class=s1>&#39;\.(js|json)(\?|$)|/api/|/v[0-9]/&#39;</span> gau.txt <span class=p>|</span> sort -u &gt; endpoints.txt
+</span></span></code></pre></div><p>LinkFinder regex for URLs inside JS files:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>linkfinder -i <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/static/app.js&#34;</span> -o cli
+</span></span><span class=line><span class=cl><span class=c1>## or recursively across a domain:</span>
+</span></span><span class=line><span class=cl>linkfinder -i <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> -d -o html -o links.html
+</span></span></code></pre></div><p>katana, modern crawler that handles SPA routing and JS:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>katana -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> -jc -kf all -o katana.txt
+</span></span><span class=line><span class=cl><span class=c1>## -jc = JS crawling, -kf = known files (sitemap.xml, robots.txt etc)</span>
+</span></span></code></pre></div><p>gospider, fast Go crawler with form/cookie tracking:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>gospider -s <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> -d <span class=m>3</span> -c <span class=m>10</span> --robots --sitemap --js -o gospider/
+</span></span></code></pre></div><p>hakrawler, focused on URL extraction:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>echo</span> <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> <span class=p>|</span> hakrawler -d <span class=m>3</span>
+</span></span></code></pre></div><h2 id=vi-well-known-files-always-to-check data-heading-permalink=true><span class=heading-content>vi. Well-known files always to check</span>
+<a class=heading-permalink href=#vi-well-known-files-always-to-check aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Hit these every time, they&rsquo;re free findings:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=k>for</span> path in robots.txt sitemap.xml security.txt .well-known/security.txt humans.txt crossdomain.xml clientaccesspolicy.xml<span class=p>;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>  curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/</span><span class=nv>$path</span><span class=s2>&#34;</span> -o /dev/null -w <span class=s2>&#34;%{http_code} </span><span class=nv>$path</span><span class=s2>\n&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>done</span>
+</span></span></code></pre></div><p>Dev / source exposure (the big ones):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Git repo exposure:</span>
+</span></span><span class=line><span class=cl>curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/.git/HEAD&#34;</span>        <span class=c1>## 200 with content = full repo extractable</span>
+</span></span><span class=line><span class=cl>curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/.git/config&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1>## If exposed:</span>
+</span></span><span class=line><span class=cl>git-dumper <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/.git/&#34;</span> ./loot/
+</span></span><span class=line><span class=cl><span class=c1>## Other source files:</span>
+</span></span><span class=line><span class=cl><span class=k>for</span> f in <span class=s1>&#39;.env&#39;</span> <span class=s1>&#39;.env.local&#39;</span> <span class=s1>&#39;.env.production&#39;</span> <span class=s1>&#39;.env.development&#39;</span> <span class=s1>&#39;.env.example&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>         <span class=s1>&#39;docker-compose.yml&#39;</span> <span class=s1>&#39;Dockerfile&#39;</span> <span class=s1>&#39;docker-compose.override.yml&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>         <span class=s1>&#39;.DS_Store&#39;</span> <span class=s1>&#39;.htaccess&#39;</span> <span class=s1>&#39;.htpasswd&#39;</span> <span class=s1>&#39;web.config&#39;</span> <span class=s1>&#39;config.php.bak&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>         <span class=s1>&#39;wp-config.php.bak&#39;</span> <span class=s1>&#39;composer.json&#39;</span> <span class=s1>&#39;composer.lock&#39;</span> <span class=s1>&#39;package.json&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>         <span class=s1>&#39;package-lock.json&#39;</span> <span class=s1>&#39;.npmrc&#39;</span> <span class=s1>&#39;pom.xml&#39;</span> <span class=s1>&#39;build.gradle&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>         <span class=s1>&#39;phpinfo.php&#39;</span> <span class=s1>&#39;info.php&#39;</span> <span class=s1>&#39;test.php&#39;</span> <span class=s1>&#39;config.json&#39;</span><span class=p>;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>  <span class=nv>code</span><span class=o>=</span><span class=k>$(</span>curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/</span><span class=nv>$f</span><span class=s2>&#34;</span> -o /dev/null -w <span class=s2>&#34;%{http_code}&#34;</span><span class=k>)</span>
+</span></span><span class=line><span class=cl>  <span class=o>[</span> <span class=s2>&#34;</span><span class=nv>$code</span><span class=s2>&#34;</span> <span class=o>=</span> <span class=s2>&#34;200&#34;</span> <span class=o>]</span> <span class=o>&amp;&amp;</span> <span class=nb>echo</span> <span class=s2>&#34;OPEN: </span><span class=nv>$T</span><span class=s2>/</span><span class=nv>$f</span><span class=s2>&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>done</span>
+</span></span></code></pre></div><p>Backup file convention sweep (one filename, many extensions):</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ffuf -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/FUZZ&#34;</span> -w backup-ext-permutations.txt
+</span></span><span class=line><span class=cl><span class=c1>## permutations: index.php.bak, index.bak.php, index.php~, index.php.swp, index.php.old, index.php.orig</span>
+</span></span></code></pre></div><p><code>.DS_Store</code> exposure leaks directory contents:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ds_store_exposed.py <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/.DS_Store&#34;</span>
+</span></span></code></pre></div><h2 id=vii-common-framework-paths data-heading-permalink=true><span class=heading-content>vii. Common framework paths</span>
+<a class=heading-permalink href=#vii-common-framework-paths aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Knowing the stack narrows the wordlist. Identify first with wappalyzer-cli, whatweb, httpx tech-detect, or just look at the response headers and HTML:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>httpx -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> -tech-detect -title -web-server -status-code -ip
+</span></span></code></pre></div><p>By stack:</p><p><strong>Java / Spring</strong>:</p><pre tabindex=0><code>/actuator         /actuator/env       /actuator/heapdump   /actuator/mappings
 /v2/api-docs      /swagger-ui.html    /console
-</code></pre><p><strong>Spring Boot &lt; 1.5</strong> the actuator endpoints often expose env vars and heap dumps with no auth.</p>
-<p><strong>Node.js / Express</strong>:</p>
-<pre tabindex="0"><code>/api              /admin              /.env               /server.js
+</code></pre><p><strong>Spring Boot &lt; 1.5</strong> the actuator endpoints often expose env vars and heap dumps with no auth.</p><p><strong>Node.js / Express</strong>:</p><pre tabindex=0><code>/api              /admin              /.env               /server.js
 /node_modules
-</code></pre><p><strong>Django</strong>:</p>
-<pre tabindex="0"><code>/admin            /api                /__debug__          /static/
-</code></pre><p>Default debug=True leaks stack traces with config and creds.</p>
-<p><strong>Flask</strong>:</p>
-<pre tabindex="0"><code>/console          /admin              /api                /static
-</code></pre><p><code>/console</code> with debug=True = direct Python REPL.</p>
-<p><strong>Tomcat</strong>:</p>
-<pre tabindex="0"><code>/manager/html     /manager/text       /host-manager/html  /examples/
-</code></pre><p>Default creds tomcat/tomcat, admin/admin, tomcat/s3cret.</p>
-<p><strong>Apache / .htaccess apps</strong>:</p>
-<pre tabindex="0"><code>/server-status    /server-info        /cgi-bin/           /icons/
-</code></pre><p><code>/server-status</code> from internal IP leaks every recent request.</p>
-<p><strong>WordPress</strong>:</p>
-<pre tabindex="0"><code>/wp-admin/        /wp-login.php       /wp-json/wp/v2/users    /wp-content/
+</code></pre><p><strong>Django</strong>:</p><pre tabindex=0><code>/admin            /api                /__debug__          /static/
+</code></pre><p>Default debug=True leaks stack traces with config and creds.</p><p><strong>Flask</strong>:</p><pre tabindex=0><code>/console          /admin              /api                /static
+</code></pre><p><code>/console</code> with debug=True = direct Python REPL.</p><p><strong>Tomcat</strong>:</p><pre tabindex=0><code>/manager/html     /manager/text       /host-manager/html  /examples/
+</code></pre><p>Default creds tomcat/tomcat, admin/admin, tomcat/s3cret.</p><p><strong>Apache / .htaccess apps</strong>:</p><pre tabindex=0><code>/server-status    /server-info        /cgi-bin/           /icons/
+</code></pre><p><code>/server-status</code> from internal IP leaks every recent request.</p><p><strong>WordPress</strong>:</p><pre tabindex=0><code>/wp-admin/        /wp-login.php       /wp-json/wp/v2/users    /wp-content/
 /wp-config.php.bak
-</code></pre><p><code>wp-json/wp/v2/users</code> enumerates usernames on default installs.</p>
-<p><strong>Joomla / Drupal / etc</strong>: run cms-specific scanners (<code>wpscan</code>, <code>joomscan</code>, <code>droopescan</code>).</p>
-<h2 id="viii-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">viii. Tricks worth knowing</span>
-    <a class="heading-permalink" href="#viii-tricks-worth-knowing" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="method-spraying" data-heading-permalink="true"><span class="heading-content">Method spraying</span>
-    <a class="heading-permalink" href="#method-spraying" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Some endpoints behave differently per HTTP method:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="k">for</span> m in GET POST PUT DELETE PATCH OPTIONS HEAD TRACE<span class="p">;</span> <span class="k">do</span>
-</span></span><span class="line"><span class="cl">  <span class="nb">echo</span> <span class="s2">&#34;=== </span><span class="nv">$m</span><span class="s2"> ===&#34;</span>
-</span></span><span class="line"><span class="cl">  curl -sX <span class="s2">&#34;</span><span class="nv">$m</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/users&#34;</span> -o /dev/null -w <span class="s2">&#34;%{http_code} %{size_download}\n&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="k">done</span>
-</span></span></code></pre></div><h3 id="trailing-slash-and-case-sensitivity" data-heading-permalink="true"><span class="heading-content">Trailing slash and case sensitivity</span>
-    <a class="heading-permalink" href="#trailing-slash-and-case-sensitivity" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Same endpoint, different behavior:</span>
-</span></span><span class="line"><span class="cl">curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin&#34;</span>      <span class="c1">## may 302 -&gt; /admin/</span>
-</span></span><span class="line"><span class="cl">curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin/&#34;</span>     <span class="c1">## the actual app</span>
-</span></span><span class="line"><span class="cl">curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/Admin&#34;</span>      <span class="c1">## case-sensitivity on Linux backends</span>
-</span></span><span class="line"><span class="cl">curl -sI <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/ADMIN&#34;</span>
-</span></span></code></pre></div><h3 id="403-bypass-attempts" data-heading-permalink="true"><span class="heading-content">403 bypass attempts</span>
-    <a class="heading-permalink" href="#403-bypass-attempts" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>When you find an interesting endpoint that returns 403, try <a href="https://github.com/jinpwn/4oh3" target="_blank" rel="noopener noreferrer">4oh3</a>
- or <a href="https://github.com/iamj0ker/bypass-403" target="_blank" rel="noopener noreferrer">bypass-403</a>
-:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">4oh3 -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Header tricks:</span>
-</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;X-Original-URL: /admin&#34;</span> <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/&#34;</span>
-</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;X-Rewrite-URL: /admin&#34;</span> <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/&#34;</span>
-</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;X-Forwarded-For: 127.0.0.1&#34;</span> <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin&#34;</span>
-</span></span><span class="line"><span class="cl">curl -H <span class="s2">&#34;X-Forwarded-Host: localhost&#34;</span> <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Path tricks:</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin/.&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin/..&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin%20&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin%09&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin/?&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/admin/%2e&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">//admin&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/./admin&#34;</span>
-</span></span></code></pre></div><h3 id="same-wordlist-multiple-modes" data-heading-permalink="true"><span class="heading-content">Same wordlist, multiple modes</span>
-    <a class="heading-permalink" href="#same-wordlist-multiple-modes" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Web content lists also work for parameters and headers. Try them across all three modes when stuck.</p>
-<h2 id="ix-archive-sources" data-heading-permalink="true"><span class="heading-content">ix. Archive sources</span>
-    <a class="heading-permalink" href="#ix-archive-sources" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Wayback Machine often shows older endpoints removed in production, but still alive:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;target.com&#34;</span> <span class="p">|</span> gau --providers wayback,otx,commoncrawl --threads <span class="m">10</span> <span class="p">|</span> tee gau.txt
-</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;target.com&#34;</span> <span class="p">|</span> waybackurls &gt; wayback.txt
-</span></span><span class="line"><span class="cl"><span class="c1">## Filter interesting:</span>
-</span></span><span class="line"><span class="cl">grep -E <span class="s1">&#39;\.(env|bak|sql|tar|zip|gz)(\?|$)&#39;</span> gau.txt
-</span></span><span class="line"><span class="cl">grep -E <span class="s1">&#39;/admin|/api|/internal|/debug|/test&#39;</span> gau.txt
-</span></span></code></pre></div><p>URLscan.io and Shodan also archive HTTP responses, sometimes useful for finding old admin panels.</p>
-<h2 id="x-github-recon" data-heading-permalink="true"><span class="heading-content">x. GitHub recon</span>
-    <a class="heading-permalink" href="#x-github-recon" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>The target&rsquo;s own repos and developer accounts often leak paths and creds:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">trufflehog github --org<span class="o">=</span>target-inc --only-verified
-</span></span><span class="line"><span class="cl"><span class="c1">## Search GitHub directly with dorks:</span>
-</span></span><span class="line"><span class="cl"><span class="c1">##   &#34;target.com&#34; filename:.env</span>
-</span></span><span class="line"><span class="cl"><span class="c1">##   &#34;target.com&#34; password</span>
-</span></span><span class="line"><span class="cl"><span class="c1">##   &#34;target.com&#34; extension:pem</span>
-</span></span><span class="line"><span class="cl"><span class="c1">##   site:github.com target.com api_key</span>
-</span></span></code></pre></div><h2 id="xi-references" data-heading-permalink="true"><span class="heading-content">xi. References</span>
-    <a class="heading-permalink" href="#xi-references" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Methodology%20and%20Resources" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - Directory and File Bruteforcing</a>
-</li>
-<li><a href="https://github.com/danielmiessler/SecLists/tree/master/Discovery/Web-Content" target="_blank" rel="noopener noreferrer">SecLists - Discovery wordlists</a>
-</li>
-<li><a href="https://wordlists.assetnote.io" target="_blank" rel="noopener noreferrer">Assetnote wordlists</a>
- — high-quality per-tech wordlists</li>
-<li><a href="https://book.hacktricks.xyz/network-services-pentesting/pentesting-web" target="_blank" rel="noopener noreferrer">HackTricks - Pentesting Web</a>
-</li>
-<li><a href="https://portswigger.net/web-security/information-disclosure" target="_blank" rel="noopener noreferrer">PortSwigger - Information disclosure</a>
-</li>
-</ul>
-<h2 id="xii-where-it-leads" data-heading-permalink="true"><span class="heading-content">xii. Where it leads</span>
-    <a class="heading-permalink" href="#xii-where-it-leads" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Each new path is a new vuln class to check:</p>
-<ul>
-<li>API endpoints → [[WEB02 Auth &amp; Session]] then injection files</li>
-<li>File uploads → [[WEB13 File Upload &amp; LFI]]</li>
-<li>Admin panels → default creds first, then [[WEB02 Auth &amp; Session]]</li>
-<li>Source exposure (<code>.git</code>, <code>.env</code>) → read every secret, validate keys per provider in [[00 Cloud MOC]]</li>
-<li>Debug endpoints → often direct RCE (Spring actuator/jolokia, Flask debug console, Rails console)</li>
-</ul>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/00-web-moc/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">Web MOC</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web02-auth--session/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">Auth &amp; Session</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><p><code>wp-json/wp/v2/users</code> enumerates usernames on default installs.</p><p><strong>Joomla / Drupal / etc</strong>: run cms-specific scanners (<code>wpscan</code>, <code>joomscan</code>, <code>droopescan</code>).</p><h2 id=viii-tricks-worth-knowing data-heading-permalink=true><span class=heading-content>viii. Tricks worth knowing</span>
+<a class=heading-permalink href=#viii-tricks-worth-knowing aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=method-spraying data-heading-permalink=true><span class=heading-content>Method spraying</span>
+<a class=heading-permalink href=#method-spraying aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Some endpoints behave differently per HTTP method:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=k>for</span> m in GET POST PUT DELETE PATCH OPTIONS HEAD TRACE<span class=p>;</span> <span class=k>do</span>
+</span></span><span class=line><span class=cl>  <span class=nb>echo</span> <span class=s2>&#34;=== </span><span class=nv>$m</span><span class=s2> ===&#34;</span>
+</span></span><span class=line><span class=cl>  curl -sX <span class=s2>&#34;</span><span class=nv>$m</span><span class=s2>&#34;</span> <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/users&#34;</span> -o /dev/null -w <span class=s2>&#34;%{http_code} %{size_download}\n&#34;</span>
+</span></span><span class=line><span class=cl><span class=k>done</span>
+</span></span></code></pre></div><h3 id=trailing-slash-and-case-sensitivity data-heading-permalink=true><span class=heading-content>Trailing slash and case sensitivity</span>
+<a class=heading-permalink href=#trailing-slash-and-case-sensitivity aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Same endpoint, different behavior:</span>
+</span></span><span class=line><span class=cl>curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin&#34;</span>      <span class=c1>## may 302 -&gt; /admin/</span>
+</span></span><span class=line><span class=cl>curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin/&#34;</span>     <span class=c1>## the actual app</span>
+</span></span><span class=line><span class=cl>curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/Admin&#34;</span>      <span class=c1>## case-sensitivity on Linux backends</span>
+</span></span><span class=line><span class=cl>curl -sI <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/ADMIN&#34;</span>
+</span></span></code></pre></div><h3 id=403-bypass-attempts data-heading-permalink=true><span class=heading-content>403 bypass attempts</span>
+<a class=heading-permalink href=#403-bypass-attempts aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>When you find an interesting endpoint that returns 403, try <a href=https://github.com/jinpwn/4oh3 target=_blank rel="noopener noreferrer">4oh3</a>
+or <a href=https://github.com/iamj0ker/bypass-403 target=_blank rel="noopener noreferrer">bypass-403</a>
+:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>4oh3 -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Header tricks:</span>
+</span></span><span class=line><span class=cl>curl -H <span class=s2>&#34;X-Original-URL: /admin&#34;</span> <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/&#34;</span>
+</span></span><span class=line><span class=cl>curl -H <span class=s2>&#34;X-Rewrite-URL: /admin&#34;</span> <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/&#34;</span>
+</span></span><span class=line><span class=cl>curl -H <span class=s2>&#34;X-Forwarded-For: 127.0.0.1&#34;</span> <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin&#34;</span>
+</span></span><span class=line><span class=cl>curl -H <span class=s2>&#34;X-Forwarded-Host: localhost&#34;</span> <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Path tricks:</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin/.&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin/..&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin%20&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin%09&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin/?&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/admin/%2e&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>//admin&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/./admin&#34;</span>
+</span></span></code></pre></div><h3 id=same-wordlist-multiple-modes data-heading-permalink=true><span class=heading-content>Same wordlist, multiple modes</span>
+<a class=heading-permalink href=#same-wordlist-multiple-modes aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Web content lists also work for parameters and headers. Try them across all three modes when stuck.</p><h2 id=ix-archive-sources data-heading-permalink=true><span class=heading-content>ix. Archive sources</span>
+<a class=heading-permalink href=#ix-archive-sources aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Wayback Machine often shows older endpoints removed in production, but still alive:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nb>echo</span> <span class=s2>&#34;target.com&#34;</span> <span class=p>|</span> gau --providers wayback,otx,commoncrawl --threads <span class=m>10</span> <span class=p>|</span> tee gau.txt
+</span></span><span class=line><span class=cl><span class=nb>echo</span> <span class=s2>&#34;target.com&#34;</span> <span class=p>|</span> waybackurls &gt; wayback.txt
+</span></span><span class=line><span class=cl><span class=c1>## Filter interesting:</span>
+</span></span><span class=line><span class=cl>grep -E <span class=s1>&#39;\.(env|bak|sql|tar|zip|gz)(\?|$)&#39;</span> gau.txt
+</span></span><span class=line><span class=cl>grep -E <span class=s1>&#39;/admin|/api|/internal|/debug|/test&#39;</span> gau.txt
+</span></span></code></pre></div><p>URLscan.io and Shodan also archive HTTP responses, sometimes useful for finding old admin panels.</p><h2 id=x-github-recon data-heading-permalink=true><span class=heading-content>x. GitHub recon</span>
+<a class=heading-permalink href=#x-github-recon aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>The target&rsquo;s own repos and developer accounts often leak paths and creds:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>trufflehog github --org<span class=o>=</span>target-inc --only-verified
+</span></span><span class=line><span class=cl><span class=c1>## Search GitHub directly with dorks:</span>
+</span></span><span class=line><span class=cl><span class=c1>##   &#34;target.com&#34; filename:.env</span>
+</span></span><span class=line><span class=cl><span class=c1>##   &#34;target.com&#34; password</span>
+</span></span><span class=line><span class=cl><span class=c1>##   &#34;target.com&#34; extension:pem</span>
+</span></span><span class=line><span class=cl><span class=c1>##   site:github.com target.com api_key</span>
+</span></span></code></pre></div><h2 id=xi-references data-heading-permalink=true><span class=heading-content>xi. References</span>
+<a class=heading-permalink href=#xi-references aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li><a href=https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Methodology%20and%20Resources target=_blank rel="noopener noreferrer">PayloadsAllTheThings - Directory and File Bruteforcing</a></li><li><a href=https://github.com/danielmiessler/SecLists/tree/master/Discovery/Web-Content target=_blank rel="noopener noreferrer">SecLists - Discovery wordlists</a></li><li><a href=https://wordlists.assetnote.io target=_blank rel="noopener noreferrer">Assetnote wordlists</a>
+— high-quality per-tech wordlists</li><li><a href=https://book.hacktricks.xyz/network-services-pentesting/pentesting-web target=_blank rel="noopener noreferrer">HackTricks - Pentesting Web</a></li><li><a href=https://portswigger.net/web-security/information-disclosure target=_blank rel="noopener noreferrer">PortSwigger - Information disclosure</a></li></ul><h2 id=xii-where-it-leads data-heading-permalink=true><span class=heading-content>xii. Where it leads</span>
+<a class=heading-permalink href=#xii-where-it-leads aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Each new path is a new vuln class to check:</p><ul><li>API endpoints → <a href=/cheatsheets/web/web02-auth--session/>WEB02 Auth & Session</a>
+then injection files</li><li>File uploads → <a href=/cheatsheets/web/web13-file-upload--lfi/>WEB13 File Upload & LFI</a></li><li>Admin panels → default creds first, then <a href=/cheatsheets/web/web02-auth--session/>WEB02 Auth & Session</a></li><li>Source exposure (<code>.git</code>, <code>.env</code>) → read every secret, validate keys per provider in <a href=/cheatsheets/cloud/00-cloud-moc/>00 Cloud MOC</a></li><li>Debug endpoints → often direct RCE (Spring actuator/jolokia, Flask debug console, Rails console)</li></ul></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/web/00-web-moc/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>Web MOC</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/web/web02-auth--session/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>Auth & Session</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

